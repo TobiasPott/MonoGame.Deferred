@@ -185,8 +185,8 @@ namespace DeferredEngine.Renderer.RenderModules
             
 
             Vector3 position = editorData.SelectedObjectPosition;
-            EditorLogic.GizmoModes gizmoMode = editorData.GizmoMode;
-            Matrix rotation = (GameStats.e_LocalTransformation || gizmoMode == EditorLogic.GizmoModes.Scale ) ? editorData.SelectedObject.RotationMatrix : Matrix.Identity;
+            GizmoModes gizmoMode = editorData.GizmoMode;
+            Matrix rotation = (GameStats.e_LocalTransformation || gizmoMode == GizmoModes.Scale ) ? editorData.SelectedObject.RotationMatrix : Matrix.Identity;
 
             //Z
             DrawArrow(position, rotation, 0, 0, 0, GetHoveredId() == 1 ? 1 : 0.5f, Color.Blue, staticViewProjection, gizmoMode); //z 1
@@ -201,7 +201,7 @@ namespace DeferredEngine.Renderer.RenderModules
             //DrawArrowRound(position, rotation,0, Math.PI / 2, 0, GetHoveredId() == 3 ? 1 : 0.5f, Color.Red, staticViewProjection); //x 3
         }
 
-        private void DrawArrow(Vector3 position, Matrix rotationObject, double angleX, double angleY, double angleZ, float scale, Color color, Matrix staticViewProjection, EditorLogic.GizmoModes gizmoMode, Vector3? direction = null)
+        private void DrawArrow(Vector3 position, Matrix rotationObject, double angleX, double angleY, double angleZ, float scale, Color color, Matrix staticViewProjection, GizmoModes gizmoMode, Vector3? direction = null)
         {
             Matrix rotation;
             if (direction != null)
@@ -222,7 +222,7 @@ namespace DeferredEngine.Renderer.RenderModules
             Shaders.IdRenderEffectParameterWorldViewProj.SetValue(worldViewProj);
             Shaders.IdRenderEffectParameterColorId.SetValue(color.ToVector4());
 
-            Model model = gizmoMode == EditorLogic.GizmoModes.Translation
+            Model model = gizmoMode == GizmoModes.Translation
                 ? _assets.EditorArrow
                 : _assets.EditorArrowRound;
 

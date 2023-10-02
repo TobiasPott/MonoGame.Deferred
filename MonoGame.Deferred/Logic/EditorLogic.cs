@@ -26,13 +26,6 @@ namespace DeferredEngine.Logic
         private float previousMouseX = 0;
         private float previousMouseY = 0;
 
-        public enum GizmoModes
-        {
-            Translation,
-            Rotation,
-            Scale
-        }
-
         public struct EditorReceivedData
         {
            public int HoveredId;

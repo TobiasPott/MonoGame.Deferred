@@ -1,5 +1,4 @@
-﻿using BEPUphysics.Paths;
-using DeferredEngine.Recources;
+﻿using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper.HelperGeometry;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

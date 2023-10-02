@@ -35,7 +35,7 @@ namespace DeferredEngine.Logic
         private GUITextBlockButton _gizmoTranslation;
         private GUITextBlockButton _gizmoRotation;
         private GUITextBlockButton _gizmoScale;
-        private EditorLogic.GizmoModes _gizmoModePrevious;
+        private GizmoModes _gizmoModePrevious;
 
         //Selected object
         private TransformableObject activeObject;
@@ -78,19 +78,19 @@ namespace DeferredEngine.Logic
             {
                 ButtonObject = this,
                 ButtonMethod = GetType().GetMethod("ChangeGizmoMode"),
-                ButtonMethodArgs = new object[]{ EditorLogic.GizmoModes.Translation },
+                ButtonMethodArgs = new object[]{ GizmoModes.Translation },
             });
             _leftSideList.AddElement(_gizmoRotation = new GUITextBlockButton(defaultStyle, "Rotate (R)")
             {
                 ButtonObject = this,
                 ButtonMethod = GetType().GetMethod("ChangeGizmoMode"),
-                ButtonMethodArgs = new object[] { EditorLogic.GizmoModes.Rotation },
+                ButtonMethodArgs = new object[] { GizmoModes.Rotation },
             });
             _leftSideList.AddElement(_gizmoScale = new GUITextBlockButton(defaultStyle, "Scale (Z)")
             {
                 ButtonObject = this,
                 ButtonMethod = GetType().GetMethod("ChangeGizmoMode"),
-                ButtonMethodArgs = new object[] { EditorLogic.GizmoModes.Scale },
+                ButtonMethodArgs = new object[] { GizmoModes.Scale },
             });
             _leftSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Local: ")
             {
@@ -99,7 +99,7 @@ namespace DeferredEngine.Logic
             });
             _leftSideList.Alignment = GUIStyle.GUIAlignment.BottomLeft;
 
-            ChangeGizmoMode(EditorLogic.GizmoModes.Translation);
+            ChangeGizmoMode(GizmoModes.Translation);
 
             //Editor options
             GuiCanvas.AddElement(_rightSideList = new GuiListToggleScroll(new Vector2(-20,0), defaultStyle));
@@ -428,28 +428,28 @@ namespace DeferredEngine.Logic
             _rightSideList.Alignment = GUIStyle.GUIAlignment.TopRight;
         }
 
-        public void ChangeGizmoMode(EditorLogic.GizmoModes mode)
+        public void ChangeGizmoMode(GizmoModes mode)
         {
             GameStats.e_gizmoMode = mode;
 
             UpdateGizmoSelection(mode);
         }
 
-        private void UpdateGizmoSelection(EditorLogic.GizmoModes mode)
+        private void UpdateGizmoSelection(GizmoModes mode)
         {
             switch (mode)
             {
-                case EditorLogic.GizmoModes.Translation:
+                case GizmoModes.Translation:
                     _gizmoTranslation.BlockColor = Color.MonoGameOrange;
                     _gizmoRotation.BlockColor = Color.Gray;
                     _gizmoScale.BlockColor = Color.Gray;
                     break;
-                case EditorLogic.GizmoModes.Rotation:
+                case GizmoModes.Rotation:
                     _gizmoTranslation.BlockColor = Color.Gray;
                     _gizmoRotation.BlockColor = Color.MonoGameOrange;
                     _gizmoScale.BlockColor = Color.Gray;
                     break;
-                case EditorLogic.GizmoModes.Scale:
+                case GizmoModes.Scale:
                     _gizmoTranslation.BlockColor = Color.Gray;
                     _gizmoRotation.BlockColor = Color.Gray;
                     _gizmoScale.BlockColor = Color.MonoGameOrange;

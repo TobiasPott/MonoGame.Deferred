@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace DeferredEngine.Renderer.Helper
 {
-    internal static class FastRand
+    public static class FastRand
     {
         static int _state = 1;
 

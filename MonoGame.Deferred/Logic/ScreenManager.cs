@@ -45,8 +45,9 @@ namespace DeferredEngine.Logic
         //Update per frame
         public void Update(GameTime gameTime, bool isActive)
         {
+#if DEBUG
             _shaderManager.CheckForChanges();
-
+#endif
             _guiLogic.Update(gameTime, isActive, _editorLogic.SelectedObject);
             _editorLogic.Update(gameTime, _sceneLogic.BasicEntities, _sceneLogic.Decals, _sceneLogic.PointLights, _sceneLogic.DirectionalLights, _sceneLogic.EnvironmentSample, _sceneLogic.DebugEntities, _editorReceivedDataBuffer, _sceneLogic.MeshMaterialLibrary);
             _sceneLogic.Update(gameTime, isActive);

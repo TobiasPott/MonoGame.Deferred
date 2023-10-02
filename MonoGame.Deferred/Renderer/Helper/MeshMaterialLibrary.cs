@@ -22,7 +22,6 @@ namespace DeferredEngine.Renderer.Helper
         public int Index;
 
         private bool _previousMode = GameSettings.g_cpuculling;
-        private bool _previousEditorMode = GameSettings.e_enableeditor;
         private readonly BoundingSphere _defaultBoundingSphere;
         private RasterizerState _shadowGenerationRasterizerState;
         private FullScreenTriangle _fullScreenTriangle;
