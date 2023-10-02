@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DeferredEngine.Entities;
+﻿using System.IO;
 using DeferredEngine.Recources.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -61,7 +55,7 @@ namespace DeferredEngine.Recources
         {
             Vector3[] vertices;
             int[] indices;
-            ModelDataExtractor.GetVerticesAndIndicesFromModel(model, out vertices, out indices);
+            GeometryDataExtractor.GetVerticesAndIndicesFromModel(model, out vertices, out indices);
 
             BoundingBox = BoundingBox.CreateFromPoints(vertices);
 

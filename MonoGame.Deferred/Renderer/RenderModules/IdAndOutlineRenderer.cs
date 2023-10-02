@@ -34,7 +34,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _assets = assets;
         }
 
-        public void Draw(MeshMaterialLibrary meshMat, List<Decal> decals, List<PointLight> pointLights, List<DirectionalLight> dirLights, EnvironmentSample envSample, List<DebugEntity> debug, Matrix viewProjection, Matrix view, EditorLogic.EditorSendData editorData, bool mouseMoved)
+        public void Draw(MeshMaterialLibrary meshMat, List<Decal> decals, List<PointLight> pointLights, List<DirectionalLight> dirLights, EnvironmentProbe envSample, List<DebugEntity> debug, Matrix viewProjection, Matrix view, EditorLogic.EditorSendData editorData, bool mouseMoved)
         {
             if (editorData.GizmoTransformationMode)
             {
@@ -52,7 +52,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 DrawOutlines(meshMat, viewProjection, mouseMoved, HoveredId, editorData, mouseMoved);
         }
 
-        public void DrawIds(MeshMaterialLibrary meshMat, List<Decal> decals, List<PointLight> pointLights, List<DirectionalLight> dirLights, EnvironmentSample envSample, List<DebugEntity> debug, Matrix viewProjection, Matrix view, EditorLogic.EditorSendData editorData)
+        public void DrawIds(MeshMaterialLibrary meshMat, List<Decal> decals, List<PointLight> pointLights, List<DirectionalLight> dirLights, EnvironmentProbe envSample, List<DebugEntity> debug, Matrix viewProjection, Matrix view, EditorLogic.EditorSendData editorData)
         {
             
             _graphicsDevice.SetRenderTarget(_idRenderTarget2D);
@@ -96,7 +96,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 2);
         }
 
-        public void DrawBillboards(List<Decal> decals, List<PointLight> lights, List<DirectionalLight> dirLights, EnvironmentSample envSample, List<DebugEntity> debugEntities, Matrix staticViewProjection, Matrix view)
+        public void DrawBillboards(List<Decal> decals, List<PointLight> lights, List<DirectionalLight> dirLights, EnvironmentProbe envSample, List<DebugEntity> debugEntities, Matrix staticViewProjection, Matrix view)
         {
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             _graphicsDevice.SetVertexBuffer(_billboardBuffer.VBuffer);

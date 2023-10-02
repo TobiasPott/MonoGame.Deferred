@@ -65,7 +65,7 @@ namespace DeferredEngine.Logic
             List<Decal> decals, 
             List<PointLight> pointLights, 
             List<DirectionalLight> dirLights, 
-            EnvironmentSample envSample, 
+            EnvironmentProbe envSample, 
             List<DebugEntity> debugEntities,
             EditorReceivedData data, 
             MeshMaterialLibrary meshMaterialLibrary)

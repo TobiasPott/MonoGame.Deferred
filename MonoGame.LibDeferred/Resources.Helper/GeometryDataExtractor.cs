@@ -8,7 +8,7 @@ namespace DeferredEngine.Recources.Helper
     /// <summary>
     /// Contains helper methods for extracting vertices and indices from XNA models.
     /// </summary>
-    public static class ModelDataExtractor
+    public static class GeometryDataExtractor
     {
         /// <summary>
         /// Gets an array of vertices and indices from the provided model.

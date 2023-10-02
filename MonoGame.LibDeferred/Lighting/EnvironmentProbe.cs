@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace DeferredEngine.Entities
 {
-    public class EnvironmentSample : TransformableObject
+    public class EnvironmentProbe : TransformableObject
     {
         public bool NeedsUpdate = true;
         private Vector3 _position;
@@ -34,7 +34,7 @@ namespace DeferredEngine.Entities
         public override TransformableObject Clone { get; }
         public override string Name { get; set; }
 
-        public EnvironmentSample(Vector3 position)
+        public EnvironmentProbe(Vector3 position)
         {
             Position = position;
             Id = IdGenerator.GetNewId();

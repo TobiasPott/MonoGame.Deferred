@@ -595,7 +595,7 @@ namespace DeferredEngine.Logic
                 }
 
                 // Environment Sample!
-                else if(selectedObject is EnvironmentSample)
+                else if(selectedObject is EnvironmentProbe)
                 {
                     _objectButton1.IsHidden = false;
                     _objectToggle1.IsHidden = false;
@@ -614,7 +614,7 @@ namespace DeferredEngine.Logic
                         _objectToggle1.ToggleObject = selectedObject;
                         _objectToggle1.ToggleField = selectedObject.GetType().GetField("AutoUpdate");
 
-                        _objectToggle1.Toggle = (selectedObject as EnvironmentSample).AutoUpdate;
+                        _objectToggle1.Toggle = (selectedObject as EnvironmentProbe).AutoUpdate;
 
                         _objectToggle1.Text = new StringBuilder("Update on move");
                         

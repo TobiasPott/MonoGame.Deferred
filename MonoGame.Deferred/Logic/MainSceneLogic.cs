@@ -44,7 +44,7 @@ namespace DeferredEngine.Logic
         public readonly List<PointLight> PointLights = new List<PointLight>();
         public readonly List<DirectionalLight> DirectionalLights = new List<DirectionalLight>();
         public readonly List<DebugEntity> DebugEntities = new List<DebugEntity>();
-        public EnvironmentSample EnvironmentSample;
+        public EnvironmentProbe EnvironmentSample;
 
         //Which render target are we currently displaying?
         private int _renderModeCycle;
@@ -89,7 +89,7 @@ namespace DeferredEngine.Logic
 
             Camera = new Camera(position: new Vector3(-88, -11f, 4), lookat: new Vector3(38, 8, 32));
 
-            EnvironmentSample = new EnvironmentSample(new Vector3(-45, -5, 5));
+            EnvironmentSample = new EnvironmentProbe(new Vector3(-45, -5, 5));
             
             _sdfGenerator = new SdfGenerator();
 
@@ -455,7 +455,7 @@ namespace DeferredEngine.Logic
         {
             BEPUutilities.Vector3[] vertices;
             int[] indices;
-            ModelDataExtractor.GetVerticesAndIndicesFromModel(entity.Model, out vertices, out indices);
+            GeometryDataExtractor.GetVerticesAndIndicesFromModel(entity.Model, out vertices, out indices);
             var mesh = new StaticMesh(vertices, indices, 
                 new AffineTransform(
                     new BEPUutilities.Vector3(entity.Scale.X, entity.Scale.Y, entity.Scale.Z), 

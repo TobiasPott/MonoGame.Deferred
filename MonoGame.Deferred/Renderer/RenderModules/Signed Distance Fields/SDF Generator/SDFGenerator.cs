@@ -46,7 +46,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Gener
         {
             Vector3[] vertexPositions;
             int[] indices;
-            ModelDataExtractor.GetVerticesAndIndicesFromModel(model, out vertexPositions, out indices);
+            GeometryDataExtractor.GetVerticesAndIndicesFromModel(model, out vertexPositions, out indices);
             triangles = new Triangle[indices.Length / 3];
             int baseIndex = 0;
             for (var i = 0; i < triangles.Length; i++, baseIndex += 3)
