@@ -2,7 +2,7 @@
 
 namespace DeferredEngine.Recources.Helper
 {
-    static class IdGenerator
+    public static class IdGenerator
     {
         //start at 3, we need 123 for gizmos
         static int _currentId = 103;

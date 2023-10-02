@@ -12,7 +12,7 @@ namespace DeferredEngine.Recources
         public static int g_fixedfps = 0;
         public static int u_showdisplayinfo = 3;
         public static bool p_physics = false;
-        public static Renderer.Renderer.RenderModes g_rendermode = Renderer.Renderer.RenderModes.Deferred;
+        public static Renderer.RenderModes g_rendermode = Renderer.RenderModes.Deferred;
 
         //Editor
         public static bool e_enableeditor = true;

@@ -1,5 +1,4 @@
-﻿using System;
-using DeferredEngine.Recources;
+﻿using DeferredEngine.Recources;
 using DeferredEngine.Recources.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

@@ -66,18 +66,18 @@ namespace DeferredEngine.Logic
 
         public StringBuilder[] RenderModesSB =
         {
-            new StringBuilder( ((Renderer.Renderer.RenderModes)0).ToString() ),
-            new StringBuilder( ((Renderer.Renderer.RenderModes)1).ToString() ),
-            new StringBuilder( ((Renderer.Renderer.RenderModes)2).ToString() ),
-            new StringBuilder( ((Renderer.Renderer.RenderModes)3).ToString() ),
-            new StringBuilder( ((Renderer.Renderer.RenderModes)4).ToString() ),
-            new StringBuilder( ((Renderer.Renderer.RenderModes)5).ToString() ),
-            new StringBuilder( ((Renderer.Renderer.RenderModes)6).ToString() ),
-            new StringBuilder( ((Renderer.Renderer.RenderModes)7).ToString() ),
-            new StringBuilder( ((Renderer.Renderer.RenderModes)8).ToString() ),
-            new StringBuilder( ((Renderer.Renderer.RenderModes)9).ToString() ),
-            new StringBuilder( ((Renderer.Renderer.RenderModes)10).ToString() ),
-            new StringBuilder( ((Renderer.Renderer.RenderModes)11).ToString() ),
+            new StringBuilder( ((Renderer.RenderModes)0).ToString() ),
+            new StringBuilder( ((Renderer.RenderModes)1).ToString() ),
+            new StringBuilder( ((Renderer.RenderModes)2).ToString() ),
+            new StringBuilder( ((Renderer.RenderModes)3).ToString() ),
+            new StringBuilder( ((Renderer.RenderModes)4).ToString() ),
+            new StringBuilder( ((Renderer.RenderModes)5).ToString() ),
+            new StringBuilder( ((Renderer.RenderModes)6).ToString() ),
+            new StringBuilder( ((Renderer.RenderModes)7).ToString() ),
+            new StringBuilder( ((Renderer.RenderModes)8).ToString() ),
+            new StringBuilder( ((Renderer.RenderModes)9).ToString() ),
+            new StringBuilder( ((Renderer.RenderModes)10).ToString() ),
+            new StringBuilder( ((Renderer.RenderModes)11).ToString() ),
         };
 
         // Console
@@ -538,7 +538,7 @@ namespace DeferredEngine.Logic
         }
 
 
-        private StringBuilder RenderModesToString(Renderer.Renderer.RenderModes render)
+        private StringBuilder RenderModesToString(Renderer.RenderModes render)
         {
             return RenderModesSB[(int)render];
         }

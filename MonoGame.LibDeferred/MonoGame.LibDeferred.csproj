@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.1.303" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="BEPUutilities">
+	    <HintPath>..\MonoGame.Deferred\Content\BEPUutilities.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
+
+</Project>

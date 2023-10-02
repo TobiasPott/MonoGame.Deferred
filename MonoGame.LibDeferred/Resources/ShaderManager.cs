@@ -18,7 +18,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using HelperSuite.ContentLoader;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -32,7 +31,8 @@ namespace DeferredEngine.Recources
 #if DEBUG
         ContentManager TempContent;
         DateTime LastUpdate;
-        const string mgcbPathExe = "C:/program Files (x86)/MSBuild/MonoGame/v3.0/Tools/mgcb.exe";
+        //const string mgcbPathExe = "C:/program Files (x86)/MSBuild/MonoGame/v3.0/Tools/mgcb.exe";
+        const string mgcbPathExe = "%USERPROFILE%/.dotnet/toolsmgcb.exe";
 #endif
 
         string contentBuiltPath;

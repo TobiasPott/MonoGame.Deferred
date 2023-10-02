@@ -313,9 +313,9 @@ namespace DeferredEngine.Logic
             if (Input.WasKeyPressed(Keys.F1))
             {
                 _renderModeCycle++;
-                if (_renderModeCycle > Enum.GetNames(typeof(Renderer.Renderer.RenderModes)).Length - 1) _renderModeCycle = 0;
+                if (_renderModeCycle > Enum.GetNames(typeof(Renderer.RenderModes)).Length - 1) _renderModeCycle = 0;
 
-                GameSettings.g_rendermode = (Renderer.Renderer.RenderModes) _renderModeCycle;
+                GameSettings.g_rendermode = (Renderer.RenderModes) _renderModeCycle;
             }
         }
         

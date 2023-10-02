@@ -97,22 +97,6 @@ namespace DeferredEngine.Renderer
         //SDF
         private List<SignedDistanceField> _sdfDefinitions;
 
-        //Render modes
-        public enum RenderModes {
-            Deferred,
-            Albedo,
-            Normal,
-            Depth,
-            Diffuse,
-            Specular,
-            Volumetric,
-            //Hologram,
-            SSAO,
-            SSBlur,
-            //Emissive,
-            SSR,
-            HDR
-        }
 
         //Render targets
         private RenderTarget2D _renderTargetAlbedo;
