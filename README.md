@@ -1,10 +1,17 @@
-# Deferred Engine For Monogame
+# Deferred Engine For Monogame 3.8x (Fork from [Kosmonaut3d](https://github.com/Kosmonaut3d/DeferredEngine))
 
+This fork aims at the current MonoGame framework 3.8x on windows platforms to get the sample running on an updated pipeline. The current state provides a buildable project based on MonoGame 3.8.1.303.
+
+The mid-term aim of this repository is porting the deferred engine and as much features as possible to work on DesktopGL, Android and iOS target platforms.
+
+
+
+Feedback to original developer community thread:  
+  -> http://community.monogame.net/t/deferred-engine-playground-download/8180   
+  -> https://kosmonautblog.wordpress.com/
+     
 by https://twitter.com/kosmonautgames
-
-Feedback -> http://community.monogame.net/t/deferred-engine-playground-download/8180   
-         -> https://kosmonautblog.wordpress.com/
-         
+    
 ![Alt text](http://i.imgur.com/ucSrI29.png "soft shadows")
 
 
