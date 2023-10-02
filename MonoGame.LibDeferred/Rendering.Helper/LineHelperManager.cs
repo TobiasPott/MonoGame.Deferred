@@ -144,15 +144,15 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
             AddLineStartEnd(vertices[7], vertices[4], 1);
         }
 
-        public void AddBoundingBox(BasicEntity basicEntity)
+        public void AddBoundingBox(EntityBase entity)
         {
             Vector3[] vertices = new Vector3[8];
-            vertices = basicEntity.BoundingBox.GetCorners();
+            vertices = entity.BoundingBox.GetCorners();
 
             //Transform
             for (var index = 0; index < vertices.Length; index++)
             {
-                vertices[index] = Vector3.Transform(vertices[index], basicEntity.WorldTransform.World);
+                vertices[index] = Vector3.Transform(vertices[index], entity.WorldTransform.World);
             }
 
             AddLineStartEnd(vertices[0], vertices[1], 1);
