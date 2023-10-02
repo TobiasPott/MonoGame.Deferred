@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoDeferred", "MonoGame.Deferred\MonoDeferred.csproj", "{C6295792-D1EF-4650-942F-C648D1FAD640}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGame.Deferred", "MonoGame.Deferred\MonoGame.Deferred.csproj", "{C6295792-D1EF-4650-942F-C648D1FAD640}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGame.HelperSuite", "MonoGame.HelperSuite\MonoGame.HelperSuite.csproj", "{062C6625-A99A-4367-9CEE-C13F06A51480}"
 EndProject
