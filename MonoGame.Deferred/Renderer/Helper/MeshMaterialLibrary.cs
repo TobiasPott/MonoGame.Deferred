@@ -281,33 +281,14 @@ namespace DeferredEngine.Renderer.Helper
         }
 
 
-        public void FlagMovedObjects(List<BasicEntity> entities)
-        {
-            //if (_previousEditorMode != GameSettings.e_enableeditor)
-            //{
-            //    _previousEditorMode = GameSettings.e_enableeditor;
-            //    //Set Changed to true
-            //    for (int index1 = 0; index1 < entities.Count; index1++)
-            //    {
-            //        BasicEntity entity = entities[index1];
-            //        entity.WorldTransform.HasChanged = true;
-            //    }
-
-            //    for (int index1 = 0; index1 < Index; index1++)
-            //    {
-            //        MaterialLibrary matLib = GameSettings.g_cpusort ? MaterialLib[MaterialLibPointer[index1]] : MaterialLib[index1];
-
-            //        matLib.HasChangedThisFrame = true;
-            //    }
-            //}
-
-            for (int index1 = 0; index1 < entities.Count; index1++)
-            {
-                BasicEntity entity = entities[index1];
-                entity.CheckPhysics();
-            }
-
-        }
+        //public void ProcessPhysics(List<BasicEntity> entities)
+        //{
+        //    for (int index1 = 0; index1 < entities.Count; index1++)
+        //    {
+        //        //BasicEntity entity = entities[index1];
+        //        //entity.CheckPhysics();
+        //    }
+        //}
 
         /// <summary>
         /// Should be called when the frame is done.

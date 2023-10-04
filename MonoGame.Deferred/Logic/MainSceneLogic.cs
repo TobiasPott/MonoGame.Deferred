@@ -102,20 +102,8 @@ namespace DeferredEngine.Logic
             // NOTE: If you don't pass a materialEffect it will use the default material from the object
 
             BasicEntity testEntity = AddEntity(model: _assets.SponzaModel,
-                position: Vector3.Zero,
-                angleX: Math.PI / 2,
-                angleY: 0,
-                angleZ: 0,
-                scale: 0.1f,
-                hasStaticPhysics: false);//CHANGE BACK
+                position: Vector3.Zero, angleX: Math.PI / 2, angleY: 0, angleZ: 0, scale: 0.1f);//CHANGE BACK
 
-
-            //AddEntity(model: _assets.CloneTrooper,
-            //    position: new Vector3(20, 0, 10),
-            //    angleX: Math.PI / 2,
-            //    angleY: 0,
-            //    angleZ: 0,
-            //    scale: 10.4f);
 
             for (int x = -5; x <= 5; x++)
             {
@@ -123,21 +111,13 @@ namespace DeferredEngine.Logic
                 {
                     AddEntity(model: _assets.Plane,
                         materialEffect: ((x + 5 + y + 5) % 2 == 1) ? _assets.MirrorMaterial : _assets.MetalRough03Material,
-                        position: new Vector3(30 + x * 4, y * 4 + 4, 0),
-                        angleX: 0,
-                        angleY: 0,
-                        angleZ: 0,
-                        scale: 2);
+                        position: new Vector3(30 + x * 4, y * 4 + 4, 0), angleX: 0, angleY: 0, angleZ: 0, scale: 2);
                 }
             }
 
             AddEntity(model: _assets.StanfordDragonLowpoly,
                 materialEffect: _assets.BaseMaterial,
-                position: new Vector3(40, -10, 0),
-                angleX: Math.PI / 2,
-                angleY: 0,
-                angleZ: 0,
-                scale: 10);
+                position: new Vector3(40, -10, 0), angleX: Math.PI / 2, angleY: 0, angleZ: 0, scale: 10);
 
             ////////////////////////////////////////////////////////////////////////
             // Dynamic geometry
@@ -158,12 +138,7 @@ namespace DeferredEngine.Logic
             _physicsSpace.Add(physicsEntity = new Sphere(position: BEPUutilities.Vector3.Zero, radius: 5, mass: 50));
             AddEntity(model: _assets.IsoSphere,
                 materialEffect: _assets.AlphaBlendRim,
-                position: new Vector3(20, 0, 10),
-                angleX: Math.PI / 2,
-                angleY: 0,
-                angleZ: 0,
-                scale: 5,
-                PhysicsEntity: physicsEntity);
+                position: new Vector3(20, 0, 10), angleX: Math.PI / 2, angleY: 0, angleZ: 0, scale: 5);
 
             testEntity.ApplyTransformation();
 
@@ -175,12 +150,7 @@ namespace DeferredEngine.Logic
                 _physicsSpace.Add(physicsEntity = new Sphere(position: BEPUutilities.Vector3.Zero, radius: 5, mass: 50));
                 AddEntity(model: _assets.IsoSphere,
                     materialEffect: test,
-                    position: new Vector3(30 + i * 10, 0, 10),
-                    angleX: Math.PI / 2,
-                    angleY: 0,
-                    angleZ: 0,
-                    scale: 5,
-                    PhysicsEntity: physicsEntity);
+                    position: new Vector3(30 + i * 10, 0, 10), angleX: Math.PI / 2, angleY: 0, angleZ: 0, scale: 5);
             }
 
             ////////////////////////////////////////////////////////////////////////
@@ -219,45 +189,16 @@ namespace DeferredEngine.Logic
                 staticShadow: false,
                 isVolumetric: false);
 
-            //volumetric light!
-            //AddPointLight(position: new Vector3(-4, 40, 66),
-            //    radius: 80,
-            //    color: Color.White,
-            //    intensity: 50,
-            //    castShadows: true,
-            //    shadowResolution: 1024,
-            //    staticShadow: false,
-            //    isVolumetric: true,
-            //    volumetricDensity: 3);
-
-
-            // Spawn a lot of lights to test performance 
-
-            //int sides = 4;
-            //float distance = 20;
-            //Vector3 startPosition = new Vector3(-30, 30, 1);
-
-            ////amount of lights is sides*sides* sides*2
-
-            //for (int x = 0; x < sides * 2; x++)
-            //    for (int y = 0; y < sides; y++)
-            //        for (int z = 0; z < sides; z++)
-            //        {
-            //            Vector3 position = new Vector3(x, -y, z) * distance + startPosition;
-            //            AddPointLight(position, distance, FastRand.NextColor(), 50, false, false, 0.9f);
-            //        }
-
-
-            //AddDirectionalLight(direction: new Vector3(0.2f, 0.2f, -1),
-            //    intensity: 100,
-            //    color: Color.White,
-            //    position: Vector3.UnitZ * 2,
-            //    drawShadows: true,
-            //    shadowWorldSize: 450,
-            //    shadowDepth: 180,
-            //    shadowResolution: 1024,
-            //    shadowFilteringFiltering: DirectionalLightSource.ShadowFilteringTypes.SoftPCF3x,
-            //    screenspaceShadowBlur: false);
+            AddDirectionalLight(direction: new Vector3(0.2f, 0.2f, -1),
+                intensity: 100,
+                color: Color.White,
+                position: Vector3.UnitZ * 2,
+                drawShadows: true,
+                shadowWorldSize: 450,
+                shadowDepth: 180,
+                shadowResolution: 1024,
+                shadowFilteringFiltering: DirectionalLight.ShadowFilteringTypes.SoftPCF3x,
+                screenspaceShadowBlur: false);
         }
 
 
@@ -274,18 +215,6 @@ namespace DeferredEngine.Logic
             //Upd
             Input.Update(gameTime, Camera);
 
-            //VolumeTexture.RotationMatrix = testEntity.WorldTransform.InverseWorld;
-            //VolumeTexture.Scale = testEntity.WorldTransform.Scale;
-            
-            //Make the lights move up and down
-            //for (var i = 2; i < PointLights.Count; i++)
-            //{
-            //    PointLight point = PointLights[i];
-            //    point.Position = new Vector3(point.Position.X, point.Position.Y, (float)(Math.Sin(gameTime.TotalGameTime.TotalSeconds * 0.8f + i) * 10 - 13));
-            //}
-
-            //KeyInputs for specific tasks
-
 
             //If we are currently typing stuff into the console we should ignore the following keyboard inputs
             if (DebugScreen.ConsoleOpen) return;
@@ -296,7 +225,6 @@ namespace DeferredEngine.Logic
                 RenderingSettings.e_enableeditor = !RenderingSettings.e_enableeditor;
             }
 
-            
             
             //Spawns a new light on the ground
             if (Input.keyboardState.IsKeyDown(Keys.L))
@@ -395,10 +323,8 @@ namespace DeferredEngine.Logic
         /// <param name="angleY"></param>
         /// <param name="angleZ"></param>
         /// <param name="scale"></param>
-        /// <param name="PhysicsEntity">attached physical object</param>
-        /// <param name="hasStaticPhysics">if "true" a static mesh will be computed based on the model mesh. Other physical objects can collide with the entity</param>
         /// <returns>returns the basicEntity we created</returns>
-        private BasicEntity AddEntity(ModelDefinition model, Vector3 position, double angleX, double angleY, double angleZ, float scale, Entity PhysicsEntity = null, bool hasStaticPhysics = false)
+        private BasicEntity AddEntity(ModelDefinition model, Vector3 position, double angleX, double angleY, double angleZ, float scale)
         {
             BasicEntity entity = new BasicEntity(model,
                 null, 
@@ -407,11 +333,8 @@ namespace DeferredEngine.Logic
                 angleX: angleX, 
                 angleY: angleY, 
                 scale: Vector3.One * scale,
-                library: MeshMaterialLibrary,
-                physicsObject: PhysicsEntity);
+                library: MeshMaterialLibrary);
             BasicEntities.Add(entity);
-
-            if (hasStaticPhysics) AddStaticPhysics(entity);
 
             return entity;
         }
@@ -426,10 +349,8 @@ namespace DeferredEngine.Logic
         /// <param name="angleY"></param>
         /// <param name="angleZ"></param>
         /// <param name="scale"></param>
-        /// <param name="PhysicsEntity">attached physical object</param>
-        /// <param name="hasStaticPhysics">if "true" a static mesh will be computed based on the model mesh. Other physical objects can collide with the entity</param>
         /// <returns>returns the basicEntity we created</returns>
-        private BasicEntity AddEntity(ModelDefinition model, MaterialEffect materialEffect, Vector3 position, double angleX, double angleY, double angleZ, float scale, Entity PhysicsEntity = null, bool hasStaticPhysics = false )
+        private BasicEntity AddEntity(ModelDefinition model, MaterialEffect materialEffect, Vector3 position, double angleX, double angleY, double angleZ, float scale)
         {
             BasicEntity entity = new BasicEntity(model,
                 materialEffect,
@@ -438,11 +359,8 @@ namespace DeferredEngine.Logic
                 angleX: angleX,
                 angleY: angleY,
                 scale: Vector3.One * scale,
-                library: MeshMaterialLibrary,
-                physicsObject: PhysicsEntity);
+                library: MeshMaterialLibrary);
             BasicEntities.Add(entity);
-
-            if(hasStaticPhysics) AddStaticPhysics(entity);
 
             return entity;
         }
@@ -453,17 +371,17 @@ namespace DeferredEngine.Logic
         /// <param name="entity"></param>
         private void AddStaticPhysics(BasicEntity entity)
         {
-            BEPUutilities.Vector3[] vertices;
-            int[] indices;
-            GeometryDataExtractor.GetVerticesAndIndicesFromModel(entity.ModelDefinition.Model, out vertices, out indices);
-            var mesh = new StaticMesh(vertices, indices, 
-                new AffineTransform(
-                    new BEPUutilities.Vector3(entity.Scale.X, entity.Scale.Y, entity.Scale.Z), 
-                Quaternion.CreateFromRotationMatrix(MathConverter.Convert(entity.RotationMatrix)), 
-                MathConverter.Convert(entity.Position)));
+            //BEPUutilities.Vector3[] vertices;
+            //int[] indices;
+            //GeometryDataExtractor.GetVerticesAndIndicesFromModel(entity.ModelDefinition.Model, out vertices, out indices);
+            //var mesh = new StaticMesh(vertices, indices, 
+            //    new AffineTransform(
+            //        new BEPUutilities.Vector3(entity.Scale.X, entity.Scale.Y, entity.Scale.Z), 
+            //    Quaternion.CreateFromRotationMatrix(MathConverter.Convert(entity.RotationMatrix)), 
+            //    MathConverter.Convert(entity.Position)));
 
-            entity.StaticPhysicsObject = mesh;
-            _physicsSpace.Add(mesh);
+            //entity.StaticPhysicsObject = mesh;
+            //_physicsSpace.Add(mesh);
         }
 
     }

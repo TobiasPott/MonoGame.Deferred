@@ -73,6 +73,6 @@ namespace DeferredEngine.Entities
 
 
         public abstract void ApplyTransformation();
-        public abstract void CheckPhysics();
+
     }
 }

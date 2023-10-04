@@ -287,7 +287,7 @@ namespace DeferredEngine.Renderer
             } 
 
             //Update the mesh data for changes in physics etc.
-            meshMaterialLibrary.FlagMovedObjects(entities);
+            //meshMaterialLibrary.ProcessPhysics(entities);
 
             //Check if we changed some drastic stuff for which we need to reload some elements
             CheckRenderChanges(directionalLights);
