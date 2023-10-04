@@ -90,7 +90,7 @@ namespace DeferredEngine.Entities
             library.DeleteFromRegistry(this);
         }
 
-        public void ApplyTransformation()
+        public override void ApplyTransformation()
         {
             if (_dynamicPhysicsObject == null)
             {
@@ -133,7 +133,7 @@ namespace DeferredEngine.Entities
             }
         }
 
-        internal void CheckPhysics()
+        public override void CheckPhysics()
         {
             if (_dynamicPhysicsObject == null) return;
 

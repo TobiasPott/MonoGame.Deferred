@@ -24,8 +24,8 @@ namespace DeferredEngine.Renderer.Helper
         private bool _previousMode = RenderingSettings.g_cpuculling;
         private readonly BoundingSphere _defaultBoundingSphere;
         private RasterizerState _shadowGenerationRasterizerState;
-        private FullScreenTriangle _fullScreenTriangle;
         private DepthStencilState _depthWrite;
+        private FullScreenTriangle _fullScreenTriangle;
 
         private GraphicsDevice graphicsDevice;
 
