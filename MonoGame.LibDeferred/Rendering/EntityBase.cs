@@ -70,5 +70,7 @@ namespace DeferredEngine.Entities
             BoundingBox = bBox;
             BoundingBoxOffset = bBoxOffset;
         }
+
+
     }
 }

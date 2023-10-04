@@ -1,6 +1,4 @@
-﻿using System;
-using DeferredEngine.Recources;
-using DeferredEngine.Renderer.Helper;
+﻿using DeferredEngine.Recources;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Matrix = Microsoft.Xna.Framework.Matrix;
@@ -35,9 +33,6 @@ namespace DeferredEngine.Renderer.RenderModules
 
         public void Draw(Matrix _viewProjection, Model isosphere, Texture2D tex)
         {
-            //_spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, texFilterEffect, null);
-            //_spriteBatch.Draw(tex, new Rectangle(0,0,256, 1536), Color.White);
-            //_spriteBatch.End();
             ModelMeshPart meshpart = isosphere.Meshes[0].MeshParts[0];
 
             texFilterEffect.Parameters["WorldViewProj"].SetValue(Matrix.CreateScale(10) * _viewProjection);

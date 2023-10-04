@@ -175,18 +175,18 @@ namespace DeferredEngine.Renderer.Helper
                 MaterialLibrary matLib = MaterialLib[i];
                 //if (matLib.HasMaterial(mat))
                 //{
-                    if (matLib.DeleteFromRegistry(mesh, worldMatrix))
+                if (matLib.DeleteFromRegistry(mesh, worldMatrix))
+                {
+                    for (var j = i; j < Index - 1; j++)
                     {
-                        for (var j = i; j < Index - 1; j++)
-                        {
-                            //slide down one
-                            MaterialLib[j] = MaterialLib[j + 1];
+                        //slide down one
+                        MaterialLib[j] = MaterialLib[j + 1];
 
-                        }
-                        Index--;
-
-                        break;
                     }
+                    Index--;
+
+                    break;
+                }
                 //}
             }
         }
@@ -224,11 +224,11 @@ namespace DeferredEngine.Renderer.Helper
             }
 
             if (!GameSettings.g_cpuculling) return false;
-            
+
             for (int index1 = 0; index1 < entities.Count; index1++)
             {
                 BasicEntity entity = entities[index1];
-                
+
                 if (!hasCameraChanged && !entity.WorldTransform.HasChanged)// && entity.DynamicPhysicsObject == null)
                 {
                     continue;
@@ -240,38 +240,38 @@ namespace DeferredEngine.Renderer.Helper
 
             bool hasAnythingChanged = false;
             //Ok we applied the transformation to all the entities, now update the submesh boundingboxes!
-          // Parallel.For(0, Index, index1 =>
-             for (int index1 = 0; index1 < Index; index1++)
+            // Parallel.For(0, Index, index1 =>
+            for (int index1 = 0; index1 < Index; index1++)
+            {
+                float distance = 0;
+                int counter = 0;
+
+
+                MaterialLibrary matLib = GameSettings.g_cpusort
+                    ? MaterialLib[MaterialLibPointer[index1]]
+                    : MaterialLib[index1];
+                for (int i = 0; i < matLib.Index; i++)
                 {
-                    float distance = 0;
-                    int counter = 0;
+                    MeshLibrary meshLib = matLib.GetMeshLibrary()[i];
+                    float? distanceSq = meshLib.UpdatePositionAndCheckRender(hasCameraChanged, boundingFrustrum,
+                        cameraPosition, _defaultBoundingSphere);
 
-
-                    MaterialLibrary matLib = GameSettings.g_cpusort
-                        ? MaterialLib[MaterialLibPointer[index1]]
-                        : MaterialLib[index1];
-                    for (int i = 0; i < matLib.Index; i++)
+                    //If we get a new distance, apply it to the material
+                    if (distanceSq != null)
                     {
-                        MeshLibrary meshLib = matLib.GetMeshLibrary()[i];
-                        float? distanceSq = meshLib.UpdatePositionAndCheckRender(hasCameraChanged, boundingFrustrum,
-                            cameraPosition, _defaultBoundingSphere);
-
-                        //If we get a new distance, apply it to the material
-                        if (distanceSq != null)
-                        {
-                            distance += (float) distanceSq;
-                            counter++;
-                            hasAnythingChanged = true;
-                        }
+                        distance += (float)distanceSq;
+                        counter++;
+                        hasAnythingChanged = true;
                     }
+                }
 
-                    if (Math.Abs(distance) > 0.00001f)
-                    {
-                        distance /= counter;
-                        matLib.DistanceSquared = distance;
-                        matLib.HasChangedThisFrame = true;
-                    }
-                }//);
+                if (Math.Abs(distance) > 0.00001f)
+                {
+                    distance /= counter;
+                    matLib.DistanceSquared = distance;
+                    matLib.HasChangedThisFrame = true;
+                }
+            }//);
 
             //finally sort the materials by distance. Bubble sort should in theory be fast here since little changes.
             if (hasAnythingChanged)
@@ -300,7 +300,7 @@ namespace DeferredEngine.Renderer.Helper
             //        matLib.HasChangedThisFrame = true;
             //    }
             //}
-            
+
             for (int index1 = 0; index1 < entities.Count; index1++)
             {
                 BasicEntity entity = entities[index1];
@@ -354,7 +354,7 @@ namespace DeferredEngine.Renderer.Helper
                 if (!CheckShadowMapUpdateNeeds(lightViewPointChanged, hasAnyObjectMoved))
                     return;
             }
-            
+
             for (int index1 = 0; index1 < Index; index1++)
             {
                 MaterialLibrary matLib = MaterialLib[index1];
@@ -367,21 +367,21 @@ namespace DeferredEngine.Renderer.Helper
                 for (int i = 0; i < matLib.Index; i++)
                 {
                     MeshLibrary meshLib = matLib.GetMeshLibrary()[i];
-                    
-                        //If it's set to "not rendered" skip
-                        for (int j = 0; j < meshLib.Rendered.Length; j++)
+
+                    //If it's set to "not rendered" skip
+                    for (int j = 0; j < meshLib.Rendered.Length; j++)
+                    {
+                        if (meshLib.Rendered[j])
                         {
-                            if (meshLib.Rendered[j])
-                            {
-                                isUsed = true;
-                                //if (meshLib.GetWorldMatrices()[j].HasChanged)
-                                //    hasAnyObjectMoved = true;
-                            }
-
-                            if (isUsed)// && hasAnyObjectMoved)
-                                break;
-
+                            isUsed = true;
+                            //if (meshLib.GetWorldMatrices()[j].HasChanged)
+                            //    hasAnyObjectMoved = true;
                         }
+
+                        if (isUsed)// && hasAnyObjectMoved)
+                            break;
+
+                    }
                 }
 
                 if (!isUsed) continue;
@@ -392,7 +392,7 @@ namespace DeferredEngine.Renderer.Helper
 
                 //Check if alpha or opaque!
                 if (renderType == RenderType.Opaque && material.IsTransparent || renderType == RenderType.Opaque && material.Type == MaterialEffect.MaterialTypes.ForwardShaded) continue;
-                if(renderType == RenderType.Hologram && material.Type != MaterialEffect.MaterialTypes.Hologram)
+                if (renderType == RenderType.Hologram && material.Type != MaterialEffect.MaterialTypes.Hologram)
                     continue;
                 if (renderType != RenderType.Hologram && material.Type == MaterialEffect.MaterialTypes.Hologram)
                     continue;
@@ -409,9 +409,9 @@ namespace DeferredEngine.Renderer.Helper
                     if (!material.HasShadow)
                         continue;
                 }
-                
-                 if(renderType != RenderType.IdRender && renderType != RenderType.IdOutline)
-                GameStats.MaterialDraws++;
+
+                if (renderType != RenderType.IdRender && renderType != RenderType.IdOutline)
+                    GameStats.MaterialDraws++;
 
                 PerMaterialSettings(renderType, material, renderModule);
 
@@ -440,7 +440,7 @@ namespace DeferredEngine.Renderer.Helper
                         if (!ApplyShaders(renderType, renderModule, localWorldMatrix, view, viewProjection, meshLib, index,
                                 outlineId, outlined)) continue;
                         GameStats.MeshDraws++;
-                        
+
                         graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, vertexOffset, startIndex,
                                 primitiveCount);
                     }
@@ -536,9 +536,9 @@ namespace DeferredEngine.Renderer.Helper
         private bool ApplyShaders(RenderType renderType, IRenderModule renderModule, Matrix localWorldMatrix, Matrix? view, Matrix viewProjection, MeshLibrary meshLib, int index, int outlineId, bool outlined)
         {
             if (renderType == RenderType.Opaque
-                || renderType == RenderType.ShadowLinear 
-                || renderType == RenderType.ShadowOmnidirectional 
-                || renderType == RenderType.SubsurfaceScattering 
+                || renderType == RenderType.ShadowLinear
+                || renderType == RenderType.ShadowOmnidirectional
+                || renderType == RenderType.SubsurfaceScattering
                 || renderType == RenderType.Forward)
             {
                 renderModule.Apply(localWorldMatrix, view, viewProjection);
@@ -564,7 +564,7 @@ namespace DeferredEngine.Renderer.Helper
                 }
                 if (renderType == RenderType.IdOutline)
                 {
-                    
+
                     //Is this the Id we want to outline?
                     if (id == outlineId)
                     {
@@ -607,7 +607,7 @@ namespace DeferredEngine.Renderer.Helper
             //todo: We only need textures for non shadow mapping, right? Not quite actually, for alpha textures we need materials
             else if (renderType == RenderType.Opaque)
             {
-                ((GBufferRenderModule) renderModule).SetMaterialSettings(material);
+                ((GBufferRenderModule)renderModule).SetMaterialSettings(material);
             }
         }
 
