@@ -1,21 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using DeferredEngine.Entities;
+﻿using DeferredEngine.Entities;
 using DeferredEngine.Logic;
 using DeferredEngine.Recources;
-using DeferredEngine.Recources.Helper;
 using DeferredEngine.Renderer.Helper;
 using DeferredEngine.Renderer.Helper.HelperGeometry;
 using DeferredEngine.Renderer.RenderModules;
-using DeferredEngine.Renderer.RenderModules.Default;
 using DeferredEngine.Renderer.RenderModules.PostProcessingFilters;
 using DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields;
 using DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Generator;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using DirectionalLight = DeferredEngine.Entities.DirectionalLight;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -33,7 +30,6 @@ namespace DeferredEngine.Renderer
         //Graphics & Helpers
         private GraphicsDevice _graphicsDevice;
         private SpriteBatch _spriteBatch;
-        //private QuadRenderer _quadRenderer;
         private FullScreenTriangleBuffer _fullScreenTriangle;
         private GaussianBlur _gaussianBlur;
         private EditorRender _editorRender;
@@ -64,7 +60,7 @@ namespace DeferredEngine.Renderer
         private Vector3[] _haltonSequence;
         private int _haltonSequenceIndex = -1;
         private const int HaltonSequenceLength = 16;
-        
+
         //Projection Matrices and derivates used in shaders
         private Matrix _view;
         private Matrix _inverseView;
@@ -87,7 +83,6 @@ namespace DeferredEngine.Renderer
         //Checkvariables to see which console variables have changed from the frame before
         private float _g_FarClip;
         private float _supersampling = 1;
-        //private bool _hologramDraw;
         private int _forceShadowFiltering;
         private bool _forceShadowSS;
         private bool _ssr = true;
@@ -120,10 +115,8 @@ namespace DeferredEngine.Renderer
         //TAA
         private RenderTarget2D _renderTargetTAA_1;
         private RenderTarget2D _renderTargetTAA_2;
-        
-        private RenderTarget2D _renderTargetScreenSpaceEffectReflection;
 
-        //private RenderTarget2D _renderTargetHologram;
+        private RenderTarget2D _renderTargetScreenSpaceEffectReflection;
 
         private RenderTarget2D _renderTargetSSAOEffect;
 
@@ -137,7 +130,7 @@ namespace DeferredEngine.Renderer
         private RenderTarget2D _renderTargetOutput;
 
         private RenderTarget2D _currentOutput;
-        
+
         //Cubemap
         private RenderTargetCube _renderTargetCubeMap;
 
@@ -154,11 +147,11 @@ namespace DeferredEngine.Renderer
         //  FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-            #region BASE FUNCTIONS
+        #region BASE FUNCTIONS
 
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //  BASE FUNCTIONS
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  BASE FUNCTIONS
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
         /// Initialize variables
@@ -182,7 +175,7 @@ namespace DeferredEngine.Renderer
             _distanceFieldRenderModule = new DistanceFieldRenderModule(shaderManager, "Shaders/SignedDistanceFields/volumeProjection");
 
             _inverseResolution = new Vector3(1.0f / RenderingSettings.g_screenwidth, 1.0f / RenderingSettings.g_screenheight, 0);
-            
+
             _colorGradingFilter = new ColorGradingFilter(content, "Shaders/PostProcessing/ColorGrading");
         }
 
@@ -218,14 +211,14 @@ namespace DeferredEngine.Renderer
             _forwardRenderModule.Initialize();
 
             _helperGeometryRenderModule.Initialize();
-            
+
             _assets = assets;
             //Apply some base settings to overwrite shader defaults with game settings defaults
             RenderingSettings.ApplySettings();
 
             Shaders.ScreenSpaceReflectionParameter_NoiseMap.SetValue(_assets.NoiseMap);
             SetUpRenderTargets(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight, false);
-            
+
         }
 
         /// <summary>
@@ -266,7 +259,7 @@ namespace DeferredEngine.Renderer
         /// <param name="editorData">The data passed from our editor logic</param>
         /// <param name="gameTime"></param>
         /// <returns></returns>
-        public EditorLogic.EditorReceivedData Draw(Camera camera, MeshMaterialLibrary meshMaterialLibrary, List<BasicEntity> entities, List<Decal> decals, List<PointLight> pointLights, List<DirectionalLight> directionalLights, EnvironmentProbe envSample, List<DebugEntity> debugEntities, EditorLogic.EditorSendData editorData, GameTime gameTime)
+        public EditorLogic.EditorReceivedData Draw(Camera camera, MeshMaterialLibrary meshMaterialLibrary, List<BasicEntity> entities, List<Decal> decals, List<PointLight> pointLights, List<DirectionalLight> directionalLights, EnvironmentProbe envSample, EditorLogic.EditorSendData editorData, GameTime gameTime)
         {
             //Reset the stat counter, so we can count stats/information for this frame only
             ResetStats();
@@ -280,7 +273,7 @@ namespace DeferredEngine.Renderer
                     ViewMatrix = _view,
                     ProjectionMatrix = _projection
                 };
-            } 
+            }
 
             //Update the mesh data for changes in physics etc.
             //meshMaterialLibrary.ProcessPhysics(entities);
@@ -306,13 +299,13 @@ namespace DeferredEngine.Renderer
 
             //Update our view projection matrices if the camera moved
             UpdateViewProjection(camera, meshMaterialLibrary, entities);
-            
+
             //Draw our meshes to the G Buffer
             DrawGBuffer(meshMaterialLibrary);
 
             //Deferred Decals
             DrawDecals(decals);
-            
+
             //Draw Screen Space reflections to a different render target
             DrawScreenSpaceReflections(gameTime);
 
@@ -341,30 +334,30 @@ namespace DeferredEngine.Renderer
 
             //Forward
             _currentOutput = DrawForward(_currentOutput, meshMaterialLibrary, camera, pointLights);
-            
+
             //Compose the image and add information from previous frames to apply temporal super sampling
             _currentOutput = TonemapAndCombineTemporalAntialiasing(_currentOutput); // -> output: _temporalAAOffFrame ? _renderTargetTAA_2 : _renderTargetTAA_1
 
             //Do Bloom
             _currentOutput = DrawBloom(_currentOutput); // -> output: _renderTargetBloom
-            
+
             //Draw the elements that we are hovering over with outlines
-            if(RenderingSettings.e_enableeditor && RenderingStats.e_EnableSelection)
-                _editorRender.DrawIds(meshMaterialLibrary, decals, pointLights, directionalLights, envSample, debugEntities, _staticViewProjection, _view, editorData);
+            if (RenderingSettings.e_enableeditor && RenderingStats.e_EnableSelection)
+                _editorRender.DrawIds(meshMaterialLibrary, decals, pointLights, directionalLights, envSample, _staticViewProjection, _view, editorData);
 
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
             RenderMode(_currentOutput);
 
             //Draw signed distance field functions
             DrawSignedDistanceFieldFunctions(camera);
-            
+
             //Additional editor elements that overlay our screen
-            
-            RenderEditorOverlays(editorData, meshMaterialLibrary, decals, pointLights, directionalLights, envSample, debugEntities);
-            
+
+            RenderEditorOverlays(editorData, meshMaterialLibrary, decals, pointLights, directionalLights, envSample);
+
             //Draw debug geometry
             _helperGeometryRenderModule.Draw(_graphicsDevice, _staticViewProjection);
-            
+
             //Set up the frustum culling for the next frame
             meshMaterialLibrary.FrustumCullingFinalizeFrame(entities);
 
@@ -374,13 +367,13 @@ namespace DeferredEngine.Renderer
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileTotalRender = performanceCurrentTime;
             }
-            
+
             //return data we have recovered from the editor id, so we know what entity gets hovered/clicked on and can manipulate in the update function
             return new EditorLogic.EditorReceivedData
             {
-                HoveredId =  _editorRender.GetHoveredId(),
-                ViewMatrix =  _view,
-                ProjectionMatrix =  _projection
+                HoveredId = _editorRender.GetHoveredId(),
+                ViewMatrix = _view,
+                ProjectionMatrix = _projection
             };
         }
 
@@ -396,7 +389,7 @@ namespace DeferredEngine.Renderer
             return false;
         }
 
-        private void RenderEditorOverlays(EditorLogic.EditorSendData editorData, MeshMaterialLibrary meshMaterialLibrary, List<Decal> decals, List<PointLight> pointLights, List<DirectionalLight> directionalLights, EnvironmentProbe envSample, List<DebugEntity> debugEntities)
+        private void RenderEditorOverlays(EditorLogic.EditorSendData editorData, MeshMaterialLibrary meshMaterialLibrary, List<Decal> decals, List<PointLight> pointLights, List<DirectionalLight> directionalLights, EnvironmentProbe envSample)
         {
 
             if (RenderingSettings.e_enableeditor && RenderingStats.e_EnableSelection)
@@ -404,9 +397,7 @@ namespace DeferredEngine.Renderer
                 if (RenderingSettings.e_drawoutlines)
                     DrawMapToScreenToFullScreen(_editorRender.GetOutlines(), BlendState.Additive);
 
-                _editorRender.DrawEditorElements(meshMaterialLibrary, decals, pointLights, directionalLights, envSample,
-                    debugEntities,
-                    _staticViewProjection, _view, editorData);
+                _editorRender.DrawEditorElements(meshMaterialLibrary, decals, pointLights, directionalLights, envSample, _staticViewProjection, _view, editorData);
 
 
                 if (editorData.SelectedObject != null)
@@ -426,10 +417,10 @@ namespace DeferredEngine.Renderer
                 }
             }
 
-            if(RenderingSettings.sdf_debug && _distanceFieldRenderModule.GetAtlas()!= null)
+            if (RenderingSettings.sdf_debug && _distanceFieldRenderModule.GetAtlas() != null)
             {
                 _spriteBatch.Begin(0, BlendState.Opaque, SamplerState.PointClamp);
-                _spriteBatch.Draw(_distanceFieldRenderModule.GetAtlas() , new Rectangle(0, RenderingSettings.g_screenheight - 200, RenderingSettings.g_screenwidth, 200), Color.White);
+                _spriteBatch.Draw(_distanceFieldRenderModule.GetAtlas(), new Rectangle(0, RenderingSettings.g_screenheight - 200, RenderingSettings.g_screenwidth, 200), Color.White);
                 _spriteBatch.End();
             }
 
@@ -482,7 +473,7 @@ namespace DeferredEngine.Renderer
 
             //We don't want to use SSAO in this cubemap
             Shaders.DeferredComposeEffectParameter_UseSSAO.SetValue(false);
-            
+
             //Create our projection, which is a basic pyramid
             _projection = Matrix.CreatePerspectiveFieldOfView((float)(Math.PI / 2), 1, 1, farPlane);
 
@@ -543,7 +534,7 @@ namespace DeferredEngine.Renderer
                 ComputeFrustumCorners(_boundingFrustum, camera);
 
                 _lightAccumulationModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _view, _inverseView, _viewIT, _projection, _viewProjection, _inverseViewProjection);
-                
+
                 //Base stuff, for description look in Draw()
                 meshMaterialLibrary.FrustumCulling(entities, _boundingFrustum, true, origin);
 
@@ -560,7 +551,7 @@ namespace DeferredEngine.Renderer
                 //We don't use temporal AA obviously for the cubemap
                 bool tempAa = RenderingSettings.g_taa;
                 RenderingSettings.g_taa = false;
-                
+
                 //Shaders.DeferredCompose.CurrentTechnique = Shaders.DeferredComposeTechnique_NonLinear;
                 Compose();
                 //Shaders.DeferredCompose.CurrentTechnique = GameSettings.g_SSReflection
@@ -573,7 +564,7 @@ namespace DeferredEngine.Renderer
 
             //Change RTs back to normal
             SetUpRenderTargets(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight, true);
-            
+
             //Our camera has changed we need to reinitialize stuff because we used a different camera in the cubemap render
             camera.HasChanged = true;
 
@@ -587,12 +578,12 @@ namespace DeferredEngine.Renderer
             }
         }
 
-                #endregion
+        #endregion
 
-                #region DEFERRED RENDERING FUNCTIONS
-                /////////////////////////////////////////////////////////////////////////////////////////////////////
-                //  DEFERRED RENDERING FUNCTIONS, IN ORDER OF USAGE
-                ////////////////////////////////////////////////////////////////////////////////////////////////////
+        #region DEFERRED RENDERING FUNCTIONS
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  DEFERRED RENDERING FUNCTIONS, IN ORDER OF USAGE
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
         /// Reset our stat counting for this frame
@@ -640,7 +631,7 @@ namespace DeferredEngine.Renderer
                 _g_SSReflectionNoise = RenderingSettings.g_SSReflectionNoise;
                 if (!_g_SSReflectionNoise) Shaders.ScreenSpaceReflectionParameter_Time.SetValue(0.0f);
             }
-            
+
             //if (_hologramDraw != GameSettings.g_HologramDraw)
             //{
             //    _hologramDraw = GameSettings.g_HologramDraw;
@@ -662,7 +653,7 @@ namespace DeferredEngine.Renderer
                     if (light.ShadowMap != null) light.ShadowMap.Dispose();
                     light.ShadowMap = null;
 
-                    light.ShadowFiltering = (DirectionalLight.ShadowFilteringTypes) (_forceShadowFiltering - 1);
+                    light.ShadowFiltering = (DirectionalLight.ShadowFilteringTypes)(_forceShadowFiltering - 1);
 
                     light.HasChanged = true;
                 }
@@ -723,7 +714,7 @@ namespace DeferredEngine.Renderer
                 _performancePreviousTime = performanceCurrentTime;
             }
         }
-        
+
         /// <summary>
         /// Create the projection matrices
         /// </summary>
@@ -758,7 +749,7 @@ namespace DeferredEngine.Renderer
 
                 _projection = Matrix.CreatePerspectiveFieldOfView(camera.FieldOfView,
                     RenderingSettings.g_screenwidth / (float)RenderingSettings.g_screenheight, 1, RenderingSettings.g_farplane);
-                
+
                 _gBufferRenderModule.Camera = camera.Position;
 
                 _viewProjection = _view * _projection;
@@ -768,35 +759,35 @@ namespace DeferredEngine.Renderer
 
                 //Transformation for TAA - from current view back to the old view projection
                 _currentViewToPreviousViewProjection = Matrix.Invert(_view) * _previousViewProjection;
-                
+
                 //Temporal AA
                 if (RenderingSettings.g_taa)
                 {
                     switch (RenderingSettings.g_taa_jittermode)
                     {
                         case 0: //2 frames, just basic translation. Worst taa implementation. Not good with the continous integration used
-                        {
-                            float translation = _temporalAAOffFrame ? 0.5f : -0.5f;
-                            _viewProjection = _viewProjection *
-                                              Matrix.CreateTranslation(new Vector3(translation / RenderingSettings.g_screenwidth,
-                                                  translation / RenderingSettings.g_screenheight, 0));
-                        }
+                            {
+                                float translation = _temporalAAOffFrame ? 0.5f : -0.5f;
+                                _viewProjection = _viewProjection *
+                                                  Matrix.CreateTranslation(new Vector3(translation / RenderingSettings.g_screenwidth,
+                                                      translation / RenderingSettings.g_screenheight, 0));
+                            }
                             break;
                         case 1: // Just random translation
-                        {
-                            float randomAngle = FastRand.NextAngle();
-                            Vector3 translation = new Vector3((float)Math.Sin(randomAngle) / RenderingSettings.g_screenwidth, (float)Math.Cos(randomAngle) / RenderingSettings.g_screenheight, 0) * 0.5f;
-                            _viewProjection = _viewProjection *
-                                              Matrix.CreateTranslation(translation);
+                            {
+                                float randomAngle = FastRand.NextAngle();
+                                Vector3 translation = new Vector3((float)Math.Sin(randomAngle) / RenderingSettings.g_screenwidth, (float)Math.Cos(randomAngle) / RenderingSettings.g_screenheight, 0) * 0.5f;
+                                _viewProjection = _viewProjection *
+                                                  Matrix.CreateTranslation(translation);
 
-                        }
+                            }
                             break;
                         case 2: // Halton sequence, default
-                        {
-                            Vector3 translation = GetHaltonSequence();
-                            _viewProjection = _viewProjection *
-                                              Matrix.CreateTranslation(translation);
-                        }
+                            {
+                                Vector3 translation = GetHaltonSequence();
+                                _viewProjection = _viewProjection *
+                                                  Matrix.CreateTranslation(translation);
+                            }
                             break;
                     }
                 }
@@ -908,7 +899,7 @@ namespace DeferredEngine.Renderer
             Shaders.deferredDirectionalLightParameterFrustumCorners.SetValue(_currentFrustumCorners);
             _subsurfaceScatterRenderModule.FrustumCorners = _currentFrustumCorners;
         }
-        
+
         /// <summary>
         /// Draw all our meshes to the GBuffer - albedo, normal, depth - for further computation
         /// </summary>
@@ -916,7 +907,7 @@ namespace DeferredEngine.Renderer
         private void DrawGBuffer(MeshMaterialLibrary meshMaterialLibrary)
         {
             _gBufferRenderModule.Draw(_graphicsDevice, _renderTargetBinding, meshMaterialLibrary, _viewProjection, _view);
-            
+
             //Performance Profiler
             if (RenderingSettings.d_profiler)
             {
@@ -934,15 +925,15 @@ namespace DeferredEngine.Renderer
         private void DrawDecals(List<Decal> decals)
         {
             if (!RenderingSettings.g_drawdecals) return;
-            
+
             //First copy albedo to decal offtarget
             DrawMapToScreenToFullScreen(_renderTargetAlbedo, BlendState.Opaque, _renderTargetDecalOffTarget);
 
             DrawMapToScreenToFullScreen(_renderTargetDecalOffTarget, BlendState.Opaque, _renderTargetAlbedo);
-            
+
             _decalRenderModule.Draw(_graphicsDevice, decals, _view, _viewProjection, _inverseView);
         }
-        
+
         /// <summary>
         /// Draw Screen Space Reflections
         /// </summary>
@@ -960,18 +951,18 @@ namespace DeferredEngine.Renderer
 
             if (RenderingSettings.g_taa)
             {
-                    Shaders.ScreenSpaceReflectionParameter_TargetMap.SetValue(_temporalAAOffFrame ? _renderTargetTAA_1 : _renderTargetTAA_2);
+                Shaders.ScreenSpaceReflectionParameter_TargetMap.SetValue(_temporalAAOffFrame ? _renderTargetTAA_1 : _renderTargetTAA_2);
             }
             else
             {
-            Shaders.ScreenSpaceReflectionParameter_TargetMap.SetValue(_renderTargetComposed);
+                Shaders.ScreenSpaceReflectionParameter_TargetMap.SetValue(_renderTargetComposed);
             }
 
             if (RenderingSettings.g_SSReflectionNoise)
                 Shaders.ScreenSpaceReflectionParameter_Time.SetValue((float)gameTime.TotalGameTime.TotalSeconds % 1000);
 
             Shaders.ScreenSpaceReflectionParameter_Projection.SetValue(_projection);
-            
+
             Shaders.ScreenSpaceReflectionEffect.CurrentTechnique.Passes[0].Apply();
             _fullScreenTriangle.Draw(_graphicsDevice);
 
@@ -1006,7 +997,7 @@ namespace DeferredEngine.Renderer
             Shaders.ScreenSpaceEffect.CurrentTechnique = Shaders.ScreenSpaceEffectTechnique_SSAO;
             Shaders.ScreenSpaceEffect.CurrentTechnique.Passes[0].Apply();
             _fullScreenTriangle.Draw(_graphicsDevice);
-            
+
             //Performance Profiler
             if (RenderingSettings.d_profiler)
             {
@@ -1086,7 +1077,7 @@ namespace DeferredEngine.Renderer
 
             _spriteBatch.End();
 
-            if (RenderingSettings.g_ssao_blur &&  RenderingSettings.g_ssao_draw)
+            if (RenderingSettings.g_ssao_blur && RenderingSettings.g_ssao_draw)
             {
                 _graphicsDevice.RasterizerState = RasterizerState.CullNone;
 
@@ -1102,7 +1093,7 @@ namespace DeferredEngine.Renderer
                 _graphicsDevice.SetRenderTarget(_renderTargetScreenSpaceEffectBlurFinal);
 
                 Shaders.ScreenSpaceEffectParameter_InverseResolution.SetValue(new Vector2(1.0f / _renderTargetScreenSpaceEffectUpsampleBlurHorizontal.Width,
-                    1.0f / _renderTargetScreenSpaceEffectUpsampleBlurHorizontal.Height)*0.5f);
+                    1.0f / _renderTargetScreenSpaceEffectUpsampleBlurHorizontal.Height) * 0.5f);
                 Shaders.ScreenSpaceEffectParameter_SSAOMap.SetValue(_renderTargetScreenSpaceEffectUpsampleBlurHorizontal);
                 Shaders.ScreenSpaceEffectTechnique_BlurHorizontal.Passes[0].Apply();
 
@@ -1129,7 +1120,7 @@ namespace DeferredEngine.Renderer
                 _performancePreviousTime = performanceCurrentTime;
             }
         }
-        
+
         /// <summary>
         /// Apply our environment cubemap to the renderer
         /// </summary>
@@ -1215,9 +1206,9 @@ namespace DeferredEngine.Renderer
         /// <returns></returns>
         private RenderTarget2D DrawSubsurfaceScattering(RenderTarget2D input, MeshMaterialLibrary meshMaterialLibrary)
         {
-            return _subsurfaceScatterRenderModule.Draw(_graphicsDevice, input, input, meshMaterialLibrary, _viewProjection );
+            return _subsurfaceScatterRenderModule.Draw(_graphicsDevice, input, input, meshMaterialLibrary, _viewProjection);
         }
-        
+
         private void ReconstructDepth()
         {
             if (_viewProjectionHasChanged)
@@ -1234,7 +1225,7 @@ namespace DeferredEngine.Renderer
 
             _graphicsDevice.SetRenderTarget(input);
             ReconstructDepth();
-            
+
             return _forwardRenderModule.Draw(_graphicsDevice, input, meshMaterialLibrary, _viewProjection, camera, pointLights, _boundingFrustum);
         }
 
@@ -1244,7 +1235,7 @@ namespace DeferredEngine.Renderer
             {
                 Texture2D bloom = _bloomFilter.Draw(input, RenderingSettings.g_screenwidth,
                     RenderingSettings.g_screenheight);
-                
+
                 _graphicsDevice.SetRenderTargets(_renderTargetBloom);
 
                 _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
@@ -1278,14 +1269,14 @@ namespace DeferredEngine.Renderer
 
             RenderTarget2D output = _temporalAAOffFrame ? _renderTargetTAA_2 : _renderTargetTAA_1;
 
-            _temporalAntialiasingRenderModule.Draw(_graphicsDevice, 
+            _temporalAntialiasingRenderModule.Draw(_graphicsDevice,
                 useTonemap: RenderingSettings.g_taa_tonemapped,
                 currentFrame: input,
-                previousFrames: _temporalAAOffFrame? _renderTargetTAA_1 : _renderTargetTAA_2,
+                previousFrames: _temporalAAOffFrame ? _renderTargetTAA_1 : _renderTargetTAA_2,
                 output: output,
-                fullScreenTriangle: _fullScreenTriangle, 
+                fullScreenTriangle: _fullScreenTriangle,
                 currentViewToPreviousViewProjection: _currentViewToPreviousViewProjection);
-            
+
             //Performance Profiler
             if (RenderingSettings.d_profiler)
             {
@@ -1294,14 +1285,14 @@ namespace DeferredEngine.Renderer
 
                 _performancePreviousTime = performanceCurrentTime;
             }
-            
+
             return RenderingSettings.g_taa_tonemapped ? input : output;
         }
-        
+
         private void DrawSignedDistanceFieldFunctions(Camera camera)
         {
             if (!RenderingSettings.sdf_drawdistance) return;
-            
+
             _distanceFieldRenderModule.Draw(_graphicsDevice, camera, _fullScreenTriangle);
 
             //_spriteBatch.Begin(0, BlendState.Opaque, SamplerState.PointClamp);
@@ -1310,7 +1301,7 @@ namespace DeferredEngine.Renderer
             //_spriteBatch.Draw(volumeTexture.Texture,
             //    new Rectangle(0, GameSettings.g_screenheight - height, GameSettings.g_screenwidth, height), Color.White);
             //_spriteBatch.End();
-            
+
         }
 
         /// <summary>
@@ -1322,19 +1313,19 @@ namespace DeferredEngine.Renderer
         {
             switch (RenderingSettings.g_rendermode)
             {
-               case RenderModes.Albedo:
+                case RenderModes.Albedo:
                     DrawMapToScreenToFullScreen(_renderTargetAlbedo);
                     break;
-               case RenderModes.Normal:
+                case RenderModes.Normal:
                     DrawMapToScreenToFullScreen(_renderTargetNormal);
                     break;
-               case RenderModes.Depth:
+                case RenderModes.Depth:
                     DrawMapToScreenToFullScreen(_renderTargetDepth);
                     break;
-               case RenderModes.Diffuse:
+                case RenderModes.Diffuse:
                     DrawMapToScreenToFullScreen(_renderTargetDiffuse);
                     break;
-               case RenderModes.Specular:
+                case RenderModes.Specular:
                     DrawMapToScreenToFullScreen(_renderTargetSpecular);
                     break;
                 case RenderModes.Volumetric:
@@ -1359,7 +1350,7 @@ namespace DeferredEngine.Renderer
                 //    DrawMapToScreenToFullScreen(_renderTargetSSS);
                 //    break;
                 case RenderModes.HDR:
-                        DrawMapToScreenToFullScreen(currentInput);
+                    DrawMapToScreenToFullScreen(currentInput);
                     break;
                 default:
                     DrawPostProcessing(currentInput);
@@ -1384,22 +1375,22 @@ namespace DeferredEngine.Renderer
         private void DrawPostProcessing(RenderTarget2D currentInput)
         {
             if (!RenderingSettings.g_PostProcessing) return;
-            
+
             RenderTarget2D destinationRenderTarget;
-            
+
             destinationRenderTarget = _renderTargetOutput;
-            
+
             Shaders.PostProcessingParameter_ScreenTexture.SetValue(currentInput);
             _graphicsDevice.SetRenderTarget(destinationRenderTarget);
 
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-            
+
             Shaders.PostProcessing.CurrentTechnique.Passes[0].Apply();
             _fullScreenTriangle.Draw(_graphicsDevice);
 
-            if(RenderingSettings.g_ColorGrading)
-            destinationRenderTarget = _colorGradingFilter.Draw(_graphicsDevice, destinationRenderTarget);
+            if (RenderingSettings.g_ColorGrading)
+                destinationRenderTarget = _colorGradingFilter.Draw(_graphicsDevice, destinationRenderTarget);
 
             DrawMapToScreenToFullScreen(destinationRenderTarget);
         }
@@ -1407,10 +1398,10 @@ namespace DeferredEngine.Renderer
 
         #endregion
 
-            #region RENDERTARGET SETUP FUNCTIONS
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //  RENDERTARGET SETUP FUNCTIONS
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////
+        #region RENDERTARGET SETUP FUNCTIONS
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  RENDERTARGET SETUP FUNCTIONS
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
         /// Update the resolution of our rendertargets
@@ -1498,10 +1489,10 @@ namespace DeferredEngine.Renderer
 
             _renderTargetComposed = new RenderTarget2D(_graphicsDevice, targetWidth,
                targetHeight, false, SurfaceFormat.HalfVector4, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
-            
+
             _renderTargetBloom = new RenderTarget2D(_graphicsDevice, targetWidth,
                targetHeight, false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-            
+
             _renderTargetScreenSpaceEffectUpsampleBlurVertical = new RenderTarget2D(_graphicsDevice, targetWidth,
                 targetHeight, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
 
@@ -1518,7 +1509,7 @@ namespace DeferredEngine.Renderer
                 _temporalAntialiasingRenderModule.Resolution = new Vector2(targetWidth, targetHeight);
                 // Shaders.SSReflectionEffectParameter_Resolution.SetValue(new Vector2(target_width, target_height));
                 Shaders.EmissiveEffectParameter_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
-                
+
                 Shaders.ScreenSpaceReflectionParameter_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
                 _deferredEnvironmentMapRenderModule.Resolution = new Vector2(targetWidth, targetHeight);
                 _renderTargetScreenSpaceEffectReflection = new RenderTarget2D(_graphicsDevice, targetWidth,
@@ -1549,7 +1540,7 @@ namespace DeferredEngine.Renderer
 
 
                 Vector2 aspectRatio = new Vector2(Math.Min(1.0f, targetWidth / (float)targetHeight), Math.Min(1.0f, targetHeight / (float)targetWidth));
-                
+
                 Shaders.ScreenSpaceEffectParameter_AspectRatio.SetValue(aspectRatio);
 
 
@@ -1585,7 +1576,7 @@ namespace DeferredEngine.Renderer
             _decalRenderModule.DepthMap = _renderTargetDepth;
 
             _distanceFieldRenderModule.DepthMap = _renderTargetDepth;
-            
+
             //_subsurfaceScatterRenderModule.NormalMap = _renderTargetNormal;
             //_subsurfaceScatterRenderModule.AlbedoMap = _renderTargetAlbedo;
 
@@ -1610,21 +1601,21 @@ namespace DeferredEngine.Renderer
             Shaders.EmissiveEffectParameter_DepthMap.SetValue(_renderTargetDepth);
             Shaders.EmissiveEffectParameter_NormalMap.SetValue(_renderTargetNormal);
 
-            _temporalAntialiasingRenderModule.DepthMap = _renderTargetDepth;  
+            _temporalAntialiasingRenderModule.DepthMap = _renderTargetDepth;
         }
 
-            #endregion
+        #endregion
 
-            #region HELPER FUNCTIONS
-            ////////////////////////////////////////////////////////////////////////////////////////////////////
-            //  HELPER FUNCTIONS
-            ////////////////////////////////////////////////////////////////////////////////////////////////////
+        #region HELPER FUNCTIONS
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  HELPER FUNCTIONS
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
 
         private void DrawMapToScreenToCube(RenderTarget2D map, RenderTargetCube target, CubeMapFace? face)
         {
 
             if (face != null) _graphicsDevice.SetRenderTarget(target, (CubeMapFace)face);
-           // _graphicsDevice.Clear(Color.CornflowerBlue);
+            // _graphicsDevice.Clear(Color.CornflowerBlue);
             _spriteBatch.Begin(0, BlendState.Opaque, SamplerState.PointClamp);
             _spriteBatch.Draw(map, new Rectangle(0, 0, map.Width, map.Height), Color.White);
             _spriteBatch.End();
@@ -1632,7 +1623,7 @@ namespace DeferredEngine.Renderer
 
         private void DrawMapToScreenToFullScreen(Texture2D map, BlendState blendState = null, RenderTarget2D output = null)
         {
-            if(blendState == null) blendState = BlendState.Opaque;
+            if (blendState == null) blendState = BlendState.Opaque;
 
             int height;
             int width;
@@ -1657,11 +1648,11 @@ namespace DeferredEngine.Renderer
                 }
             }
             _graphicsDevice.SetRenderTarget(output);
-            _spriteBatch.Begin(0, blendState, _supersampling>1 ? SamplerState.LinearWrap : SamplerState.PointClamp);
+            _spriteBatch.Begin(0, blendState, _supersampling > 1 ? SamplerState.LinearWrap : SamplerState.PointClamp);
             _spriteBatch.Draw(map, new Rectangle(0, 0, width, height), Color.White);
             _spriteBatch.End();
         }
-        
+
         #endregion
 
         #endregion

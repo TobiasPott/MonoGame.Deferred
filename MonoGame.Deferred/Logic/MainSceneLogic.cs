@@ -34,7 +34,6 @@ namespace DeferredEngine.Logic
         public readonly List<Decal> Decals = new List<Decal>();
         public readonly List<PointLight> PointLights = new List<PointLight>();
         public readonly List<DirectionalLight> DirectionalLights = new List<DirectionalLight>();
-        public readonly List<DebugEntity> DebugEntities = new List<DebugEntity>();
         public EnvironmentProbe EnvironmentSample;
 
         //Which render target are we currently displaying?

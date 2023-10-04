@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using DeferredEngine.Entities;
+﻿using DeferredEngine.Entities;
 using DeferredEngine.Logic;
 using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper;
@@ -9,6 +7,8 @@ using DeferredEngine.Renderer.Helper.HelperGeometry;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
+using System.Collections.Generic;
 using DirectionalLight = DeferredEngine.Entities.DirectionalLight;
 
 namespace DeferredEngine.Renderer.RenderModules
@@ -66,7 +66,7 @@ namespace DeferredEngine.Renderer.RenderModules
         }
 
 
-        public void DrawBillboards(List<Decal> decals, List<PointLight> lights, List<DirectionalLight> dirLights, EnvironmentProbe envSample, List<DebugEntity> debug, Matrix staticViewProjection, Matrix view, EditorLogic.EditorSendData sendData)
+        public void DrawBillboards(List<Decal> decals, List<PointLight> lights, List<DirectionalLight> dirLights, EnvironmentProbe envSample, Matrix staticViewProjection, Matrix view, EditorLogic.EditorSendData sendData)
         {
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             _graphicsDevice.SetVertexBuffer(_billboardBuffer.VBuffer);
@@ -132,15 +132,8 @@ namespace DeferredEngine.Renderer.RenderModules
             //EnvMap
 
             Shaders.BillboardEffectParameter_Texture.SetValue(_assets.IconEnvmap);
-            
-            DrawBillboard(envSample, staticViewProjection, view, sendData);
 
-            //Dbg
-            for (int index = 0; index < debug.Count; index++)
-            {
-                var dbgEntity = debug[index];
-                DrawBillboard(dbgEntity, staticViewProjection, view, sendData);
-            }
+            DrawBillboard(envSample, staticViewProjection, view, sendData);
 
         }
         private void DrawBillboard(TransformableObject billboardObject, Matrix staticViewProjection, Matrix view, EditorLogic.EditorSendData sendData)
@@ -162,31 +155,31 @@ namespace DeferredEngine.Renderer.RenderModules
                 Shaders.BillboardEffectParameter_IdColor.SetValue(Color.Gray.ToVector3());
         }
 
-        public void DrawIds(MeshMaterialLibrary meshMaterialLibrary, List<Decal> decals, List<PointLight>lights, List<DirectionalLight> dirLights, EnvironmentProbe envSample, List<DebugEntity> debug, Matrix staticViewProjection, Matrix view, EditorLogic.EditorSendData editorData)
+        public void DrawIds(MeshMaterialLibrary meshMaterialLibrary, List<Decal> decals, List<PointLight> lights, List<DirectionalLight> dirLights, EnvironmentProbe envSample, Matrix staticViewProjection, Matrix view, EditorLogic.EditorSendData editorData)
         {
-            _idAndOutlineRenderer.Draw(meshMaterialLibrary, decals, lights, dirLights, envSample, debug, staticViewProjection, view, editorData, _mouseMovement);
+            _idAndOutlineRenderer.Draw(meshMaterialLibrary, decals, lights, dirLights, envSample, staticViewProjection, view, editorData, _mouseMovement);
         }
 
-        public void DrawEditorElements(MeshMaterialLibrary meshMaterialLibrary, List<Decal> decals, List<PointLight> lights, List<DirectionalLight> dirLights, EnvironmentProbe envSample, List<DebugEntity> debug, Matrix staticViewProjection, Matrix view, EditorLogic.EditorSendData editorData)
+        public void DrawEditorElements(MeshMaterialLibrary meshMaterialLibrary, List<Decal> decals, List<PointLight> lights, List<DirectionalLight> dirLights, EnvironmentProbe envSample, Matrix staticViewProjection, Matrix view, EditorLogic.EditorSendData editorData)
         {
             _graphicsDevice.SetRenderTarget(null);
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             _graphicsDevice.BlendState = BlendState.Opaque;
-            
+
             DrawGizmo(staticViewProjection, editorData);
-            DrawBillboards(decals, lights, dirLights, envSample, debug, staticViewProjection, view, editorData);
+            DrawBillboards(decals, lights, dirLights, envSample, staticViewProjection, view, editorData);
         }
 
         public void DrawGizmo(Matrix staticViewProjection, EditorLogic.EditorSendData editorData)
         {
             if (editorData.SelectedObjectId == 0) return;
 
-            
+
 
             Vector3 position = editorData.SelectedObjectPosition;
             GizmoModes gizmoMode = editorData.GizmoMode;
-            Matrix rotation = (RenderingStats.e_LocalTransformation || gizmoMode == GizmoModes.Scale ) ? editorData.SelectedObject.RotationMatrix : Matrix.Identity;
+            Matrix rotation = (RenderingStats.e_LocalTransformation || gizmoMode == GizmoModes.Scale) ? editorData.SelectedObject.RotationMatrix : Matrix.Identity;
 
             //Z
             DrawArrow(position, rotation, 0, 0, 0, GetHoveredId() == 1 ? 1 : 0.5f, Color.Blue, staticViewProjection, gizmoMode); //z 1
@@ -206,8 +199,8 @@ namespace DeferredEngine.Renderer.RenderModules
             Matrix rotation;
             if (direction != null)
             {
-                rotation = Matrix.CreateLookAt(Vector3.Zero, (Vector3) direction, Vector3.UnitX);
-              
+                rotation = Matrix.CreateLookAt(Vector3.Zero, (Vector3)direction, Vector3.UnitX);
+
 
             }
             else
@@ -216,8 +209,8 @@ namespace DeferredEngine.Renderer.RenderModules
                                    Matrix.CreateRotationZ((float)angleZ);
             }
 
-            Matrix scaleMatrix = Matrix.CreateScale(0.75f, 0.75f,scale*1.5f);
-            Matrix worldViewProj = scaleMatrix *  rotation * rotationObject * Matrix.CreateTranslation(position) * staticViewProjection;
+            Matrix scaleMatrix = Matrix.CreateScale(0.75f, 0.75f, scale * 1.5f);
+            Matrix worldViewProj = scaleMatrix * rotation * rotationObject * Matrix.CreateTranslation(position) * staticViewProjection;
 
             Shaders.IdRenderEffectParameterWorldViewProj.SetValue(worldViewProj);
             Shaders.IdRenderEffectParameterColorId.SetValue(color.ToVector4());
@@ -228,7 +221,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
 
             ModelMeshPart meshpart = model.Meshes[0].MeshParts[0];
-                
+
             Shaders.IdRenderEffectDrawId.Apply();
 
             _graphicsDevice.SetVertexBuffer(meshpart.VertexBuffer);

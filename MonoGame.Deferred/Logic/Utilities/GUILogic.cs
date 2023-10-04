@@ -1,11 +1,9 @@
-﻿using System;
-using System.Reflection;
-using System.Text;
-using DeferredEngine.Entities;
+﻿using DeferredEngine.Entities;
 using DeferredEngine.Recources;
 using HelperSuite.GUI;
 using HelperSuite.GUIHelper;
 using Microsoft.Xna.Framework;
+using System.Text;
 
 namespace DeferredEngine.Logic
 {
@@ -60,9 +58,9 @@ namespace DeferredEngine.Logic
             GuiCanvas = new GUICanvas(Vector2.Zero, new Vector2(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight));
 
             defaultStyle = new GUIStyle(
-                dimensionsStyle: new Vector2(200,35),
+                dimensionsStyle: new Vector2(200, 35),
                 textFontStyle: _assets.MonospaceFont,
-                blockColorStyle: Color.Gray, 
+                blockColorStyle: Color.Gray,
                 textColorStyle: Color.White,
                 sliderColorStyle: Color.White,
                 guiAlignmentStyle: GUIStyle.GUIAlignment.None,
@@ -78,7 +76,7 @@ namespace DeferredEngine.Logic
             {
                 ButtonObject = this,
                 ButtonMethod = GetType().GetMethod("ChangeGizmoMode"),
-                ButtonMethodArgs = new object[]{ GizmoModes.Translation },
+                ButtonMethodArgs = new object[] { GizmoModes.Translation },
             });
             _leftSideList.AddElement(_gizmoRotation = new GUITextBlockButton(defaultStyle, "Rotate (R)")
             {
@@ -94,7 +92,7 @@ namespace DeferredEngine.Logic
             });
             _leftSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Local: ")
             {
-               ToggleField = typeof(RenderingStats).GetField("e_LocalTransformation"),
+                ToggleField = typeof(RenderingStats).GetField("e_LocalTransformation"),
                 Toggle = RenderingStats.e_LocalTransformation
             });
             _leftSideList.Alignment = GUIStyle.GUIAlignment.BottomLeft;
@@ -102,9 +100,9 @@ namespace DeferredEngine.Logic
             ChangeGizmoMode(GizmoModes.Translation);
 
             //Editor options
-            GuiCanvas.AddElement(_rightSideList = new GuiListToggleScroll(new Vector2(-20,0), defaultStyle));
+            GuiCanvas.AddElement(_rightSideList = new GuiListToggleScroll(new Vector2(-20, 0), defaultStyle));
 
-            GUITextBlock helperText = new GUITextBlock(new Vector2(0, 100), new Vector2(300, 200), CreateHelperText(), defaultStyle.TextFontStyle, new Color(Color.DimGray, 0.2f), Color.White, GUIStyle.TextAlignment.Left, new Vector2(10, 1)) {IsHidden = true};
+            GUITextBlock helperText = new GUITextBlock(new Vector2(0, 100), new Vector2(300, 200), CreateHelperText(), defaultStyle.TextFontStyle, new Color(Color.DimGray, 0.2f), Color.White, GUIStyle.TextAlignment.Left, new Vector2(10, 1)) { IsHidden = true };
             GuiCanvas.AddElement(helperText);
 
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Editor")
@@ -150,12 +148,12 @@ namespace DeferredEngine.Logic
 
             _objectDescriptionList.AddElement(_objectDescriptionName = new GUITextBlock(defaultStyle, "objDescName"));
             _objectDescriptionList.AddElement(_objectDescriptionPos = new GUITextBlock(defaultStyle, "objDescName"));
-            _objectDescriptionList.AddElement(_objectButton1 = new GUITextBlockButton(defaultStyle, "objButton1") {IsHidden = true});
+            _objectDescriptionList.AddElement(_objectButton1 = new GUITextBlockButton(defaultStyle, "objButton1") { IsHidden = true });
             _objectDescriptionList.AddElement(_objectToggle0 = new GUITextBlockToggle(defaultStyle, "objToggle0") { IsHidden = true });
             _objectDescriptionList.AddElement(_objectToggle1 = new GUITextBlockToggle(defaultStyle, "objToggle1") { IsHidden = true });
             _objectDescriptionList.AddElement(_objectToggle2 = new GUITextBlockToggle(defaultStyle, "objToggle2") { IsHidden = true });
             _objectDescriptionList.AddElement(_objectToggle3 = new GUITextBlockToggle(defaultStyle, "objToggle3") { IsHidden = true });
-            _objectDescriptionList.AddElement(_objectSlider0 = new GuiSliderFloatText(defaultStyle, 0,1,2,"objToggle1") { IsHidden = true });
+            _objectDescriptionList.AddElement(_objectSlider0 = new GuiSliderFloatText(defaultStyle, 0, 1, 2, "objToggle1") { IsHidden = true });
             _objectDescriptionList.AddElement(_objectSlider1 = new GuiSliderFloatText(defaultStyle, 0, 1, 2, "objToggle2") { IsHidden = true });
             _objectDescriptionList.AddElement(_objectSlider2 = new GuiSliderIntText(defaultStyle, 0, 10, 1, "objToggle3") { IsHidden = true });
             _objectDescriptionList.AddElement(_objectColorPicker1 = new GUIColorPicker(defaultStyle) { IsHidden = true });
@@ -166,8 +164,8 @@ namespace DeferredEngine.Logic
             /////////////////////////////////////////////////////////////////
             //Options
             /////////////////////////////////////////////////////////////////
-            
-            _rightSideList.AddElement(new GUITextBlock(defaultStyle, "Options") {BlockColor = Color.DimGray, Dimensions = new Vector2(200,10), TextAlignment = GUIStyle.TextAlignment.Center});
+
+            _rightSideList.AddElement(new GUITextBlock(defaultStyle, "Options") { BlockColor = Color.DimGray, Dimensions = new Vector2(200, 10), TextAlignment = GUIStyle.TextAlignment.Center });
 
             GuiListToggle optionList = new GuiListToggle(Vector2.Zero, defaultStyle);
             _rightSideList.AddElement(optionList);
@@ -201,7 +199,7 @@ namespace DeferredEngine.Logic
 
             optionList.AddElement(new GUITextBlock(defaultStyle, "PostProcessing") { BlockColor = Color.DarkSlateGray, Dimensions = new Vector2(200, 10), TextAlignment = GUIStyle.TextAlignment.Center });
 
-            GuiListToggle postprocessingList = new GuiListToggle(Vector2.Zero, defaultStyle) {ToggleBlockColor = Color.DarkSlateGray, IsToggled = false};
+            GuiListToggle postprocessingList = new GuiListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
             optionList.AddElement(postprocessingList);
 
             postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Temporal AA")
@@ -485,7 +483,7 @@ namespace DeferredEngine.Logic
                 _gizmoModePrevious = RenderingStats.e_gizmoMode;
                 UpdateGizmoSelection(_gizmoModePrevious);
             }
-            
+
             GUIControl.Update(Input.mouseLastState, Input.mouseState);
 
             if (GUIControl.GetMousePosition().X > _rightSideList.Position.X &&
@@ -494,7 +492,7 @@ namespace DeferredEngine.Logic
                 RenderingStats.UIIsHovered = true;
             }
 
-             _leftSideList.IsHidden = !RenderingStats.e_EnableSelection;
+            _leftSideList.IsHidden = !RenderingStats.e_EnableSelection;
 
             if (selectedObject != null)
             {
@@ -583,7 +581,7 @@ namespace DeferredEngine.Logic
 
                         _objectToggle2.SetField(selectedObject, "CastShadows");
                         _objectToggle2.Text = new StringBuilder("Cast Shadows");
-                        
+
                         _objectSlider1.MinValue = 0.01f;
                         _objectSlider1.MaxValue = 1000;
 
@@ -595,7 +593,7 @@ namespace DeferredEngine.Logic
                 }
 
                 // Environment Sample!
-                else if(selectedObject is EnvironmentProbe)
+                else if (selectedObject is EnvironmentProbe)
                 {
                     _objectButton1.IsHidden = false;
                     _objectToggle1.IsHidden = false;
@@ -617,7 +615,7 @@ namespace DeferredEngine.Logic
                         _objectToggle1.Toggle = (selectedObject as EnvironmentProbe).AutoUpdate;
 
                         _objectToggle1.Text = new StringBuilder("Update on move");
-                        
+
                         _objectToggle2.SetField(selectedObject, "UseSDFAO");
                         _objectToggle2.Text = new StringBuilder("Use SDFAO");
 
@@ -626,22 +624,6 @@ namespace DeferredEngine.Logic
 
                         _objectSlider1.SetField(selectedObject, "DiffuseStrength");
                         _objectSlider1.SetValues("Diffuse Strength: ", 0, 1, 2);
-                    }
-                }
-
-                else if (selectedObject is DebugEntity)
-                {
-                    _objectSlider0.IsHidden = false;
-                    _objectSlider1.IsHidden = false;
-                    _objectSlider2.IsHidden = false;
-                    if (activeObject != selectedObject)
-                    {
-                        //_objectSlider0.SetProperty(selectedObject, "SizeX");
-                        //_objectSlider0.SetValues("Size X: ", 0.1f, 200, 2);
-                        //_objectSlider1.SetProperty(selectedObject, "SizeY");
-                        //_objectSlider1.SetValues("Size Y: ", 0.1f, 200, 2);
-                        //_objectSlider2.SetProperty(selectedObject, "SizeZ");
-                        //_objectSlider2.SetValues("Size Z: ", 0.1f, 200, 2);
                     }
                 }
 

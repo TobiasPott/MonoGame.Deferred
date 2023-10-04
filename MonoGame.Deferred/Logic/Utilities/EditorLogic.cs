@@ -59,7 +59,6 @@ namespace DeferredEngine.Logic
             List<PointLight> pointLights, 
             List<DirectionalLight> dirLights, 
             EnvironmentProbe envSample, 
-            List<DebugEntity> debugEntities,
             EditorReceivedData data, 
             MeshMaterialLibrary meshMaterialLibrary)
         {
@@ -154,15 +153,6 @@ namespace DeferredEngine.Logic
                         }
                     }
 
-                    for (int index = 0; index < debugEntities.Count; index++)
-                    {
-                        DirectionalLight debugEntity = dirLights[index];
-                        if (debugEntity.Id == hoveredId)
-                        {
-                            SelectedObject = debugEntity;
-                            break;
-                        }
-                    }
                 }
 
             }
@@ -196,32 +186,6 @@ namespace DeferredEngine.Logic
                     dirLights.Remove((DirectionalLight) SelectedObject);
 
                     SelectedObject = null;
-                }
-            }
-
-            if (Input.WasKeyPressed(Keys.Insert) || (Input.keyboardState.IsKeyDown(Keys.LeftControl) && Input.WasKeyPressed(Keys.C)))
-            {
-                if (SelectedObject is BasicEntity)
-                {
-                    BasicEntity copy = (BasicEntity)SelectedObject.Clone;
-                    copy.RegisterInLibrary(meshMaterialLibrary);
-    
-                    entities.Add(copy);
-                }
-                else if (SelectedObject is Decal)
-                {
-                    Decal copy = (Decal)SelectedObject.Clone;
-                    decals.Add(copy);
-                }
-                else if (SelectedObject is PointLight)
-                {
-                    PointLight copy = (PointLight)SelectedObject.Clone;
-                    pointLights.Add(copy);
-                }
-                else if (SelectedObject is DirectionalLight)
-                {
-                    DirectionalLight copy = (DirectionalLight)SelectedObject.Clone;
-                    dirLights.Add(copy);
                 }
             }
             
