@@ -1,13 +1,13 @@
 ﻿//#define SHOWTILES
 
-using System;
-using System.Collections.Generic;
 using DeferredEngine.Entities;
 using DeferredEngine.Renderer.Helper;
 using DeferredEngine.Renderer.RenderModules.Default;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
 
 namespace DeferredEngine.Renderer.RenderModules
 {

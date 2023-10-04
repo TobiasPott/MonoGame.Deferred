@@ -31,10 +31,9 @@ namespace DeferredEngine.Renderer
         private GraphicsDevice _graphicsDevice;
         private SpriteBatch _spriteBatch;
         private FullScreenTriangleBuffer _fullScreenTriangle;
-        private GaussianBlur _gaussianBlur;
         private EditorRender _editorRender;
-        private LightAccumulationModule _lightAccumulationModule;
 
+        private LightAccumulationModule _lightAccumulationModule;
         private ShadowMapRenderModule _shadowMapRenderModule;
         private GBufferRenderModule _gBufferRenderModule;
         private TemporalAntialiasingRenderModule _temporalAntialiasingRenderModule;
@@ -45,6 +44,7 @@ namespace DeferredEngine.Renderer
         private HelperGeometryRenderModule _helperGeometryRenderModule;
         private DistanceFieldRenderModule _distanceFieldRenderModule;
 
+        private GaussianBlur _gaussianBlur;
         private BloomFilter _bloomFilter;
         private ColorGradingFilter _colorGradingFilter;
 
