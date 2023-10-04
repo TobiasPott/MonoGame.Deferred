@@ -40,7 +40,7 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
     /// 
     /// If you use ToneMapping you should apply Bloom before that step.
     /// </summary>
-    public class BloomFilter : IDisposable
+    public partial class BloomFilter : IDisposable
     {
         #region fields & properties
 
@@ -99,16 +99,6 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
 
         public bool BloomUseLuminance = true;
         public int BloomDownsamplePasses = 5;
-
-        //enums
-        public enum BloomPresets
-        {
-            Wide,
-            Focussed,
-            Small,
-            SuperWide,
-            Cheap
-        };
 
         #endregion
 

@@ -1,8 +1,7 @@
-﻿using System;
-using System.IO;
-using DeferredEngine.Renderer.Helper;
+﻿using DeferredEngine.Renderer.Helper;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+
 
 namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
 {
@@ -105,6 +104,8 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
 
             _applyLUTPass = _shaderEffect.Techniques["ApplyLUT"].Passes[0];
             _createLUTPass = _shaderEffect.Techniques["CreateLUT"].Passes[0];
+
+            LookUpTable = content.Load<Texture2D>("Shaders/PostProcessing/lut");
         }
 
         public void Initialize(GraphicsDevice graphics )
@@ -130,8 +131,11 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
         /// <param name="input"> The basic texture or rendertarget you want to modify</param>
         /// <param name="lookupTable"> The specific lookup table used</param>
         /// <returns></returns>
-        public RenderTarget2D Draw(GraphicsDevice graphics, Texture2D input, Texture2D lookupTable)
+        public RenderTarget2D Draw(GraphicsDevice graphics, Texture2D input, Texture2D lookupTable = null)
         {
+            if(lookupTable == null)
+                lookupTable = _lookupTable;
+
             //Set up rendertarget
             if (_renderTarget == null || _renderTarget.Width != input.Width || _renderTarget.Height != input.Height)
             {
@@ -140,7 +144,7 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
             }
 
             InputTexture = input;
-            LookUpTable = lookupTable;
+            //LookUpTable = lookupTable;
             Size = (lookupTable.Width == 64) ? 16 : 32;
                 
             graphics.SetRenderTarget(_renderTarget);

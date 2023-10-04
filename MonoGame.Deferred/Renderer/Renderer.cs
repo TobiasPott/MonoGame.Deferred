@@ -142,11 +142,6 @@ namespace DeferredEngine.Renderer
         //Cubemap
         private RenderTargetCube _renderTargetCubeMap;
 
-        //Color Correction LUT
-
-        private Texture2D _lut;
-        
-
         //Performance Profiler
 
         private readonly Stopwatch _performanceTimer = new Stopwatch();
@@ -190,8 +185,6 @@ namespace DeferredEngine.Renderer
             _inverseResolution = new Vector3(1.0f / GameSettings.g_screenwidth, 1.0f / GameSettings.g_screenheight, 0);
             
             _colorGradingFilter = new ColorGradingFilter(content, "Shaders/PostProcessing/ColorGrading");
-
-            _lut = content.Load<Texture2D>("Shaders/PostProcessing/lut");
         }
 
         /// <summary>
@@ -1414,7 +1407,7 @@ namespace DeferredEngine.Renderer
             _fullScreenTriangle.Draw(_graphicsDevice);
 
             if(GameSettings.g_ColorGrading)
-            destinationRenderTarget = _colorGradingFilter.Draw(_graphicsDevice, destinationRenderTarget, _lut);
+            destinationRenderTarget = _colorGradingFilter.Draw(_graphicsDevice, destinationRenderTarget);
 
             DrawMapToScreenToFullScreen(destinationRenderTarget);
         }
