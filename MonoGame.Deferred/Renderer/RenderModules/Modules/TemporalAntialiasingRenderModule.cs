@@ -96,7 +96,6 @@ namespace DeferredEngine.Renderer.RenderModules
         {
             _taaShader = content.Load<Effect>(shaderPath);
 
-
         }
 
 

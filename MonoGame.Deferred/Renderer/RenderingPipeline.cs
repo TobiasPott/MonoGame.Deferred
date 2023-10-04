@@ -20,7 +20,7 @@ using DirectionalLight = DeferredEngine.Entities.DirectionalLight;
 
 namespace DeferredEngine.Renderer
 {
-    public class Renderer : IDisposable
+    public class RenderingPipeline : IDisposable
     {
         #region VARIABLES
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////

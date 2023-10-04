@@ -75,6 +75,17 @@ namespace DeferredEngine.Entities
             Name = GetType().Name + " " + Id;
         }
 
+        public override int Id { get; set; }
+        public override Matrix RotationMatrix { get; set; }
+
+        public sealed override bool IsEnabled
+        {
+            get;
+            set;
+        }
+
+        public override string Name { get; set; }
+
         public Color Color
         {
             get { return _color; }
@@ -110,17 +121,6 @@ namespace DeferredEngine.Entities
                 HasChanged = true;
             }
         }
-
-        public override int Id { get; set; }
-        public override Matrix RotationMatrix { get; set; }
-
-        public sealed override bool IsEnabled
-        {
-            get;
-            set;
-        }
-
-        public override string Name { get; set; }
 
         protected PointLight()
         {

@@ -14,7 +14,7 @@ namespace DeferredEngine.Entities
         public bool HasChanged;
 
         public Vector3 DirectionViewSpace;
-        
+
         public readonly bool CastShadows;
         public readonly float ShadowSize;
         public readonly float ShadowDepth;
@@ -50,7 +50,7 @@ namespace DeferredEngine.Entities
         /// <param name="shadowFiltering"></param>
         /// <param name="screenspaceshadowblur"></param>
         /// <param name="staticshadows"></param>
-        public DirectionalLight(Color color, float intensity, Vector3 direction,Vector3 position = default(Vector3), bool castShadows = false, float shadowSize = 100, float shadowDepth = 100, int shadowResolution = 512, ShadowFilteringTypes shadowFiltering = ShadowFilteringTypes.Poisson, bool screenspaceshadowblur = false, bool staticshadows = false)
+        public DirectionalLight(Color color, float intensity, Vector3 direction, Vector3 position = default(Vector3), bool castShadows = false, float shadowSize = 100, float shadowDepth = 100, int shadowResolution = 512, ShadowFilteringTypes shadowFiltering = ShadowFilteringTypes.Poisson, bool screenspaceshadowblur = false, bool staticshadows = false)
         {
             Color = color;
             Intensity = intensity;
@@ -59,7 +59,7 @@ namespace DeferredEngine.Entities
             normalizedDirection.Normalize();
             Direction = normalizedDirection;
             _initialDirection = normalizedDirection;
-            
+
             CastShadows = castShadows;
             ShadowSize = shadowSize;
             ShadowDepth = shadowDepth;
@@ -75,8 +75,6 @@ namespace DeferredEngine.Entities
             Id = IdGenerator.GetNewId();
 
             IsEnabled = true;
-
-            TransformDirectionToAngles();
 
             _rotationMatrix = Matrix.Identity;
 
@@ -128,28 +126,17 @@ namespace DeferredEngine.Entities
             get { return _rotationMatrix; }
             set
             {
-                _rotationMatrix = value; 
-                TransformAnglesToDirection();
+                _rotationMatrix = value;
             }
         }
 
         public override bool IsEnabled { get; set; }
 
-        private void TransformAnglesToDirection()
-        {
-            Direction = Vector3.Transform(_initialDirection, RotationMatrix);
-        }
-
-        private Matrix Trafo;
         private Matrix _rotationMatrix;
         private Color _color;
         public Vector3 ColorV3;
 
-        private void TransformDirectionToAngles()
-        {
-            Trafo = Matrix.CreateLookAt(Vector3.Zero, Direction, Vector3.UnitZ);
-        }
-        
+
         public override string Name { get; set; }
 
         public void ApplyShader()
@@ -175,12 +162,12 @@ namespace DeferredEngine.Entities
                     Shaders.deferredDirectionalLightParameter_ShadowMap.SetValue(ShadowMap);
                     Shaders.deferredDirectionalLightParameter_ShadowFiltering.SetValue((int)ShadowFiltering);
                     Shaders.deferredDirectionalLightParameter_ShadowMapSize.SetValue((float)ShadowResolution);
-                    Shaders.deferredDirectionalLightShadowed.Passes[0].Apply();   
+                    Shaders.deferredDirectionalLightShadowed.Passes[0].Apply();
                 }
             }
             else
             {
-                Shaders.deferredDirectionalLightUnshadowed.Passes[0].Apply();  
+                Shaders.deferredDirectionalLightUnshadowed.Passes[0].Apply();
             }
         }
     }
