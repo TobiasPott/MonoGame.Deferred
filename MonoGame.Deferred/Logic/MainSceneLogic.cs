@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using BEPUphysics;
+﻿using BEPUphysics;
 using DeferredEngine.Entities;
 using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper;
@@ -9,11 +7,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
+using System.Collections.Generic;
 using DirectionalLight = DeferredEngine.Entities.DirectionalLight;
-using Matrix = Microsoft.Xna.Framework.Matrix;
-using Quaternion = BEPUutilities.Quaternion;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
-using Vector4 = Microsoft.Xna.Framework.Vector4;
 
 namespace DeferredEngine.Logic
 {
@@ -84,9 +81,6 @@ namespace DeferredEngine.Logic
             EnvironmentSample = new EnvironmentProbe(new Vector3(-45, -5, 5));
 
             _sdfGenerator = new SdfGenerator();
-
-            ////////////////////////////////////////////////////////////////////////
-            // GUI
 
             ////////////////////////////////////////////////////////////////////////
             // Static geometry

@@ -37,7 +37,6 @@ namespace DeferredEngine.Renderer
         private FullScreenTriangleBuffer _fullScreenTriangle;
         private GaussianBlur _gaussianBlur;
         private EditorRender _editorRender;
-        private CPURayMarch _cpuRayMarch;
         private LightAccumulationModule _lightAccumulationModule;
 
         private ShadowMapRenderModule _shadowMapRenderModule;
@@ -204,9 +203,6 @@ namespace DeferredEngine.Renderer
             _editorRender = new EditorRender();
             _editorRender.Initialize(graphicsDevice, assets);
 
-            _cpuRayMarch = new CPURayMarch();
-            _cpuRayMarch.Initialize(_graphicsDevice);
-
             _bloomFilter.Initialize(_graphicsDevice, RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight, _fullScreenTriangle);
 
             _colorGradingFilter.Initialize(graphicsDevice);
@@ -366,10 +362,6 @@ namespace DeferredEngine.Renderer
             
             RenderEditorOverlays(editorData, meshMaterialLibrary, decals, pointLights, directionalLights, envSample, debugEntities);
             
-
-            //Debug ray marching
-                CpuRayMarch(camera);
-
             //Draw debug geometry
             _helperGeometryRenderModule.Draw(_graphicsDevice, _staticViewProjection);
             
@@ -1668,17 +1660,6 @@ namespace DeferredEngine.Renderer
             _spriteBatch.Begin(0, blendState, _supersampling>1 ? SamplerState.LinearWrap : SamplerState.PointClamp);
             _spriteBatch.Draw(map, new Rectangle(0, 0, width, height), Color.White);
             _spriteBatch.End();
-        }
-        
-        private void CpuRayMarch(Camera camera)
-        {
-            if(RenderingSettings.e_CPURayMarch)
-
-            if (Input.WasKeyPressed(Keys.K))
-                _cpuRayMarch.Calculate(_renderTargetDepth, _renderTargetNormal, _projection, _inverseView, _inverseViewProjection,
-                    camera, _currentFrustumCorners);
-
-            _cpuRayMarch.Draw();
         }
         
         #endregion
