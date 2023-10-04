@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DeferredEngine.Recources.Helper;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace DeferredEngine.Entities
 {
@@ -18,7 +13,7 @@ namespace DeferredEngine.Entities
         public override bool IsEnabled { get; set; }
         public override TransformableObject Clone { get; }
         public sealed override string Name { get; set; }
-        
+
         public Vector3 Size;
 
         public Vector3 Resolution = 2 * Vector3.One;
