@@ -20,14 +20,10 @@ namespace DeferredEngine.Logic
 
         private readonly MngStringBuilder _mngStringBuilder = new MngStringBuilder(2048);
 
-        //private ScreenManager.ScreenStates _state;
-
         private static readonly List<string> StringList = new List<string>();
         public static readonly List<StringColor> AiDebugString = new List<StringColor>();
 
         public Color consoleColor = Color.Coral;
-
-        //private GraphicsDevice _graphicsDevice;
 
         private long _maxGcMemory;
 
@@ -361,9 +357,9 @@ namespace DeferredEngine.Logic
                 }
 
                 _spriteBatch.DrawString(_monospaceFont, _mngStringBuilder.StringBuilder,
-                    new Vector2(11.0f, 11.0f), Color.Black);
+                    new Vector2(11.0f, 11.0f), Color.Black, 0, Vector2.Zero, 1.5f, SpriteEffects.None, 0);
                 _spriteBatch.DrawString(_monospaceFont, _mngStringBuilder.StringBuilder,
-                    new Vector2(10.0f, 10.0f), consoleColor);
+                    new Vector2(10.0f, 10.0f), consoleColor, 0, Vector2.Zero, 1.5f, SpriteEffects.None, 0);
 
                 _spriteBatch.End();
             }
