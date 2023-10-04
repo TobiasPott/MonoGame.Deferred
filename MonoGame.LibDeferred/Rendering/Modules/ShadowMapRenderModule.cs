@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using DeferredEngine.Entities;
+﻿using DeferredEngine.Entities;
 using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper;
 using DeferredEngine.Renderer.RenderModules.Default;
@@ -155,7 +153,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
                 //Reset the blur array
                 light.faceBlurCount = new int[6];
-                
+
                 graphicsDevice.SetRenderTarget(light.ShadowMap);
                 graphicsDevice.Clear(Color.Black);
 
@@ -215,21 +213,21 @@ namespace DeferredEngine.Renderer.RenderModules
                     meshMaterialLibrary.FrustumCulling(entities, _boundingFrustumShadow, true, light.Position);
 
                     // Rendering!
-                    
+
                     graphicsDevice.Viewport = new Viewport(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
                     //_graphicsDevice.ScissorRectangle = new Rectangle(0, light.ShadowResolution* (int) cubeMapFace,  light.ShadowResolution, light.ShadowResolution);
-                    
+
                     _FarClip.SetValue(light.Radius);
                     _LightPositionWS.SetValue(light.Position);
 
                     graphicsDevice.ScissorRectangle = new Rectangle(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
 
-                    meshMaterialLibrary.Draw(renderType: MeshMaterialLibrary.RenderType.ShadowOmnidirectional, 
-                        viewProjection: lightViewProjection, 
-                        lightViewPointChanged: true, 
-                        hasAnyObjectMoved: light.HasChanged, 
+                    meshMaterialLibrary.Draw(renderType: MeshMaterialLibrary.RenderType.ShadowOmnidirectional,
+                        viewProjection: lightViewProjection,
+                        lightViewPointChanged: true,
+                        hasAnyObjectMoved: light.HasChanged,
                         renderModule: this);
-                    
+
                 }
             }
             else
@@ -267,7 +265,7 @@ namespace DeferredEngine.Renderer.RenderModules
                     else _boundingFrustumShadow = new BoundingFrustum(lightViewProjection);
 
                     bool hasAnyObjectMoved = meshMaterialLibrary.FrustumCulling(entities, _boundingFrustumShadow, false, light.Position);
-                    
+
                     if (!hasAnyObjectMoved) continue;
 
                     if (!draw)
@@ -278,7 +276,7 @@ namespace DeferredEngine.Renderer.RenderModules
                     }
 
                     graphicsDevice.Viewport = new Viewport(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
-                    
+
                     //_graphicsDevice.Clear(Color.TransparentBlack);
                     //_graphicsDevice.Clear(ClearOptions.DepthBuffer, Color.White, 0, 0);
                     graphicsDevice.ScissorRectangle = new Rectangle(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
@@ -306,8 +304,8 @@ namespace DeferredEngine.Renderer.RenderModules
             {
                 //if (lightSource.ShadowFiltering != DirectionalLightSource.ShadowFilteringTypes.VSM)
                 //{
-                    light.ShadowMap = new RenderTarget2D(graphicsDevice, shadowResolution, shadowResolution, false,
-                        SurfaceFormat.Single, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
+                light.ShadowMap = new RenderTarget2D(graphicsDevice, shadowResolution, shadowResolution, false,
+                    SurfaceFormat.Single, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
                 //}
                 //else //For a VSM shadowMap we need 2 components
                 //{
@@ -315,7 +313,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 //       SurfaceFormat.Vector2, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
                 //}
             }
-            
+
             if (light.HasChanged)
             {
                 Matrix lightProjection = Matrix.CreateOrthographic(light.ShadowSize, light.ShadowSize,
