@@ -67,12 +67,12 @@ namespace DeferredEngine.Logic
 
             if (!DebugScreen.ConsoleOpen)
             {
-                if (Input.WasKeyPressed(Keys.R)) GameStats.e_gizmoMode = GizmoModes.Rotation;
-                if (Input.WasKeyPressed(Keys.T)) GameStats.e_gizmoMode = GizmoModes.Translation;
-                if (Input.WasKeyPressed(Keys.Z)) GameStats.e_gizmoMode = GizmoModes.Scale;
+                if (Input.WasKeyPressed(Keys.R)) RenderingStats.e_gizmoMode = GizmoModes.Rotation;
+                if (Input.WasKeyPressed(Keys.T)) RenderingStats.e_gizmoMode = GizmoModes.Translation;
+                if (Input.WasKeyPressed(Keys.Z)) RenderingStats.e_gizmoMode = GizmoModes.Scale;
             }
 
-            _gizmoMode = GameStats.e_gizmoMode;
+            _gizmoMode = RenderingStats.e_gizmoMode;
 
             int hoveredId = data.HoveredId;
 
@@ -271,7 +271,7 @@ namespace DeferredEngine.Logic
                     binormal = Vector3.UnitX;
                 }
 
-                if (GameStats.e_LocalTransformation)
+                if (RenderingStats.e_LocalTransformation)
                 {
                     tangent = Vector3.Transform(tangent, SelectedObject.RotationMatrix);
                     normal = Vector3.Transform(normal, SelectedObject.RotationMatrix);
@@ -328,7 +328,7 @@ namespace DeferredEngine.Logic
                 if (_gizmoMode == GizmoModes.Rotation)
                 {
 
-                    if (!GameStats.e_LocalTransformation)
+                    if (!RenderingStats.e_LocalTransformation)
                     {
                         if (gizmoId == 1 )
                         {

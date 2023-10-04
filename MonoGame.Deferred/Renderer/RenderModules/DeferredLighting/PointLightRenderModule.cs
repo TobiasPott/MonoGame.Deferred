@@ -198,7 +198,7 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
                 return;
 
             //For our stats
-            GameStats.LightsDrawn++;
+            RenderingStats.LightsDrawn++;
 
             //Send the light parameters to the shader
             if (_viewProjectionHasChanged)

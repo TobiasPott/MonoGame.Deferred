@@ -68,7 +68,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Gener
         public void GenerateDistanceFields(BasicEntity entity, GraphicsDevice graphics, DistanceFieldRenderModule distanceFieldRenderModule, FullScreenTriangle fullScreenTriangle)
         {
             SignedDistanceField uncomputedSignedDistanceField = entity.SignedDistanceField;
-            Model unprocessedModel = entity.Model;
+            Model unprocessedModel = entity.ModelDefinition.Model;
 
             //Set to false so it won't get covered in future
             uncomputedSignedDistanceField.NeedsToBeGenerated = false;
@@ -291,7 +291,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Gener
                         data[toTexCoords(xi, yi, zi, xsteps, zsteps)] = color;
 
                         if(threadindex==0)
-                        GameStats.sdf_load = (xi + (yi + zi / (float)zsteps) / (float)ysteps) / (float)xsteps;
+                        RenderingStats.sdf_load = (xi + (yi + zi / (float)zsteps) / (float)ysteps) / (float)xsteps;
                     }
                 }
 

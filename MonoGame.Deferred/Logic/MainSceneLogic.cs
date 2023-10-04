@@ -455,7 +455,7 @@ namespace DeferredEngine.Logic
         {
             BEPUutilities.Vector3[] vertices;
             int[] indices;
-            GeometryDataExtractor.GetVerticesAndIndicesFromModel(entity.Model, out vertices, out indices);
+            GeometryDataExtractor.GetVerticesAndIndicesFromModel(entity.ModelDefinition.Model, out vertices, out indices);
             var mesh = new StaticMesh(vertices, indices, 
                 new AffineTransform(
                     new BEPUutilities.Vector3(entity.Scale.X, entity.Scale.Y, entity.Scale.Z), 

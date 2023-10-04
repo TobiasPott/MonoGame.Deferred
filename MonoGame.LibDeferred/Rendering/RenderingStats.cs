@@ -2,7 +2,7 @@
 
 namespace DeferredEngine.Recources
 {
-    public static class GameStats
+    public static class RenderingStats
     {
         public static int MeshDraws = 0;
         public static int MaterialDraws = 0;

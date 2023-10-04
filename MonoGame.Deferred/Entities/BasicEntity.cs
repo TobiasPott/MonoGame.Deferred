@@ -16,9 +16,9 @@ namespace DeferredEngine.Entities
     {
         //Avoid nesting, but i could also just provide the ModelDefinition instead
         public readonly ModelDefinition ModelDefinition;
-        public readonly Model Model;
-        public readonly SignedDistanceField SignedDistanceField;
         public readonly MaterialEffect Material;
+        public Model Model => ModelDefinition.Model;
+        public SignedDistanceField SignedDistanceField => ModelDefinition.SDF;
 
         private Entity _dynamicPhysicsObject;
         public StaticMesh StaticPhysicsObject = null;
@@ -35,8 +35,6 @@ namespace DeferredEngine.Entities
             : base(modelbb.BoundingBox, modelbb.BoundingBoxOffset)
         {
             ModelDefinition = modelbb;
-            Model = modelbb.Model;
-            SignedDistanceField = modelbb.SDF;
             
             Material = material;
             Position = position;
@@ -59,9 +57,7 @@ namespace DeferredEngine.Entities
         public BasicEntity(ModelDefinition modelbb, MaterialEffect material, Vector3 position, Matrix rotationMatrix, Vector3 scale)
             :base(modelbb.BoundingBox, modelbb.BoundingBoxOffset)
         {
-            Model = modelbb.Model;
             ModelDefinition = modelbb;
-            SignedDistanceField = modelbb.SDF;
 
             Material = material;
             Position = position;
@@ -76,7 +72,7 @@ namespace DeferredEngine.Entities
 
         public void RegisterInLibrary(MeshMaterialLibrary library)
         {
-            library.Register(Material, Model, WorldTransform);
+            library.Register(Material, ModelDefinition.Model, WorldTransform);
         }
 
         private void RegisterPhysics(Entity physisEntity)

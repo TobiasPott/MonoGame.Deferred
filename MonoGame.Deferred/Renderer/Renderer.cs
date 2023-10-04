@@ -353,7 +353,7 @@ namespace DeferredEngine.Renderer
             _currentOutput = DrawBloom(_currentOutput); // -> output: _renderTargetBloom
             
             //Draw the elements that we are hovering over with outlines
-            if(RenderingSettings.e_enableeditor && GameStats.e_EnableSelection)
+            if(RenderingSettings.e_enableeditor && RenderingStats.e_EnableSelection)
                 _editorRender.DrawIds(meshMaterialLibrary, decals, pointLights, directionalLights, envSample, debugEntities, _staticViewProjection, _view, editorData);
 
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
@@ -380,7 +380,7 @@ namespace DeferredEngine.Renderer
             if (RenderingSettings.d_profiler)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                GameStats.d_profileTotalRender = performanceCurrentTime;
+                RenderingStats.d_profileTotalRender = performanceCurrentTime;
             }
             
             //return data we have recovered from the editor id, so we know what entity gets hovered/clicked on and can manipulate in the update function
@@ -407,7 +407,7 @@ namespace DeferredEngine.Renderer
         private void RenderEditorOverlays(EditorLogic.EditorSendData editorData, MeshMaterialLibrary meshMaterialLibrary, List<Decal> decals, List<PointLight> pointLights, List<DirectionalLight> directionalLights, EnvironmentProbe envSample, List<DebugEntity> debugEntities)
         {
 
-            if (RenderingSettings.e_enableeditor && GameStats.e_EnableSelection)
+            if (RenderingSettings.e_enableeditor && RenderingStats.e_EnableSelection)
             {
                 if (RenderingSettings.e_drawoutlines)
                     DrawMapToScreenToFullScreen(_editorRender.GetOutlines(), BlendState.Additive);
@@ -589,7 +589,7 @@ namespace DeferredEngine.Renderer
             if (RenderingSettings.d_profiler)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                GameStats.d_profileDrawCubeMap = performanceCurrentTime - _performancePreviousTime;
+                RenderingStats.d_profileDrawCubeMap = performanceCurrentTime - _performancePreviousTime;
 
                 _performancePreviousTime = performanceCurrentTime;
             }
@@ -607,12 +607,12 @@ namespace DeferredEngine.Renderer
         /// </summary>
         private void ResetStats()
         {
-            GameStats.MaterialDraws = 0;
-            GameStats.MeshDraws = 0;
-            GameStats.LightsDrawn = 0;
-            GameStats.shadowMaps = 0;
-            GameStats.activeShadowMaps = 0;
-            GameStats.EmissiveMeshDraws = 0;
+            RenderingStats.MaterialDraws = 0;
+            RenderingStats.MeshDraws = 0;
+            RenderingStats.LightsDrawn = 0;
+            RenderingStats.shadowMaps = 0;
+            RenderingStats.activeShadowMaps = 0;
+            RenderingStats.EmissiveMeshDraws = 0;
 
             //Profiler
             if (RenderingSettings.d_profiler)
@@ -701,7 +701,7 @@ namespace DeferredEngine.Renderer
             if (RenderingSettings.d_profiler)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                GameStats.d_profileRenderChanges = performanceCurrentTime - _performancePreviousTime;
+                RenderingStats.d_profileRenderChanges = performanceCurrentTime - _performancePreviousTime;
 
                 _performancePreviousTime = performanceCurrentTime;
             }
@@ -726,7 +726,7 @@ namespace DeferredEngine.Renderer
             if (RenderingSettings.d_profiler)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                GameStats.d_profileDrawShadows = performanceCurrentTime - _performancePreviousTime;
+                RenderingStats.d_profileDrawShadows = performanceCurrentTime - _performancePreviousTime;
 
                 _performancePreviousTime = performanceCurrentTime;
             }
@@ -828,7 +828,7 @@ namespace DeferredEngine.Renderer
             if (RenderingSettings.d_profiler)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                GameStats.d_profileUpdateViewProjection = performanceCurrentTime - _performancePreviousTime;
+                RenderingStats.d_profileUpdateViewProjection = performanceCurrentTime - _performancePreviousTime;
 
                 _performancePreviousTime = performanceCurrentTime;
             }
@@ -929,7 +929,7 @@ namespace DeferredEngine.Renderer
             if (RenderingSettings.d_profiler)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                GameStats.d_profileDrawGBuffer = performanceCurrentTime - _performancePreviousTime;
+                RenderingStats.d_profileDrawGBuffer = performanceCurrentTime - _performancePreviousTime;
 
                 _performancePreviousTime = performanceCurrentTime;
             }
@@ -986,7 +986,7 @@ namespace DeferredEngine.Renderer
             if (RenderingSettings.d_profiler)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                GameStats.d_profileDrawSSR = performanceCurrentTime - _performancePreviousTime;
+                RenderingStats.d_profileDrawSSR = performanceCurrentTime - _performancePreviousTime;
 
                 _performancePreviousTime = performanceCurrentTime;
             }
@@ -1019,7 +1019,7 @@ namespace DeferredEngine.Renderer
             if (RenderingSettings.d_profiler)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                GameStats.d_profileDrawScreenSpaceEffect = performanceCurrentTime - _performancePreviousTime;
+                RenderingStats.d_profileDrawScreenSpaceEffect = performanceCurrentTime - _performancePreviousTime;
 
                 _performancePreviousTime = performanceCurrentTime;
             }
@@ -1075,7 +1075,7 @@ namespace DeferredEngine.Renderer
             if (RenderingSettings.d_profiler)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                GameStats.d_profileDrawScreenSpaceDirectionalShadow = performanceCurrentTime - _performancePreviousTime;
+                RenderingStats.d_profileDrawScreenSpaceDirectionalShadow = performanceCurrentTime - _performancePreviousTime;
 
                 _performancePreviousTime = performanceCurrentTime;
             }
@@ -1132,7 +1132,7 @@ namespace DeferredEngine.Renderer
             if (RenderingSettings.d_profiler)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                GameStats.d_profileDrawBilateralBlur = performanceCurrentTime - _performancePreviousTime;
+                RenderingStats.d_profileDrawBilateralBlur = performanceCurrentTime - _performancePreviousTime;
 
                 _performancePreviousTime = performanceCurrentTime;
             }
@@ -1151,7 +1151,7 @@ namespace DeferredEngine.Renderer
             if (RenderingSettings.d_profiler)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                GameStats.d_profileDrawEnvironmentMap = performanceCurrentTime - _performancePreviousTime;
+                RenderingStats.d_profileDrawEnvironmentMap = performanceCurrentTime - _performancePreviousTime;
 
                 _performancePreviousTime = performanceCurrentTime;
             }
@@ -1207,7 +1207,7 @@ namespace DeferredEngine.Renderer
             if (RenderingSettings.d_profiler)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                GameStats.d_profileCompose = performanceCurrentTime - _performancePreviousTime;
+                RenderingStats.d_profileCompose = performanceCurrentTime - _performancePreviousTime;
 
                 _performancePreviousTime = performanceCurrentTime;
             }
@@ -1298,7 +1298,7 @@ namespace DeferredEngine.Renderer
             if (RenderingSettings.d_profiler)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                GameStats.d_profileCombineTemporalAntialiasing = performanceCurrentTime - _performancePreviousTime;
+                RenderingStats.d_profileCombineTemporalAntialiasing = performanceCurrentTime - _performancePreviousTime;
 
                 _performancePreviousTime = performanceCurrentTime;
             }
@@ -1379,7 +1379,7 @@ namespace DeferredEngine.Renderer
             if (RenderingSettings.d_profiler)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                GameStats.d_profileDrawFinalRender = performanceCurrentTime - _performancePreviousTime;
+                RenderingStats.d_profileDrawFinalRender = performanceCurrentTime - _performancePreviousTime;
 
                 _performancePreviousTime = performanceCurrentTime;
             }

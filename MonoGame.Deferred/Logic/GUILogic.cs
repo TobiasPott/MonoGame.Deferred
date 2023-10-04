@@ -94,8 +94,8 @@ namespace DeferredEngine.Logic
             });
             _leftSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Local: ")
             {
-               ToggleField = typeof(GameStats).GetField("e_LocalTransformation"),
-                Toggle = GameStats.e_LocalTransformation
+               ToggleField = typeof(RenderingStats).GetField("e_LocalTransformation"),
+                Toggle = RenderingStats.e_LocalTransformation
             });
             _leftSideList.Alignment = GUIStyle.GUIAlignment.BottomLeft;
 
@@ -109,8 +109,8 @@ namespace DeferredEngine.Logic
 
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Editor")
             {
-                ToggleField = typeof(GameStats).GetField("e_EnableSelection"),
-                Toggle = GameStats.e_EnableSelection
+                ToggleField = typeof(RenderingStats).GetField("e_EnableSelection"),
+                Toggle = RenderingStats.e_EnableSelection
             });
 
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Highlight Meshes")
@@ -430,7 +430,7 @@ namespace DeferredEngine.Logic
 
         public void ChangeGizmoMode(GizmoModes mode)
         {
-            GameStats.e_gizmoMode = mode;
+            RenderingStats.e_gizmoMode = mode;
 
             UpdateGizmoSelection(mode);
         }
@@ -477,12 +477,12 @@ namespace DeferredEngine.Logic
 
         public void Update(GameTime gameTime, bool isActive, TransformableObject selectedObject)
         {
-            GameStats.UIIsHovered = false;
+            RenderingStats.UIIsHovered = false;
             if (!isActive || !RenderingSettings.e_enableeditor || !RenderingSettings.ui_enabled) return;
 
-            if (GameStats.e_gizmoMode != _gizmoModePrevious)
+            if (RenderingStats.e_gizmoMode != _gizmoModePrevious)
             {
-                _gizmoModePrevious = GameStats.e_gizmoMode;
+                _gizmoModePrevious = RenderingStats.e_gizmoMode;
                 UpdateGizmoSelection(_gizmoModePrevious);
             }
             
@@ -491,10 +491,10 @@ namespace DeferredEngine.Logic
             if (GUIControl.GetMousePosition().X > _rightSideList.Position.X &&
                 GUIControl.GetMousePosition().Y < _rightSideList.Dimensions.Y)
             {
-                GameStats.UIIsHovered = true;
+                RenderingStats.UIIsHovered = true;
             }
 
-             _leftSideList.IsHidden = !GameStats.e_EnableSelection;
+             _leftSideList.IsHidden = !RenderingStats.e_EnableSelection;
 
             if (selectedObject != null)
             {

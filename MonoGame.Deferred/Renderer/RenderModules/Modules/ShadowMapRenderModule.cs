@@ -88,7 +88,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 if (light.CastShadows)
                 {
                     //A poing light has 6 shadow maps, add that to our stat counter. These are total shadow maps, not updated ones
-                    GameStats.shadowMaps += 6;
+                    RenderingStats.shadowMaps += 6;
 
                     //Update if we didn't initialize yet or if we are dynamic
                     if (!light.StaticShadows || light.ShadowMap == null)
@@ -111,7 +111,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
                 if (light.CastShadows)
                 {
-                    GameStats.shadowMaps += 1;
+                    RenderingStats.shadowMaps += 1;
 
                     CreateShadowMapDirectionalLight(graphicsDevice, light, light.ShadowResolution, meshMaterialLibrary, entities);
 

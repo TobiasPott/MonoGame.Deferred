@@ -342,22 +342,22 @@ namespace DeferredEngine.Logic
                 _mngStringBuilder.Append(_maxGcMemory/1024);
 
                 _mngStringBuilder.Append(sb_meshes);
-                _mngStringBuilder.Append(GameStats.MeshDraws);
+                _mngStringBuilder.Append(RenderingStats.MeshDraws);
                 _mngStringBuilder.Append(sb_materials);
-                _mngStringBuilder.Append(GameStats.MaterialDraws);
+                _mngStringBuilder.Append(RenderingStats.MaterialDraws);
                 _mngStringBuilder.Append(sb_lights);
-                _mngStringBuilder.Append(GameStats.LightsDrawn);
+                _mngStringBuilder.Append(RenderingStats.LightsDrawn);
                 _mngStringBuilder.Append(sb_emissive);
-                _mngStringBuilder.Append(GameStats.EmissiveMeshDraws);
+                _mngStringBuilder.Append(RenderingStats.EmissiveMeshDraws);
                 _mngStringBuilder.Append(sb_shadowmaps);
-                _mngStringBuilder.Append(GameStats.activeShadowMaps);
+                _mngStringBuilder.Append(RenderingStats.activeShadowMaps);
                 _mngStringBuilder.Append(sb_slash);
-                _mngStringBuilder.Append(GameStats.shadowMaps);
+                _mngStringBuilder.Append(RenderingStats.shadowMaps);
 
-                if (GameStats.sdf_load > 0)
+                if (RenderingStats.sdf_load > 0)
                 {
                     _mngStringBuilder.Append(sb_sdfgeneration);
-                    _mngStringBuilder.Append(GameStats.sdf_load);
+                    _mngStringBuilder.Append(RenderingStats.sdf_load);
                 }
 
                 _spriteBatch.DrawString(_monospaceFont, _mngStringBuilder.StringBuilder,
@@ -383,7 +383,7 @@ namespace DeferredEngine.Logic
         {
             if (!RenderingSettings.d_profiler) return;
 
-            FieldInfo[] info2 = typeof(GameStats).GetFields();
+            FieldInfo[] info2 = typeof(RenderingStats).GetFields();
             int foundIndex = 0;
             for (int index = 0; index < info2.Length; index++)
             {

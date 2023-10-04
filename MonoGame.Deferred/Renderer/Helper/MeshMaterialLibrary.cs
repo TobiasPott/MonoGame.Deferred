@@ -154,12 +154,12 @@ namespace DeferredEngine.Renderer.Helper
 
         public void DeleteFromRegistry(BasicEntity basicEntity)
         {
-            if (basicEntity.Model == null) return; //nothing to delete
+            if (basicEntity.ModelDefinition.Model == null) return; //nothing to delete
 
             //delete the individual meshes!
-            for (int index = 0; index < basicEntity.Model.Meshes.Count; index++)
+            for (int index = 0; index < basicEntity.ModelDefinition.Model.Meshes.Count; index++)
             {
-                var mesh = basicEntity.Model.Meshes[index];
+                var mesh = basicEntity.ModelDefinition.Model.Meshes[index];
                 for (int i = 0; i < mesh.MeshParts.Count; i++)
                 {
                     ModelMeshPart meshPart = mesh.MeshParts[i];
@@ -411,7 +411,7 @@ namespace DeferredEngine.Renderer.Helper
                 }
 
                 if (renderType != RenderType.IdRender && renderType != RenderType.IdOutline)
-                    GameStats.MaterialDraws++;
+                    RenderingStats.MaterialDraws++;
 
                 PerMaterialSettings(renderType, material, renderModule);
 
@@ -439,7 +439,7 @@ namespace DeferredEngine.Renderer.Helper
 
                         if (!ApplyShaders(renderType, renderModule, localWorldMatrix, view, viewProjection, meshLib, index,
                                 outlineId, outlined)) continue;
-                        GameStats.MeshDraws++;
+                        RenderingStats.MeshDraws++;
 
                         graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, vertexOffset, startIndex,
                                 primitiveCount);
@@ -503,7 +503,7 @@ namespace DeferredEngine.Renderer.Helper
 
             }
 
-            GameStats.activeShadowMaps++;
+            RenderingStats.activeShadowMaps++;
 
             return true;
         }

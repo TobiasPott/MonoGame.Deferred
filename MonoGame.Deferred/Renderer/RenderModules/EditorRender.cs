@@ -39,7 +39,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
         public void Update(GameTime gameTime)
         {
-            if (GameStats.UIIsHovered || Input.mouseState.RightButton == ButtonState.Pressed)
+            if (RenderingStats.UIIsHovered || Input.mouseState.RightButton == ButtonState.Pressed)
             {
                 _mouseMovement = false;
                 return;
@@ -186,7 +186,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
             Vector3 position = editorData.SelectedObjectPosition;
             GizmoModes gizmoMode = editorData.GizmoMode;
-            Matrix rotation = (GameStats.e_LocalTransformation || gizmoMode == GizmoModes.Scale ) ? editorData.SelectedObject.RotationMatrix : Matrix.Identity;
+            Matrix rotation = (RenderingStats.e_LocalTransformation || gizmoMode == GizmoModes.Scale ) ? editorData.SelectedObject.RotationMatrix : Matrix.Identity;
 
             //Z
             DrawArrow(position, rotation, 0, 0, 0, GetHoveredId() == 1 ? 1 : 0.5f, Color.Blue, staticViewProjection, gizmoMode); //z 1
