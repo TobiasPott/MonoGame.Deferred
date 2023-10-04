@@ -120,11 +120,6 @@ namespace DeferredEngine.Entities
             set;
         }
 
-        public override TransformableObject Clone
-        {
-            get { return new PointLight(Position, Radius, Color, Intensity, CastShadows, IsVolumetric, ShadowResolution, SoftShadowBlurAmount, StaticShadows);}
-        }
-
         public override string Name { get; set; }
 
         protected PointLight()

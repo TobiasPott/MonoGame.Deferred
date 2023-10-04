@@ -150,11 +150,6 @@ namespace DeferredEngine.Entities
             Trafo = Matrix.CreateLookAt(Vector3.Zero, Direction, Vector3.UnitZ);
         }
         
-        public override TransformableObject Clone
-        {
-            get { return new DirectionalLight(Color, Intensity, Direction, Position, CastShadows, ShadowSize, ShadowDepth, ShadowResolution, ShadowFiltering, false, _staticShadow); }
-        }
-
         public override string Name { get; set; }
 
         public void ApplyShader()

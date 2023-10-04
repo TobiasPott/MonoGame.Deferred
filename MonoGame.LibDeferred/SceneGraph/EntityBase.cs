@@ -11,6 +11,14 @@ namespace DeferredEngine.Entities
         public readonly Vector3 BoundingBoxOffset;
 
         protected int _id;
+        public override int Id
+        {
+            get => _id;
+            set => _id = value;
+        }
+        public override bool IsEnabled { get; set; }
+        public override string Name { get; set; }
+
 
         protected Vector3 _position;
         public override Vector3 Position
@@ -20,6 +28,17 @@ namespace DeferredEngine.Entities
             {
                 WorldTransform.HasChanged = true;
                 _position = value;
+            }
+        }
+
+        protected Matrix _rotationMatrix;
+        public override Matrix RotationMatrix
+        {
+            get => _rotationMatrix;
+            set
+            {
+                _rotationMatrix = value;
+                WorldTransform.HasChanged = true;
             }
         }
 
@@ -34,26 +53,6 @@ namespace DeferredEngine.Entities
             }
         }
 
-        public override int Id
-        {
-            get => _id;
-            set => _id = value;
-        }
-
-        protected Matrix _rotationMatrix;
-        public override Matrix RotationMatrix
-        {
-            get => _rotationMatrix;
-            set
-            {
-                _rotationMatrix = value;
-                WorldTransform.HasChanged = true;
-            }
-        }
-
-        public override bool IsEnabled { get; set; }
-
-        public override string Name { get; set; }
 
 
         public readonly TransformMatrix WorldTransform;

@@ -1,7 +1,6 @@
 ﻿
 //#define FORWARDONLY
 
-using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -36,14 +35,14 @@ namespace DeferredEngine.Recources
         public float Metallic;
         public float EmissiveStrength;
 
-        public float Roughness { get { return _roughness;} set { _roughness = Math.Max(value, 0.001f); } }
-        
+        public float Roughness { get { return _roughness; } set { _roughness = Math.Max(value, 0.001f); } }
+
         public Texture2D AlbedoMap
         {
             get { return _albedoMap; }
             set
             {
-                if (value == null) return; 
+                if (value == null) return;
                 _albedoMap = value;
                 HasDiffuse = true;
             }
@@ -54,7 +53,7 @@ namespace DeferredEngine.Recources
             get { return _roughnessMap; }
             set
             {
-                if (value == null) return; 
+                if (value == null) return;
                 _roughnessMap = value;
                 HasRoughnessMap = true;
             }
@@ -65,7 +64,7 @@ namespace DeferredEngine.Recources
             get { return _metallicMap; }
             set
             {
-                if (value == null) return; 
+                if (value == null) return;
                 _metallicMap = value;
                 HasMetallic = true;
             }
@@ -76,7 +75,7 @@ namespace DeferredEngine.Recources
             get { return _normalMap; }
             set
             {
-                if (value == null) return; 
+                if (value == null) return;
                 _normalMap = value;
                 HasNormalMap = true;
             }
@@ -98,12 +97,12 @@ namespace DeferredEngine.Recources
             get { return _mask; }
             set
             {
-                if (value == null) return; 
+                if (value == null) return;
                 _mask = value;
                 HasMask = true;
             }
         }
-        
+
         private MaterialTypes _type = MaterialTypes.Basic;
         public int MaterialTypeNumber;
         public bool RenderCClockwise = false;
@@ -124,7 +123,7 @@ namespace DeferredEngine.Recources
             set
             {
                 _type = value;
-                MaterialTypeNumber = (int) value;
+                MaterialTypeNumber = (int)value;
             }
         }
 
@@ -173,7 +172,7 @@ namespace DeferredEngine.Recources
 
         public bool Equals(MaterialEffect b)
         {
-            if (b==null) return false;
+            if (b == null) return false;
 
             if (HasDiffuse != b.HasDiffuse) return false;
 

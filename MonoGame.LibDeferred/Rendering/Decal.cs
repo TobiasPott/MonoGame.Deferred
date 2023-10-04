@@ -30,11 +30,6 @@ namespace DeferredEngine.Entities
 
         public override bool IsEnabled { get; set; }
 
-        public override TransformableObject Clone
-        {
-            get { return new Decal(Texture, Position, RotationMatrix, Scale);}
-        }
-
         public override string Name { get; set; }
 
         public override Vector3 Scale

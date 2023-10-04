@@ -12,15 +12,6 @@ namespace DeferredEngine.Entities
         public readonly ModelDefinition ModelDefinition;
         public readonly MaterialEffect Material;
 
-        public override TransformableObject Clone
-        {
-            get
-            {
-                //Not very clean...
-                return new BasicEntity(ModelDefinition, Material, Position, RotationMatrix, Scale);
-            }
-        }
-
         public BasicEntity(ModelDefinition modelbb, MaterialEffect material, Vector3 position, double angleZ, double angleX, double angleY, Vector3 scale, MeshMaterialLibrary library = null)
             : base(modelbb.BoundingBox, modelbb.BoundingBoxOffset)
         {

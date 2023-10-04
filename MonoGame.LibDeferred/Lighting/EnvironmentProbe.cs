@@ -31,7 +31,6 @@ namespace DeferredEngine.Entities
         public override int Id { get; set; }
         public override Matrix RotationMatrix { get; set; }
         public override bool IsEnabled { get; set; }
-        public override TransformableObject Clone { get; }
         public override string Name { get; set; }
 
         public EnvironmentProbe(Vector3 position)
