@@ -39,7 +39,6 @@ namespace DeferredEngine.Renderer
         private TemporalAntialiasingRenderModule _temporalAntialiasingRenderModule;
         private DeferredEnvironmentMapRenderModule _deferredEnvironmentMapRenderModule;
         private DecalRenderModule _decalRenderModule;
-        private SubsurfaceScatterRenderModule _subsurfaceScatterRenderModule;
         private ForwardRenderModule _forwardRenderModule;
         private HelperGeometryRenderModule _helperGeometryRenderModule;
         private DistanceFieldRenderModule _distanceFieldRenderModule;
@@ -169,7 +168,6 @@ namespace DeferredEngine.Renderer
             _temporalAntialiasingRenderModule = new TemporalAntialiasingRenderModule(content, "Shaders/TemporalAntiAliasing/TemporalAntiAliasing");
             _deferredEnvironmentMapRenderModule = new DeferredEnvironmentMapRenderModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
             _decalRenderModule = new DecalRenderModule(shaderManager, "Shaders/Deferred/DeferredDecal");
-            _subsurfaceScatterRenderModule = new SubsurfaceScatterRenderModule(content, "Shaders/SubsurfaceScattering/SubsurfaceScattering");
             _forwardRenderModule = new ForwardRenderModule(content, "Shaders/forward/forward");
             _helperGeometryRenderModule = new HelperGeometryRenderModule(content, "Shaders/Editor/LineEffect");
             _distanceFieldRenderModule = new DistanceFieldRenderModule(shaderManager, "Shaders/SignedDistanceFields/volumeProjection");
@@ -205,8 +203,6 @@ namespace DeferredEngine.Renderer
             _gBufferRenderModule.Initialize(_graphicsDevice);
 
             _decalRenderModule.Initialize(graphicsDevice);
-
-            _subsurfaceScatterRenderModule.Initialize();
 
             _forwardRenderModule.Initialize();
 
@@ -329,8 +325,6 @@ namespace DeferredEngine.Renderer
 
             //Compose the scene by combining our lighting data with the gbuffer data
             _currentOutput = Compose(); //-> output _renderTargetComposed
-
-            ///*_currentOutput =*/ DrawSubsurfaceScattering(_renderTargetSSS, meshMaterialLibrary);
 
             //Forward
             _currentOutput = DrawForward(_currentOutput, meshMaterialLibrary, camera, pointLights);
@@ -897,7 +891,6 @@ namespace DeferredEngine.Renderer
             _temporalAntialiasingRenderModule.FrustumCorners = _currentFrustumCorners;
             Shaders.ReconstructDepthParameter_FrustumCorners.SetValue(_currentFrustumCorners);
             Shaders.deferredDirectionalLightParameterFrustumCorners.SetValue(_currentFrustumCorners);
-            _subsurfaceScatterRenderModule.FrustumCorners = _currentFrustumCorners;
         }
 
         /// <summary>
@@ -1196,17 +1189,6 @@ namespace DeferredEngine.Renderer
             }
 
             return _renderTargetComposed;
-        }
-
-        /// <summary>
-        /// Not working right now
-        /// </summary>
-        /// <param name="input"></param>
-        /// <param name="meshMaterialLibrary"></param>
-        /// <returns></returns>
-        private RenderTarget2D DrawSubsurfaceScattering(RenderTarget2D input, MeshMaterialLibrary meshMaterialLibrary)
-        {
-            return _subsurfaceScatterRenderModule.Draw(_graphicsDevice, input, input, meshMaterialLibrary, _viewProjection);
         }
 
         private void ReconstructDepth()
