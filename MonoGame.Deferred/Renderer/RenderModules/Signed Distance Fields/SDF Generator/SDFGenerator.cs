@@ -67,7 +67,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Gener
 
         public void GenerateDistanceFields(BasicEntity entity, GraphicsDevice graphics, DistanceFieldRenderModule distanceFieldRenderModule, FullScreenTriangle fullScreenTriangle)
         {
-            SignedDistanceField uncomputedSignedDistanceField = entity.SignedDistanceField;
+            SignedDistanceField uncomputedSignedDistanceField = entity.ModelDefinition.SDF;
             Model unprocessedModel = entity.ModelDefinition.Model;
 
             //Set to false so it won't get covered in future
@@ -225,9 +225,9 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Gener
                 BasicEntity entity = entities[index0];
 
 
-                if (!entity.SignedDistanceField.IsUsed) continue;
+                if (!entity.ModelDefinition.SDF.IsUsed) continue;
 
-                if (entity.SignedDistanceField.NeedsToBeGenerated)
+                if (entity.ModelDefinition.SDF.NeedsToBeGenerated)
                 {
                     GenerateDistanceFields(entity, graphics, distanceFieldRenderModule, fullScreenTriangle);
                 }
@@ -236,14 +236,14 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Gener
                 //Compile a list of all mbbs used right now
                 for (var i = 0; i < sdfDefinitions.Count; i++)
                 {
-                    if (entity.SignedDistanceField == sdfDefinitions[i])
+                    if (entity.ModelDefinition.SDF == sdfDefinitions[i])
                     {
                         found = true;
                         break;
                     }
                 }
                 if(!found)
-                sdfDefinitions.Add(entity.SignedDistanceField);
+                sdfDefinitions.Add(entity.ModelDefinition.SDF);
 
             }
 

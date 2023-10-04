@@ -17,8 +17,6 @@ namespace DeferredEngine.Entities
         //Avoid nesting, but i could also just provide the ModelDefinition instead
         public readonly ModelDefinition ModelDefinition;
         public readonly MaterialEffect Material;
-        public Model Model => ModelDefinition.Model;
-        public SignedDistanceField SignedDistanceField => ModelDefinition.SDF;
 
         private Entity _dynamicPhysicsObject;
         public StaticMesh StaticPhysicsObject = null;
@@ -40,8 +38,7 @@ namespace DeferredEngine.Entities
             Position = position;
             Scale = scale;
             
-            RotationMatrix = Matrix.CreateRotationX((float)angleX) * Matrix.CreateRotationY((float)angleY) *
-                                  Matrix.CreateRotationZ((float)angleZ);
+            RotationMatrix = Matrix.CreateRotationX((float)angleX) * Matrix.CreateRotationY((float)angleY) * Matrix.CreateRotationZ((float)angleZ);
 
             if (library != null)
                 RegisterInLibrary(library);

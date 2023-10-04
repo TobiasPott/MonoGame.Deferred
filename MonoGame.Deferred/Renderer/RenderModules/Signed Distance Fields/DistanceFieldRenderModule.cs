@@ -159,11 +159,11 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields
             {
                 BasicEntity entity = entities[index];
 
-                if (entity.SignedDistanceField.IsUsed)
+                if (entity.ModelDefinition.SDF.IsUsed)
                 {
                     _instanceInverseMatrixArray[i] = entity.WorldTransform.InverseWorld;
                     _instanceScaleArray[i] = entity.WorldTransform.Scale;
-                    _instanceSDFIndexArray[i] = entity.SignedDistanceField.ArrayIndex;
+                    _instanceSDFIndexArray[i] = entity.ModelDefinition.SDF.ArrayIndex;
 
                     i++;
 
