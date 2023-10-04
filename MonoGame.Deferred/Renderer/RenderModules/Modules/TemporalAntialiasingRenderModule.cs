@@ -100,7 +100,7 @@ namespace DeferredEngine.Renderer.RenderModules
         }
 
 
-        public void Draw(GraphicsDevice _graphicsDevice, bool useTonemap, RenderTarget2D currentFrame, RenderTarget2D previousFrames, RenderTarget2D output, Matrix currentViewToPreviousViewProjection, FullScreenTriangle fullScreenTriangle)
+        public void Draw(GraphicsDevice _graphicsDevice, bool useTonemap, RenderTarget2D currentFrame, RenderTarget2D previousFrames, RenderTarget2D output, Matrix currentViewToPreviousViewProjection, FullScreenTriangleBuffer fullScreenTriangle)
         {
 
             UseTonemap = useTonemap;

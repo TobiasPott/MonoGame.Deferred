@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using BEPUphysics;
-using BEPUphysics.BroadPhaseEntries;
-using BEPUphysics.Entities;
-using BEPUphysics.Entities.Prefabs;
-using BEPUutilities;
 using DeferredEngine.Entities;
 using DeferredEngine.Recources;
-using DeferredEngine.Recources.Helper;
 using DeferredEngine.Renderer.Helper;
-using DeferredEngine.Renderer.Helper.HelperGeometry;
 using DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Generator;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -30,9 +24,9 @@ namespace DeferredEngine.Logic
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  VARIABLES
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        
+
         private Assets _assets;
-        
+
         public Camera Camera;
 
 
@@ -53,17 +47,15 @@ namespace DeferredEngine.Logic
         //SDF
         public SdfGenerator _sdfGenerator;
 
-        private BasicEntity testEntity;
-
         #endregion
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //  MAIN FUNCTIONS
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  MAIN FUNCTIONS
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         //Done after Load
         public void Initialize(Assets assets, Space space, GraphicsDevice graphicsDevice)
@@ -90,7 +82,7 @@ namespace DeferredEngine.Logic
             Camera = new Camera(position: new Vector3(-88, -11f, 4), lookat: new Vector3(38, 8, 32));
 
             EnvironmentSample = new EnvironmentProbe(new Vector3(-45, -5, 5));
-            
+
             _sdfGenerator = new SdfGenerator();
 
             ////////////////////////////////////////////////////////////////////////
@@ -101,7 +93,7 @@ namespace DeferredEngine.Logic
 
             // NOTE: If you don't pass a materialEffect it will use the default material from the object
 
-            BasicEntity testEntity = AddEntity(model: _assets.SponzaModel,
+            AddEntity(model: _assets.SponzaModel,
                 position: Vector3.Zero, angleX: Math.PI / 2, angleY: 0, angleZ: 0, scale: 0.1f);//CHANGE BACK
 
 
@@ -130,24 +122,16 @@ namespace DeferredEngine.Logic
             // NOTE: Our physics entity's position will be overwritten, so it doesn't matter
             // NOTE: If a physics object has mass it will move, otherwise it is static
 
-            Entity physicsEntity;
-
-            //Just a ground box where nothing should fall through
-            //_physicsSpace.Add(new Box(new BEPUutilities.Vector3(0, 0, -0.5f), 1000, 1000, 1));
-
-            _physicsSpace.Add(physicsEntity = new Sphere(position: BEPUutilities.Vector3.Zero, radius: 5, mass: 50));
             AddEntity(model: _assets.IsoSphere,
                 materialEffect: _assets.AlphaBlendRim,
                 position: new Vector3(20, 0, 10), angleX: Math.PI / 2, angleY: 0, angleZ: 0, scale: 5);
 
-            testEntity.ApplyTransformation();
 
             for (int i = 0; i < 10; i++)
             {
                 MaterialEffect test = _assets.SilverMaterial.Clone();
                 test.Roughness = i / 9.0f + 0.1f;
                 test.Metallic = 1;
-                _physicsSpace.Add(physicsEntity = new Sphere(position: BEPUutilities.Vector3.Zero, radius: 5, mass: 50));
                 AddEntity(model: _assets.IsoSphere,
                     materialEffect: test,
                     position: new Vector3(30 + i * 10, 0, 10), angleX: Math.PI / 2, angleY: 0, angleZ: 0, scale: 5);
@@ -225,35 +209,35 @@ namespace DeferredEngine.Logic
                 RenderingSettings.e_enableeditor = !RenderingSettings.e_enableeditor;
             }
 
-            
+
             //Spawns a new light on the ground
             if (Input.keyboardState.IsKeyDown(Keys.L))
             {
-                AddPointLight(position: new Vector3(FastRand.NextSingle() * 250 - 125, FastRand.NextSingle() * 50 - 25, FastRand.NextSingle() * 30 - 19), 
-                    radius: 20, 
-                    color: FastRand.NextColor(), 
-                    intensity: 40, 
+                AddPointLight(position: new Vector3(FastRand.NextSingle() * 250 - 125, FastRand.NextSingle() * 50 - 25, FastRand.NextSingle() * 30 - 19),
+                    radius: 20,
+                    color: FastRand.NextColor(),
+                    intensity: 40,
                     castShadows: false,
                     isVolumetric: true);
             }
-            
+
             //Switch which rendertargets we show
             if (Input.WasKeyPressed(Keys.F1))
             {
                 _renderModeCycle++;
                 if (_renderModeCycle > Enum.GetNames(typeof(Renderer.RenderModes)).Length - 1) _renderModeCycle = 0;
 
-                RenderingSettings.g_rendermode = (Renderer.RenderModes) _renderModeCycle;
+                RenderingSettings.g_rendermode = (Renderer.RenderModes)_renderModeCycle;
             }
         }
-        
+
 
         //Load content
         public void Load(ContentManager content)
         {
             //...
         }
-        
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  HELPER FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -274,18 +258,18 @@ namespace DeferredEngine.Logic
         /// <param name="screenspaceShadowBlur"></param>
         /// <param name="staticshadows">These shadows will not be updated once they are created, moving objects will be shadowed incorrectly</param>
         /// <returns></returns>
-        private DirectionalLight AddDirectionalLight(Vector3 direction, int intensity, Color color, Vector3 position = default(Vector3), bool drawShadows = false, float shadowWorldSize = 100, float shadowDepth = 100, int shadowResolution = 512, DirectionalLight.ShadowFilteringTypes shadowFilteringFiltering = DirectionalLight.ShadowFilteringTypes.Poisson, bool screenspaceShadowBlur = false, bool staticshadows = false )
+        private DirectionalLight AddDirectionalLight(Vector3 direction, int intensity, Color color, Vector3 position = default(Vector3), bool drawShadows = false, float shadowWorldSize = 100, float shadowDepth = 100, int shadowResolution = 512, DirectionalLight.ShadowFilteringTypes shadowFilteringFiltering = DirectionalLight.ShadowFilteringTypes.Poisson, bool screenspaceShadowBlur = false, bool staticshadows = false)
         {
-            DirectionalLight light = new DirectionalLight(color: color, 
-                intensity: intensity, 
-                direction: direction, 
-                position: position, 
-                castShadows: drawShadows, 
-                shadowSize: shadowWorldSize, 
-                shadowDepth: shadowDepth, 
-                shadowResolution: shadowResolution, 
-                shadowFiltering: shadowFilteringFiltering, 
-                screenspaceshadowblur: screenspaceShadowBlur, 
+            DirectionalLight light = new DirectionalLight(color: color,
+                intensity: intensity,
+                direction: direction,
+                position: position,
+                castShadows: drawShadows,
+                shadowSize: shadowWorldSize,
+                shadowDepth: shadowDepth,
+                shadowResolution: shadowResolution,
+                shadowFiltering: shadowFilteringFiltering,
+                screenspaceshadowblur: screenspaceShadowBlur,
                 staticshadows: staticshadows);
             DirectionalLights.Add(light);
             return light;
@@ -327,11 +311,11 @@ namespace DeferredEngine.Logic
         private BasicEntity AddEntity(ModelDefinition model, Vector3 position, double angleX, double angleY, double angleZ, float scale)
         {
             BasicEntity entity = new BasicEntity(model,
-                null, 
-                position: position, 
-                angleZ: angleZ, 
-                angleX: angleX, 
-                angleY: angleY, 
+                null,
+                position: position,
+                angleZ: angleZ,
+                angleX: angleX,
+                angleY: angleY,
                 scale: Vector3.One * scale,
                 library: MeshMaterialLibrary);
             BasicEntities.Add(entity);

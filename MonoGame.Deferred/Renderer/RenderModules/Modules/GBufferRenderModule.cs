@@ -46,7 +46,7 @@ namespace DeferredEngine.Renderer.RenderModules
         private EffectTechnique _DrawNormal;
         private EffectTechnique _DrawBasic;
 
-        private FullScreenTriangle _fullScreenTriangle;
+        private FullScreenTriangleBuffer _fullScreenTriangle;
 
         public GBufferRenderModule(ContentManager content, string shaderPathClear, string shaderPathGbuffer)
         {
@@ -59,7 +59,7 @@ namespace DeferredEngine.Renderer.RenderModules
             get { return _farClip; }
             set
             {
-                _farClip = value; 
+                _farClip = value;
                 _FarClip.SetValue(value);
             }
         }
@@ -70,7 +70,7 @@ namespace DeferredEngine.Renderer.RenderModules
             get { return _camera; }
             set
             {
-                _camera = value; 
+                _camera = value;
                 _Camera.SetValue(value);
             }
         }
@@ -80,8 +80,8 @@ namespace DeferredEngine.Renderer.RenderModules
         {
             _clearGBufferPass = _clearShader.Techniques["Clear"].Passes[0];
 
-            _fullScreenTriangle = new FullScreenTriangle(graphicsDevice);
-            
+            _fullScreenTriangle = new FullScreenTriangleBuffer(graphicsDevice);
+
             _WorldView = _gbufferShader.Parameters["WorldView"];
             _WorldViewProj = _gbufferShader.Parameters["WorldViewProj"];
             _WorldViewIT = _gbufferShader.Parameters["WorldViewIT"];
@@ -117,7 +117,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _DrawNormal = _gbufferShader.Techniques["DrawNormal"];
             _DrawBasic = _gbufferShader.Techniques["DrawBasic"];
         }
-        
+
         public void Load(ContentManager content, string shaderPathClear, string shaderPathGbuffer)
         {
             _clearShader = content.Load<Effect>(shaderPathClear);
@@ -266,7 +266,7 @@ namespace DeferredEngine.Renderer.RenderModules
                     {
                         _Material_NormalMap.SetValue(material.NormalMap);
                         _gbufferShader.CurrentTechnique = _DrawNormal;
-                    } 
+                    }
 
                     else if (material.HasDiffuse)
                     {
@@ -305,13 +305,13 @@ namespace DeferredEngine.Renderer.RenderModules
 
                 if (material.Type == MaterialEffect.MaterialTypes.SubsurfaceScattering)
                 {
-                    if(RenderingSettings.sdf_subsurface)
+                    if (RenderingSettings.sdf_subsurface)
                         _Material_MaterialType.SetValue(material.MaterialTypeNumber);
                     else
                         _Material_MaterialType.SetValue(0);
                 }
                 else
-                _Material_MaterialType.SetValue(material.MaterialTypeNumber);
+                    _Material_MaterialType.SetValue(material.MaterialTypeNumber);
             }
         }
 

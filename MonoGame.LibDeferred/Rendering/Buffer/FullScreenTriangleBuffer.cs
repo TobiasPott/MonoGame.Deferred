@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.Helper
 {
-    public class FullScreenTriangle
+    public class FullScreenTriangleBuffer
     {
         private VertexBuffer vertexBuffer;
 
@@ -14,8 +14,7 @@ namespace DeferredEngine.Renderer.Helper
 
             public static readonly VertexDeclaration VertexDeclaration = new VertexDeclaration
             (
-                new VertexElement(0, VertexElementFormat.Vector2,
-                    VertexElementUsage.Position, 0)
+                new VertexElement(0, VertexElementFormat.Vector2, VertexElementUsage.Position, 0)
             );
 
             public FullScreenQuadVertex(Vector2 position)
@@ -26,7 +25,7 @@ namespace DeferredEngine.Renderer.Helper
             public const int SizeInBytes = 8;
         }
 
-        public FullScreenTriangle(GraphicsDevice graphics)
+        public FullScreenTriangleBuffer(GraphicsDevice graphics)
         {
             FullScreenQuadVertex[] vertices = new FullScreenQuadVertex[3];
             vertices[0] = new FullScreenQuadVertex(new Vector2(-1, -1));

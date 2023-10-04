@@ -65,7 +65,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Gener
             }
         }
 
-        public void GenerateDistanceFields(BasicEntity entity, GraphicsDevice graphics, DistanceFieldRenderModule distanceFieldRenderModule, FullScreenTriangle fullScreenTriangle)
+        public void GenerateDistanceFields(BasicEntity entity, GraphicsDevice graphics, DistanceFieldRenderModule distanceFieldRenderModule, FullScreenTriangleBuffer fullScreenTriangle)
         {
             SignedDistanceField uncomputedSignedDistanceField = entity.ModelDefinition.SDF;
             Model unprocessedModel = entity.ModelDefinition.Model;
@@ -214,7 +214,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Gener
         }
 
         
-        public void Update(List<BasicEntity> entities, GraphicsDevice graphics, DistanceFieldRenderModule distanceFieldRenderModule, FullScreenTriangle fullScreenTriangle, ref List<SignedDistanceField> sdfDefinitionsOut)
+        public void Update(List<BasicEntity> entities, GraphicsDevice graphics, DistanceFieldRenderModule distanceFieldRenderModule, FullScreenTriangleBuffer fullScreenTriangle, ref List<SignedDistanceField> sdfDefinitionsOut)
         {
             //First let's check which entities need building, if at all!
             sdfDefinitions.Clear();

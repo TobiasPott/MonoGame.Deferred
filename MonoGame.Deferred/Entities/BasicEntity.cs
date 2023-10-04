@@ -1,7 +1,6 @@
 ﻿using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper;
 using Matrix = Microsoft.Xna.Framework.Matrix;
-using Quaternion = BEPUutilities.Quaternion;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 
 namespace DeferredEngine.Entities

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DeferredEngine.Entities;
+﻿using DeferredEngine.Entities;
 using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
 
 namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
 {
@@ -153,7 +150,7 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
             deferredPointLightParameter_AlbedoMap = _pointLightShader.Parameters["AlbedoMap"];
             deferredPointLightParameter_NormalMap = _pointLightShader.Parameters["NormalMap"];
             deferredPointLightParameter_DepthMap = _pointLightShader.Parameters["DepthMap"];
-    }
+        }
 
         /// <summary>
         /// Draw the point lights, set up some stuff first

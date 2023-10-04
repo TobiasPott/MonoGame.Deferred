@@ -23,7 +23,7 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
 
         #region fields
         private readonly Effect _shaderEffect;
-        private FullScreenTriangle _fullScreenTriangle;
+        private FullScreenTriangleBuffer _fullScreenTriangle;
 
         private RenderTarget2D _renderTarget;
         
@@ -110,7 +110,7 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
 
         public void Initialize(GraphicsDevice graphics )
         {
-            _fullScreenTriangle = new FullScreenTriangle(graphics);
+            _fullScreenTriangle = new FullScreenTriangleBuffer(graphics);
         }
 
         public void Dispose()

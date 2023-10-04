@@ -17,7 +17,7 @@ namespace DeferredEngine.Renderer.RenderModules
         private const int MAXLIGHTSPERTILE = 40;
 
         private Effect _shader;
-        
+
         private EffectParameter _worldParam;
         private EffectParameter _worldViewProjParam;
         private EffectParameter _worldViewITParam;
@@ -44,7 +44,7 @@ namespace DeferredEngine.Renderer.RenderModules
         private Vector3[] _tileFrustumCorners = new Vector3[8];
 
         private EffectPass _pass1;
-        
+
         public Matrix World { set { _worldParam.SetValue(value); } }
         public Matrix WorldViewProj { set { _worldViewProjParam.SetValue(value); } }
         public Matrix WorldViewIT { set { _worldViewITParam.SetValue(value); } }
@@ -62,7 +62,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _worldViewITParam = _shader.Parameters["WorldViewIT"];
 
             _lightAmountParam = _shader.Parameters["LightAmount"];
-            
+
             _lightPositionWSParam = _shader.Parameters["LightPositionWS"];
             _lightRadiusParam = _shader.Parameters["LightRadius"];
             _lightIntensityParam = _shader.Parameters["LightIntensity"];
@@ -106,7 +106,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
             //Vector3[] corners = frustum.GetCorners();
             //BoundingFrustumEx frustum3 = new BoundingFrustumEx(ref corners);
-            
+
             //TiledLighting(frustum, pointLights, 20, 10);
 
             meshMat.Draw(MeshMaterialLibrary.RenderType.Forward, viewProjection, renderModule: this);
@@ -118,38 +118,38 @@ namespace DeferredEngine.Renderer.RenderModules
         {
             if (TiledList == null || TiledList.Length != cols * rows)
             {
-                TiledList = new int[cols*rows][];
-                TiledListLength = new float[cols*rows];
+                TiledList = new int[cols * rows][];
+                TiledListLength = new float[cols * rows];
 
                 for (var index = 0; index < TiledList.Length; index++)
                 {
                     TiledList[index] = new int[MAXLIGHTSPERTILE];
                 }
             }
-            
-            if(_tileFrustum==null)
+
+            if (_tileFrustum == null)
                 _tileFrustum = new BoundingFrustumEx(frustum.Matrix);
 
             Vector3[] mainfrustumCorners = frustum.GetCorners();
-            
+
             for (float col = 0; col < cols; col++)
             {
                 for (float row = 0; row < rows; row++)
                 {
 
                     //top left
-                    _tileFrustumCorners[0] = mainfrustumCorners[0] 
-                        + (mainfrustumCorners[1]-mainfrustumCorners[0]) * col / cols 
+                    _tileFrustumCorners[0] = mainfrustumCorners[0]
+                        + (mainfrustumCorners[1] - mainfrustumCorners[0]) * col / cols
                         + (mainfrustumCorners[3] - mainfrustumCorners[0]) * row / rows;
 
                     //top right
-                    _tileFrustumCorners[1] = mainfrustumCorners[0] 
+                    _tileFrustumCorners[1] = mainfrustumCorners[0]
                         + (mainfrustumCorners[1] - mainfrustumCorners[0]) * (col + 1) / cols
-                        + (mainfrustumCorners[3] - mainfrustumCorners[0]) * row / rows; 
+                        + (mainfrustumCorners[3] - mainfrustumCorners[0]) * row / rows;
 
 
                     //bot right
-                    _tileFrustumCorners[2] = mainfrustumCorners[0] 
+                    _tileFrustumCorners[2] = mainfrustumCorners[0]
                         + (mainfrustumCorners[1] - mainfrustumCorners[0]) * (col + 1) / cols
                         + (mainfrustumCorners[2] - mainfrustumCorners[1]) * (row + 1) / rows;
 
@@ -157,24 +157,24 @@ namespace DeferredEngine.Renderer.RenderModules
                     _tileFrustumCorners[3] = mainfrustumCorners[0]
                         + (mainfrustumCorners[1] - mainfrustumCorners[0]) * (col) / cols
                         + (mainfrustumCorners[2] - mainfrustumCorners[1]) * (row + 1) / rows;
-                    
+
                     _tileFrustumCorners[4] = mainfrustumCorners[4]
                                              + (mainfrustumCorners[5] - mainfrustumCorners[4]) * col / cols
                                              + (mainfrustumCorners[7] - mainfrustumCorners[4]) * row / rows;
-                    
+
                     _tileFrustumCorners[5] = mainfrustumCorners[4]
                                              + (mainfrustumCorners[5] - mainfrustumCorners[4]) * (col + 1) / cols
                                              + (mainfrustumCorners[7] - mainfrustumCorners[4]) * row / rows;
 
-                    
+
                     _tileFrustumCorners[6] = mainfrustumCorners[4]
                                              + (mainfrustumCorners[5] - mainfrustumCorners[4]) * (col + 1) / cols
                                              + (mainfrustumCorners[6] - mainfrustumCorners[5]) * (row + 1) / rows;
-                    
+
                     _tileFrustumCorners[7] = mainfrustumCorners[4]
                                              + (mainfrustumCorners[5] - mainfrustumCorners[4]) * (col) / cols
                                              + (mainfrustumCorners[6] - mainfrustumCorners[5]) * (row + 1) / rows;
-                    
+
                     _tileFrustum.SetCorners(ref _tileFrustumCorners);
                     _tileFrustum.CreatePlanesFromCorners();
 
@@ -232,10 +232,10 @@ namespace DeferredEngine.Renderer.RenderModules
             for (var index = 0; index < count; index++)
             {
                 PointLight light = pointLights[index];
-                
+
                 //Check frustum culling
                 if (frustum.Contains(light.BoundingSphere) == ContainmentType.Disjoint) continue;
-                
+
                 LightPositionWS[lightsInBounds] = light.Position;
                 LightColor[lightsInBounds] = light.ColorV3;
                 LightIntensity[lightsInBounds] = light.Intensity;
@@ -250,7 +250,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _lightIntensityParam.SetValue(LightIntensity);
             _lightRadiusParam.SetValue(LightRadius);
         }
-        
+
 
         public void Dispose()
         {
@@ -262,7 +262,7 @@ namespace DeferredEngine.Renderer.RenderModules
             //Matrix worldView = localWorldMatrix * (Matrix)view;
             World = localWorldMatrix;
             WorldViewProj = localWorldMatrix * viewProjection;
-            WorldViewIT = Matrix.Transpose( Matrix.Invert(localWorldMatrix));
+            WorldViewIT = Matrix.Transpose(Matrix.Invert(localWorldMatrix));
 
             _pass1.Apply();
             //_WorldViewProj.SetValue(localWorldMatrix * viewProjection);

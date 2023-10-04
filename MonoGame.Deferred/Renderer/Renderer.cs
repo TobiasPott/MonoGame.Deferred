@@ -34,7 +34,7 @@ namespace DeferredEngine.Renderer
         private GraphicsDevice _graphicsDevice;
         private SpriteBatch _spriteBatch;
         //private QuadRenderer _quadRenderer;
-        private FullScreenTriangle _fullScreenTriangle;
+        private FullScreenTriangleBuffer _fullScreenTriangle;
         private GaussianBlur _gaussianBlur;
         private EditorRender _editorRender;
         private CPURayMarch _cpuRayMarch;
@@ -196,7 +196,7 @@ namespace DeferredEngine.Renderer
         {
             _graphicsDevice = graphicsDevice;
 
-            _fullScreenTriangle = new FullScreenTriangle(graphicsDevice);
+            _fullScreenTriangle = new FullScreenTriangleBuffer(graphicsDevice);
             _spriteBatch = new SpriteBatch(graphicsDevice);
             _gaussianBlur = new GaussianBlur();
             _gaussianBlur.Initialize(graphicsDevice);

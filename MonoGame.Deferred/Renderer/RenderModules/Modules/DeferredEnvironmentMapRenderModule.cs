@@ -1,9 +1,9 @@
-﻿using System;
-using DeferredEngine.Entities;
+﻿using DeferredEngine.Entities;
 using DeferredEngine.Renderer.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
@@ -111,7 +111,8 @@ namespace DeferredEngine.Renderer.RenderModules
         public float FireflyThreshold
         {
             get { return _fireflyThreshold; }
-            set {
+            set
+            {
                 if (Math.Abs(value - _fireflyThreshold) > 0.0001f)
                 {
                     _fireflyThreshold = value;
@@ -123,7 +124,8 @@ namespace DeferredEngine.Renderer.RenderModules
         public float SpecularStrength
         {
             get { return _specularStrength; }
-            set {
+            set
+            {
                 if (Math.Abs(value - _specularStrength) > 0.0001f)
                 {
                     _specularStrength = value;
@@ -177,7 +179,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _paramDiffuseStrength = _deferredEnvironmentShader.Parameters["EnvironmentMapDiffuseStrength"];
             _paramCameraPositionWS = _deferredEnvironmentShader.Parameters["CameraPositionWS"];
             _paramTime = _deferredEnvironmentShader.Parameters["Time"];
-            
+
             //SDF
             ParamVolumeTexParam = _deferredEnvironmentShader.Parameters["VolumeTex"];
             ParamVolumeTexSizeParam = _deferredEnvironmentShader.Parameters["VolumeTexSize"];
@@ -192,24 +194,24 @@ namespace DeferredEngine.Renderer.RenderModules
             _passSky = _deferredEnvironmentShader.Techniques["Sky"].Passes[0];
             _passBasic = _deferredEnvironmentShader.Techniques["Basic"].Passes[0];
         }
-        
+
         public void Load(ContentManager content, string shaderPath)
         {
             _deferredEnvironmentShader = content.Load<Effect>(shaderPath);
 
         }
 
-        public void DrawEnvironmentMap(GraphicsDevice graphicsDevice, Camera camera, Matrix view, FullScreenTriangle fullScreenTriangle, EnvironmentProbe envSample, GameTime gameTime, bool fireflyReduction, float ffThreshold)
+        public void DrawEnvironmentMap(GraphicsDevice graphicsDevice, Camera camera, Matrix view, FullScreenTriangleBuffer fullScreenTriangle, EnvironmentProbe envSample, GameTime gameTime, bool fireflyReduction, float ffThreshold)
         {
             FireflyReduction = fireflyReduction;
             FireflyThreshold = ffThreshold;
-            
+
             SpecularStrength = envSample.SpecularStrength;
             DiffuseStrength = envSample.DiffuseStrength;
             CameraPositionWS = camera.Position;
 
             Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
-            
+
             graphicsDevice.DepthStencilState = DepthStencilState.None;
             graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             UseSDFAO = envSample.UseSDFAO;
@@ -218,7 +220,7 @@ namespace DeferredEngine.Renderer.RenderModules
             fullScreenTriangle.Draw(graphicsDevice);
         }
 
-        public void DrawSky(GraphicsDevice graphicsDevice, FullScreenTriangle quadRenderer)
+        public void DrawSky(GraphicsDevice graphicsDevice, FullScreenTriangleBuffer quadRenderer)
         {
             graphicsDevice.DepthStencilState = DepthStencilState.None;
             graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;

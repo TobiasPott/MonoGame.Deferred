@@ -8,7 +8,7 @@ namespace DeferredEngine.Renderer.Helper
     public class LineHelper
     {
         public VertexPositionColor[] Verts;
-        public static short[] Indices = {0, 1};
+        public static short[] Indices = { 0, 1 };
 
         private Vector3 _start;
         private Vector3 _end;
@@ -69,6 +69,6 @@ namespace DeferredEngine.Renderer.Helper
             Verts[0].Position = _start;
             Verts[1].Position = _end;
         }
-        
+
     }
 }

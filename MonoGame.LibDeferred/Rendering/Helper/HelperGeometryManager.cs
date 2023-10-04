@@ -48,7 +48,7 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
 
         public void AddLineStartEnd(Vector3 start, Vector3 end, short timer, Color startColor, Color endColor)
         {
-            _lineHelperManager.AddLineStartEnd(start,end, timer, startColor, endColor);
+            _lineHelperManager.AddLineStartEnd(start, end, timer, startColor, endColor);
         }
 
         public void AddOctahedron(Vector3 position, Vector4 color)

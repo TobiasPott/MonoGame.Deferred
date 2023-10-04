@@ -24,13 +24,13 @@ namespace DeferredEngine.Renderer.RenderModules.Default
 
             _pass1 = _shader.Techniques["technique1"].Passes[0];
         }
-        
+
         public void Load(ContentManager content, string shaderPath)
         {
             _shader = content.Load<Effect>(shaderPath);
 
         }
-       
+
         public void Apply(Matrix localWorldMatrix, Matrix? view, Matrix viewProjection)
         {
             throw new NotImplementedException();

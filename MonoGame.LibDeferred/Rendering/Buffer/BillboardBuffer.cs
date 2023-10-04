@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.Helper.Editor
@@ -22,23 +21,23 @@ namespace DeferredEngine.Renderer.Helper.Editor
             vBufferArray[0].Color = color;
 
             vBufferArray[1].Position = Vector3.Zero;
-            vBufferArray[ 1].TextureCoordinate = new Vector2(0, 1);
+            vBufferArray[1].TextureCoordinate = new Vector2(0, 1);
             vBufferArray[1].Color = color;
 
             vBufferArray[2].Position = Vector3.Zero;
-            vBufferArray[ 2].TextureCoordinate = new Vector2(1, 1);
+            vBufferArray[2].TextureCoordinate = new Vector2(1, 1);
             vBufferArray[2].Color = color;
 
             vBufferArray[3].Position = Vector3.Zero;
-            vBufferArray[ 3].TextureCoordinate = new Vector2(1, 0);
+            vBufferArray[3].TextureCoordinate = new Vector2(1, 0);
             vBufferArray[3].Color = color;
 
-            iBufferArray[ 0] = 0;
-            iBufferArray[ 1] = 1;
-            iBufferArray[ 2] = 2;
-            iBufferArray[ 3] = 2;
-            iBufferArray[ 4] = 3;
-            iBufferArray[ 5] = 0;
+            iBufferArray[0] = 0;
+            iBufferArray[1] = 1;
+            iBufferArray[2] = 2;
+            iBufferArray[3] = 2;
+            iBufferArray[4] = 3;
+            iBufferArray[5] = 0;
 
             VBuffer.SetData(vBufferArray);
             IBuffer.SetData(iBufferArray);

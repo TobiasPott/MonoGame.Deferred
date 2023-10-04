@@ -123,7 +123,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields
             _shader?.Dispose();
         }
 
-        public void Draw(GraphicsDevice graphicsDevice, Camera camera, FullScreenTriangle fullScreenTriangle)
+        public void Draw(GraphicsDevice graphicsDevice, Camera camera, FullScreenTriangleBuffer fullScreenTriangle)
         {
             CameraPosition = camera.Position;
 
@@ -282,7 +282,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields
         }
 
 
-        public RenderTarget2D CreateSDFTexture(GraphicsDevice graphics, Texture2D triangleData, int xsteps, int ysteps, int zsteps, SignedDistanceField sdf, FullScreenTriangle fullScreenTriangle, int trianglesLength)
+        public RenderTarget2D CreateSDFTexture(GraphicsDevice graphics, Texture2D triangleData, int xsteps, int ysteps, int zsteps, SignedDistanceField sdf, FullScreenTriangleBuffer fullScreenTriangle, int trianglesLength)
         {
             RenderTarget2D output = new RenderTarget2D(graphics, xsteps * zsteps, ysteps, false, SurfaceFormat.Single, DepthFormat.None);
 

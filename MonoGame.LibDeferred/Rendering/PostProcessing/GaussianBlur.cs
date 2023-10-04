@@ -42,7 +42,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _rt20482.Dispose();
         }
 
-        public RenderTarget2D DrawGaussianBlur(RenderTarget2D renderTargetOutput, FullScreenTriangle triangle)
+        public RenderTarget2D DrawGaussianBlur(RenderTarget2D renderTargetOutput, FullScreenTriangleBuffer triangle)
         {
             //select rendertarget
             RenderTarget2D renderTargetBlur = null;
@@ -88,7 +88,7 @@ namespace DeferredEngine.Renderer.RenderModules
             return renderTargetOutput;
         }
 
-        public RenderTargetCube DrawGaussianBlur(RenderTargetCube renderTargetOutput, CubeMapFace cubeFace, FullScreenTriangle triangle)
+        public RenderTargetCube DrawGaussianBlur(RenderTargetCube renderTargetOutput, CubeMapFace cubeFace, FullScreenTriangleBuffer triangle)
         {
             //select rendertarget
             RenderTarget2D renderTargetBlur = null;

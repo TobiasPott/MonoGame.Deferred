@@ -1,9 +1,9 @@
-﻿using System;
-using DeferredEngine.Renderer.Helper;
+﻿using DeferredEngine.Renderer.Helper;
 using DeferredEngine.Renderer.RenderModules.Default;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
@@ -11,7 +11,7 @@ namespace DeferredEngine.Renderer.RenderModules
     public class SubsurfaceScatterRenderModule : IRenderModule, IDisposable
     {
         private Effect _shader;
-        
+
         private EffectParameter _albedoMapParameter;
         private EffectParameter _normalMapParameter;
         private EffectParameter _frustumCornersParameter;
@@ -25,11 +25,11 @@ namespace DeferredEngine.Renderer.RenderModules
         {
             set { _frustumCornersParameter.SetValue(value); }
         }
-        
+
         public Texture2D NormalMap { set { _normalMapParameter.SetValue(value); } }
         public Texture2D AlbedoMap { set { _albedoMapParameter.SetValue(value); } }
 
-        public Matrix World { set { _worldParam.SetValue(value);} }
+        public Matrix World { set { _worldParam.SetValue(value); } }
         public Matrix WorldViewProj { set { _worldViewProjParam.SetValue(value); } }
         public Matrix WorldViewIT { set { _worldViewITParam.SetValue(value); } }
 
@@ -62,9 +62,9 @@ namespace DeferredEngine.Renderer.RenderModules
         {
             graphicsDevice.SetRenderTarget(output);
             graphicsDevice.DepthStencilState = DepthStencilState.Default;
-            
+
             meshMat.Draw(MeshMaterialLibrary.RenderType.SubsurfaceScattering, viewProjection, renderModule: this);
-            
+
             return output;
         }
 
@@ -79,7 +79,7 @@ namespace DeferredEngine.Renderer.RenderModules
             World = localWorldMatrix;
             WorldViewProj = localWorldMatrix * viewProjection;
             WorldViewIT = Matrix.Transpose(localWorldMatrix);
-            
+
             _pass1.Apply();
             //_WorldViewProj.SetValue(localWorldMatrix * viewProjection);
 

@@ -60,7 +60,7 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
 
         //Objects
         private GraphicsDevice _graphicsDevice;
-        private FullScreenTriangle _fullScreenTriangle;
+        private FullScreenTriangleBuffer _fullScreenTriangle;
 
         //Shader + variables
         private Effect _bloomEffect;
@@ -200,7 +200,7 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
         #region initialize
 
         //Initialize graphicsDevice
-        public void Initialize(GraphicsDevice graphicsDevice, int width, int height, FullScreenTriangle fullScreenTriangle)
+        public void Initialize(GraphicsDevice graphicsDevice, int width, int height, FullScreenTriangleBuffer fullScreenTriangle)
         {
             _fullScreenTriangle = fullScreenTriangle;
 

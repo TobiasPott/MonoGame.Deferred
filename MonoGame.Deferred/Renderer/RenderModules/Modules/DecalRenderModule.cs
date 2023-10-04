@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DeferredEngine.Entities;
+﻿using DeferredEngine.Entities;
 using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
@@ -33,12 +29,12 @@ namespace DeferredEngine.Renderer.RenderModules
         private int _shaderIndex;
         private ShaderManager _shaderManagerReference;
 
-        public float FarClip { set {_paramFarClip.SetValue(value);} }
+        public float FarClip { set { _paramFarClip.SetValue(value); } }
         public Texture2D DepthMap { set { _paramDepthMap.SetValue(value); } }
 
         public DecalRenderModule(ShaderManager shaderManager, string shaderPath)
         {
-            
+
             Load(shaderManager, shaderPath);
             InitializeShader();
         }
@@ -81,7 +77,7 @@ namespace DeferredEngine.Renderer.RenderModules
             Vector3 a = -Vector3.One;
             Vector3 b = Vector3.One;
             Color color = Color.White;
-            Color colorUpper = new Color(0,255,0,255);
+            Color colorUpper = new Color(0, 255, 0, 255);
             verts[0] = new VertexPositionColor(new Vector3(a.X, a.Y, a.Z), color);
             verts[1] = new VertexPositionColor(new Vector3(b.X, a.Y, a.Z), color);
             verts[2] = new VertexPositionColor(new Vector3(a.X, b.Y, a.Z), color);
@@ -159,10 +155,10 @@ namespace DeferredEngine.Renderer.RenderModules
                 Matrix localMatrix = decal.World;
 
                 _paramDecalMap.SetValue(decal.Texture);
-                _paramWorldView.SetValue(localMatrix*view);
-                _paramWorldViewProj.SetValue( localMatrix*viewProjection);
+                _paramWorldView.SetValue(localMatrix * view);
+                _paramWorldViewProj.SetValue(localMatrix * viewProjection);
                 _paramInverseWorldView.SetValue(inverseView * decal.InverseWorld);
-                
+
                 _decalPass.Apply();
 
                 graphics.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 12);
@@ -173,16 +169,16 @@ namespace DeferredEngine.Renderer.RenderModules
         {
             graphics.SetVertexBuffer(_vertexBuffer);
             graphics.Indices = _indexBufferCage;
-            
+
             Matrix localMatrix = decal.World;
 
             _paramWorldView.SetValue(localMatrix * view);
             _paramWorldViewProj.SetValue(localMatrix * viewProjection);
-            
+
             _outlinePass.Apply();
 
             graphics.DrawIndexedPrimitives(PrimitiveType.LineList, 0, 0, 12);
-            
+
         }
 
 

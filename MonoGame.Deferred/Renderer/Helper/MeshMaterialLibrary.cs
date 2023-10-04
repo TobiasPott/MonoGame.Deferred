@@ -25,7 +25,7 @@ namespace DeferredEngine.Renderer.Helper
         private readonly BoundingSphere _defaultBoundingSphere;
         private RasterizerState _shadowGenerationRasterizerState;
         private DepthStencilState _depthWrite;
-        private FullScreenTriangle _fullScreenTriangle;
+        private FullScreenTriangleBuffer _fullScreenTriangle;
 
         private GraphicsDevice graphicsDevice;
 
@@ -48,7 +48,7 @@ namespace DeferredEngine.Renderer.Helper
                 DepthBufferFunction = CompareFunction.Always
             };
 
-            _fullScreenTriangle = new FullScreenTriangle(graphics);
+            _fullScreenTriangle = new FullScreenTriangleBuffer(graphics);
         }
 
         /// <summary>
