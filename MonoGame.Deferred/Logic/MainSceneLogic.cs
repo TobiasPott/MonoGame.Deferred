@@ -30,7 +30,7 @@ namespace DeferredEngine.Logic
         //mesh library, holds all the meshes and their materials
         public MeshMaterialLibrary MeshMaterialLibrary;
 
-        public readonly List<BasicEntity> BasicEntities = new List<BasicEntity>();
+        public readonly List<ModelEntity> BasicEntities = new List<ModelEntity>();
         public readonly List<Decal> Decals = new List<Decal>();
         public readonly List<PointLight> PointLights = new List<PointLight>();
         public readonly List<DirectionalLight> DirectionalLights = new List<DirectionalLight>();
@@ -301,9 +301,9 @@ namespace DeferredEngine.Logic
         /// <param name="angleZ"></param>
         /// <param name="scale"></param>
         /// <returns>returns the basicEntity we created</returns>
-        private BasicEntity AddEntity(ModelDefinition model, Vector3 position, double angleX, double angleY, double angleZ, float scale)
+        private ModelEntity AddEntity(ModelDefinition model, Vector3 position, double angleX, double angleY, double angleZ, float scale)
         {
-            BasicEntity entity = new BasicEntity(model,
+            ModelEntity entity = new ModelEntity(model,
                 null,
                 position: position,
                 angleZ: angleZ,
@@ -327,9 +327,9 @@ namespace DeferredEngine.Logic
         /// <param name="angleZ"></param>
         /// <param name="scale"></param>
         /// <returns>returns the basicEntity we created</returns>
-        private BasicEntity AddEntity(ModelDefinition model, MaterialEffect materialEffect, Vector3 position, double angleX, double angleY, double angleZ, float scale)
+        private ModelEntity AddEntity(ModelDefinition model, MaterialEffect materialEffect, Vector3 position, double angleX, double angleY, double angleZ, float scale)
         {
-            BasicEntity entity = new BasicEntity(model,
+            ModelEntity entity = new ModelEntity(model,
                 materialEffect,
                 position: position,
                 angleZ: angleZ,
@@ -346,7 +346,7 @@ namespace DeferredEngine.Logic
         /// Create a static physics mesh from a model and scale.
         /// </summary>
         /// <param name="entity"></param>
-        private void AddStaticPhysics(BasicEntity entity)
+        private void AddStaticPhysics(ModelEntity entity)
         {
             //BEPUutilities.Vector3[] vertices;
             //int[] indices;

@@ -1,4 +1,5 @@
 ﻿using DeferredEngine.Recources;
+using DeferredEngine.Recources.Helper;
 using DeferredEngine.Renderer.Helper;
 using Matrix = Microsoft.Xna.Framework.Matrix;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
@@ -6,13 +7,15 @@ using Vector3 = Microsoft.Xna.Framework.Vector3;
 namespace DeferredEngine.Entities
 {
 
-    public sealed class BasicEntity : EntityBase
+    public sealed class ModelEntity : EntityBase
     {
-        //Avoid nesting, but i could also just provide the ModelDefinition instead
         public readonly ModelDefinition ModelDefinition;
         public readonly MaterialEffect Material;
 
-        public BasicEntity(ModelDefinition modelbb, MaterialEffect material, Vector3 position, double angleZ, double angleX, double angleY, Vector3 scale, MeshMaterialLibrary library = null)
+        public ModelEntity(ModelDefinition modelbb, MaterialEffect material, Vector3 position, double angleZ, double angleX, double angleY, Vector3 scale, MeshMaterialLibrary library = null)
+            : this(modelbb, material, position, new Vector3((float)angleX, (float)angleY, (float)angleZ), scale, library)
+        { }
+        public ModelEntity(ModelDefinition modelbb, MaterialEffect material, Vector3 position, Vector3 rotationAngles, Vector3 scale, MeshMaterialLibrary library = null)
             : base(modelbb.BoundingBox, modelbb.BoundingBoxOffset)
         {
             ModelDefinition = modelbb;
@@ -21,7 +24,7 @@ namespace DeferredEngine.Entities
             Position = position;
             Scale = scale;
 
-            RotationMatrix = Matrix.CreateRotationX((float)angleX) * Matrix.CreateRotationY((float)angleY) * Matrix.CreateRotationZ((float)angleZ);
+            RotationMatrix = Extensions.CreateRotationXYZ(rotationAngles);
 
             if (library != null)
                 RegisterInLibrary(library);
@@ -31,21 +34,6 @@ namespace DeferredEngine.Entities
             WorldTransform.InverseWorld = Matrix.Invert(Matrix.CreateTranslation(BoundingBoxOffset * Scale) * RotationMatrix * Matrix.CreateTranslation(Position));
         }
 
-        public BasicEntity(ModelDefinition modelbb, MaterialEffect material, Vector3 position, Matrix rotationMatrix, Vector3 scale)
-            : base(modelbb.BoundingBox, modelbb.BoundingBoxOffset)
-        {
-            ModelDefinition = modelbb;
-
-            Material = material;
-            Position = position;
-            RotationMatrix = rotationMatrix;
-            Scale = scale;
-            RotationMatrix = rotationMatrix;
-
-            WorldTransform.World = Matrix.CreateScale(Scale) * RotationMatrix * Matrix.CreateTranslation(Position);
-            WorldTransform.Scale = Scale;
-            WorldTransform.InverseWorld = Matrix.Invert(Matrix.CreateTranslation(BoundingBoxOffset * Scale) * RotationMatrix * Matrix.CreateTranslation(Position));
-        }
 
         public void RegisterInLibrary(MeshMaterialLibrary library)
         {
@@ -68,7 +56,7 @@ namespace DeferredEngine.Entities
             WorldTransform.World = _worldOldMatrix;
 
             WorldTransform.InverseWorld = Matrix.Invert(Matrix.CreateTranslation(BoundingBoxOffset * Scale) * RotationMatrix * Matrix.CreateTranslation(Position));
-        
+
         }
 
     }

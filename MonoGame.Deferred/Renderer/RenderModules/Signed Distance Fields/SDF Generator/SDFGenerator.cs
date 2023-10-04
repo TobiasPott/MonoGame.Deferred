@@ -65,7 +65,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Gener
             }
         }
 
-        public void GenerateDistanceFields(BasicEntity entity, GraphicsDevice graphics, DistanceFieldRenderModule distanceFieldRenderModule, FullScreenTriangleBuffer fullScreenTriangle)
+        public void GenerateDistanceFields(ModelEntity entity, GraphicsDevice graphics, DistanceFieldRenderModule distanceFieldRenderModule, FullScreenTriangleBuffer fullScreenTriangle)
         {
             SignedDistanceField uncomputedSignedDistanceField = entity.ModelDefinition.SDF;
             Model unprocessedModel = entity.ModelDefinition.Model;
@@ -214,7 +214,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Gener
         }
 
         
-        public void Update(List<BasicEntity> entities, GraphicsDevice graphics, DistanceFieldRenderModule distanceFieldRenderModule, FullScreenTriangleBuffer fullScreenTriangle, ref List<SignedDistanceField> sdfDefinitionsOut)
+        public void Update(List<ModelEntity> entities, GraphicsDevice graphics, DistanceFieldRenderModule distanceFieldRenderModule, FullScreenTriangleBuffer fullScreenTriangle, ref List<SignedDistanceField> sdfDefinitionsOut)
         {
             //First let's check which entities need building, if at all!
             sdfDefinitions.Clear();
@@ -222,7 +222,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Gener
             //This should preferably be a list of meshes that are in the scene, instead of a list of entities
             for (var index0 = 0; index0 < entities.Count; index0++)
             {
-                BasicEntity entity = entities[index0];
+                ModelEntity entity = entities[index0];
 
 
                 if (!entity.ModelDefinition.SDF.IsUsed) continue;

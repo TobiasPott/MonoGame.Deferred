@@ -222,7 +222,7 @@ namespace DeferredEngine.Renderer
         /// </summary>
         /// <param name="gameTime"></param>
         /// <param name="isActive"></param>
-        public void Update(GameTime gameTime, bool isActive, SdfGenerator sdfGenerator, List<BasicEntity> entities)
+        public void Update(GameTime gameTime, bool isActive, SdfGenerator sdfGenerator, List<ModelEntity> entities)
         {
             if (!isActive) return;
             _editorRender.Update(gameTime);
@@ -255,7 +255,7 @@ namespace DeferredEngine.Renderer
         /// <param name="editorData">The data passed from our editor logic</param>
         /// <param name="gameTime"></param>
         /// <returns></returns>
-        public EditorLogic.EditorReceivedData Draw(Camera camera, MeshMaterialLibrary meshMaterialLibrary, List<BasicEntity> entities, List<Decal> decals, List<PointLight> pointLights, List<DirectionalLight> directionalLights, EnvironmentProbe envSample, EditorLogic.EditorSendData editorData, GameTime gameTime)
+        public EditorLogic.EditorReceivedData Draw(Camera camera, MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<Decal> decals, List<PointLight> pointLights, List<DirectionalLight> directionalLights, EnvironmentProbe envSample, EditorLogic.EditorSendData editorData, GameTime gameTime)
         {
             //Reset the stat counter, so we can count stats/information for this frame only
             ResetStats();
@@ -403,10 +403,10 @@ namespace DeferredEngine.Renderer
                     }
 
                     if (RenderingSettings.e_drawboundingbox)
-                        if (editorData.SelectedObject is BasicEntity)
+                        if (editorData.SelectedObject is ModelEntity)
                         {
                             HelperGeometryManager.GetInstance()
-                                .AddBoundingBox(editorData.SelectedObject as BasicEntity);
+                                .AddBoundingBox(editorData.SelectedObject as ModelEntity);
                         }
                 }
             }
@@ -449,7 +449,7 @@ namespace DeferredEngine.Renderer
         /// <param name="farPlane"></param>
         /// <param name="gameTime"></param>
         /// <param name="camera"></param>
-        private void DrawCubeMap(Vector3 origin, MeshMaterialLibrary meshMaterialLibrary, List<BasicEntity> entities, List<PointLight> pointLights, List<DirectionalLight> dirLights, EnvironmentProbe envSample, float farPlane, GameTime gameTime, Camera camera)
+        private void DrawCubeMap(Vector3 origin, MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<PointLight> pointLights, List<DirectionalLight> dirLights, EnvironmentProbe envSample, float farPlane, GameTime gameTime, Camera camera)
         {
             //If our cubemap is not yet initialized, create a new one
             if (_renderTargetCubeMap == null)
@@ -692,7 +692,7 @@ namespace DeferredEngine.Renderer
         /// <param name="pointLights"></param>
         /// <param name="dirLights"></param>
         /// <param name="camera"></param>
-        private void DrawShadowMaps(MeshMaterialLibrary meshMaterialLibrary, List<BasicEntity> entities, List<PointLight> pointLights, List<DirectionalLight> dirLights, Camera camera)
+        private void DrawShadowMaps(MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<PointLight> pointLights, List<DirectionalLight> dirLights, Camera camera)
         {
             //Don't render for the first frame, we need a guideline first
             if (_boundingFrustum == null) UpdateViewProjection(camera, meshMaterialLibrary, entities);
@@ -715,7 +715,7 @@ namespace DeferredEngine.Renderer
         /// <param name="camera"></param>
         /// <param name="meshMaterialLibrary"></param>
         /// <param name="entities"></param>
-        private void UpdateViewProjection(Camera camera, MeshMaterialLibrary meshMaterialLibrary, List<BasicEntity> entities)
+        private void UpdateViewProjection(Camera camera, MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities)
         {
             _viewProjectionHasChanged = camera.HasChanged;
 

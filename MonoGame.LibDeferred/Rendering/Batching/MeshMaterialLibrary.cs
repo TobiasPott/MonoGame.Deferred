@@ -152,7 +152,7 @@ namespace DeferredEngine.Renderer.Helper
             }
         }
 
-        public void DeleteFromRegistry(BasicEntity basicEntity)
+        public void DeleteFromRegistry(ModelEntity basicEntity)
         {
             if (basicEntity.ModelDefinition.Model == null) return; //nothing to delete
 
@@ -197,7 +197,7 @@ namespace DeferredEngine.Renderer.Helper
         /// <param name="entities"></param>
         /// <param name="boundingFrustrum"></param>
         /// <param name="hasCameraChanged"></param>
-        public bool FrustumCulling(List<BasicEntity> entities, BoundingFrustum boundingFrustrum, bool hasCameraChanged, Vector3 cameraPosition)
+        public bool FrustumCulling(List<ModelEntity> entities, BoundingFrustum boundingFrustrum, bool hasCameraChanged, Vector3 cameraPosition)
         {
             //Check if the culling mode has changed
             if (_previousMode != RenderingSettings.g_cpuculling)
@@ -227,7 +227,7 @@ namespace DeferredEngine.Renderer.Helper
 
             for (int index1 = 0; index1 < entities.Count; index1++)
             {
-                BasicEntity entity = entities[index1];
+                ModelEntity entity = entities[index1];
 
                 if (!hasCameraChanged && !entity.WorldTransform.HasChanged)// && entity.DynamicPhysicsObject == null)
                 {
@@ -294,13 +294,13 @@ namespace DeferredEngine.Renderer.Helper
         /// Should be called when the frame is done.
         /// </summary>
         /// <param name="entities"></param>
-        public void FrustumCullingFinalizeFrame(List<BasicEntity> entities)
+        public void FrustumCullingFinalizeFrame(List<ModelEntity> entities)
         {
 
             //Set Changed to false
             for (int index1 = 0; index1 < entities.Count; index1++)
             {
-                BasicEntity entity = entities[index1];
+                ModelEntity entity = entities[index1];
                 entity.WorldTransform.HasChanged = false;
             }
 

@@ -65,7 +65,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _shader = content.Load<Effect>(shaderPath);
         }
 
-        public void Draw(GraphicsDevice graphicsDevice, MeshMaterialLibrary meshMaterialLibrary, List<BasicEntity> entities, List<PointLight> pointLights, List<DirectionalLight> dirLights, Camera camera)
+        public void Draw(GraphicsDevice graphicsDevice, MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<PointLight> pointLights, List<DirectionalLight> dirLights, Camera camera)
         {
             _pass = Passes.Omnidirectional;
 
@@ -134,7 +134,7 @@ namespace DeferredEngine.Renderer.RenderModules
         /// <param name="size"></param>
         /// <param name="meshMaterialLibrary"></param>
         /// <param name="entities"></param>
-        private void CreateShadowCubeMap(GraphicsDevice graphicsDevice, PointLight light, int size, MeshMaterialLibrary meshMaterialLibrary, List<BasicEntity> entities)
+        private void CreateShadowCubeMap(GraphicsDevice graphicsDevice, PointLight light, int size, MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities)
         {
             //For VSM we need 2 channels, -> Vector2
             //todo: check if we need preserve contents
@@ -297,7 +297,7 @@ namespace DeferredEngine.Renderer.RenderModules
         /// <param name="shadowResolution"></param>
         /// <param name="meshMaterialLibrary"></param>
         /// <param name="entities"></param>
-        private void CreateShadowMapDirectionalLight(GraphicsDevice graphicsDevice, DirectionalLight light, int shadowResolution, MeshMaterialLibrary meshMaterialLibrary, List<BasicEntity> entities)
+        private void CreateShadowMapDirectionalLight(GraphicsDevice graphicsDevice, DirectionalLight light, int shadowResolution, MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities)
         {
             //Create a renderTarget if we don't have one yet
             if (light.ShadowMap == null)

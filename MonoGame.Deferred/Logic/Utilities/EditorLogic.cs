@@ -54,7 +54,7 @@ namespace DeferredEngine.Logic
         /// <param name="entities"></param>
         /// <param name="data"></param>
         public void Update(GameTime gameTime, 
-            List<BasicEntity> entities, 
+            List<ModelEntity> entities, 
             List<Decal> decals, 
             List<PointLight> pointLights, 
             List<DirectionalLight> dirLights, 
@@ -162,10 +162,10 @@ namespace DeferredEngine.Logic
             if (Input.WasKeyPressed(Keys.Delete))
             {
                 //Find object
-                if (SelectedObject is BasicEntity)
+                if (SelectedObject is ModelEntity)
                 {
-                    entities.Remove((BasicEntity) SelectedObject);
-                    meshMaterialLibrary.DeleteFromRegistry((BasicEntity) SelectedObject);
+                    entities.Remove((ModelEntity) SelectedObject);
+                    meshMaterialLibrary.DeleteFromRegistry((ModelEntity) SelectedObject);
 
                     SelectedObject = null;
                 }

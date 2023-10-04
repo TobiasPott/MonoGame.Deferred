@@ -147,7 +147,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields
             }
         }
 
-        public void UpdateDistanceFieldTransformations(List<BasicEntity> entities, List<SignedDistanceField> sdfDefinitions, DeferredEnvironmentMapRenderModule environmentMapRenderModule, GraphicsDevice graphics, SpriteBatch spriteBatch, LightAccumulationModule lightAccumulationModule)
+        public void UpdateDistanceFieldTransformations(List<ModelEntity> entities, List<SignedDistanceField> sdfDefinitions, DeferredEnvironmentMapRenderModule environmentMapRenderModule, GraphicsDevice graphics, SpriteBatch spriteBatch, LightAccumulationModule lightAccumulationModule)
         {
             if (!RenderingSettings.sdf_draw) return;
             
@@ -157,7 +157,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields
             int i = 0;
             for (var index = 0; index < entities.Count; index++)
             {
-                BasicEntity entity = entities[index];
+                ModelEntity entity = entities[index];
 
                 if (entity.ModelDefinition.SDF.IsUsed)
                 {
