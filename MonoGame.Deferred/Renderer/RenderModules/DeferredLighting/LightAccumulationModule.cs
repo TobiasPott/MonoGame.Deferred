@@ -106,7 +106,7 @@ namespace DeferredEngine.Renderer.RenderModules
             Vector3 cameraOrigin, GameTime gameTime, RenderTargetBinding[] renderTargetLightBinding, RenderTarget2D  renderTargetDiffuse)
         {
             //Reconstruct Depth
-            if (GameSettings.g_UseDepthStencilLightCulling > 0)
+            if (RenderingSettings.g_UseDepthStencilLightCulling > 0)
             {
                 _graphicsDevice.SetRenderTarget(renderTargetDiffuse);
                 _graphicsDevice.Clear(ClearOptions.DepthBuffer, new Color(0, 0, 0, 0.0f), 1, 0);

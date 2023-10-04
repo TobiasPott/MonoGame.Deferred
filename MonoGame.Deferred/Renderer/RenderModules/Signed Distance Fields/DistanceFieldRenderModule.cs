@@ -130,7 +130,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields
             //CheckUpdate
             CheckForShaderChanges();
 
-            if (GameSettings.sdf_drawvolume)
+            if (RenderingSettings.sdf_drawvolume)
                 _volumePass.Apply();
             else
                 _distancePass.Apply();
@@ -149,7 +149,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields
 
         public void UpdateDistanceFieldTransformations(List<BasicEntity> entities, List<SignedDistanceField> sdfDefinitions, DeferredEnvironmentMapRenderModule environmentMapRenderModule, GraphicsDevice graphics, SpriteBatch spriteBatch, LightAccumulationModule lightAccumulationModule)
         {
-            if (!GameSettings.sdf_draw) return;
+            if (!RenderingSettings.sdf_draw) return;
             
             //First of all let's build the atlas
             UpdateAtlas(sdfDefinitions, graphics, spriteBatch, environmentMapRenderModule, lightAccumulationModule);

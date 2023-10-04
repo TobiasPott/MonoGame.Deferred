@@ -334,7 +334,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
                 // Rendering!
                 _FarClip.SetValue(light.ShadowDepth);
-                _SizeBias.SetValue(GameSettings.ShadowBias * 2048 / light.ShadowResolution);
+                _SizeBias.SetValue(RenderingSettings.ShadowBias * 2048 / light.ShadowResolution);
 
                 meshMaterialLibrary.Draw(MeshMaterialLibrary.RenderType.ShadowLinear,
                     light.LightViewProjection, light.HasChanged, false, false, 0, light.LightView, renderModule: this);
@@ -353,7 +353,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 graphicsDevice.Clear(ClearOptions.DepthBuffer, Color.White, 1, 0);
 
                 _FarClip.SetValue(light.ShadowDepth);
-                _SizeBias.SetValue(GameSettings.ShadowBias * 2048 / light.ShadowResolution);
+                _SizeBias.SetValue(RenderingSettings.ShadowBias * 2048 / light.ShadowResolution);
 
                 meshMaterialLibrary.Draw(MeshMaterialLibrary.RenderType.ShadowLinear,
                     light.LightViewProjection, false, true, false, 0, light.LightView, renderModule: this);

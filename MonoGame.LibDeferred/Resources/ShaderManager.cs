@@ -78,7 +78,7 @@ namespace DeferredEngine.Recources
         public void CheckForChanges()
         {
 #if DEBUG
-            if (!GameSettings.d_hotreloadshaders) return;
+            if (!RenderingSettings.d_hotreloadshaders) return;
 
             for (var index = 0; index < ShaderCollection.Count; index++)
             {

@@ -39,7 +39,7 @@ namespace DeferredEngine.Logic
             _guiLogic.Initialize(_assets, _sceneLogic.Camera);
             _editorLogic.Initialize(graphicsDevice);
             _debug.Initialize(graphicsDevice);
-            _guiRenderer.Initialize(graphicsDevice, GameSettings.g_screenwidth, GameSettings.g_screenheight);
+            _guiRenderer.Initialize(graphicsDevice, RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight);
         }
 
         //Update per frame
@@ -95,7 +95,7 @@ namespace DeferredEngine.Logic
                 editorData: _editorLogic.GetEditorData(), 
                 gameTime: gameTime);
             
-            if (GameSettings.e_enableeditor && GameSettings.ui_enabled)
+            if (RenderingSettings.e_enableeditor && RenderingSettings.ui_enabled)
                 _guiRenderer.Draw(_guiLogic.GuiCanvas);
 
             _debug.Draw(gameTime);

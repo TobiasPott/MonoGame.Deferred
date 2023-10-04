@@ -57,7 +57,7 @@ namespace DeferredEngine.Logic
         /// <param name="sceneLogicCamera"></param>
         private void CreateGUI(Camera sceneLogicCamera)
         {
-            GuiCanvas = new GUICanvas(Vector2.Zero, new Vector2(GameSettings.g_screenwidth, GameSettings.g_screenheight));
+            GuiCanvas = new GUICanvas(Vector2.Zero, new Vector2(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight));
 
             defaultStyle = new GUIStyle(
                 dimensionsStyle: new Vector2(200,35),
@@ -115,8 +115,8 @@ namespace DeferredEngine.Logic
 
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Highlight Meshes")
             {
-                ToggleField = typeof(GameSettings).GetField("e_drawoutlines"),
-                Toggle = GameSettings.e_drawoutlines
+                ToggleField = typeof(RenderingSettings).GetField("e_drawoutlines"),
+                Toggle = RenderingSettings.e_drawoutlines
             });
 
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Show Controls")
@@ -128,8 +128,8 @@ namespace DeferredEngine.Logic
 
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Default Material")
             {
-                ToggleField = typeof(GameSettings).GetField("d_defaultmaterial"),
-                Toggle = GameSettings.d_defaultmaterial
+                ToggleField = typeof(RenderingSettings).GetField("d_defaultmaterial"),
+                Toggle = RenderingSettings.d_defaultmaterial
             });
 
             _rightSideList.AddElement(new GuiSliderFloatText(defaultStyle, 0.1f, 3/*(float) (Math.PI - 0.1)*/, 2, "Field Of View: ")
@@ -185,14 +185,14 @@ namespace DeferredEngine.Logic
 
             sdfList.AddElement(new GUITextBlockToggle(defaultStyle, "Draw SDF")
             {
-                ToggleField = typeof(GameSettings).GetField("sdf_drawdistance"),
-                Toggle = GameSettings.sdf_drawdistance
+                ToggleField = typeof(RenderingSettings).GetField("sdf_drawdistance"),
+                Toggle = RenderingSettings.sdf_drawdistance
             });
 
             sdfList.AddElement(new GUITextBlockToggle(defaultStyle, "Draw SDF volume")
             {
-                ToggleField = typeof(GameSettings).GetField("sdf_drawvolume"),
-                Toggle = GameSettings.sdf_drawvolume
+                ToggleField = typeof(RenderingSettings).GetField("sdf_drawvolume"),
+                Toggle = RenderingSettings.sdf_drawvolume
             });
 
             /////////////////////////////////////////////////////////////////
@@ -206,44 +206,44 @@ namespace DeferredEngine.Logic
 
             postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Temporal AA")
             {
-                ToggleField = typeof(GameSettings).GetField("g_taa"),
-                Toggle = GameSettings.g_taa
+                ToggleField = typeof(RenderingSettings).GetField("g_taa"),
+                Toggle = RenderingSettings.g_taa
             });
 
             postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Tonemap TAA")
             {
-                ToggleField = typeof(GameSettings).GetField("g_taa_tonemapped"),
-                Toggle = GameSettings.g_taa_tonemapped
+                ToggleField = typeof(RenderingSettings).GetField("g_taa_tonemapped"),
+                Toggle = RenderingSettings.g_taa_tonemapped
             });
 
             postprocessingList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 4, 2, "WhitePoint: ")
             {
-                SliderProperty = typeof(GameSettings).GetProperty("WhitePoint"),
-                SliderValue = GameSettings.WhitePoint
+                SliderProperty = typeof(RenderingSettings).GetProperty("WhitePoint"),
+                SliderValue = RenderingSettings.WhitePoint
             });
 
             postprocessingList.AddElement(new GuiSliderFloatText(defaultStyle, -8, 8, 2, "Exposure: ")
             {
-                SliderProperty = typeof(GameSettings).GetProperty("Exposure"),
-                SliderValue = GameSettings.Exposure
+                SliderProperty = typeof(RenderingSettings).GetProperty("Exposure"),
+                SliderValue = RenderingSettings.Exposure
             });
 
             postprocessingList.AddElement(new GuiSliderFloatText(defaultStyle, -1, 1, 2, "S-Curve: ")
             {
-                SliderProperty = typeof(GameSettings).GetProperty("SCurveStrength"),
-                SliderValue = GameSettings.SCurveStrength
+                SliderProperty = typeof(RenderingSettings).GetProperty("SCurveStrength"),
+                SliderValue = RenderingSettings.SCurveStrength
             });
 
             postprocessingList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 1, 2, "Chr. Abb.: ")
             {
-                SliderProperty = typeof(GameSettings).GetProperty("ChromaticAbberationStrength"),
-                SliderValue = GameSettings.ChromaticAbberationStrength
+                SliderProperty = typeof(RenderingSettings).GetProperty("ChromaticAbberationStrength"),
+                SliderValue = RenderingSettings.ChromaticAbberationStrength
             });
 
             postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Color Grading")
             {
-                ToggleField = typeof(GameSettings).GetField("g_ColorGrading"),
-                Toggle = GameSettings.g_ColorGrading
+                ToggleField = typeof(RenderingSettings).GetField("g_ColorGrading"),
+                Toggle = RenderingSettings.g_ColorGrading
             });
 
             /////////////////////////////////////////////////////////////////
@@ -259,44 +259,44 @@ namespace DeferredEngine.Logic
 
             ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable SSR")
             {
-                ToggleProperty = typeof(GameSettings).GetProperty("g_SSReflection"),
-                Toggle = GameSettings.g_SSReflection
+                ToggleProperty = typeof(RenderingSettings).GetProperty("g_SSReflection"),
+                Toggle = RenderingSettings.g_SSReflection
             });
 
             ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Stochastic distr.")
             {
-                ToggleProperty = typeof(GameSettings).GetProperty("g_SSReflectionTaa"),
-                Toggle = GameSettings.g_SSReflectionTaa
+                ToggleProperty = typeof(RenderingSettings).GetProperty("g_SSReflectionTaa"),
+                Toggle = RenderingSettings.g_SSReflectionTaa
             });
 
             ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Temporal Noise")
             {
-                ToggleField = typeof(GameSettings).GetField("g_SSReflectionNoise"),
-                Toggle = GameSettings.g_SSReflectionNoise
+                ToggleField = typeof(RenderingSettings).GetField("g_SSReflectionNoise"),
+                Toggle = RenderingSettings.g_SSReflectionNoise
             });
 
             ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Firefly Reduction")
             {
-                ToggleProperty = typeof(GameSettings).GetProperty("g_SSReflection_FireflyReduction"),
-                Toggle = GameSettings.g_SSReflection_FireflyReduction
+                ToggleProperty = typeof(RenderingSettings).GetProperty("g_SSReflection_FireflyReduction"),
+                Toggle = RenderingSettings.g_SSReflection_FireflyReduction
             });
 
             ssrList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 5, 2, "Firefly Threshold ")
             {
-                SliderProperty = typeof(GameSettings).GetProperty("g_SSReflection_FireflyThreshold"),
-                SliderValue = GameSettings.g_SSReflection_FireflyThreshold
+                SliderProperty = typeof(RenderingSettings).GetProperty("g_SSReflection_FireflyThreshold"),
+                SliderValue = RenderingSettings.g_SSReflection_FireflyThreshold
             });
 
             ssrList.AddElement(new GuiSliderIntText(defaultStyle, 1, 100, 1, "Samples: ")
             {
-                SliderProperty = typeof(GameSettings).GetProperty("g_SSReflections_Samples"),
-                SliderValue = GameSettings.g_SSReflections_Samples
+                SliderProperty = typeof(RenderingSettings).GetProperty("g_SSReflections_Samples"),
+                SliderValue = RenderingSettings.g_SSReflections_Samples
             });
 
             ssrList.AddElement(new GuiSliderIntText(defaultStyle, 1, 100, 1, "Search Samples: ")
             {
-                SliderProperty = typeof(GameSettings).GetProperty("g_SSReflections_RefinementSamples"),
-                SliderValue = GameSettings.g_SSReflections_RefinementSamples
+                SliderProperty = typeof(RenderingSettings).GetProperty("g_SSReflections_RefinementSamples"),
+                SliderValue = RenderingSettings.g_SSReflections_RefinementSamples
             });
 
             /////////////////////////////////////////////////////////////////
@@ -312,32 +312,32 @@ namespace DeferredEngine.Logic
 
             ssaoList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable SSAO")
             {
-                ToggleProperty = typeof(GameSettings).GetProperty("g_ssao_draw"),
-                Toggle = GameSettings.g_ssao_draw
+                ToggleProperty = typeof(RenderingSettings).GetProperty("g_ssao_draw"),
+                Toggle = RenderingSettings.g_ssao_draw
             });
 
             ssaoList.AddElement(new GUITextBlockToggle(defaultStyle, "SSAO Blur: ")
             {
-                ToggleField = typeof(GameSettings).GetField("g_ssao_blur"),
-                Toggle = GameSettings.g_ssao_blur
+                ToggleField = typeof(RenderingSettings).GetField("g_ssao_blur"),
+                Toggle = RenderingSettings.g_ssao_blur
             });
 
             ssaoList.AddElement(new GuiSliderIntText(defaultStyle, 1, 32, 1, "SSAO Samples: ")
             {
-                SliderProperty = typeof(GameSettings).GetProperty("g_ssao_samples"),
-                SliderValue = GameSettings.g_ssao_samples
+                SliderProperty = typeof(RenderingSettings).GetProperty("g_ssao_samples"),
+                SliderValue = RenderingSettings.g_ssao_samples
             });
 
             ssaoList.AddElement(new GuiSliderFloatText(defaultStyle, 1, 100, 2, "Sample Radius: ")
             {
-                SliderProperty = typeof(GameSettings).GetProperty("g_ssao_radius"),
-                SliderValue = GameSettings.g_ssao_radius
+                SliderProperty = typeof(RenderingSettings).GetProperty("g_ssao_radius"),
+                SliderValue = RenderingSettings.g_ssao_radius
             });
 
             ssaoList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 4, 1, "SSAO Strength: ")
             {
-                SliderProperty = typeof(GameSettings).GetProperty("g_ssao_strength"),
-                SliderValue = GameSettings.g_ssao_strength
+                SliderProperty = typeof(RenderingSettings).GetProperty("g_ssao_strength"),
+                SliderValue = RenderingSettings.g_ssao_strength
             });
 
             /////////////////////////////////////////////////////////////////
@@ -353,76 +353,76 @@ namespace DeferredEngine.Logic
 
             bloomList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Bloom")
             {
-                ToggleField = typeof(GameSettings).GetField("g_BloomEnable"),
-                Toggle = GameSettings.g_BloomEnable
+                ToggleField = typeof(RenderingSettings).GetField("g_BloomEnable"),
+                Toggle = RenderingSettings.g_BloomEnable
             });
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 4, 1, "Threshold: ")
             {
-                SliderField = typeof(GameSettings).GetField("g_BloomThreshold"),
-                SliderValue = GameSettings.g_BloomThreshold
+                SliderField = typeof(RenderingSettings).GetField("g_BloomThreshold"),
+                SliderValue = RenderingSettings.g_BloomThreshold
             });
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP0 Radius: ")
             {
-                SliderField = typeof(GameSettings).GetField("g_BloomRadius1"),
-                SliderValue = GameSettings.g_BloomRadius1
+                SliderField = typeof(RenderingSettings).GetField("g_BloomRadius1"),
+                SliderValue = RenderingSettings.g_BloomRadius1
             });
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP0 Strength: ")
             {
-                SliderField = typeof(GameSettings).GetField("g_BloomStrength1"),
-                SliderValue = GameSettings.g_BloomStrength1
+                SliderField = typeof(RenderingSettings).GetField("g_BloomStrength1"),
+                SliderValue = RenderingSettings.g_BloomStrength1
             });
 
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP1 Radius: ")
             {
-                SliderField = typeof(GameSettings).GetField("g_BloomRadius2"),
-                SliderValue = GameSettings.g_BloomRadius2
+                SliderField = typeof(RenderingSettings).GetField("g_BloomRadius2"),
+                SliderValue = RenderingSettings.g_BloomRadius2
             });
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP1 Strength: ")
             {
-                SliderField = typeof(GameSettings).GetField("g_BloomStrength2"),
-                SliderValue = GameSettings.g_BloomStrength2
+                SliderField = typeof(RenderingSettings).GetField("g_BloomStrength2"),
+                SliderValue = RenderingSettings.g_BloomStrength2
             });
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP2 Radius: ")
             {
-                SliderField = typeof(GameSettings).GetField("g_BloomRadius3"),
-                SliderValue = GameSettings.g_BloomRadius3
+                SliderField = typeof(RenderingSettings).GetField("g_BloomRadius3"),
+                SliderValue = RenderingSettings.g_BloomRadius3
             });
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP2 Strength: ")
             {
-                SliderField = typeof(GameSettings).GetField("g_BloomStrength3"),
-                SliderValue = GameSettings.g_BloomStrength3
+                SliderField = typeof(RenderingSettings).GetField("g_BloomStrength3"),
+                SliderValue = RenderingSettings.g_BloomStrength3
             });
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP3 Radius: ")
             {
-                SliderField = typeof(GameSettings).GetField("g_BloomRadius4"),
-                SliderValue = GameSettings.g_BloomRadius4
+                SliderField = typeof(RenderingSettings).GetField("g_BloomRadius4"),
+                SliderValue = RenderingSettings.g_BloomRadius4
             });
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP3 Strength: ")
             {
-                SliderField = typeof(GameSettings).GetField("g_BloomStrength4"),
-                SliderValue = GameSettings.g_BloomStrength4
+                SliderField = typeof(RenderingSettings).GetField("g_BloomStrength4"),
+                SliderValue = RenderingSettings.g_BloomStrength4
             });
 
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP4 Radius: ")
             {
-                SliderField = typeof(GameSettings).GetField("g_BloomRadius5"),
-                SliderValue = GameSettings.g_BloomRadius5
+                SliderField = typeof(RenderingSettings).GetField("g_BloomRadius5"),
+                SliderValue = RenderingSettings.g_BloomRadius5
             });
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP4 Strength: ")
             {
-                SliderField = typeof(GameSettings).GetField("g_BloomStrength5"),
-                SliderValue = GameSettings.g_BloomStrength5
+                SliderField = typeof(RenderingSettings).GetField("g_BloomStrength5"),
+                SliderValue = RenderingSettings.g_BloomStrength5
             });
 
             _rightSideList.Alignment = GUIStyle.GUIAlignment.TopRight;
@@ -478,7 +478,7 @@ namespace DeferredEngine.Logic
         public void Update(GameTime gameTime, bool isActive, TransformableObject selectedObject)
         {
             GameStats.UIIsHovered = false;
-            if (!isActive || !GameSettings.e_enableeditor || !GameSettings.ui_enabled) return;
+            if (!isActive || !RenderingSettings.e_enableeditor || !RenderingSettings.ui_enabled) return;
 
             if (GameStats.e_gizmoMode != _gizmoModePrevious)
             {
@@ -657,8 +657,8 @@ namespace DeferredEngine.Logic
 
         public void UpdateResolution()
         {
-            GUIControl.UpdateResolution(GameSettings.g_screenwidth, GameSettings.g_screenheight);
-            GuiCanvas.Resize(GameSettings.g_screenwidth, GameSettings.g_screenheight);
+            GUIControl.UpdateResolution(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight);
+            GuiCanvas.Resize(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight);
         }
     }
 }

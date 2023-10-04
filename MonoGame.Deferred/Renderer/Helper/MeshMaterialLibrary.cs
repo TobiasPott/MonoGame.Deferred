@@ -21,7 +21,7 @@ namespace DeferredEngine.Renderer.Helper
 
         public int Index;
 
-        private bool _previousMode = GameSettings.g_cpuculling;
+        private bool _previousMode = RenderingSettings.g_cpuculling;
         private readonly BoundingSphere _defaultBoundingSphere;
         private RasterizerState _shadowGenerationRasterizerState;
         private FullScreenTriangle _fullScreenTriangle;
@@ -135,7 +135,7 @@ namespace DeferredEngine.Renderer.Helper
         //Not a real sort, but it does it's job over time
         private void SortByDistance()
         {
-            if (!GameSettings.g_cpusort) return;
+            if (!RenderingSettings.g_cpusort) return;
 
             for (int i = 1; i < Index; i++)
             {
@@ -200,7 +200,7 @@ namespace DeferredEngine.Renderer.Helper
         public bool FrustumCulling(List<BasicEntity> entities, BoundingFrustum boundingFrustrum, bool hasCameraChanged, Vector3 cameraPosition)
         {
             //Check if the culling mode has changed
-            if (_previousMode != GameSettings.g_cpuculling)
+            if (_previousMode != RenderingSettings.g_cpuculling)
             {
                 if (_previousMode)
                 {
@@ -219,11 +219,11 @@ namespace DeferredEngine.Renderer.Helper
                     }
 
                 }
-                _previousMode = GameSettings.g_cpuculling;
+                _previousMode = RenderingSettings.g_cpuculling;
 
             }
 
-            if (!GameSettings.g_cpuculling) return false;
+            if (!RenderingSettings.g_cpuculling) return false;
 
             for (int index1 = 0; index1 < entities.Count; index1++)
             {
@@ -247,7 +247,7 @@ namespace DeferredEngine.Renderer.Helper
                 int counter = 0;
 
 
-                MaterialLibrary matLib = GameSettings.g_cpusort
+                MaterialLibrary matLib = RenderingSettings.g_cpusort
                     ? MaterialLib[MaterialLibPointer[index1]]
                     : MaterialLib[index1];
                 for (int i = 0; i < matLib.Index; i++)
@@ -325,7 +325,7 @@ namespace DeferredEngine.Renderer.Helper
 
             for (int index1 = 0; index1 < Index; index1++)
             {
-                MaterialLibrary matLib = GameSettings.g_cpusort ? MaterialLib[MaterialLibPointer[index1]] : MaterialLib[index1];
+                MaterialLibrary matLib = RenderingSettings.g_cpusort ? MaterialLib[MaterialLibPointer[index1]] : MaterialLib[index1];
 
                 matLib.HasChangedThisFrame = false;
             }

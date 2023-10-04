@@ -85,7 +85,7 @@ namespace DeferredEngine.Renderer.Helper
             }
 
             //We need to calcualte a new average distance
-            if (hasAnythingChanged && GameSettings.g_cpusort)
+            if (hasAnythingChanged && RenderingSettings.g_cpusort)
             {
                 distance = 0;
 

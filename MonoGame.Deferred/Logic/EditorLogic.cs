@@ -63,7 +63,7 @@ namespace DeferredEngine.Logic
             EditorReceivedData data, 
             MeshMaterialLibrary meshMaterialLibrary)
         {
-            if (!GameSettings.e_enableeditor) return;
+            if (!RenderingSettings.e_enableeditor) return;
 
             if (!DebugScreen.ConsoleOpen)
             {

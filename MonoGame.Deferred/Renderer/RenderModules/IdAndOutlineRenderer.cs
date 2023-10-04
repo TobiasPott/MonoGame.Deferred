@@ -48,7 +48,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 DrawIds(meshMat, decals, pointLights, dirLights, envSample, debug, viewProjection, view, editorData);
             }
 
-            if(GameSettings.e_drawoutlines)
+            if(RenderingSettings.e_drawoutlines)
                 DrawOutlines(meshMat, viewProjection, mouseMoved, HoveredId, editorData, mouseMoved);
         }
 

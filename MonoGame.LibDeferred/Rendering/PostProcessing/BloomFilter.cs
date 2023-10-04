@@ -518,19 +518,19 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
 
         private void ApplyGameSettings()
         {
-            _bloomRadius1 = GameSettings.g_BloomRadius1;
-            _bloomRadius2 = GameSettings.g_BloomRadius2;
-            _bloomRadius3 = GameSettings.g_BloomRadius3;
-            _bloomRadius4 = GameSettings.g_BloomRadius4;
-            _bloomRadius5 = GameSettings.g_BloomRadius5;
+            _bloomRadius1 = RenderingSettings.g_BloomRadius1;
+            _bloomRadius2 = RenderingSettings.g_BloomRadius2;
+            _bloomRadius3 = RenderingSettings.g_BloomRadius3;
+            _bloomRadius4 = RenderingSettings.g_BloomRadius4;
+            _bloomRadius5 = RenderingSettings.g_BloomRadius5;
 
-            _bloomStrength1 = GameSettings.g_BloomStrength1;
-            _bloomStrength2 = GameSettings.g_BloomStrength2;
-            _bloomStrength3 = GameSettings.g_BloomStrength3;
-            _bloomStrength4 = GameSettings.g_BloomStrength4;
-            _bloomStrength5 = GameSettings.g_BloomStrength5;
+            _bloomStrength1 = RenderingSettings.g_BloomStrength1;
+            _bloomStrength2 = RenderingSettings.g_BloomStrength2;
+            _bloomStrength3 = RenderingSettings.g_BloomStrength3;
+            _bloomStrength4 = RenderingSettings.g_BloomStrength4;
+            _bloomStrength5 = RenderingSettings.g_BloomStrength5;
 
-            BloomThreshold = GameSettings.g_BloomThreshold * 0.1f;
+            BloomThreshold = RenderingSettings.g_BloomThreshold * 0.1f;
         }
 
         private void ChangeBlendState()

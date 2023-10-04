@@ -104,7 +104,7 @@ namespace DeferredEngine.Entities
 
                 WorldTransform.InverseWorld = Matrix.Invert(Matrix.CreateTranslation(BoundingBoxOffset * Scale) * RotationMatrix * Matrix.CreateTranslation(Position));
                 
-                if (StaticPhysicsObject != null && !GameSettings.e_enableeditor)
+                if (StaticPhysicsObject != null && !RenderingSettings.e_enableeditor)
                 {
                     AffineTransform change = new AffineTransform(
                             new BEPUutilities.Vector3(Scale.X, Scale.Y, Scale.Z),
@@ -147,7 +147,7 @@ namespace DeferredEngine.Entities
             }
             else
             {
-                if (Position != _worldNewMatrix.Translation && GameSettings.e_enableeditor)
+                if (Position != _worldNewMatrix.Translation && RenderingSettings.e_enableeditor)
                 {
                     //DynamicPhysicsObject.Position = new BEPUutilities.Vector3(Position.X, Position.Y, Position.Z);
                     _dynamicPhysicsObject.Position = MathConverter.Convert(Position);

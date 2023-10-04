@@ -29,7 +29,7 @@ namespace DeferredEngine.Renderer.Helper
 
         public bool HasMaterial(MaterialEffect mat)
         {
-            if (!GameSettings.g_batchbymaterial) return false;
+            if (!RenderingSettings.g_batchbymaterial) return false;
             return mat.Equals(_material);
         }
 

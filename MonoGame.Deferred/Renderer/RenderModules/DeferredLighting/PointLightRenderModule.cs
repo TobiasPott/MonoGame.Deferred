@@ -173,7 +173,7 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
             int vertexOffset = meshpart.VertexOffset;
             int startIndex = meshpart.StartIndex;
 
-            if (GameSettings.g_VolumetricLights)
+            if (RenderingSettings.g_VolumetricLights)
                 deferredPointLightParameter_Time.SetValue((float)gameTime.TotalGameTime.TotalSeconds % 1000);
 
             for (int index = 0; index < pointLights.Count; index++)
@@ -219,7 +219,7 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
             int inside = cameraToCenter < light.Radius * 1.2f ? 1 : -1;
             deferredPointLightParameter_Inside.SetValue(inside);
 
-            if (GameSettings.g_UseDepthStencilLightCulling == 2)
+            if (RenderingSettings.g_UseDepthStencilLightCulling == 2)
             {
                 _graphicsDevice.DepthStencilState = _stencilCullPass1;
                 //draw front faces
@@ -246,7 +246,7 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
 
                 ApplyShader(light);
 
-                _graphicsDevice.DepthStencilState = GameSettings.g_UseDepthStencilLightCulling > 0 && !light.IsVolumetric && inside < 0 ? DepthStencilState.DepthRead : DepthStencilState.None;
+                _graphicsDevice.DepthStencilState = RenderingSettings.g_UseDepthStencilLightCulling > 0 && !light.IsVolumetric && inside < 0 ? DepthStencilState.DepthRead : DepthStencilState.None;
 
                 _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, vertexOffset, startIndex, primitiveCount);
             }
@@ -267,7 +267,7 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
                 deferredPointLightParameter_ShadowMapRadius.SetValue((float)light.ShadowMapRadius);
                 deferredPointLightParameter_ShadowMapSize.SetValue((float)light.ShadowResolution);
 
-                if (light.IsVolumetric && GameSettings.g_VolumetricLights)
+                if (light.IsVolumetric && RenderingSettings.g_VolumetricLights)
                 {
                     deferredPointLightParameter_LightVolumeDensity.SetValue(light.LightVolumeDensity);
                     deferredPointLightShadowedVolumetric.Passes[0].Apply();
@@ -283,7 +283,7 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
 
                 deferredPointLightParameter_ShadowMapRadius.SetValue((float)light.ShadowMapRadius);
 
-                if (light.IsVolumetric && GameSettings.g_VolumetricLights)
+                if (light.IsVolumetric && RenderingSettings.g_VolumetricLights)
                 {
                     deferredPointLightParameter_LightVolumeDensity.SetValue(light.LightVolumeDensity);
                     deferredPointLightUnshadowedVolumetric.Passes[0].Apply();

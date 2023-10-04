@@ -3,7 +3,7 @@
 
 namespace DeferredEngine.Recources
 {
-    public static class GameSettings
+    public static class RenderingSettings
     {
         //Default & Display settings
         public static int g_screenwidth = 1280;

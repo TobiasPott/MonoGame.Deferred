@@ -129,7 +129,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.SetRenderTargets(_renderTargetBinding);
 
             //Clear the GBuffer
-            if (GameSettings.g_ClearGBuffer)
+            if (RenderingSettings.g_ClearGBuffer)
             {
                 _graphicsDevice.RasterizerState = RasterizerState.CullNone;
                 _graphicsDevice.BlendState = BlendState.Opaque;
@@ -159,11 +159,11 @@ namespace DeferredEngine.Renderer.RenderModules
 
         public void SetMaterialSettings(MaterialEffect material)
         {
-            if (GameSettings.d_defaultmaterial)
+            if (RenderingSettings.d_defaultmaterial)
             {
                 _Material_DiffuseColor.SetValue(Color.Gray.ToVector3());
-                _Material_Roughness.SetValue(GameSettings.m_defaultroughness > 0
-                        ? GameSettings.m_defaultroughness
+                _Material_Roughness.SetValue(RenderingSettings.m_defaultroughness > 0
+                        ? RenderingSettings.m_defaultroughness
                         : 0.3f);
                 _Material_Metallic.SetValue(0.0f);
                 _Material_MaterialType.SetValue(0);
@@ -297,15 +297,15 @@ namespace DeferredEngine.Renderer.RenderModules
                 }
 
                 if (!material.HasRoughnessMap)
-                    _Material_Roughness.SetValue(GameSettings.m_defaultroughness >
+                    _Material_Roughness.SetValue(RenderingSettings.m_defaultroughness >
                                                                                0
-                        ? GameSettings.m_defaultroughness
+                        ? RenderingSettings.m_defaultroughness
                         : material.Roughness);
                 _Material_Metallic.SetValue(material.Metallic);
 
                 if (material.Type == MaterialEffect.MaterialTypes.SubsurfaceScattering)
                 {
-                    if(GameSettings.sdf_subsurface)
+                    if(RenderingSettings.sdf_subsurface)
                         _Material_MaterialType.SetValue(material.MaterialTypeNumber);
                     else
                         _Material_MaterialType.SetValue(0);

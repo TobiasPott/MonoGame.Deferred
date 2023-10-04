@@ -142,7 +142,7 @@ namespace DeferredEngine.Logic
             _consoleStringSuggestion.Clear();
             if (_consoleString.Length > 0)
             {
-                PropertyInfo[] infos = typeof(GameSettings).GetProperties();
+                PropertyInfo[] infos = typeof(RenderingSettings).GetProperties();
                 for (var index = 0; index < infos.Length; index++)
                 {
                     PropertyInfo info = infos[index];
@@ -154,7 +154,7 @@ namespace DeferredEngine.Logic
                         //return;
                     }
                 }
-                FieldInfo[] info2 = typeof(GameSettings).GetFields();
+                FieldInfo[] info2 = typeof(RenderingSettings).GetFields();
                 for (var index = 0; index < info2.Length; index++)
                 {
                     FieldInfo info = info2[index];
@@ -176,7 +176,7 @@ namespace DeferredEngine.Logic
         private bool UseConsoleCommand()
         {
             string[] cmds = _consoleString.Split(' ');
-            FieldInfo prop = typeof(GameSettings).GetField(cmds[0], BindingFlags.Public | BindingFlags.Static);
+            FieldInfo prop = typeof(RenderingSettings).GetField(cmds[0], BindingFlags.Public | BindingFlags.Static);
 
             if (cmds.Length < 2) return false;
             if (prop != null)
@@ -194,7 +194,7 @@ namespace DeferredEngine.Logic
             }
             else
             {
-                PropertyInfo propinfo = typeof(GameSettings).GetProperty(cmds[0], BindingFlags.Public | BindingFlags.Static);
+                PropertyInfo propinfo = typeof(RenderingSettings).GetProperty(cmds[0], BindingFlags.Public | BindingFlags.Static);
                 Object value = null;
                 try
                 {
@@ -223,7 +223,7 @@ namespace DeferredEngine.Logic
 
         public void Draw(GameTime gameTime)
         {
-            if (GameSettings.u_showdisplayinfo > 0 || ConsoleOpen)
+            if (RenderingSettings.u_showdisplayinfo > 0 || ConsoleOpen)
             {
                 _fps = 0.9 * _fps + 0.1 * (1000 / gameTime.ElapsedGameTime.TotalMilliseconds);
 
@@ -299,14 +299,14 @@ namespace DeferredEngine.Logic
 
                 StringList.Clear();
 
-                if (GameSettings.u_showdisplayinfo == 1) //most basic, only show fps
+                if (RenderingSettings.u_showdisplayinfo == 1) //most basic, only show fps
                 {
                     _spriteBatch.DrawString(_sprFont,
                     string.Format(Math.Round(_smoothfps).ToString()),
                     new Vector2(10.0f, 10.0f), Color.White);
                 }
 
-                if (GameSettings.u_showdisplayinfo <= 1)
+                if (RenderingSettings.u_showdisplayinfo <= 1)
                 {
                     _spriteBatch.End();
                     StringList.Clear();
@@ -331,11 +331,11 @@ namespace DeferredEngine.Logic
                 _mngStringBuilder.Append((int) Math.Round(_minfps));
                 _mngStringBuilder.AppendLine(sb_closeBracket);
                     
-                _mngStringBuilder.Append(GameSettings.g_screenwidth);
+                _mngStringBuilder.Append(RenderingSettings.g_screenwidth);
                 _mngStringBuilder.Append(sb_multipliedBy);
-                _mngStringBuilder.Append(GameSettings.g_screenheight);
+                _mngStringBuilder.Append(RenderingSettings.g_screenheight);
                 _mngStringBuilder.Append(sb_emptySpace);
-                _mngStringBuilder.Append(RenderModesToString( GameSettings.g_rendermode));
+                _mngStringBuilder.Append(RenderModesToString( RenderingSettings.g_rendermode));
                 _mngStringBuilder.Append(sb_memoryGc);
                 _mngStringBuilder.Append(totalmemory/1024);
                 _mngStringBuilder.Append(sb_dotdotdot);
@@ -381,7 +381,7 @@ namespace DeferredEngine.Logic
         /// </summary>
         private void LoadProfilerStrings()
         {
-            if (!GameSettings.d_profiler) return;
+            if (!RenderingSettings.d_profiler) return;
 
             FieldInfo[] info2 = typeof(GameStats).GetFields();
             int foundIndex = 0;

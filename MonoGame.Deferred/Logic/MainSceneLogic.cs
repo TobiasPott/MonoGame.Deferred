@@ -293,7 +293,7 @@ namespace DeferredEngine.Logic
             //Starts the "editor mode" where we can manipulate objects
             if (Input.WasKeyPressed(Keys.Space))
             {
-                GameSettings.e_enableeditor = !GameSettings.e_enableeditor;
+                RenderingSettings.e_enableeditor = !RenderingSettings.e_enableeditor;
             }
 
             
@@ -315,7 +315,7 @@ namespace DeferredEngine.Logic
                 _renderModeCycle++;
                 if (_renderModeCycle > Enum.GetNames(typeof(Renderer.RenderModes)).Length - 1) _renderModeCycle = 0;
 
-                GameSettings.g_rendermode = (Renderer.RenderModes) _renderModeCycle;
+                RenderingSettings.g_rendermode = (Renderer.RenderModes) _renderModeCycle;
             }
         }
         

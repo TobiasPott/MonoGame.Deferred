@@ -93,7 +93,7 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
 
         public  void Draw(GraphicsDevice graphicsDevice, Matrix viewProjection, EffectParameter worldViewProjection, EffectPass vertexColorPass)
         {
-            if (!GameSettings.d_drawlines) return;
+            if (!RenderingSettings.d_drawlines) return;
             
             worldViewProjection.SetValue(viewProjection);
 

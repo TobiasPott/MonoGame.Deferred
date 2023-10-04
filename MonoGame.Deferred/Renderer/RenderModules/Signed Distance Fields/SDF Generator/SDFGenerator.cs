@@ -85,7 +85,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Gener
 
             Texture2D output;
 
-            if (!GameSettings.sdf_cpu)
+            if (!RenderingSettings.sdf_cpu)
             {
                 Stopwatch stopwatch = Stopwatch.StartNew();
 
@@ -139,7 +139,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Gener
 
                     Stopwatch stopwatch = Stopwatch.StartNew();
 
-                    int numberOfThreads = GameSettings.sdf_threads;
+                    int numberOfThreads = RenderingSettings.sdf_threads;
 
                     if (numberOfThreads > 1)
                     {
@@ -195,7 +195,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Gener
                     stopwatch.Stop();
 
                     Debug.Write("\nSDF generated in " + stopwatch.ElapsedMilliseconds + "ms with " +
-                                GameSettings.sdf_threads + " thread(s)");
+                                RenderingSettings.sdf_threads + " thread(s)");
 
                     string path = uncomputedSignedDistanceField.TexturePath;
                     DataStream.SaveImageData(data, xsteps, ysteps, zsteps, path);
@@ -250,13 +250,13 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Gener
             //Now for the model definitions
             for(var i = 0; i < sdfDefinitions.Count; i++)
             {
-                if (GameSettings.sdf_regenerate)
+                if (RenderingSettings.sdf_regenerate)
                 {
                     sdfDefinitions[i].NeedsToBeGenerated = true;
                 }
             }
 
-            GameSettings.sdf_regenerate = false;
+            RenderingSettings.sdf_regenerate = false;
 
             sdfDefinitionsOut = sdfDefinitions;
         }

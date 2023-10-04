@@ -25,7 +25,7 @@ namespace DeferredEngine.Recources
                 CreateBoundingBox(Model);
 
                 //Optionally save that new one
-                if (GameSettings.e_saveBoundingBoxes)
+                if (RenderingSettings.e_saveBoundingBoxes)
                 {
                     DataStream.SaveBoundingBoxData(BoundingBox, bbxpath);
                 }
