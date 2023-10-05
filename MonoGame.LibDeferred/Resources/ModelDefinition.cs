@@ -1,17 +1,16 @@
-﻿using System.IO;
-using DeferredEngine.Recources.Helper;
+﻿using DeferredEngine.Recources.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Recources
 {
+
     public class ModelDefinition
     {
         public BoundingBox BoundingBox;
         public Vector3 BoundingBoxOffset;
         public Model Model;
-        public SignedDistanceField SDF;
 
         public ModelDefinition(ContentManager content, string assetpath, GraphicsDevice graphics, bool UseSDF = false) : this(content,
             assetpath, graphics, UseSDF, new Vector3(50, 50, 50))
@@ -36,10 +35,6 @@ namespace DeferredEngine.Recources
 
             //Find the middle
             BoundingBoxOffset = (BoundingBox.Max + BoundingBox.Min) / 2.0f;
-
-            //SDF
-            SDF = new SignedDistanceField(content.RootDirectory + "/" + assetpath + ".sdft", graphics, BoundingBox, BoundingBoxOffset, sdfResolution);
-            SDF.IsUsed = UseSDF;
         }
 
 
@@ -57,9 +52,8 @@ namespace DeferredEngine.Recources
             GeometryDataExtractor.GetVerticesAndIndicesFromModel(model, out vertices, out indices);
 
             BoundingBox = BoundingBox.CreateFromPoints(vertices);
-
         }
 
     }
-    
+
 }
