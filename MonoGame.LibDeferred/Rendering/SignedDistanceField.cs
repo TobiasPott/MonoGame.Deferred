@@ -7,9 +7,9 @@ namespace DeferredEngine.Recources
     public class SignedDistanceField
     {
         public Texture2D SdfTexture;
-        
+
         public Vector3 VolumeSize;
-        public Vector4 TextureResolution = new Vector4(50,50,50,0); //x,y,z and w is index/starty in atlas
+        public Vector4 TextureResolution = new Vector4(50, 50, 50, 0); //x,y,z and w is index/starty in atlas
         public Vector3 Offset;
 
         public string TexturePath;
@@ -60,6 +60,6 @@ namespace DeferredEngine.Recources
                 NeedsToBeGenerated = true;
             }
         }
-        
+
     }
 }

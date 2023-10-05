@@ -88,6 +88,7 @@ namespace DeferredEngine.Renderer
         private bool _g_SSReflectionNoise;
 
         //SDF
+        // ToDo: @tpott: Move out of the pipeline as some sort of extension as it is only touched by the generator and the module
         private List<SignedDistanceField> _sdfDefinitions;
 
 
