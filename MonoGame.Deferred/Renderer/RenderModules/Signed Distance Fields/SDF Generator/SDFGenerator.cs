@@ -16,7 +16,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Gener
         private Task generateTask;
 
         private List<SignedDistanceField> sdfDefinitions = new List<SignedDistanceField>();
-        
+
         public struct Triangle
         {
             public Vector3 a;
@@ -213,7 +213,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Gener
             return x + y * xsteps * zsteps;
         }
 
-        
+
         public void Update(List<ModelEntity> entities, GraphicsDevice graphics, DistanceFieldRenderModule distanceFieldRenderModule, FullScreenTriangleBuffer fullScreenTriangle, ref List<SignedDistanceField> sdfDefinitionsOut)
         {
             //First let's check which entities need building, if at all!
@@ -238,13 +238,13 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Gener
                         break;
                     }
                 }
-                if(!found)
-                sdfDefinitions.Add(entity.ModelDefinition.SDF);
+                if (!found)
+                    sdfDefinitions.Add(entity.ModelDefinition.SDF);
 
             }
 
             //Now for the model definitions
-            for(var i = 0; i < sdfDefinitions.Count; i++)
+            for (var i = 0; i < sdfDefinitions.Count; i++)
             {
                 if (RenderingSettings.sdf_regenerate)
                 {
@@ -277,17 +277,17 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Gener
                     {
                         //Only do it for the current thread!
                         if (i++ % numberOfThreads != threadindex) continue;
-                        
-                        Vector3 position = new Vector3(xi * volumeTexSizeX * 2.0f / (xsteps-1) - volumeTexSizeX,
-                            yi * volumeTexSizeY * 2.0f / (ysteps-1) - volumeTexSizeY,
-                            zi * volumeTexSizeZ * 2.0f / (zsteps -1) - volumeTexSizeZ ) + offset;
-                        
+
+                        Vector3 position = new Vector3(xi * volumeTexSizeX * 2.0f / (xsteps - 1) - volumeTexSizeX,
+                            yi * volumeTexSizeY * 2.0f / (ysteps - 1) - volumeTexSizeY,
+                            zi * volumeTexSizeZ * 2.0f / (zsteps - 1) - volumeTexSizeZ) + offset;
+
                         float color = ComputeSDF(position, triangles);
-                        
+
                         data[toTexCoords(xi, yi, zi, xsteps, zsteps)] = color;
 
-                        if(threadindex==0)
-                        RenderingStats.sdf_load = (xi + (yi + zi / (float)zsteps) / (float)ysteps) / (float)xsteps;
+                        if (threadindex == 0)
+                            RenderingStats.sdf_load = (xi + (yi + zi / (float)zsteps) / (float)ysteps) / (float)xsteps;
                     }
                 }
 
@@ -310,7 +310,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Gener
             //http://iquilezles.org/www/articles/distfunctions/distfunctions.htm
 
             float min = 100000;
-            
+
             //Shoot a ray in some direction to check if we are inside the mesh or outside
 
             Vector3 dir = Vector3.Up;
@@ -334,12 +334,12 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Gener
                 float value = (Math.Sign(Vector3.Dot(Vector3.Cross(ba, nor), pa)) +
                                 Math.Sign(Vector3.Dot(Vector3.Cross(cb, nor), pb)) +
                                 Math.Sign(Vector3.Dot(Vector3.Cross(ac, nor), pc)) < 2.0f)
-                                ? 
+                                ?
                                 Math.Min(Math.Min(
                                 dot2(ba * saturate(Vector3.Dot(ba, pa) / dot2(ba)) - pa),
                                 dot2(cb * saturate(Vector3.Dot(cb, pb) / dot2(cb)) - pb)),
                                 dot2(ac * saturate(Vector3.Dot(ac, pc) / dot2(ac)) - pc))
-                                : 
+                                :
                                 Vector3.Dot(nor, pa) * Vector3.Dot(nor, pa) / dot2(nor);
 
                 //intersection
@@ -358,7 +358,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Gener
 
             int signum = intersections % 2 == 0 ? 1 : -1;
 
-            return (float) Math.Sqrt(Math.Abs(min)) * signum; /** Math.Sign(min)*/;
+            return (float)Math.Sqrt(Math.Abs(min)) * signum; /** Math.Sign(min)*/;
         }
 
         private int RayCast(Vector3 a, Vector3 b, Vector3 c, Vector3 origin, Vector3 dir)
