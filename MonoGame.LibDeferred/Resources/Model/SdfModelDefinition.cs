@@ -16,7 +16,7 @@ namespace DeferredEngine.Recources
             assetpath, graphics, UseSDF, DefaultSdfResolution)
         { }
         public SdfModelDefinition(ContentManager content, string assetpath, GraphicsDevice graphics, bool UseSDF, Vector3 sdfResolution /*default = 50^3*/)
-            : base(content, assetpath, graphics, UseSDF, sdfResolution)
+            : base(content, assetpath, graphics)
         {
             //SDF
             SDF = new SignedDistanceField(content.RootDirectory + "/" + assetpath + ".sdft", graphics, BoundingBox, BoundingBoxOffset, sdfResolution);

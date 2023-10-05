@@ -12,10 +12,7 @@ namespace DeferredEngine.Recources
         public Vector3 BoundingBoxOffset;
         public Model Model;
 
-        public ModelDefinition(ContentManager content, string assetpath, GraphicsDevice graphics, bool UseSDF = false) : this(content,
-            assetpath, graphics, UseSDF, new Vector3(50, 50, 50))
-        { }
-        public ModelDefinition(ContentManager content, string assetpath, GraphicsDevice graphics, bool UseSDF, Vector3 sdfResolution /*default = 50^3*/)
+        public ModelDefinition(ContentManager content, string assetpath, GraphicsDevice graphics)
         {
             
             Model = content.Load<Model>(assetpath);
