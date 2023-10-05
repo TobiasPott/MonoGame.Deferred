@@ -94,17 +94,17 @@ namespace DeferredEngine.Recources
             EditorArrow = content.Load<Model>("Art/Editor/Arrow");
             EditorArrowRound = content.Load<Model>("Art/Editor/ArrowRound");
 
-            IsoSphere = new SdfModelDefinition(content, "Art/default/isosphere", graphicsDevice, true, new Vector3(50, 50, 50));
+            IsoSphere = new SdfModelDefinition(content, "Art/default/isosphere", graphicsDevice, true);
             
             Sphere = content.Load<Model>("Art/default/sphere");
             SphereMeshPart = Sphere.Meshes[0].MeshParts[0];
 
             Plane = new SdfModelDefinition(content, "Art/Plane", graphicsDevice);
 
-            Cube = new SdfModelDefinition(content, "Art/test/cube", graphicsDevice, true, new Vector3(50, 50, 50));
+            Cube = new SdfModelDefinition(content, "Art/test/cube", graphicsDevice, true);
 
-            Tiger = new SdfModelDefinition(content, "Art/Tiger/Tiger", graphicsDevice, true, new Vector3(50,50,50));
-            HumanModel = new SdfModelDefinition(content, "Art/Human/human", graphicsDevice, true, new Vector3(50, 50, 50));
+            Tiger = new SdfModelDefinition(content, "Art/Tiger/Tiger", graphicsDevice, true);
+            HumanModel = new SdfModelDefinition(content, "Art/Human/human", graphicsDevice, true);
 
             IconDecal = content.Load<Texture2D>("Art/Editor/icon_decal");
             IconLight = content.Load<Texture2D>("Art/Editor/icon_light");
@@ -163,8 +163,8 @@ namespace DeferredEngine.Recources
 
             //
 
-            StanfordDragon = new SdfModelDefinition(content, "Art/default/dragon_uv_smooth", graphicsDevice, false, new Vector3(70, 70, 70)); 
-            StanfordDragonLowpoly = new SdfModelDefinition(content, "Art/default/dragon_lowpoly", graphicsDevice, true, new Vector3(60, 60,60));
+            StanfordDragon = new SdfModelDefinition(content, "Art/default/dragon_uv_smooth", graphicsDevice, false, SdfModelDefinition.DefaultSdfResolution * 1.4f); 
+            StanfordDragonLowpoly = new SdfModelDefinition(content, "Art/default/dragon_lowpoly", graphicsDevice, true, SdfModelDefinition.DefaultSdfResolution * 1.2f);
 
             DragonLowPolyMaterial = CreateMaterial(Color.Red, 0.5f, 0, type: MaterialEffect.MaterialTypes.Basic, normalMap: content.Load<Texture2D>("Art/default/dragon_normal"));
 

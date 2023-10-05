@@ -4,47 +4,27 @@ using DeferredEngine.Recources.Helper;
 using DeferredEngine.Renderer.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Generator
 {
-    public class SdfGenerator
+    public partial class SdfGenerator
     {
         private Task generateTask;
 
         private List<SignedDistanceField> sdfDefinitions = new List<SignedDistanceField>();
 
-        public struct Triangle
-        {
-            public Vector3 a;
-            public Vector3 b;
-            public Vector3 c;
-            public Vector3 n;
-            public Vector3 ba;
-            public Vector3 cb;
-            public Vector3 ac;
 
-        }
-
-        public struct SamplePoint
-        {
-            public Vector3 p;
-            public float sdf;
-
-            public SamplePoint(Vector3 position, float sdf)
-            {
-                p = position;
-                this.sdf = sdf;
-            }
-        }
-
-
-        public void GenerateTriangles(Model model, out Triangle[] triangles)
+        public void GenerateTriangles(Model model, ref SdfTriangle[] triangles)
         {
             Vector3[] vertexPositions;
             int[] indices;
             GeometryDataExtractor.GetVerticesAndIndicesFromModel(model, out vertexPositions, out indices);
-            triangles = new Triangle[indices.Length / 3];
+            if (triangles.Length != indices.Length / 3)
+                Array.Resize<SdfTriangle>(ref triangles, indices.Length / 3);
             int baseIndex = 0;
             for (var i = 0; i < triangles.Length; i++, baseIndex += 3)
             {
@@ -76,8 +56,8 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Gener
                 uncomputedSignedDistanceField.SdfTexture?.Dispose();
 
                 //First generate tris
-                Triangle[] triangles;
-                GenerateTriangles(unprocessedModel, out triangles);
+                GenerateTriangles(unprocessedModel, ref sdfModelDefinition.SdfTriangles);
+                SdfTriangle[] triangles = sdfModelDefinition.SdfTriangles;
 
                 int xsteps = (int)uncomputedSignedDistanceField.TextureResolution.X;
                 int ysteps = (int)uncomputedSignedDistanceField.TextureResolution.Y;
@@ -262,7 +242,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Gener
             sdfDefinitionsOut = sdfDefinitions;
         }
 
-        private void GenerateData(int xsteps, int ysteps, int zsteps, SignedDistanceField volumeTex, ref float[] data, int threadindex, int numberOfThreads, Triangle[] triangles)
+        private void GenerateData(int xsteps, int ysteps, int zsteps, SignedDistanceField volumeTex, ref float[] data, int threadindex, int numberOfThreads, SdfTriangle[] triangles)
         {
             int xi, yi, zi;
 
@@ -309,7 +289,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Gener
             return x < 0 ? 0 : x > 1 ? 1 : x;
         }
 
-        private float ComputeSDF(Vector3 p, Triangle[] triangles)
+        private float ComputeSDF(Vector3 p, SdfTriangle[] triangles)
         {
             //Find nearest distance.
             //http://iquilezles.org/www/articles/distfunctions/distfunctions.htm
