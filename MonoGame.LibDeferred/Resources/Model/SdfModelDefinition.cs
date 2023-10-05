@@ -7,7 +7,7 @@ namespace DeferredEngine.Recources
 {
     public class SdfModelDefinition : ModelDefinition
     {
-        public static readonly Vector3 DefaultSdfResolution = new Vector3(25, 25, 25);
+        public static readonly Vector3 DefaultSdfResolution = new Vector3(50, 50, 50);
 
         public SignedDistanceField SDF;
         public SdfTriangle[] SdfTriangles = Array.Empty<SdfTriangle>();
