@@ -55,7 +55,7 @@ namespace DeferredEngine.Renderer.Helper
         /// <param name="mat">if "null" it will be taken from the model!</param>
         /// <param name="model"></param>
         /// <param name="worldMatrix"></param>
-        public void Register(MaterialEffect mat, Model model, TransformMatrix worldMatrix)
+        public void Register(MaterialEffect mat, Model model, TransformableObject worldMatrix)
         {
             if (model == null) return;
 
@@ -75,7 +75,7 @@ namespace DeferredEngine.Renderer.Helper
             }
         }
 
-        public void Register(MaterialEffect mat, ModelMeshPart mesh, TransformMatrix worldMatrix, BoundingSphere boundingSphere) //These should be ordered by likeness, so I don't get opaque -> transparent -> opaque
+        public void Register(MaterialEffect mat, ModelMeshPart mesh, TransformableObject worldMatrix, BoundingSphere boundingSphere) //These should be ordered by likeness, so I don't get opaque -> transparent -> opaque
         {
             bool found = false;
 
@@ -161,12 +161,12 @@ namespace DeferredEngine.Renderer.Helper
                 for (int i = 0; i < mesh.MeshParts.Count; i++)
                 {
                     ModelMeshPart meshPart = mesh.MeshParts[i];
-                    DeleteFromRegistry(basicEntity.Material, meshPart, basicEntity.WorldTransform);
+                    DeleteFromRegistry(basicEntity.Material, meshPart, basicEntity);
                 }
             }
         }
 
-        private void DeleteFromRegistry(MaterialEffect mat, ModelMeshPart mesh, TransformMatrix worldMatrix)
+        private void DeleteFromRegistry(MaterialEffect mat, ModelMeshPart mesh, TransformableObject worldMatrix)
         {
             for (var i = 0; i < Index; i++)
             {

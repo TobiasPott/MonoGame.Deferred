@@ -12,7 +12,7 @@ namespace DeferredEngine.Renderer.Helper
         public BoundingSphere MeshBoundingSphere;
 
         const int InitialLibrarySize = 4;
-        private TransformMatrix[] _worldMatrices = new TransformMatrix[InitialLibrarySize];
+        private TransformableObject[] _worldMatrices = new TransformableObject[InitialLibrarySize];
 
         //the local displacement of the boundingsphere!
         private Vector3[] _worldBoundingCenters = new Vector3[InitialLibrarySize];
@@ -36,7 +36,7 @@ namespace DeferredEngine.Renderer.Helper
             return _mesh;
         }
 
-        public TransformMatrix[] GetWorldMatrices()
+        public TransformableObject[] GetWorldMatrices()
         {
             return _worldMatrices;
         }
@@ -56,16 +56,12 @@ namespace DeferredEngine.Renderer.Helper
 
             for (var i = 0; i < Index; i++)
             {
-                TransformMatrix trafoMatrix = _worldMatrices[i];
+                TransformableObject trafoMatrix = _worldMatrices[i];
 
-
-                if (trafoMatrix.HasChanged)
-                {
-                    _worldBoundingCenters[i] = trafoMatrix.TransformMatrixSubModel(MeshBoundingSphere.Center);
-                }
+                _worldBoundingCenters[i] = Vector3.Transform(MeshBoundingSphere.Center, trafoMatrix.World);
 
                 //If either the trafomatrix or the camera has changed we need to check visibility
-                if (trafoMatrix.HasChanged || cameraHasChanged)
+                if (cameraHasChanged)
                 {
                     sphere.Center = _worldBoundingCenters[i];
                     sphere.Radius = MeshBoundingSphere.Radius * trafoMatrix.Scale.X;
@@ -99,11 +95,11 @@ namespace DeferredEngine.Renderer.Helper
         }
 
         //Basically no chance we have the same model already. We should be fine just adding it to the list if we did everything else right.
-        public void Register(TransformMatrix world)
+        public void Register(TransformableObject world)
         {
             _worldMatrices[Index] = world;
             Rendered[Index] = true;
-            _worldBoundingCenters[Index] = world.TransformMatrixSubModel(MeshBoundingSphere.Center);
+            _worldBoundingCenters[Index] = Vector3.Transform(MeshBoundingSphere.Center, world.World);
 
             Index++;
 
@@ -111,7 +107,7 @@ namespace DeferredEngine.Renderer.Helper
 
             if (Index >= _worldMatrices.Length)
             {
-                TransformMatrix[] tempLib = new TransformMatrix[Index + 1];
+                TransformableObject[] tempLib = new TransformableObject[Index + 1];
                 _worldMatrices.CopyTo(tempLib, 0);
                 _worldMatrices = tempLib;
 
@@ -125,11 +121,11 @@ namespace DeferredEngine.Renderer.Helper
             }
         }
 
-        public bool DeleteFromRegistry(TransformMatrix worldMatrix)
+        public bool DeleteFromRegistry(TransformableObject worldMatrix)
         {
             for (var i = 0; i < Index; i++)
             {
-                TransformMatrix trafoMatrix = _worldMatrices[i];
+                TransformableObject trafoMatrix = _worldMatrices[i];
 
                 if (trafoMatrix == worldMatrix)
                 {

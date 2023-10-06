@@ -43,7 +43,7 @@ namespace DeferredEngine.Renderer.Helper
             return _meshLib;
         }
 
-        public void Register(ModelMeshPart mesh, TransformMatrix worldMatrix, BoundingSphere boundingSphere)
+        public void Register(ModelMeshPart mesh, TransformableObject worldMatrix, BoundingSphere boundingSphere)
         {
             bool found = false;
             //Check if we already have a model like that, if yes put it in there!
@@ -77,7 +77,7 @@ namespace DeferredEngine.Renderer.Helper
             }
         }
 
-        public bool DeleteFromRegistry(ModelMeshPart mesh, TransformMatrix worldMatrix)
+        public bool DeleteFromRegistry(ModelMeshPart mesh, TransformableObject worldMatrix)
         {
             for (var i = 0; i < Index; i++)
             {

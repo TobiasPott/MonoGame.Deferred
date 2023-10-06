@@ -5,13 +5,12 @@ namespace DeferredEngine.Entities
 {
     public class TransformMatrix
     {
-        public Matrix InverseWorld;
         public bool HasChanged = true;
         public readonly int Id;
 
         public Vector3 Scale;
-
         public Matrix World;
+        public Matrix InverseWorld;
 
         public TransformMatrix(Matrix world, int id)
         {
@@ -19,9 +18,5 @@ namespace DeferredEngine.Entities
             Id = id;
         }
 
-        public Vector3 TransformMatrixSubModel(Vector3 translateSub)
-        {
-            return Vector3.Transform(translateSub, World);
-        }
     }
 }

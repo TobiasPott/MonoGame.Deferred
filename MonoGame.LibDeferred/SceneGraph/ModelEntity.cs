@@ -33,7 +33,7 @@ namespace DeferredEngine.Entities
 
         public void RegisterInLibrary(MeshMaterialLibrary library)
         {
-            library.Register(Material, ModelDefinition.Model, WorldTransform);
+            library.Register(Material, ModelDefinition.Model, this);
         }
 
         public void Dispose(MeshMaterialLibrary library)
