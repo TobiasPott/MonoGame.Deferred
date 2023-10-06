@@ -133,7 +133,7 @@ namespace DeferredEngine.Logic
             ////////////////////////////////////////////////////////////////////////
             // Decals
 
-            Decals.Add(new Decal(_assets.IconDecal, new Vector3(-6, 22, 15), 0, -Math.PI / 2, 0, Vector3.One * 10));
+            Decals.Add(new Decal(_assets.IconDecal, new Vector3(-6, 22, 15), new Vector3((float)(-Math.PI / 2), 0, 0), Vector3.One * 10));
 
             ////////////////////////////////////////////////////////////////////////
             // Dynamic lights
