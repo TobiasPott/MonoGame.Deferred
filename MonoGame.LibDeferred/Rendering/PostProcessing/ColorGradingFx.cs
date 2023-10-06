@@ -1,5 +1,4 @@
-﻿using DeferredEngine.Renderer.Helper;
-using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 
@@ -143,9 +142,7 @@ namespace DeferredEngine.Renderer.PostProcessing
 
             _graphicsDevice.SetRenderTarget(_renderTarget);
             _graphicsDevice.BlendState = BlendState.Opaque;
-
-            _applyLUTPass.Apply();
-            _fullscreenTarget.Draw(_graphicsDevice);
+            this.Draw(_applyLUTPass);
             return _renderTarget;
         }
 
@@ -168,8 +165,7 @@ namespace DeferredEngine.Renderer.PostProcessing
 
             _graphicsDevice.SetRenderTarget(_renderTarget);
 
-            _createLUTPass.Apply();
-            _fullscreenTarget.Draw(_graphicsDevice);
+            this.Draw(_createLUTPass);
 
             //Save this texture
             Stream stream = File.Create(relativeFilePath);

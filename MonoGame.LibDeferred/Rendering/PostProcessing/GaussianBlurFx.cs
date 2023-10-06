@@ -56,13 +56,11 @@ namespace DeferredEngine.Renderer.PostProcessing
             Shaders.GaussianBlurEffectParameter_InverseResolution.SetValue(invRes);
             Shaders.GaussianBlurEffectParameter_TargetMap.SetValue(renderTargetOutput);
 
-            _horizontalPass.Apply();
-            _fullscreenTarget.Draw(_graphicsDevice);
+            this.Draw(_horizontalPass);
 
             _graphicsDevice.SetRenderTarget(renderTargetOutput);
             Shaders.GaussianBlurEffectParameter_TargetMap.SetValue(renderTargetBlur);
-            _verticalPass.Apply();
-            _fullscreenTarget.Draw(_graphicsDevice);
+            this.Draw(_verticalPass);
 
             return renderTargetOutput;
         }
@@ -82,14 +80,11 @@ namespace DeferredEngine.Renderer.PostProcessing
             Vector2 invRes = new Vector2(1.0f / size, 1.0f / size);
             Shaders.GaussianBlurEffectParameter_InverseResolution.SetValue(invRes);
             Shaders.GaussianBlurEffectParameter_TargetMap.SetValue(renderTargetOutput);
-
-            _horizontalPass.Apply();
-            _fullscreenTarget.Draw(_graphicsDevice);
+            this.Draw(_horizontalPass);
 
             _graphicsDevice.SetRenderTarget(renderTargetOutput, cubeFace);
             Shaders.GaussianBlurEffectParameter_TargetMap.SetValue(renderTargetBlur);
-            _verticalPass.Apply();
-            _fullscreenTarget.Draw(_graphicsDevice);
+            this.Draw(_verticalPass);
 
             return renderTargetOutput;
         }

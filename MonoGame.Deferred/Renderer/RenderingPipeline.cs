@@ -384,7 +384,7 @@ namespace DeferredEngine.Renderer
             if (RenderingSettings.e_enableeditor && RenderingStats.e_EnableSelection)
             {
                 if (RenderingSettings.e_drawoutlines)
-                    DrawMapToScreenToFullScreen(_editorRender.GetOutlines(), BlendState.Additive);
+                    DrawTextureToScreenToFullScreen(_editorRender.GetOutlines(), BlendState.Additive);
 
                 _editorRender.DrawEditorElements(meshMaterialLibrary, decals, pointLights, directionalLights, envSample, _staticViewProjection, _view, gizmoContext);
 
@@ -547,7 +547,7 @@ namespace DeferredEngine.Renderer
                 //    ? Shaders.DeferredComposeTechnique_Linear
                 //    : Shaders.DeferredComposeTechnique_NonLinear;
                 RenderingSettings.g_taa = tempAa;
-                DrawMapToScreenToCube(_renderTargetComposed, _renderTargetCubeMap, cubeMapFace);
+                DrawTextureToScreenToCube(_renderTargetComposed, _renderTargetCubeMap, cubeMapFace);
             }
             Shaders.DeferredComposeEffectParameter_UseSSAO.SetValue(RenderingSettings.g_ssao_draw);
 
@@ -915,9 +915,9 @@ namespace DeferredEngine.Renderer
             if (!RenderingSettings.g_drawdecals) return;
 
             //First copy albedo to decal offtarget
-            DrawMapToScreenToFullScreen(_renderTargetAlbedo, BlendState.Opaque, _renderTargetDecalOffTarget);
+            DrawTextureToScreenToFullScreen(_renderTargetAlbedo, BlendState.Opaque, _renderTargetDecalOffTarget);
 
-            DrawMapToScreenToFullScreen(_renderTargetDecalOffTarget, BlendState.Opaque, _renderTargetAlbedo);
+            DrawTextureToScreenToFullScreen(_renderTargetDecalOffTarget, BlendState.Opaque, _renderTargetAlbedo);
 
             _decalRenderModule.Draw(_graphicsDevice, decals, _view, _viewProjection, _inverseView);
         }
@@ -1245,10 +1245,8 @@ namespace DeferredEngine.Renderer
 
             RenderTarget2D output = _temporalAAOffFrame ? _renderTargetTAA_2 : _renderTargetTAA_1;
             _taaFx.UseTonemap = RenderingSettings.g_taa_tonemapped;
-            _taaFx.Draw(currentFrame: input,
-                previousFrames: _temporalAAOffFrame ? _renderTargetTAA_1 : _renderTargetTAA_2,
-                output: output,
-                currentViewToPreviousViewProjection: _currentViewToPreviousViewProjection);
+            _taaFx.CurrentViewToPreviousViewProjection = _currentViewToPreviousViewProjection;
+            _taaFx.Draw(currentFrame: input, previousFrames: _temporalAAOffFrame ? _renderTargetTAA_1 : _renderTargetTAA_2, output: output);
 
             //Performance Profiler
             if (RenderingSettings.d_profiler)
@@ -1287,43 +1285,43 @@ namespace DeferredEngine.Renderer
             switch (RenderingSettings.g_rendermode)
             {
                 case RenderModes.Albedo:
-                    DrawMapToScreenToFullScreen(_renderTargetAlbedo);
+                    DrawTextureToScreenToFullScreen(_renderTargetAlbedo);
                     break;
                 case RenderModes.Normal:
-                    DrawMapToScreenToFullScreen(_renderTargetNormal);
+                    DrawTextureToScreenToFullScreen(_renderTargetNormal);
                     break;
                 case RenderModes.Depth:
-                    DrawMapToScreenToFullScreen(_renderTargetDepth);
+                    DrawTextureToScreenToFullScreen(_renderTargetDepth);
                     break;
                 case RenderModes.Diffuse:
-                    DrawMapToScreenToFullScreen(_renderTargetDiffuse);
+                    DrawTextureToScreenToFullScreen(_renderTargetDiffuse);
                     break;
                 case RenderModes.Specular:
-                    DrawMapToScreenToFullScreen(_renderTargetSpecular);
+                    DrawTextureToScreenToFullScreen(_renderTargetSpecular);
                     break;
                 case RenderModes.Volumetric:
-                    DrawMapToScreenToFullScreen(_renderTargetVolume);
+                    DrawTextureToScreenToFullScreen(_renderTargetVolume);
                     break;
                 case RenderModes.SSAO:
-                    DrawMapToScreenToFullScreen(_renderTargetSSAOEffect);
+                    DrawTextureToScreenToFullScreen(_renderTargetSSAOEffect);
                     break;
                 //case RenderModes.Hologram:
                 //    DrawMapToScreenToFullScreen(_renderTargetHologram);
                 //    break;
                 case RenderModes.SSBlur:
-                    DrawMapToScreenToFullScreen(_renderTargetScreenSpaceEffectBlurFinal);
+                    DrawTextureToScreenToFullScreen(_renderTargetScreenSpaceEffectBlurFinal);
                     break;
                 //case RenderModes.Emissive:
                 //    DrawMapToScreenToFullScreen(_renderTargetEmissive);
                 //    break;
                 case RenderModes.SSR:
-                    DrawMapToScreenToFullScreen(_renderTargetScreenSpaceEffectReflection);
+                    DrawTextureToScreenToFullScreen(_renderTargetScreenSpaceEffectReflection);
                     break;
                 //case RenderModes.SubsurfaceScattering:
                 //    DrawMapToScreenToFullScreen(_renderTargetSSS);
                 //    break;
                 case RenderModes.HDR:
-                    DrawMapToScreenToFullScreen(currentInput);
+                    DrawTextureToScreenToFullScreen(currentInput);
                     break;
                 default:
                     DrawPostProcessing(currentInput);
@@ -1365,7 +1363,7 @@ namespace DeferredEngine.Renderer
             if (RenderingSettings.g_ColorGrading)
                 destinationRenderTarget = _colorGradingFx.Draw(destinationRenderTarget);
 
-            DrawMapToScreenToFullScreen(destinationRenderTarget);
+            DrawTextureToScreenToFullScreen(destinationRenderTarget);
         }
         #endregion
 
@@ -1584,23 +1582,22 @@ namespace DeferredEngine.Renderer
         //  HELPER FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        private void DrawMapToScreenToCube(RenderTarget2D map, RenderTargetCube target, CubeMapFace? face)
+        private void DrawTextureToScreenToCube(RenderTarget2D texture, RenderTargetCube target, CubeMapFace? face)
         {
 
             if (face != null) _graphicsDevice.SetRenderTarget(target, (CubeMapFace)face);
             // _graphicsDevice.Clear(Color.CornflowerBlue);
             _spriteBatch.Begin(0, BlendState.Opaque, SamplerState.PointClamp);
-            _spriteBatch.Draw(map, new Rectangle(0, 0, map.Width, map.Height), Color.White);
+            _spriteBatch.Draw(texture, new Rectangle(0, 0, texture.Width, texture.Height), Color.White);
             _spriteBatch.End();
         }
-
-        private void DrawMapToScreenToFullScreen(Texture2D map, BlendState blendState = null, RenderTarget2D output = null)
+        private void DrawTextureToScreenToFullScreen(Texture2D texture, BlendState blendState = null, RenderTarget2D output = null)
         {
             if (blendState == null) blendState = BlendState.Opaque;
 
             int height;
             int width;
-            if (Math.Abs(map.Width / (float)map.Height - RenderingSettings.g_screenwidth / (float)RenderingSettings.g_screenheight) < 0.001)
+            if (Math.Abs(texture.Width / (float)texture.Height - RenderingSettings.g_screenwidth / (float)RenderingSettings.g_screenheight) < 0.001)
             //If same aspectratio
             {
                 height = RenderingSettings.g_screenheight;
@@ -1622,7 +1619,7 @@ namespace DeferredEngine.Renderer
             }
             _graphicsDevice.SetRenderTarget(output);
             _spriteBatch.Begin(0, blendState, _supersampling > 1 ? SamplerState.LinearWrap : SamplerState.PointClamp);
-            _spriteBatch.Draw(map, new Rectangle(0, 0, width, height), Color.White);
+            _spriteBatch.Draw(texture, new Rectangle(0, 0, width, height), Color.White);
             _spriteBatch.End();
         }
 

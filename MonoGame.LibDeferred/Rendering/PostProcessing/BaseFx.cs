@@ -13,6 +13,15 @@ namespace DeferredEngine.Renderer.PostProcessing
             _graphicsDevice = graphicsDevice;
             _fullscreenTarget = fullscreenTarget;
         }
+        protected void Draw(EffectPass pass)
+        {
+            if (pass != null)
+                pass.Apply();
+            this.Draw();
+        }
+        protected void Draw()
+        { _fullscreenTarget.Draw(_graphicsDevice); }
+
         public abstract void Dispose();
 
 

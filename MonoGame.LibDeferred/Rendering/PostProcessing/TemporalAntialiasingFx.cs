@@ -18,18 +18,21 @@ namespace DeferredEngine.Renderer.PostProcessing
         private EffectParameter _paramFrustumCorners;
         private EffectParameter _paramUseTonemap;
 
+        private Vector3[] _frustumCorners;
+        private Vector2 _resolution;
+        private bool _useTonemap;
+        public Matrix CurrentViewToPreviousViewProjection;
+
+        private RenderTarget2D _depthMap;
+        private EffectPass _taaPass;
+        private EffectPass _invTonemapPass;
+
+
         public TemporalAntialiasingFx(ContentManager content, string shaderPath = "Shaders/TemporalAntiAliasing/TemporalAntiAliasing")
         {
             Load(content, shaderPath);
         }
 
-        private Vector3[] _frustumCorners;
-        private Vector2 _resolution;
-        private RenderTarget2D _depthMap;
-        private EffectPass _taaPass;
-        private EffectPass _invTonemapPass;
-
-        private bool _useTonemap;
 
         public Vector3[] FrustumCorners
         {
@@ -40,7 +43,6 @@ namespace DeferredEngine.Renderer.PostProcessing
                 _paramFrustumCorners.SetValue(_frustumCorners);
             }
         }
-
         public Vector2 Resolution
         {
             get { return _resolution; }
@@ -50,7 +52,6 @@ namespace DeferredEngine.Renderer.PostProcessing
                 _paramResolution.SetValue(_resolution);
             }
         }
-
         public RenderTarget2D DepthMap
         {
             get { return _depthMap; }
@@ -60,7 +61,6 @@ namespace DeferredEngine.Renderer.PostProcessing
                 _paramDepthMap.SetValue(value);
             }
         }
-
         public bool UseTonemap
         {
             get { return _useTonemap; }
@@ -73,6 +73,7 @@ namespace DeferredEngine.Renderer.PostProcessing
                 }
             }
         }
+
 
 
         public override void Initialize(GraphicsDevice graphicsDevice, FullScreenTriangleBuffer fullScreenTriangle)
@@ -99,24 +100,22 @@ namespace DeferredEngine.Renderer.PostProcessing
         }
 
 
-        public void Draw(RenderTarget2D currentFrame, RenderTarget2D previousFrames, RenderTarget2D output, Matrix currentViewToPreviousViewProjection)
+        public void Draw(RenderTarget2D currentFrame, RenderTarget2D previousFrames, RenderTarget2D output)
         {
             _graphicsDevice.SetRenderTarget(output);
             _graphicsDevice.BlendState = BlendState.Opaque;
 
             _paramAccumulationMap.SetValue(previousFrames);
             _paramUpdateMap.SetValue(currentFrame);
-            _paramCurrentToPrevious.SetValue(currentViewToPreviousViewProjection);
+            _paramCurrentToPrevious.SetValue(CurrentViewToPreviousViewProjection);
 
-            _taaPass.Apply();
-            _fullscreenTarget.Draw(_graphicsDevice);
+            this.Draw(_taaPass);
 
             if (UseTonemap)
             {
                 _graphicsDevice.SetRenderTarget(currentFrame);
                 _paramUpdateMap.SetValue(output);
-                _invTonemapPass.Apply();
-                _fullscreenTarget.Draw(_graphicsDevice);
+                this.Draw(_invTonemapPass);
             }
         }
 
