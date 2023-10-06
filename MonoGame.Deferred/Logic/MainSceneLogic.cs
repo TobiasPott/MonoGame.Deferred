@@ -306,9 +306,7 @@ namespace DeferredEngine.Logic
             ModelEntity entity = new ModelEntity(model,
                 null,
                 position: position,
-                angleZ: angleZ,
-                angleX: angleX,
-                angleY: angleY,
+                rotationAngles: new Vector3((float)angleX, (float)angleY, (float)angleZ),
                 scale: Vector3.One * scale,
                 library: MeshMaterialLibrary);
             BasicEntities.Add(entity);
@@ -332,33 +330,12 @@ namespace DeferredEngine.Logic
             ModelEntity entity = new ModelEntity(model,
                 materialEffect,
                 position: position,
-                angleZ: angleZ,
-                angleX: angleX,
-                angleY: angleY,
+                rotationAngles: new Vector3((float)angleX, (float)angleY, (float)angleZ),
                 scale: Vector3.One * scale,
                 library: MeshMaterialLibrary);
             BasicEntities.Add(entity);
 
             return entity;
-        }
-
-        /// <summary>
-        /// Create a static physics mesh from a model and scale.
-        /// </summary>
-        /// <param name="entity"></param>
-        private void AddStaticPhysics(ModelEntity entity)
-        {
-            //BEPUutilities.Vector3[] vertices;
-            //int[] indices;
-            //GeometryDataExtractor.GetVerticesAndIndicesFromModel(entity.ModelDefinition.Model, out vertices, out indices);
-            //var mesh = new StaticMesh(vertices, indices, 
-            //    new AffineTransform(
-            //        new BEPUutilities.Vector3(entity.Scale.X, entity.Scale.Y, entity.Scale.Z), 
-            //    Quaternion.CreateFromRotationMatrix(MathConverter.Convert(entity.RotationMatrix)), 
-            //    MathConverter.Convert(entity.Position)));
-
-            //entity.StaticPhysicsObject = mesh;
-            //_physicsSpace.Add(mesh);
         }
 
     }
