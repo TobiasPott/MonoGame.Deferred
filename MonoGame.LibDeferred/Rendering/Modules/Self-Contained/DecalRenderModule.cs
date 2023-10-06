@@ -2,8 +2,6 @@
 using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
@@ -32,9 +30,9 @@ namespace DeferredEngine.Renderer.RenderModules
         public float FarClip { set { _paramFarClip.SetValue(value); } }
         public Texture2D DepthMap { set { _paramDepthMap.SetValue(value); } }
 
-        public DecalRenderModule(ShaderManager shaderManager, string shaderPath)
-        {
 
+        public DecalRenderModule(ShaderManager shaderManager, string shaderPath = "Shaders/Deferred/DeferredDecal")
+        {
             Load(shaderManager, shaderPath);
             InitializeShader();
         }

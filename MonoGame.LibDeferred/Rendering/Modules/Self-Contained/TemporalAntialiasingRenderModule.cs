@@ -1,5 +1,4 @@
-﻿using System;
-using DeferredEngine.Renderer.Helper;
+﻿using DeferredEngine.Renderer.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -19,7 +18,7 @@ namespace DeferredEngine.Renderer.RenderModules
         private EffectParameter _paramFrustumCorners;
         private EffectParameter _paramUseTonemap;
 
-        public TemporalAntialiasingRenderModule(ContentManager content, string shaderPath)
+        public TemporalAntialiasingRenderModule(ContentManager content, string shaderPath = "Shaders/TemporalAntiAliasing/TemporalAntiAliasing")
         {
             Load(content, shaderPath);
             Initialize();
