@@ -190,7 +190,7 @@ namespace DeferredEngine.Renderer
             _bloomFilter.Initialize(_graphicsDevice, RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight, _fullScreenTriangle);
 
             _temporalAntialiasingRenderModule.Initialize(graphicsDevice, _fullScreenTriangle);
-            _colorGradingFilter.Initialize(graphicsDevice);
+            _colorGradingFilter.Initialize(graphicsDevice, _fullScreenTriangle);
 
             _lightAccumulationModule.Initialize(graphicsDevice, _fullScreenTriangle, assets);
 
@@ -1362,7 +1362,7 @@ namespace DeferredEngine.Renderer
             _fullScreenTriangle.Draw(_graphicsDevice);
 
             if (RenderingSettings.g_ColorGrading)
-                destinationRenderTarget = _colorGradingFilter.Draw(_graphicsDevice, destinationRenderTarget);
+                destinationRenderTarget = _colorGradingFilter.Draw(destinationRenderTarget);
 
             DrawMapToScreenToFullScreen(destinationRenderTarget);
         }

@@ -16,14 +16,13 @@ namespace DeferredEngine.Renderer.PostProcessing
     /// You can use Draw() to apply the color grading / color correction to an image and use the returned texture for output.
     /// You can use CreateLUT to create default Look-up tables with unmodified colors.
     /// </summary>
-    public class ColorGradingFx : IDisposable
+    public class ColorGradingFx : BaseFx
     {
 
         #region fields & properties
 
         #region fields
         private readonly Effect _shaderEffect;
-        private FullScreenTriangleBuffer _fullScreenTriangle;
 
         private RenderTarget2D _renderTarget;
 
@@ -108,15 +107,10 @@ namespace DeferredEngine.Renderer.PostProcessing
             LookUpTable = content.Load<Texture2D>("Shaders/PostProcessing/lut");
         }
 
-        public void Initialize(GraphicsDevice graphics)
-        {
-            _fullScreenTriangle = new FullScreenTriangleBuffer(graphics);
-        }
 
-        public void Dispose()
+        public override void Dispose()
         {
             _shaderEffect?.Dispose();
-            _fullScreenTriangle?.Dispose();
             _renderTarget?.Dispose();
         }
 
@@ -131,7 +125,7 @@ namespace DeferredEngine.Renderer.PostProcessing
         /// <param name="input"> The basic texture or rendertarget you want to modify</param>
         /// <param name="lookupTable"> The specific lookup table used</param>
         /// <returns></returns>
-        public RenderTarget2D Draw(GraphicsDevice graphics, Texture2D input, Texture2D lookupTable = null)
+        public RenderTarget2D Draw(Texture2D input, Texture2D lookupTable = null)
         {
             if (lookupTable == null)
                 lookupTable = _lookupTable;
@@ -140,18 +134,18 @@ namespace DeferredEngine.Renderer.PostProcessing
             if (_renderTarget == null || _renderTarget.Width != input.Width || _renderTarget.Height != input.Height)
             {
                 _renderTarget?.Dispose();
-                _renderTarget = new RenderTarget2D(graphics, input.Width, input.Height, false, SurfaceFormat.Color, DepthFormat.None);
+                _renderTarget = new RenderTarget2D(_graphicsDevice, input.Width, input.Height, false, SurfaceFormat.Color, DepthFormat.None);
             }
 
             InputTexture = input;
             //LookUpTable = lookupTable;
             Size = (lookupTable.Width == 64) ? 16 : 32;
 
-            graphics.SetRenderTarget(_renderTarget);
-            graphics.BlendState = BlendState.Opaque;
+            _graphicsDevice.SetRenderTarget(_renderTarget);
+            _graphicsDevice.BlendState = BlendState.Opaque;
 
             _applyLUTPass.Apply();
-            _fullScreenTriangle.Draw(graphics);
+            _fullscreenTarget.Draw(_graphicsDevice);
             return _renderTarget;
         }
 
@@ -162,7 +156,7 @@ namespace DeferredEngine.Renderer.PostProcessing
         /// <param name="graphics"></param>
         /// <param name="lutsize">32 or 16. 32 will result in a larger LUT which results in better images but worse performance</param>
         /// <param name="relativeFilePath">for example "Lut16.png". The base directory is where the .exe is started from</param>
-        public void CreateLUT(GraphicsDevice graphics, LUTSizes lutsize, string relativeFilePath)
+        public void CreateLUT(LUTSizes lutsize, string relativeFilePath)
         {
             _renderTarget?.Dispose();
 
@@ -170,12 +164,12 @@ namespace DeferredEngine.Renderer.PostProcessing
             _sizeRootParam.SetValue((float)(lutsize == LUTSizes.Size16 ? 4 : 8));
             int size = lutsize == LUTSizes.Size16 ? 16 * 4 : 32 * 8;
 
-            _renderTarget = new RenderTarget2D(graphics, size, size, false, SurfaceFormat.Color, DepthFormat.None);
+            _renderTarget = new RenderTarget2D(_graphicsDevice, size, size, false, SurfaceFormat.Color, DepthFormat.None);
 
-            graphics.SetRenderTarget(_renderTarget);
+            _graphicsDevice.SetRenderTarget(_renderTarget);
 
             _createLUTPass.Apply();
-            _fullScreenTriangle.Draw(graphics);
+            _fullscreenTarget.Draw(_graphicsDevice);
 
             //Save this texture
             Stream stream = File.Create(relativeFilePath);
