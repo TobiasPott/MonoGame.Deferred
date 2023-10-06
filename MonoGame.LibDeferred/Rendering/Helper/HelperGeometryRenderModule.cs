@@ -14,6 +14,8 @@ namespace DeferredEngine.Renderer.RenderModules
         private EffectPass _vertexColorPass;
         private EffectPass _globalColorPass;
 
+        public Matrix ViewProjection;
+
         public void Initialize()
         {
             _worldViewProjParam = _shader.Parameters["WorldViewProj"];
@@ -30,11 +32,10 @@ namespace DeferredEngine.Renderer.RenderModules
             _shader = content.Load<Effect>(shaderPath);
         }
 
-        public void Draw(GraphicsDevice graphics, Matrix viewProjection)
+        public void Draw(GraphicsDevice graphics)
         {
             HelperGeometryManager.GetInstance()
-                .Draw(graphics, viewProjection, _worldViewProjParam, _globalColorParam, _vertexColorPass,
-                    _globalColorPass);
+                .Draw(graphics, ViewProjection, _worldViewProjParam, _globalColorParam, _vertexColorPass, _globalColorPass);
         }
     }
 }

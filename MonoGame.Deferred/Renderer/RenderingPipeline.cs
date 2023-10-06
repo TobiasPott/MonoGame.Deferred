@@ -340,7 +340,8 @@ namespace DeferredEngine.Renderer
             RenderEditorOverlays(gizmoContext, meshMaterialLibrary, decals, pointLights, directionalLights, envSample);
 
             //Draw debug geometry
-            _helperGeometryRenderModule.Draw(_graphicsDevice, _staticViewProjection);
+            _helperGeometryRenderModule.ViewProjection = _staticViewProjection;
+            _helperGeometryRenderModule.Draw(_graphicsDevice);
 
             //Set up the frustum culling for the next frame
             meshMaterialLibrary.FrustumCullingFinalizeFrame(entities);
