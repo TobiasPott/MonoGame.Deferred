@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using static DeferredEngine.Renderer.RenderModules.IdAndOutlineRenderer;
 using DirectionalLight = DeferredEngine.Entities.DirectionalLight;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -253,10 +254,10 @@ namespace DeferredEngine.Renderer
         /// <param name="entities">entities and their properties</param>
         /// <param name="pointLights"></param>
         /// <param name="directionalLights"></param>
-        /// <param name="editorData">The data passed from our editor logic</param>
+        /// <param name="gizmoContext">The data passed from our editor logic</param>
         /// <param name="gameTime"></param>
         /// <returns></returns>
-        public EditorLogic.EditorReceivedData Draw(Camera camera, MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<Decal> decals, List<PointLight> pointLights, List<DirectionalLight> directionalLights, EnvironmentProbe envSample, EditorLogic.EditorSendData editorData, GameTime gameTime)
+        public EditorLogic.EditorReceivedData Draw(Camera camera, MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<Decal> decals, List<PointLight> pointLights, List<DirectionalLight> directionalLights, EnvironmentProbe envSample, GizmoDrawContext gizmoContext, GameTime gameTime)
         {
             //Reset the stat counter, so we can count stats/information for this frame only
             ResetStats();
@@ -338,7 +339,7 @@ namespace DeferredEngine.Renderer
 
             //Draw the elements that we are hovering over with outlines
             if (RenderingSettings.e_enableeditor && RenderingStats.e_EnableSelection)
-                _editorRender.DrawIds(meshMaterialLibrary, decals, pointLights, directionalLights, envSample, _staticViewProjection, _view, editorData);
+                _editorRender.DrawIds(meshMaterialLibrary, decals, pointLights, directionalLights, envSample, _staticViewProjection, _view, gizmoContext);
 
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
             RenderMode(_currentOutput);
@@ -348,7 +349,7 @@ namespace DeferredEngine.Renderer
 
             //Additional editor elements that overlay our screen
 
-            RenderEditorOverlays(editorData, meshMaterialLibrary, decals, pointLights, directionalLights, envSample);
+            RenderEditorOverlays(gizmoContext, meshMaterialLibrary, decals, pointLights, directionalLights, envSample);
 
             //Draw debug geometry
             _helperGeometryRenderModule.Draw(_graphicsDevice, _staticViewProjection);
@@ -384,7 +385,7 @@ namespace DeferredEngine.Renderer
             return false;
         }
 
-        private void RenderEditorOverlays(EditorLogic.EditorSendData editorData, MeshMaterialLibrary meshMaterialLibrary, List<Decal> decals, List<PointLight> pointLights, List<DirectionalLight> directionalLights, EnvironmentProbe envSample)
+        private void RenderEditorOverlays(GizmoDrawContext gizmoContext, MeshMaterialLibrary meshMaterialLibrary, List<Decal> decals, List<PointLight> pointLights, List<DirectionalLight> directionalLights, EnvironmentProbe envSample)
         {
 
             if (RenderingSettings.e_enableeditor && RenderingStats.e_EnableSelection)
@@ -392,22 +393,22 @@ namespace DeferredEngine.Renderer
                 if (RenderingSettings.e_drawoutlines)
                     DrawMapToScreenToFullScreen(_editorRender.GetOutlines(), BlendState.Additive);
 
-                _editorRender.DrawEditorElements(meshMaterialLibrary, decals, pointLights, directionalLights, envSample, _staticViewProjection, _view, editorData);
+                _editorRender.DrawEditorElements(meshMaterialLibrary, decals, pointLights, directionalLights, envSample, _staticViewProjection, _view, gizmoContext);
 
 
-                if (editorData.SelectedObject != null)
+                if (gizmoContext.SelectedObject != null)
                 {
-                    if (editorData.SelectedObject is Decal)
+                    if (gizmoContext.SelectedObject is Decal)
                     {
-                        _decalRenderModule.DrawOutlines(_graphicsDevice, editorData.SelectedObject as Decal,
+                        _decalRenderModule.DrawOutlines(_graphicsDevice, gizmoContext.SelectedObject as Decal,
                             _staticViewProjection, _view);
                     }
 
                     if (RenderingSettings.e_drawboundingbox)
-                        if (editorData.SelectedObject is ModelEntity)
+                        if (gizmoContext.SelectedObject is ModelEntity)
                         {
                             HelperGeometryManager.GetInstance()
-                                .AddBoundingBox(editorData.SelectedObject as ModelEntity);
+                                .AddBoundingBox(gizmoContext.SelectedObject as ModelEntity);
                         }
                 }
             }

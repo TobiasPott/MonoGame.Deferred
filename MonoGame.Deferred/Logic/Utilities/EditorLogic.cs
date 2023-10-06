@@ -6,6 +6,7 @@ using HelperSuite.GUIHelper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using static DeferredEngine.Renderer.RenderModules.IdAndOutlineRenderer;
 using DirectionalLight = DeferredEngine.Entities.DirectionalLight;
 
 namespace DeferredEngine.Logic
@@ -33,23 +34,23 @@ namespace DeferredEngine.Logic
             public Matrix ProjectionMatrix;
         }
 
-        public struct EditorSendData
-        {
-            public TransformableObject SelectedObject;
-            public int SelectedObjectId;
-            public Vector3 SelectedObjectPosition;
-            public bool GizmoTransformationMode;
-            public GizmoModes GizmoMode;
+        //public struct EditorSendData
+        //{
+        //    public TransformableObject SelectedObject;
+        //    public int SelectedObjectId;
+        //    public Vector3 SelectedObjectPosition;
+        //    public bool GizmoTransformationMode;
+        //    public GizmoModes GizmoMode;
 
-            public Renderer.RenderModules.IdAndOutlineRenderer.ObjectDrawContext ToObjectDrawContext() => new Renderer.RenderModules.IdAndOutlineRenderer.ObjectDrawContext()
-            {
-                SelectedObject = this.SelectedObject,
-                SelectedObjectId = this.SelectedObjectId,
-                SelectedObjectPosition = this.SelectedObjectPosition,
-                GizmoMode = this.GizmoMode,
-                GizmoTransformationMode = this.GizmoTransformationMode
-            };
-        }
+        //    public Renderer.RenderModules.IdAndOutlineRenderer.GizmoDrawContext ToObjectDrawContext() => new Renderer.RenderModules.IdAndOutlineRenderer.GizmoDrawContext()
+        //    {
+        //        SelectedObject = this.SelectedObject,
+        //        SelectedObjectId = this.SelectedObjectId,
+        //        SelectedObjectPosition = this.SelectedObjectPosition,
+        //        GizmoMode = this.GizmoMode,
+        //        GizmoTransformationMode = this.GizmoTransformationMode
+        //    };
+        //}
 
         public void Initialize(GraphicsDevice graphicsDevice)
         {
@@ -361,11 +362,11 @@ namespace DeferredEngine.Logic
 
         }
 
-        public EditorSendData GetEditorData()
+        public GizmoDrawContext GetEditorData()
         {
             if (SelectedObject == null)
-                return new EditorSendData { SelectedObjectId = 0, SelectedObjectPosition = Vector3.Zero };
-            return new EditorSendData
+                return new GizmoDrawContext { SelectedObjectId = 0, SelectedObjectPosition = Vector3.Zero };
+            return new GizmoDrawContext
             {
                 SelectedObject = SelectedObject,
                 SelectedObjectId = SelectedObject.Id,

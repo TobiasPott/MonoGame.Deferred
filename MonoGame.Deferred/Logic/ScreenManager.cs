@@ -91,7 +91,7 @@ namespace DeferredEngine.Logic
                 pointLights: _sceneLogic.PointLights,
                 directionalLights: _sceneLogic.DirectionalLights,
                 envSample: _sceneLogic.EnvironmentSample,
-                editorData: _editorLogic.GetEditorData(),
+                gizmoContext: _editorLogic.GetEditorData(),
                 gameTime: gameTime);
 
             if (RenderingSettings.e_enableeditor && RenderingSettings.ui_enabled)
