@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using BEPUutilities;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
+using DeferredEngine.Renderer.Helper;
 
 namespace DeferredEngine
 {
@@ -148,6 +149,7 @@ namespace DeferredEngine
         {
             GUIControl.Initialize(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight);
 
+            FullScreenTriangleBuffer.InitClass(GraphicsDevice);
             _screenManager.Load(Content, GraphicsDevice);
             // TODO: Add your initialization logic here
             _screenManager.Initialize(GraphicsDevice, _physicsSpace);

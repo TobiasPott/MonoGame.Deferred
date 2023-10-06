@@ -5,6 +5,12 @@ namespace DeferredEngine.Renderer.Helper
 {
     public class FullScreenTriangleBuffer
     {
+        public static FullScreenTriangleBuffer Instamce {  get; private set; }
+        public static void InitClass(GraphicsDevice graphicsDevice)
+        { Instamce = new FullScreenTriangleBuffer(graphicsDevice); }
+
+
+
         private VertexBuffer vertexBuffer;
 
         public struct FullScreenQuadVertex
