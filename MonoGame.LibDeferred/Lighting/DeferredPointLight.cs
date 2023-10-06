@@ -6,7 +6,6 @@ namespace DeferredEngine.Entities
 {
     public class DeferredPointLight : TransformableObject
     {
-        private Vector3 _position = Vector3.Zero;
         public Matrix WorldMatrix;
         private float _radius;
         private Color _color;
@@ -90,14 +89,12 @@ namespace DeferredEngine.Entities
             get { return _position; }
             set
             {
-                _position = value;
+                base.Position = value;
                 BoundingSphere.Center = value;
                 WorldMatrix = Matrix.CreateScale(Radius * 1.1f) * Matrix.CreateTranslation(Position);
                 HasChanged = true;
             }
         }
-
-        public override Vector3 Scale { get; set; }
 
         public float Radius
         {
@@ -110,8 +107,6 @@ namespace DeferredEngine.Entities
                 HasChanged = true;
             }
         }
-
-        public override Matrix RotationMatrix { get; set; }
 
         protected DeferredPointLight()
         {

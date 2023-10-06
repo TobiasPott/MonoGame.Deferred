@@ -6,20 +6,6 @@ namespace DeferredEngine.Entities
     public class EnvironmentProbe : TransformableObject
     {
         public bool NeedsUpdate = true;
-        private Vector3 _position;
-
-        public override Vector3 Position
-        {
-            get { return _position; }
-            set
-            {
-                _position = value;
-                if(AutoUpdate)
-                    NeedsUpdate = true;
-            }
-        }
-
-        public override Vector3 Scale { get; set; }
 
         public float SpecularStrength = 1;
         public float DiffuseStrength = 0.2f;
@@ -28,7 +14,18 @@ namespace DeferredEngine.Entities
 
         public bool UseSDFAO = false;
 
-        public override Matrix RotationMatrix { get; set; }
+
+        public override Vector3 Position
+        {
+            get { return _position; }
+            set
+            {
+                base.Position = value;
+                if(AutoUpdate)
+                    NeedsUpdate = true;
+            }
+        }
+
 
         public EnvironmentProbe(Vector3 position)
         {

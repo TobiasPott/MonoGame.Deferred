@@ -10,11 +10,13 @@ namespace DeferredEngine.Entities
         public float Intensity;
         private Vector3 _direction;
         private Vector3 _initialDirection;
-        private Vector3 _position;
         public bool HasChanged;
 
         public Vector3 DirectionViewSpace;
-        
+
+        private Color _color;
+        public Vector3 ColorV3;
+
         public readonly bool CastShadows;
         public readonly float ShadowSize;
         public readonly float ShadowDepth;
@@ -76,8 +78,6 @@ namespace DeferredEngine.Entities
 
             IsEnabled = true;
 
-            TransformDirectionToAngles();
-
             _rotationMatrix = Matrix.Identity;
 
             Name = GetType().Name + " " + Id;
@@ -108,19 +108,17 @@ namespace DeferredEngine.Entities
             get { return _position; }
             set
             {
-                _position = value;
+                base.Position = value;
                 HasChanged = true;
             }
         }
-
-        public override Vector3 Scale { get; set; }
 
         public override Matrix RotationMatrix
         {
             get { return _rotationMatrix; }
             set
             {
-                _rotationMatrix = value; 
+                base.RotationMatrix = value; 
                 TransformAnglesToDirection();
             }
         }
@@ -130,16 +128,6 @@ namespace DeferredEngine.Entities
             Direction = Vector3.Transform(_initialDirection, RotationMatrix);
         }
 
-        private Matrix Trafo;
-        private Matrix _rotationMatrix;
-        private Color _color;
-        public Vector3 ColorV3;
-
-        private void TransformDirectionToAngles()
-        {
-            Trafo = Matrix.CreateLookAt(Vector3.Zero, Direction, Vector3.UnitZ);
-        }
-        
         public void ApplyShader()
         {
             if (CastShadows)

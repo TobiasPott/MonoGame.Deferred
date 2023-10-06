@@ -101,9 +101,6 @@ namespace DeferredEngine.Renderer
 
         private RenderTarget2D _renderTargetDecalOffTarget;
 
-        //Subsurface Scattering
-        private RenderTarget2D _renderTargetSSS;
-
         private RenderTarget2D _renderTargetDiffuse;
         private RenderTarget2D _renderTargetSpecular;
         private RenderTarget2D _renderTargetVolume;
