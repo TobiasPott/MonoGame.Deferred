@@ -21,25 +21,10 @@ namespace DeferredEngine.Renderer.Helper
 
         public int Count => _transforms.Count;
 
-        public void SetMesh(ModelMeshPart mesh)
-        {
-            _mesh = mesh;
-        }
-
-        public bool HasMesh(ModelMeshPart mesh)
-        {
-            return mesh == _mesh;
-        }
-
-        public ModelMeshPart GetMesh()
-        {
-            return _mesh;
-        }
-
-        public List<TransformableObject> GetTransforms()
-        {
-            return _transforms;
-        }
+        public void SetMesh(ModelMeshPart mesh) => _mesh = mesh;
+        public bool HasMesh(ModelMeshPart mesh) => _mesh == mesh;
+        public ModelMeshPart GetMesh() => _mesh;
+        public List<TransformableObject> GetTransforms() => _transforms;
 
         public Vector3 GetBoundingCenterWorld(int index)
         {
@@ -107,7 +92,6 @@ namespace DeferredEngine.Renderer.Helper
             int index = _transforms.IndexOf(toDelete);
             if (index != -1)
             {
-                Debug.WriteLine("DeleteFrom MeshLibrary: " + index);
                 _transforms.RemoveAt(index);
                 Rendered.RemoveAt(index);
                 _worldBoundingCenters.RemoveAt(index);
