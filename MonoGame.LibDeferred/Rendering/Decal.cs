@@ -6,10 +6,6 @@ namespace DeferredEngine.Entities
 {
     public class Decal : TransformableObject
     {
-        public Vector3 _scale;
-        private Vector3 _position;
-        private Matrix _rotationMatrix;
-
         public override Vector3 Position
         {
             get { return _position; }
@@ -36,7 +32,6 @@ namespace DeferredEngine.Entities
             }
         }
 
-        public Matrix World;
         public Matrix InverseWorld;
         public Texture2D Texture;
 
@@ -60,7 +55,7 @@ namespace DeferredEngine.Entities
 
         public void UpdateWorldMatrix()
         {
-            World = Matrix.CreateScale(Scale) * RotationMatrix * Matrix.CreateTranslation(Position);
+            _world = Matrix.CreateScale(Scale) * RotationMatrix * Matrix.CreateTranslation(Position);
             InverseWorld = Matrix.Invert(World);
         }
     }
