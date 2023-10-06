@@ -28,10 +28,7 @@ namespace DeferredEngine.Entities
 
         public bool UseSDFAO = false;
 
-        public override int Id { get; set; }
         public override Matrix RotationMatrix { get; set; }
-        public override bool IsEnabled { get; set; }
-        public override string Name { get; set; }
 
         public EnvironmentProbe(Vector3 position)
         {

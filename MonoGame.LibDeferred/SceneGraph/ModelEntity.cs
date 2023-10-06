@@ -49,11 +49,7 @@ namespace DeferredEngine.Entities
         {
             //Has something changed?
             WorldTransform.Scale = Scale;
-            Matrix scaleMatrix = Matrix.CreateScale(Scale);
-            _worldOldMatrix = scaleMatrix * RotationMatrix * Matrix.CreateTranslation(Position);
-
-            WorldTransform.Scale = Scale;
-            WorldTransform.World = _worldOldMatrix;
+            WorldTransform.World = Matrix.CreateScale(Scale) * RotationMatrix * Matrix.CreateTranslation(Position);
 
             WorldTransform.InverseWorld = Matrix.Invert(Matrix.CreateTranslation(BoundingBoxOffset * Scale) * RotationMatrix * Matrix.CreateTranslation(Position));
 

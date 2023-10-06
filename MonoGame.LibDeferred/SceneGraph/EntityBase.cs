@@ -7,18 +7,6 @@ namespace DeferredEngine.Entities
 {
     public abstract class EntityBase: TransformableObject
     {
-        public readonly BoundingBox BoundingBox;
-        public readonly Vector3 BoundingBoxOffset;
-
-        protected int _id;
-        public override int Id
-        {
-            get => _id;
-            set => _id = value;
-        }
-        public override bool IsEnabled { get; set; }
-        public override string Name { get; set; }
-
 
         protected Vector3 _position;
         public override Vector3 Position
@@ -55,19 +43,34 @@ namespace DeferredEngine.Entities
 
 
 
+        public readonly BoundingBox BoundingBox;
+        public readonly Vector3 BoundingBoxOffset;
         public readonly TransformMatrix WorldTransform;
-        protected Matrix _worldOldMatrix = Matrix.Identity;
-        protected Matrix _worldNewMatrix = Matrix.Identity;
 
 
         public EntityBase(BoundingBox bBox, Vector3 bBoxOffset)
         {
             Id = IdGenerator.GetNewId();
             Name = GetType().Name + " " + Id;
+            _position = Vector3.Zero;
+            _rotationMatrix = Matrix.Identity; 
+            _scale = Vector3.One;
             WorldTransform = new TransformMatrix(Matrix.Identity, Id);
 
             BoundingBox = bBox;
             BoundingBoxOffset = bBoxOffset;
+        }
+        public EntityBase(Vector3 position, Matrix rotation, Vector3 scale)
+        {
+            Id = IdGenerator.GetNewId();
+            Name = GetType().Name + " " + Id;
+            _position = position;
+            _rotationMatrix = rotation;
+            _scale = scale;
+            WorldTransform = new TransformMatrix(Matrix.CreateScale(Scale) * RotationMatrix * Matrix.CreateTranslation(Position), Id);
+
+            BoundingBox = new BoundingBox(-Vector3.One, Vector3.One);
+            BoundingBoxOffset = Vector3.Zero;
         }
 
 

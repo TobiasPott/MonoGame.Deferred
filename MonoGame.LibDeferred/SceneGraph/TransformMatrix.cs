@@ -6,7 +6,6 @@ namespace DeferredEngine.Entities
     public class TransformMatrix
     {
         public Matrix InverseWorld;
-        public bool Rendered = true;
         public bool HasChanged = true;
         public readonly int Id;
 

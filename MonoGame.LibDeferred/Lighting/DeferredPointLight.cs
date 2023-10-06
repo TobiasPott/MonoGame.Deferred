@@ -111,16 +111,7 @@ namespace DeferredEngine.Entities
             }
         }
 
-        public override int Id { get; set; }
         public override Matrix RotationMatrix { get; set; }
-
-        public sealed override bool IsEnabled
-        {
-            get;
-            set;
-        }
-
-        public override string Name { get; set; }
 
         protected DeferredPointLight()
         {

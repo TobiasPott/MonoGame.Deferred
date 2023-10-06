@@ -4,9 +4,9 @@ namespace DeferredEngine.Entities
 {
     public abstract class TransformableObject
     {
-        public abstract int Id { get; set; }
-        public abstract bool IsEnabled { get; set; }
-        public abstract string Name { get; set; }
+        public virtual int Id { get; set; }
+        public virtual bool IsEnabled { get; set; }
+        public virtual string Name { get; set; }
 
         public abstract Vector3 Position { get; set; }
         public abstract Matrix RotationMatrix { get; set; }

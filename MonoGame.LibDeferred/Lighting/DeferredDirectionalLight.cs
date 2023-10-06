@@ -115,14 +115,6 @@ namespace DeferredEngine.Entities
 
         public override Vector3 Scale { get; set; }
 
-        private int _id;
-
-        public override int Id
-        {
-            get { return _id; }
-            set { _id = value; }
-        }
-
         public override Matrix RotationMatrix
         {
             get { return _rotationMatrix; }
@@ -132,8 +124,6 @@ namespace DeferredEngine.Entities
                 TransformAnglesToDirection();
             }
         }
-
-        public override bool IsEnabled { get; set; }
 
         private void TransformAnglesToDirection()
         {
@@ -150,8 +140,6 @@ namespace DeferredEngine.Entities
             Trafo = Matrix.CreateLookAt(Vector3.Zero, Direction, Vector3.UnitZ);
         }
         
-        public override string Name { get; set; }
-
         public void ApplyShader()
         {
             if (CastShadows)
