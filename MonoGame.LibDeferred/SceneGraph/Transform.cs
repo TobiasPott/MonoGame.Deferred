@@ -66,7 +66,7 @@ namespace DeferredEngine.Entities
                     _inverseWorld = Matrix.Invert(_world);
                     _worldHasChanged = false;
                 }
-                return _world;
+                return _inverseWorld;
             }
         }
 
