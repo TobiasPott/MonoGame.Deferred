@@ -10,44 +10,36 @@ namespace DeferredEngine.Renderer.Helper
     /// </summary>
     public class MaterialLibrary
     {
+        private const int InitialLibrarySize = 2;
+
         private MaterialEffect _material;
 
         //Determines how many different meshes we have per texture. 
-        const int InitialLibrarySize = 2;
-        private MeshLibrary[] _meshLib = new MeshLibrary[InitialLibrarySize];
-        public int Index;
+        private List<MeshLibrary> _meshLib = new List<MeshLibrary>(InitialLibrarySize);
 
         //efficiency: REnder front to back. So we must know the distance!
 
         public float DistanceSquared;
         public bool HasChangedThisFrame = true;
 
-        public void SetMaterial(ref MaterialEffect mat)
-        {
-            _material = mat;
-        }
+        public int Count => _meshLib.Count;
 
+
+        public void SetMaterial(MaterialEffect mat) => _material = mat;
         public bool HasMaterial(MaterialEffect mat)
         {
             if (!RenderingSettings.g_batchbymaterial) return false;
             return mat.Equals(_material);
         }
+        public MaterialEffect GetMaterial() => _material;
+        public List<MeshLibrary> GetMeshLibrary() =>_meshLib;
 
-        public MaterialEffect GetMaterial()
-        {
-            return _material;
-        }
-
-        public MeshLibrary[] GetMeshLibrary()
-        {
-            return _meshLib;
-        }
 
         public void Register(ModelMeshPart mesh, TransformableObject transform, BoundingSphere boundingSphere)
         {
             bool found = false;
             //Check if we already have a model like that, if yes put it in there!
-            for (var i = 0; i < Index; i++)
+            for (var i = 0; i < this.Count; i++)
             {
                 MeshLibrary meshLib = _meshLib[i];
                 if (meshLib.HasMesh(mesh))
@@ -61,43 +53,30 @@ namespace DeferredEngine.Renderer.Helper
             //We have no Lib yet, make a new one.
             if (!found)
             {
-                _meshLib[Index] = new MeshLibrary();
-                _meshLib[Index].SetMesh(mesh);
-                _meshLib[Index].SetBoundingSphere(boundingSphere);
-                _meshLib[Index].Register(transform);
-                Index++;
+                MeshLibrary meshLib = new MeshLibrary();
+                _meshLib.Add(meshLib);
+                meshLib.SetMesh(mesh);
+                meshLib.SetBoundingSphere(boundingSphere);
+                meshLib.Register(transform);
             }
 
-            //If we exceeded our array length, make the array bigger.
-            if (Index >= _meshLib.Length)
-            {
-                MeshLibrary[] tempLib = new MeshLibrary[Index + 1];
-                _meshLib.CopyTo(tempLib, 0);
-                _meshLib = tempLib;
-            }
         }
 
         public bool DeleteFromRegistry(ModelMeshPart mesh, TransformableObject toDelete)
         {
-            for (var i = 0; i < Index; i++)
+            for (var i = 0; i < this.Count; i++)
             {
                 MeshLibrary meshLib = _meshLib[i];
                 if (meshLib.HasMesh(mesh))
                 {
                     if (meshLib.DeleteFromRegistry(toDelete)) //if true, we can delete it from registry
                     {
-                        for (var j = i; j < Index - 1; j++)
-                        {
-                            //slide down one
-                            _meshLib[j] = _meshLib[j + 1];
-
-                        }
-                        Index--;
+                        _meshLib.Remove(meshLib);
                     }
                     break;
                 }
             }
-            if (Index <= 0) return true; //this material is no longer needed.
+            if (this.Count <= 0) return true; //this material is no longer needed.
             return false;
         }
     }

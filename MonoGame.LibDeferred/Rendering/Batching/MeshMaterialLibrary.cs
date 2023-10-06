@@ -103,7 +103,7 @@ namespace DeferredEngine.Renderer.Helper
             if (!found)
             {
                 MaterialLib[Index] = new MaterialLibrary();
-                MaterialLib[Index].SetMaterial(ref mat);
+                MaterialLib[Index].SetMaterial(mat);
                 MaterialLib[Index].Register(mesh, transform, boundingSphere);
                 Index++;
             }
@@ -201,7 +201,7 @@ namespace DeferredEngine.Renderer.Helper
                     for (int index1 = 0; index1 < Index; index1++)
                     {
                         MaterialLibrary matLib = MaterialLib[index1];
-                        for (int i = 0; i < matLib.Index; i++)
+                        for (int i = 0; i < matLib.Count; i++)
                         {
                             MeshLibrary meshLib = matLib.GetMeshLibrary()[i];
                             for (int j = 0; j < meshLib.Rendered.Count; j++)
@@ -230,7 +230,7 @@ namespace DeferredEngine.Renderer.Helper
                 MaterialLibrary matLib = RenderingSettings.g_cpusort
                     ? MaterialLib[MaterialLibPointer[index1]]
                     : MaterialLib[index1];
-                for (int i = 0; i < matLib.Index; i++)
+                for (int i = 0; i < matLib.Count; i++)
                 {
                     MeshLibrary meshLib = matLib.GetMeshLibrary()[i];
                     float? distanceSq = meshLib.UpdatePositionAndCheckRender(hasCameraChanged, boundingFrustrum,
@@ -313,12 +313,12 @@ namespace DeferredEngine.Renderer.Helper
             {
                 MaterialLibrary matLib = MaterialLib[index1];
 
-                if (matLib.Index < 1) continue;
+                if (matLib.Count < 1) continue;
 
                 //if none of this materialtype is drawn continue too!
                 bool isUsed = false;
 
-                for (int i = 0; i < matLib.Index; i++)
+                for (int i = 0; i < matLib.Count; i++)
                 {
                     MeshLibrary meshLib = matLib.GetMeshLibrary()[i];
 
@@ -369,7 +369,7 @@ namespace DeferredEngine.Renderer.Helper
 
                 PerMaterialSettings(renderType, material, renderModule);
 
-                for (int i = 0; i < matLib.Index; i++)
+                for (int i = 0; i < matLib.Count; i++)
                 {
                     MeshLibrary meshLib = matLib.GetMeshLibrary()[i];
 
@@ -425,7 +425,7 @@ namespace DeferredEngine.Renderer.Helper
                     //We determined beforehand whether something changed this frame
                     if (matLib.HasChangedThisFrame)
                     {
-                        for (int i = 0; i < matLib.Index; i++)
+                        for (int i = 0; i < matLib.Count; i++)
                         {
                             //Now we have to check whether we have a rendered thing in here
                             MeshLibrary meshLib = matLib.GetMeshLibrary()[i];
