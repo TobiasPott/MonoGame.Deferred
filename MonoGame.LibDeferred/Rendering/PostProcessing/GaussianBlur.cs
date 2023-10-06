@@ -3,7 +3,7 @@ using DeferredEngine.Renderer.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Renderer.RenderModules
+namespace DeferredEngine.Renderer.PostProcessing
 {
     [Obsolete($"{nameof(GaussianBlur)} is unused and needs refactoring when the rendering pipeline is modularized.")]
     public class GaussianBlur : IDisposable

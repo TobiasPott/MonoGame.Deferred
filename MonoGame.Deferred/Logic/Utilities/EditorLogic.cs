@@ -1,19 +1,17 @@
-﻿using System.Collections.Generic;
-using DeferredEngine.Entities;
+﻿using DeferredEngine.Entities;
 using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper;
+using DeferredEngine.Renderer.PostProcessing;
 using HelperSuite.GUIHelper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using static DeferredEngine.Renderer.RenderModules.IdAndOutlineRenderer;
-using DeferredDirectionalLight = DeferredEngine.Entities.DeferredDirectionalLight;
+using System.Collections.Generic;
 
 namespace DeferredEngine.Logic
 {
     public class EditorLogic
     {
-        //private int _selectedId = 0;
 
         private bool _gizmoTransformationMode;
         private Vector3 _gizmoPosition;
@@ -33,24 +31,6 @@ namespace DeferredEngine.Logic
             public Matrix ViewMatrix;
             public Matrix ProjectionMatrix;
         }
-
-        //public struct EditorSendData
-        //{
-        //    public TransformableObject SelectedObject;
-        //    public int SelectedObjectId;
-        //    public Vector3 SelectedObjectPosition;
-        //    public bool GizmoTransformationMode;
-        //    public GizmoModes GizmoMode;
-
-        //    public Renderer.RenderModules.IdAndOutlineRenderer.GizmoDrawContext ToObjectDrawContext() => new Renderer.RenderModules.IdAndOutlineRenderer.GizmoDrawContext()
-        //    {
-        //        SelectedObject = this.SelectedObject,
-        //        SelectedObjectId = this.SelectedObjectId,
-        //        SelectedObjectPosition = this.SelectedObjectPosition,
-        //        GizmoMode = this.GizmoMode,
-        //        GizmoTransformationMode = this.GizmoTransformationMode
-        //    };
-        //}
 
         public void Initialize(GraphicsDevice graphicsDevice)
         {

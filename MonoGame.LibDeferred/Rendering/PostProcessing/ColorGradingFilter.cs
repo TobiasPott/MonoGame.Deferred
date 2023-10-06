@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 
-namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
+namespace DeferredEngine.Renderer.PostProcessing
 {
     /// <summary>
     /// 

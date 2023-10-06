@@ -4,6 +4,7 @@ using DeferredEngine.Recources;
 using DeferredEngine.Recources.Helper;
 using DeferredEngine.Renderer.Helper;
 using DeferredEngine.Renderer.Helper.Editor;
+using DeferredEngine.Renderer.PostProcessing;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -12,9 +13,7 @@ namespace DeferredEngine.Renderer.RenderModules
 {
     public partial class IdAndOutlineRenderer
     {
-
-
-        GraphicsDevice _graphicsDevice;
+        private GraphicsDevice _graphicsDevice;
 
         private RenderTarget2D _idRenderTarget2D;
 

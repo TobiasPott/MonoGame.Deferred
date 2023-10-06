@@ -3,8 +3,8 @@ using DeferredEngine.Logic;
 using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper;
 using DeferredEngine.Renderer.Helper.HelperGeometry;
+using DeferredEngine.Renderer.PostProcessing;
 using DeferredEngine.Renderer.RenderModules;
-using DeferredEngine.Renderer.RenderModules.PostProcessingFilters;
 using DeferredEngine.Renderer.RenderModules.SDF;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -12,8 +12,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using static DeferredEngine.Renderer.RenderModules.IdAndOutlineRenderer;
-using DeferredDirectionalLight = DeferredEngine.Entities.DeferredDirectionalLight;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //    MAIN RENDER FUNCTIONS, TheKosmonaut 2016

@@ -1,4 +1,5 @@
-﻿namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
+﻿
+namespace DeferredEngine.Renderer.PostProcessing
 {
     //enums
     public enum BloomPresets

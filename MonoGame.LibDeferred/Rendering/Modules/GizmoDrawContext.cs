@@ -2,19 +2,15 @@
 using DeferredEngine.Logic;
 using Microsoft.Xna.Framework;
 
-namespace DeferredEngine.Renderer.RenderModules
+namespace DeferredEngine.Renderer.PostProcessing
 {
-    public partial class IdAndOutlineRenderer
+    public struct GizmoDrawContext
     {
-        public struct GizmoDrawContext
-        {
-            public TransformableObject SelectedObject;
-            public int SelectedObjectId;
-            public Vector3 SelectedObjectPosition;
-            public bool GizmoTransformationMode;
-            public GizmoModes GizmoMode;
-        }
-
-
+        public TransformableObject SelectedObject;
+        public int SelectedObjectId;
+        public Vector3 SelectedObjectPosition;
+        public bool GizmoTransformationMode;
+        public GizmoModes GizmoMode;
     }
+
 }
