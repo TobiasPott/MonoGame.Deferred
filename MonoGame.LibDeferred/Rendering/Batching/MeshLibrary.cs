@@ -2,24 +2,24 @@
 using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Diagnostics;
 
 namespace DeferredEngine.Renderer.Helper
 {
     //The individual model mesh, and a library or different world coordinates basically is what we need
     public class MeshLibrary
     {
+        const int InitialLibrarySize = 4;
+
+
         private ModelMeshPart _mesh;
         public BoundingSphere MeshBoundingSphere;
 
-        const int InitialLibrarySize = 4;
-        private TransformableObject[] _transforms = new TransformableObject[InitialLibrarySize];
+        private List<TransformableObject> _transforms = new List<TransformableObject>(InitialLibrarySize);
+        private List<Vector3> _worldBoundingCenters = new List<Vector3>(InitialLibrarySize);
+        public List<bool> Rendered = new List<bool>(InitialLibrarySize);
 
-        //the local displacement of the boundingsphere!
-        private Vector3[] _worldBoundingCenters = new Vector3[InitialLibrarySize];
-        //the local mode - either rendered or not!
-        public bool[] Rendered = new bool[InitialLibrarySize];
-
-        public int Index;
+        public int Count => _transforms.Count;
 
         public void SetMesh(ModelMeshPart mesh)
         {
@@ -36,7 +36,7 @@ namespace DeferredEngine.Renderer.Helper
             return _mesh;
         }
 
-        public TransformableObject[] GetTransforms()
+        public List<TransformableObject> GetTransforms()
         {
             return _transforms;
         }
@@ -54,7 +54,7 @@ namespace DeferredEngine.Renderer.Helper
 
             bool hasAnythingChanged = false;
 
-            for (var i = 0; i < Index; i++)
+            for (var i = 0; i < _transforms.Count; i++)
             {
                 TransformableObject transform = _transforms[i];
 
@@ -85,7 +85,7 @@ namespace DeferredEngine.Renderer.Helper
             {
                 distance = 0;
 
-                for (var i = 0; i < Index; i++)
+                for (var i = 0; i < _worldBoundingCenters.Count; i++)
                 {
                     distance += Vector3.DistanceSquared(cameraPosition, _worldBoundingCenters[i]);
                 }
@@ -97,51 +97,22 @@ namespace DeferredEngine.Renderer.Helper
         //Basically no chance we have the same model already. We should be fine just adding it to the list if we did everything else right.
         public void Register(TransformableObject transform)
         {
-            _transforms[Index] = transform;
-            Rendered[Index] = true;
-            _worldBoundingCenters[Index] = Vector3.Transform(MeshBoundingSphere.Center, transform.World);
-
-            Index++;
-
-            //mesh.Effect = Shaders.AmbientEffect; //Just so it has few properties!
-
-            if (Index >= _transforms.Length)
-            {
-                TransformableObject[] tempLib = new TransformableObject[Index + 1];
-                _transforms.CopyTo(tempLib, 0);
-                _transforms = tempLib;
-
-                Vector3[] tempLib2 = new Vector3[Index + 1];
-                _worldBoundingCenters.CopyTo(tempLib2, 0);
-                _worldBoundingCenters = tempLib2;
-
-                bool[] tempRendered = new bool[Index + 1];
-                Rendered.CopyTo(tempRendered, 0);
-                Rendered = tempRendered;
-            }
+            _transforms.Add(transform);
+            Rendered.Add(true);
+            _worldBoundingCenters.Add(Vector3.Transform(MeshBoundingSphere.Center, transform.World));
         }
 
         public bool DeleteFromRegistry(TransformableObject toDelete)
         {
-            for (var i = 0; i < Index; i++)
+            int index = _transforms.IndexOf(toDelete);
+            if (index != -1)
             {
-                TransformableObject transform = _transforms[i];
-
-                if (transform == toDelete)
-                {
-                    //delete this value!
-                    for (var j = i; j < Index - 1; j++)
-                    {
-                        //slide down one
-                        _transforms[j] = _transforms[j + 1];
-                        Rendered[j] = Rendered[j + 1];
-                        _worldBoundingCenters[j] = _worldBoundingCenters[j + 1];
-                    }
-                    Index--;
-                    break;
-                }
+                Debug.WriteLine("DeleteFrom MeshLibrary: " + index);
+                _transforms.RemoveAt(index);
+                Rendered.RemoveAt(index);
+                _worldBoundingCenters.RemoveAt(index);
             }
-            if (Index <= 0) return true; //this meshtype no longer needed!
+            if (_transforms.Count <= 0) return true; //this meshtype no longer needed!
             return false;
         }
 
