@@ -15,6 +15,16 @@ namespace DeferredEngine.Renderer.RenderModules
 {
     public class IdAndOutlineRenderer
     {
+        public struct ObjectDrawContext
+        {
+            public TransformableObject SelectedObject;
+            public int SelectedObjectId;
+            public Vector3 SelectedObjectPosition;
+            public bool GizmoTransformationMode;
+            public GizmoModes GizmoMode;
+        }
+
+
         GraphicsDevice _graphicsDevice;
 
         private RenderTarget2D _idRenderTarget2D;
@@ -34,9 +44,9 @@ namespace DeferredEngine.Renderer.RenderModules
             _assets = assets;
         }
 
-        public void Draw(MeshMaterialLibrary meshMat, List<Decal> decals, List<PointLight> pointLights, List<DirectionalLight> dirLights, EnvironmentProbe envSample, Matrix viewProjection, Matrix view, EditorLogic.EditorSendData editorData, bool mouseMoved)
+        public void Draw(MeshMaterialLibrary meshMat, List<Decal> decals, List<PointLight> pointLights, List<DirectionalLight> dirLights, EnvironmentProbe envSample, Matrix viewProjection, Matrix view, ObjectDrawContext drawContext, bool mouseMoved)
         {
-            if (editorData.GizmoTransformationMode)
+            if (drawContext.GizmoTransformationMode)
             {
                 _graphicsDevice.SetRenderTarget(_idRenderTarget2D);
                 _graphicsDevice.Clear(Color.Black);
@@ -45,14 +55,14 @@ namespace DeferredEngine.Renderer.RenderModules
 
             if (mouseMoved)
             {
-                DrawIds(meshMat, decals, pointLights, dirLights, envSample, viewProjection, view, editorData);
+                DrawIds(meshMat, decals, pointLights, dirLights, envSample, viewProjection, view, drawContext);
             }
 
             if (RenderingSettings.e_drawoutlines)
-                DrawOutlines(meshMat, viewProjection, mouseMoved, HoveredId, editorData, mouseMoved);
+                DrawOutlines(meshMat, viewProjection, mouseMoved, HoveredId, drawContext, mouseMoved);
         }
 
-        public void DrawIds(MeshMaterialLibrary meshMat, List<Decal> decals, List<PointLight> pointLights, List<DirectionalLight> dirLights, EnvironmentProbe envSample, Matrix viewProjection, Matrix view, EditorLogic.EditorSendData editorData)
+        public void DrawIds(MeshMaterialLibrary meshMat, List<Decal> decals, List<PointLight> pointLights, List<DirectionalLight> dirLights, EnvironmentProbe envSample, Matrix viewProjection, Matrix view, ObjectDrawContext editorData)
         {
 
             _graphicsDevice.SetRenderTarget(_idRenderTarget2D);
@@ -135,7 +145,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
         }
 
-        public void DrawGizmos(Matrix staticViewProjection, EditorLogic.EditorSendData editorData, Assets assets)
+        public void DrawGizmos(Matrix staticViewProjection, ObjectDrawContext editorData, Assets assets)
         {
             if (editorData.SelectedObjectId == 0) return;
 
@@ -182,7 +192,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
         }
 
-        public void DrawOutlines(MeshMaterialLibrary meshMat, Matrix viewProjection, bool drawAll, int hoveredId, EditorLogic.EditorSendData editorData, bool mouseMoved)
+        public void DrawOutlines(MeshMaterialLibrary meshMat, Matrix viewProjection, bool drawAll, int hoveredId, ObjectDrawContext editorData, bool mouseMoved)
         {
             _graphicsDevice.SetRenderTarget(_idRenderTarget2D);
 

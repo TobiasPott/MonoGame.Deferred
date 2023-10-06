@@ -13,7 +13,7 @@ namespace DeferredEngine.Logic
     public class EditorLogic
     {
         //private int _selectedId = 0;
-        
+
         private bool _gizmoTransformationMode;
         private Vector3 _gizmoPosition;
         private int _gizmoId;
@@ -28,7 +28,7 @@ namespace DeferredEngine.Logic
 
         public struct EditorReceivedData
         {
-           public int HoveredId;
+            public int HoveredId;
             public Matrix ViewMatrix;
             public Matrix ProjectionMatrix;
         }
@@ -40,6 +40,15 @@ namespace DeferredEngine.Logic
             public Vector3 SelectedObjectPosition;
             public bool GizmoTransformationMode;
             public GizmoModes GizmoMode;
+
+            public Renderer.RenderModules.IdAndOutlineRenderer.ObjectDrawContext ToObjectDrawContext() => new Renderer.RenderModules.IdAndOutlineRenderer.ObjectDrawContext()
+            {
+                SelectedObject = this.SelectedObject,
+                SelectedObjectId = this.SelectedObjectId,
+                SelectedObjectPosition = this.SelectedObjectPosition,
+                GizmoMode = this.GizmoMode,
+                GizmoTransformationMode = this.GizmoTransformationMode
+            };
         }
 
         public void Initialize(GraphicsDevice graphicsDevice)
@@ -53,13 +62,13 @@ namespace DeferredEngine.Logic
         /// <param name="gameTime"></param>
         /// <param name="entities"></param>
         /// <param name="data"></param>
-        public void Update(GameTime gameTime, 
-            List<ModelEntity> entities, 
-            List<Decal> decals, 
-            List<PointLight> pointLights, 
-            List<DirectionalLight> dirLights, 
-            EnvironmentProbe envSample, 
-            EditorReceivedData data, 
+        public void Update(GameTime gameTime,
+            List<ModelEntity> entities,
+            List<Decal> decals,
+            List<PointLight> pointLights,
+            List<DirectionalLight> dirLights,
+            EnvironmentProbe envSample,
+            EditorReceivedData data,
             MeshMaterialLibrary meshMaterialLibrary)
         {
             if (!RenderingSettings.e_enableeditor) return;
@@ -125,7 +134,7 @@ namespace DeferredEngine.Logic
                             break;
                         }
                     }
-                    
+
                     for (int index = 0; index < pointLights.Count; index++)
                     {
                         PointLight pointLight = pointLights[index];
@@ -164,31 +173,31 @@ namespace DeferredEngine.Logic
                 //Find object
                 if (SelectedObject is ModelEntity)
                 {
-                    entities.Remove((ModelEntity) SelectedObject);
-                    meshMaterialLibrary.DeleteFromRegistry((ModelEntity) SelectedObject);
+                    entities.Remove((ModelEntity)SelectedObject);
+                    meshMaterialLibrary.DeleteFromRegistry((ModelEntity)SelectedObject);
 
                     SelectedObject = null;
                 }
                 else if (SelectedObject is Decal)
                 {
-                    decals.Remove((Decal) SelectedObject);
+                    decals.Remove((Decal)SelectedObject);
 
                     SelectedObject = null;
                 }
                 else if (SelectedObject is PointLight)
                 {
-                    pointLights.Remove((PointLight) SelectedObject);
+                    pointLights.Remove((PointLight)SelectedObject);
 
                     SelectedObject = null;
                 }
                 else if (SelectedObject is DirectionalLight)
                 {
-                    dirLights.Remove((DirectionalLight) SelectedObject);
+                    dirLights.Remove((DirectionalLight)SelectedObject);
 
                     SelectedObject = null;
                 }
             }
-            
+
         }
 
         private void GizmoControl(int gizmoId, EditorReceivedData data)
@@ -211,7 +220,7 @@ namespace DeferredEngine.Logic
                     data.ProjectionMatrix, data.ViewMatrix, Matrix.Identity);
 
                 Ray ray = new Ray(pos1, pos2 - pos1);
-                
+
                 Vector3 normal;
                 Vector3 binormal;
                 Vector3 tangent;
@@ -250,9 +259,9 @@ namespace DeferredEngine.Logic
 
                 if (d == null) return;
 
-                float f = (float) d;
+                float f = (float)d;
 
-                Vector3 hitPoint = pos1 + (pos2 - pos1)*f;
+                Vector3 hitPoint = pos1 + (pos2 - pos1) * f;
 
                 if (_gizmoTransformationMode == false)
                 {
@@ -265,14 +274,14 @@ namespace DeferredEngine.Logic
                 //Get the difference
                 Vector3 diff = hitPoint - _gizmoPosition;
 
-                diff = Vector3.Dot(tangent, diff)*tangent;
+                diff = Vector3.Dot(tangent, diff) * tangent;
 
                 //diff.Z *= gizmoId == 1 ? 1 : 0;
                 //diff.Y *= gizmoId == 2 ? 1 : 0;
                 //diff.X *= gizmoId == 3 ? 1 : 0;
 
                 SelectedObject.Position += diff;
-                
+
                 _gizmoPosition = hitPoint;
             }
             else
@@ -294,37 +303,37 @@ namespace DeferredEngine.Logic
 
                     if (!RenderingStats.e_LocalTransformation)
                     {
-                        if (gizmoId == 1 )
+                        if (gizmoId == 1)
                         {
-                            SelectedObject.RotationMatrix = SelectedObject.RotationMatrix*
-                                                            Matrix.CreateRotationZ((float) diffL);
+                            SelectedObject.RotationMatrix = SelectedObject.RotationMatrix *
+                                                            Matrix.CreateRotationZ((float)diffL);
                         }
-                        if (gizmoId == 2 )
+                        if (gizmoId == 2)
                         {
-                            SelectedObject.RotationMatrix = SelectedObject.RotationMatrix*
-                                                            Matrix.CreateRotationY((float) diffL);
+                            SelectedObject.RotationMatrix = SelectedObject.RotationMatrix *
+                                                            Matrix.CreateRotationY((float)diffL);
                         }
                         if (gizmoId == 3)
                         {
-                            SelectedObject.RotationMatrix = SelectedObject.RotationMatrix*
-                                                            Matrix.CreateRotationX((float) diffL);
+                            SelectedObject.RotationMatrix = SelectedObject.RotationMatrix *
+                                                            Matrix.CreateRotationX((float)diffL);
                         }
                     }
                     else
                     {
                         if (gizmoId == 1)
                         {
-                            SelectedObject.RotationMatrix = Matrix.CreateRotationZ((float) diffL)*
+                            SelectedObject.RotationMatrix = Matrix.CreateRotationZ((float)diffL) *
                                                             SelectedObject.RotationMatrix;
                         }
                         if (gizmoId == 2)
                         {
-                            SelectedObject.RotationMatrix = Matrix.CreateRotationY((float) diffL)*
+                            SelectedObject.RotationMatrix = Matrix.CreateRotationY((float)diffL) *
                                                             SelectedObject.RotationMatrix;
                         }
                         if (gizmoId == 3)
                         {
-                            SelectedObject.RotationMatrix = Matrix.CreateRotationX((float) diffL)*
+                            SelectedObject.RotationMatrix = Matrix.CreateRotationX((float)diffL) *
                                                             SelectedObject.RotationMatrix;
                         }
                     }
@@ -333,11 +342,11 @@ namespace DeferredEngine.Logic
                 {
                     if (gizmoId == 1 || gizmoId == 4)
                     {
-                        SelectedObject.Scale = new Vector3(SelectedObject.Scale.X, SelectedObject.Scale.Y, MathHelper.Max(SelectedObject.Scale.Z + (float) diffL, 0.01f));
+                        SelectedObject.Scale = new Vector3(SelectedObject.Scale.X, SelectedObject.Scale.Y, MathHelper.Max(SelectedObject.Scale.Z + (float)diffL, 0.01f));
                     }
                     if (gizmoId == 2 || gizmoId == 4)
                     {
-                        SelectedObject.Scale = new Vector3(SelectedObject.Scale.X,  MathHelper.Max(SelectedObject.Scale.Y + (float)diffL, 0.01f), SelectedObject.Scale.Z);
+                        SelectedObject.Scale = new Vector3(SelectedObject.Scale.X, MathHelper.Max(SelectedObject.Scale.Y + (float)diffL, 0.01f), SelectedObject.Scale.Z);
                     }
                     if (gizmoId == 3 || gizmoId == 4)
                     {
@@ -355,15 +364,15 @@ namespace DeferredEngine.Logic
         public EditorSendData GetEditorData()
         {
             if (SelectedObject == null)
-                return new EditorSendData {SelectedObjectId = 0, SelectedObjectPosition = Vector3.Zero};
+                return new EditorSendData { SelectedObjectId = 0, SelectedObjectPosition = Vector3.Zero };
             return new EditorSendData
             {
                 SelectedObject = SelectedObject,
                 SelectedObjectId = SelectedObject.Id,
                 SelectedObjectPosition = SelectedObject.Position,
                 GizmoTransformationMode = _gizmoTransformationMode,
-                GizmoMode =  _gizmoMode,
-                
+                GizmoMode = _gizmoMode,
+
             };
         }
 

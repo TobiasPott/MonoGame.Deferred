@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using static DeferredEngine.Renderer.RenderModules.IdAndOutlineRenderer;
 using DirectionalLight = DeferredEngine.Entities.DirectionalLight;
 
 namespace DeferredEngine.Renderer.RenderModules
@@ -157,7 +158,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
         public void DrawIds(MeshMaterialLibrary meshMaterialLibrary, List<Decal> decals, List<PointLight> lights, List<DirectionalLight> dirLights, EnvironmentProbe envSample, Matrix staticViewProjection, Matrix view, EditorLogic.EditorSendData editorData)
         {
-            _idAndOutlineRenderer.Draw(meshMaterialLibrary, decals, lights, dirLights, envSample, staticViewProjection, view, editorData, _mouseMovement);
+            _idAndOutlineRenderer.Draw(meshMaterialLibrary, decals, lights, dirLights, envSample, staticViewProjection, view, editorData.ToObjectDrawContext(), _mouseMovement);
         }
 
         public void DrawEditorElements(MeshMaterialLibrary meshMaterialLibrary, List<Decal> decals, List<PointLight> lights, List<DirectionalLight> dirLights, EnvironmentProbe envSample, Matrix staticViewProjection, Matrix view, EditorLogic.EditorSendData editorData)
