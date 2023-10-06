@@ -1,11 +1,11 @@
-﻿using System;
-using DeferredEngine.Recources;
+﻿using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
+    [Obsolete($"{nameof(GaussianBlur)} is unused and needs refactoring when the rendering pipeline is modularized.")]
     public class GaussianBlur : IDisposable
     {
         private GraphicsDevice _graphicsDevice;
@@ -18,20 +18,20 @@ namespace DeferredEngine.Renderer.RenderModules
         private RenderTarget2D _rt5122;
         private RenderTarget2D _rt10242;
         private RenderTarget2D _rt20482;
-        
+
 
         public void Initialize(GraphicsDevice graphicsDevice)
         {
-           _graphicsDevice = graphicsDevice;
+            _graphicsDevice = graphicsDevice;
             _gaussEffect = Shaders.GaussianBlurEffect;
-            
+
             _horizontalPass = _gaussEffect.Techniques["GaussianBlur"].Passes["Horizontal"];
             _verticalPass = _gaussEffect.Techniques["GaussianBlur"].Passes["Vertical"];
 
             _rt2562 = new RenderTarget2D(graphicsDevice, 256, 256, false, SurfaceFormat.Vector2, DepthFormat.None);
-            _rt5122 = new RenderTarget2D(graphicsDevice, 512,512, false, SurfaceFormat.Vector2, DepthFormat.None);
-            _rt10242 = new RenderTarget2D(graphicsDevice, 1024,1024, false, SurfaceFormat.Vector2, DepthFormat.None);
-            _rt20482 = new RenderTarget2D(graphicsDevice, 2048,2048, false, SurfaceFormat.Vector2, DepthFormat.None);
+            _rt5122 = new RenderTarget2D(graphicsDevice, 512, 512, false, SurfaceFormat.Vector2, DepthFormat.None);
+            _rt10242 = new RenderTarget2D(graphicsDevice, 1024, 1024, false, SurfaceFormat.Vector2, DepthFormat.None);
+            _rt20482 = new RenderTarget2D(graphicsDevice, 2048, 2048, false, SurfaceFormat.Vector2, DepthFormat.None);
         }
 
         public void Dispose()
@@ -42,38 +42,45 @@ namespace DeferredEngine.Renderer.RenderModules
             _rt20482.Dispose();
         }
 
-        public RenderTarget2D DrawGaussianBlur(RenderTarget2D renderTargetOutput, FullScreenTriangleBuffer triangle)
+        protected RenderTarget2D GetRenderTarget2D(int size)
         {
-            //select rendertarget
-            RenderTarget2D renderTargetBlur = null;
-
-            if (renderTargetOutput.Format != SurfaceFormat.Vector2)
-                throw new NotImplementedException("Unsupported Format for blurring");
-
-            //Only square expected
-            int size = renderTargetOutput.Width;
             switch (size)
             {
                 case 256:
-                    renderTargetBlur = _rt2562;
-                    break;
+                    return _rt2562;
                 case 512:
-                    renderTargetBlur = _rt5122;
-                    break;
+                    return _rt5122;
                 case 1024:
-                    renderTargetBlur = _rt10242;
-                    break;
+                    return _rt10242;
                 case 2048:
-                    renderTargetBlur = _rt20482;
-                    break;
+                    return _rt20482;
             }
-
-            if(renderTargetBlur == null)
+            return null;
+        }
+        protected void EnsureRenderTargetFormat(Texture renderTarget, SurfaceFormat format = SurfaceFormat.Vector2)
+        {
+            if (renderTarget.Format != format)
+                throw new NotImplementedException("Unsupported Format for blurring");
+        }
+        protected void EnsureRenderTargetReference(Texture renderTarget, Texture reference = null)
+        {
+            if (renderTarget == reference)
                 throw new NotImplementedException("Unsupported Size for blurring");
+        }
+
+        public RenderTarget2D DrawGaussianBlur(RenderTarget2D renderTargetOutput, FullScreenTriangleBuffer triangle)
+        {
+            this.EnsureRenderTargetFormat(renderTargetOutput, SurfaceFormat.Vector2);
+
+            //Only square expected
+            int size = renderTargetOutput.Width;
+            //select rendertarget
+            RenderTarget2D renderTargetBlur = GetRenderTarget2D(size);
+            this.EnsureRenderTargetReference(renderTargetBlur, null);
 
             _graphicsDevice.SetRenderTarget(renderTargetBlur);
 
-            Vector2 invRes = new Vector2(1.0f/size, 1.0f/size);
+            Vector2 invRes = new Vector2(1.0f / size, 1.0f / size);
             Shaders.GaussianBlurEffectParameter_InverseResolution.SetValue(invRes);
             Shaders.GaussianBlurEffectParameter_TargetMap.SetValue(renderTargetOutput);
 
@@ -88,34 +95,15 @@ namespace DeferredEngine.Renderer.RenderModules
             return renderTargetOutput;
         }
 
-        public RenderTargetCube DrawGaussianBlur(RenderTargetCube renderTargetOutput, CubeMapFace cubeFace, FullScreenTriangleBuffer triangle)
+        public RenderTargetCube DrawGaussianBlur(RenderTargetCube renderTargetOutput, FullScreenTriangleBuffer triangle, CubeMapFace cubeFace)
         {
-            //select rendertarget
-            RenderTarget2D renderTargetBlur = null;
-
-            if (renderTargetOutput.Format != SurfaceFormat.Vector2)
-                throw new NotImplementedException("Unsupported Format for blurring");
+            this.EnsureRenderTargetFormat(renderTargetOutput, SurfaceFormat.Vector2);
 
             //Only square expected
             int size = renderTargetOutput.Size;
-            switch (size)
-            {
-                case 256:
-                    renderTargetBlur = _rt2562;
-                    break;
-                case 512:
-                    renderTargetBlur = _rt5122;
-                    break;
-                case 1024:
-                    renderTargetBlur = _rt10242;
-                    break;
-                case 2048:
-                    renderTargetBlur = _rt20482;
-                    break;
-            }
-
-            if (renderTargetBlur == null)
-                throw new NotImplementedException("Unsupported Size for blurring");
+            //select rendertarget
+            RenderTarget2D renderTargetBlur = GetRenderTarget2D(size);
+            this.EnsureRenderTargetReference(renderTargetBlur, null);
 
             _graphicsDevice.SetRenderTarget(renderTargetBlur);
 
@@ -133,5 +121,6 @@ namespace DeferredEngine.Renderer.RenderModules
 
             return renderTargetOutput;
         }
+
     }
 }

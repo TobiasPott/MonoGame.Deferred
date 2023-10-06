@@ -171,7 +171,7 @@ namespace DeferredEngine.Renderer
             _decalRenderModule = new DecalRenderModule(shaderManager);
             _helperGeometryRenderModule = new HelperGeometryRenderModule(content, "Shaders/Editor/LineEffect");
             _distanceFieldRenderModule = new DistanceFieldRenderModule(shaderManager, "Shaders/SignedDistanceFields/volumeProjection");
-            _colorGradingFilter = new ColorGradingFilter(content, "Shaders/PostProcessing/ColorGrading");
+            _colorGradingFilter = new ColorGradingFilter(content);
 
 
         }

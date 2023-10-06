@@ -94,7 +94,7 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
         /// <param name="graphics"></param>
         /// <param name="content"></param>
         /// <param name="shaderPath">the relative shader path needed for the content manager to load. For example "Shaders/ColorGrading/Colorgrading"</param>
-        public ColorGradingFilter(ContentManager content, string shaderPath)
+        public ColorGradingFilter(ContentManager content, string shaderPath = "Shaders/PostProcessing/ColorGrading")
         {
             _shaderEffect = content.Load<Effect>(shaderPath);
             _sizeParam = _shaderEffect.Parameters["Size"];
