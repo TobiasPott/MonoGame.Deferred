@@ -2,14 +2,13 @@
 using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Diagnostics;
 
 namespace DeferredEngine.Renderer.Helper
 {
     //The individual model mesh, and a library or different world coordinates basically is what we need
-    public class MeshLibrary
+    public class MeshBatch
     {
-        const int InitialLibrarySize = 4;
+        private const int InitialLibrarySize = 4;
 
 
         private ModelMeshPart _mesh;

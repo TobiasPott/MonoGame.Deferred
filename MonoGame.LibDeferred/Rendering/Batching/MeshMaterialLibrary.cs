@@ -13,7 +13,7 @@ namespace DeferredEngine.Renderer.Helper
     public class MeshMaterialLibrary
     {
         const int InitialLibrarySize = 10;
-        public MaterialLibrary[] MaterialLib = new MaterialLibrary[InitialLibrarySize];
+        public MaterialBatch[] MaterialBatch = new MaterialBatch[InitialLibrarySize];
 
         public int[] MaterialLibPointer = new int[InitialLibrarySize];
 
@@ -90,7 +90,7 @@ namespace DeferredEngine.Renderer.Helper
             //Check if we already have a material like that, if yes put it in there!
             for (var i = 0; i < Index; i++)
             {
-                MaterialLibrary matLib = MaterialLib[i];
+                MaterialBatch matLib = MaterialBatch[i];
                 if (matLib.HasMaterial(mat))
                 {
                     matLib.Register(mesh, transform, boundingSphere);
@@ -102,18 +102,18 @@ namespace DeferredEngine.Renderer.Helper
             //We have no MatLib for that specific Material yet. Make a new one.
             if (!found)
             {
-                MaterialLib[Index] = new MaterialLibrary();
-                MaterialLib[Index].SetMaterial(mat);
-                MaterialLib[Index].Register(mesh, transform, boundingSphere);
+                MaterialBatch[Index] = new MaterialBatch();
+                MaterialBatch[Index].SetMaterial(mat);
+                MaterialBatch[Index].Register(mesh, transform, boundingSphere);
                 Index++;
             }
 
             //If we exceeded our array length, make the array bigger.
-            if (Index >= MaterialLib.Length)
+            if (Index >= MaterialBatch.Length)
             {
-                MaterialLibrary[] tempLib = new MaterialLibrary[Index + 1];
-                MaterialLib.CopyTo(tempLib, 0);
-                MaterialLib = tempLib;
+                MaterialBatch[] tempLib = new MaterialBatch[Index + 1];
+                MaterialBatch.CopyTo(tempLib, 0);
+                MaterialBatch = tempLib;
 
                 MaterialLibPointer = new int[Index + 1];
                 //sort from 0 to Index
@@ -132,8 +132,8 @@ namespace DeferredEngine.Renderer.Helper
 
             for (int i = 1; i < Index; i++)
             {
-                float distanceI = MaterialLib[MaterialLibPointer[i]].DistanceSquared;
-                float distanceJ = MaterialLib[MaterialLibPointer[i - 1]].DistanceSquared;
+                float distanceI = MaterialBatch[MaterialLibPointer[i]].DistanceSquared;
+                float distanceJ = MaterialBatch[MaterialLibPointer[i - 1]].DistanceSquared;
 
                 if (distanceJ < distanceI)
                 {
@@ -165,7 +165,7 @@ namespace DeferredEngine.Renderer.Helper
         {
             for (var i = 0; i < Index; i++)
             {
-                MaterialLibrary matLib = MaterialLib[i];
+                MaterialBatch matLib = MaterialBatch[i];
                 //if (matLib.HasMaterial(mat))
                 //{
                 if (matLib.DeleteFromRegistry(mesh, transform))
@@ -173,7 +173,7 @@ namespace DeferredEngine.Renderer.Helper
                     for (var j = i; j < Index - 1; j++)
                     {
                         //slide down one
-                        MaterialLib[j] = MaterialLib[j + 1];
+                        MaterialBatch[j] = MaterialBatch[j + 1];
 
                     }
                     Index--;
@@ -200,10 +200,10 @@ namespace DeferredEngine.Renderer.Helper
                     //If we previously did cull and now don't we need to set all the submeshes to render
                     for (int index1 = 0; index1 < Index; index1++)
                     {
-                        MaterialLibrary matLib = MaterialLib[index1];
+                        MaterialBatch matLib = MaterialBatch[index1];
                         for (int i = 0; i < matLib.Count; i++)
                         {
-                            MeshLibrary meshLib = matLib.GetMeshLibrary()[i];
+                            MeshBatch meshLib = matLib.GetMeshLibrary()[i];
                             for (int j = 0; j < meshLib.Rendered.Count; j++)
                             {
                                 meshLib.Rendered[j] = _previousMode;
@@ -227,12 +227,12 @@ namespace DeferredEngine.Renderer.Helper
                 int counter = 0;
 
 
-                MaterialLibrary matLib = RenderingSettings.g_cpusort
-                    ? MaterialLib[MaterialLibPointer[index1]]
-                    : MaterialLib[index1];
+                MaterialBatch matLib = RenderingSettings.g_cpusort
+                    ? MaterialBatch[MaterialLibPointer[index1]]
+                    : MaterialBatch[index1];
                 for (int i = 0; i < matLib.Count; i++)
                 {
-                    MeshLibrary meshLib = matLib.GetMeshLibrary()[i];
+                    MeshBatch meshLib = matLib.GetMeshLibrary()[i];
                     float? distanceSq = meshLib.UpdatePositionAndCheckRender(hasCameraChanged, boundingFrustrum,
                         cameraPosition, _defaultBoundingSphere);
 
@@ -279,7 +279,7 @@ namespace DeferredEngine.Renderer.Helper
 
             for (int index1 = 0; index1 < Index; index1++)
             {
-                MaterialLibrary matLib = RenderingSettings.g_cpusort ? MaterialLib[MaterialLibPointer[index1]] : MaterialLib[index1];
+                MaterialBatch matLib = RenderingSettings.g_cpusort ? MaterialBatch[MaterialLibPointer[index1]] : MaterialBatch[index1];
 
                 matLib.HasChangedThisFrame = false;
             }
@@ -311,7 +311,7 @@ namespace DeferredEngine.Renderer.Helper
 
             for (int index1 = 0; index1 < Index; index1++)
             {
-                MaterialLibrary matLib = MaterialLib[index1];
+                MaterialBatch matLib = MaterialBatch[index1];
 
                 if (matLib.Count < 1) continue;
 
@@ -320,7 +320,7 @@ namespace DeferredEngine.Renderer.Helper
 
                 for (int i = 0; i < matLib.Count; i++)
                 {
-                    MeshLibrary meshLib = matLib.GetMeshLibrary()[i];
+                    MeshBatch meshLib = matLib.GetMeshLibrary()[i];
 
                     //If it's set to "not rendered" skip
                     for (int j = 0; j < meshLib.Rendered.Count; j++)
@@ -371,7 +371,7 @@ namespace DeferredEngine.Renderer.Helper
 
                 for (int i = 0; i < matLib.Count; i++)
                 {
-                    MeshLibrary meshLib = matLib.GetMeshLibrary()[i];
+                    MeshBatch meshLib = matLib.GetMeshLibrary()[i];
 
                     //Initialize the mesh VB and IB
                     graphicsDevice.SetVertexBuffer(meshLib.GetMesh().VertexBuffer);
@@ -420,7 +420,7 @@ namespace DeferredEngine.Renderer.Helper
 
                 for (int index1 = 0; index1 < Index; index1++)
                 {
-                    MaterialLibrary matLib = MaterialLib[index1];
+                    MaterialBatch matLib = MaterialBatch[index1];
 
                     //We determined beforehand whether something changed this frame
                     if (matLib.HasChangedThisFrame)
@@ -428,7 +428,7 @@ namespace DeferredEngine.Renderer.Helper
                         for (int i = 0; i < matLib.Count; i++)
                         {
                             //Now we have to check whether we have a rendered thing in here
-                            MeshLibrary meshLib = matLib.GetMeshLibrary()[i];
+                            MeshBatch meshLib = matLib.GetMeshLibrary()[i];
                             for (int index = 0; index < meshLib.Count; index++)
                             {
                                 //If it's set to "not rendered" skip
@@ -487,7 +487,7 @@ namespace DeferredEngine.Renderer.Helper
             }
         }
 
-        private bool ApplyShaders(RenderType renderType, IRenderModule renderModule, Matrix localWorldMatrix, Matrix? view, Matrix viewProjection, MeshLibrary meshLib, int index, int outlineId, bool outlined)
+        private bool ApplyShaders(RenderType renderType, IRenderModule renderModule, Matrix localWorldMatrix, Matrix? view, Matrix viewProjection, MeshBatch meshLib, int index, int outlineId, bool outlined)
         {
             if (renderType == RenderType.Opaque
                 || renderType == RenderType.ShadowLinear

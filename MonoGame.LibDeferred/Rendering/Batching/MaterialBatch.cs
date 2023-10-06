@@ -8,21 +8,21 @@ namespace DeferredEngine.Renderer.Helper
     /// <summary>
     /// Library which has a list of meshlibraries that correspond to a material.
     /// </summary>
-    public class MaterialLibrary
+    public class MaterialBatch
     {
         private const int InitialLibrarySize = 2;
 
         private MaterialEffect _material;
 
         //Determines how many different meshes we have per texture. 
-        private List<MeshLibrary> _meshLib = new List<MeshLibrary>(InitialLibrarySize);
+        private List<MeshBatch> _batches = new List<MeshBatch>(InitialLibrarySize);
 
         //efficiency: REnder front to back. So we must know the distance!
 
         public float DistanceSquared;
         public bool HasChangedThisFrame = true;
 
-        public int Count => _meshLib.Count;
+        public int Count => _batches.Count;
 
 
         public void SetMaterial(MaterialEffect mat) => _material = mat;
@@ -32,7 +32,7 @@ namespace DeferredEngine.Renderer.Helper
             return mat.Equals(_material);
         }
         public MaterialEffect GetMaterial() => _material;
-        public List<MeshLibrary> GetMeshLibrary() =>_meshLib;
+        public List<MeshBatch> GetMeshLibrary() => _batches;
 
 
         public void Register(ModelMeshPart mesh, TransformableObject transform, BoundingSphere boundingSphere)
@@ -41,7 +41,7 @@ namespace DeferredEngine.Renderer.Helper
             //Check if we already have a model like that, if yes put it in there!
             for (var i = 0; i < this.Count; i++)
             {
-                MeshLibrary meshLib = _meshLib[i];
+                MeshBatch meshLib = _batches[i];
                 if (meshLib.HasMesh(mesh))
                 {
                     meshLib.Register(transform);
@@ -53,11 +53,11 @@ namespace DeferredEngine.Renderer.Helper
             //We have no Lib yet, make a new one.
             if (!found)
             {
-                MeshLibrary meshLib = new MeshLibrary();
-                _meshLib.Add(meshLib);
-                meshLib.SetMesh(mesh);
-                meshLib.SetBoundingSphere(boundingSphere);
-                meshLib.Register(transform);
+                MeshBatch batch = new MeshBatch();
+                _batches.Add(batch);
+                batch.SetMesh(mesh);
+                batch.SetBoundingSphere(boundingSphere);
+                batch.Register(transform);
             }
 
         }
@@ -66,12 +66,12 @@ namespace DeferredEngine.Renderer.Helper
         {
             for (var i = 0; i < this.Count; i++)
             {
-                MeshLibrary meshLib = _meshLib[i];
+                MeshBatch meshLib = _batches[i];
                 if (meshLib.HasMesh(mesh))
                 {
                     if (meshLib.DeleteFromRegistry(toDelete)) //if true, we can delete it from registry
                     {
-                        _meshLib.Remove(meshLib);
+                        _batches.Remove(meshLib);
                     }
                     break;
                 }
