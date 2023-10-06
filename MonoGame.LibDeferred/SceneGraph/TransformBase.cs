@@ -8,6 +8,7 @@ namespace DeferredEngine.Entities
         public abstract Matrix RotationMatrix { get; set; }
         public abstract Vector3 Scale { get; set; }
         public abstract Matrix World { get; }
+        public abstract Matrix InverseWorld { get; }
 
     }
 }

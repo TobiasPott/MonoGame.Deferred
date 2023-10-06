@@ -48,6 +48,22 @@ namespace DeferredEngine.Entities
                 if (_worldHasChanged)
                 {
                     _world = Matrix.CreateScale(Scale) * RotationMatrix * Matrix.CreateTranslation(Position);
+                    _inverseWorld = Matrix.Invert(_world);
+                    _worldHasChanged = false;
+                }
+                return _world;
+            }
+        }
+
+        protected Matrix _inverseWorld;
+        public override Matrix InverseWorld
+        {
+            get
+            {
+                if (_worldHasChanged)
+                {
+                    _world = Matrix.CreateScale(Scale) * RotationMatrix * Matrix.CreateTranslation(Position);
+                    _inverseWorld = Matrix.Invert(_world);
                     _worldHasChanged = false;
                 }
                 return _world;
