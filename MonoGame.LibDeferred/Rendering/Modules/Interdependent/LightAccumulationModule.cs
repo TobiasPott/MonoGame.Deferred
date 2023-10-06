@@ -4,9 +4,6 @@ using DeferredEngine.Renderer.Helper;
 using DeferredEngine.Renderer.RenderModules.DeferredLighting;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using DeferredDirectionalLight = DeferredEngine.Entities.DeferredDirectionalLight;
 
 namespace DeferredEngine.Renderer.RenderModules
 {

@@ -3,12 +3,11 @@ using DeferredEngine.Renderer.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
     //Just a template
-    public class DeferredEnvironmentMapRenderModule : IDisposable
+    public class EnvironmentProbeRenderModule : IDisposable
     {
         private Effect _deferredEnvironmentShader;
         private EffectParameter _paramAlbedoMap;
@@ -46,7 +45,7 @@ namespace DeferredEngine.Renderer.RenderModules
         private float _diffuseStrength;
         private bool _useSDFAO;
 
-        public DeferredEnvironmentMapRenderModule(ContentManager content, string shaderPath)
+        public EnvironmentProbeRenderModule(ContentManager content, string shaderPath)
         {
             Load(content, shaderPath);
             Initialize();
@@ -227,7 +226,6 @@ namespace DeferredEngine.Renderer.RenderModules
 
             _passSky.Apply();
             quadRenderer.Draw(graphicsDevice);
-
         }
 
         public void Dispose()

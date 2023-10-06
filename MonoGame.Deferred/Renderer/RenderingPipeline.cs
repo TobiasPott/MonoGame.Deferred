@@ -37,7 +37,7 @@ namespace DeferredEngine.Renderer
         private ShadowMapRenderModule _shadowMapRenderModule;
         private GBufferRenderModule _gBufferRenderModule;
         private TemporalAntialiasingRenderModule _temporalAntialiasingRenderModule;
-        private DeferredEnvironmentMapRenderModule _deferredEnvironmentMapRenderModule;
+        private EnvironmentProbeRenderModule _deferredEnvironmentMapRenderModule;
         private DecalRenderModule _decalRenderModule;
         private ForwardRenderModule _forwardRenderModule;
         private HelperGeometryRenderModule _helperGeometryRenderModule;
@@ -165,7 +165,7 @@ namespace DeferredEngine.Renderer
             _shadowMapRenderModule = new ShadowMapRenderModule(content, "Shaders/Shadow/ShadowMap");
             _gBufferRenderModule = new GBufferRenderModule(content, "Shaders/GbufferSetup/ClearGBuffer", "Shaders/GbufferSetup/Gbuffer");
             _forwardRenderModule = new ForwardRenderModule(content, "Shaders/forward/forward");
-            _deferredEnvironmentMapRenderModule = new DeferredEnvironmentMapRenderModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
+            _deferredEnvironmentMapRenderModule = new EnvironmentProbeRenderModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
 
             _temporalAntialiasingRenderModule = new TemporalAntialiasingRenderModule(content);
             _decalRenderModule = new DecalRenderModule(shaderManager);

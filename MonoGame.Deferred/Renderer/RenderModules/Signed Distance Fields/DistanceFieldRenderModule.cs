@@ -146,7 +146,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
             }
         }
 
-        public void UpdateDistanceFieldTransformations(List<ModelEntity> entities, List<SignedDistanceField> sdfDefinitions, DeferredEnvironmentMapRenderModule environmentMapRenderModule, GraphicsDevice graphics, SpriteBatch spriteBatch, LightAccumulationModule lightAccumulationModule)
+        public void UpdateDistanceFieldTransformations(List<ModelEntity> entities, List<SignedDistanceField> sdfDefinitions, EnvironmentProbeRenderModule environmentMapRenderModule, GraphicsDevice graphics, SpriteBatch spriteBatch, LightAccumulationModule lightAccumulationModule)
         {
             if (!RenderingSettings.sdf_draw) return;
 
@@ -195,7 +195,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
         }
 
         private void UpdateAtlas(List<SignedDistanceField> sdfDefinitionsPassed, GraphicsDevice graphics,
-            SpriteBatch spriteBatch, DeferredEnvironmentMapRenderModule environmentMapRenderModule, LightAccumulationModule lightAccumulationModule)
+            SpriteBatch spriteBatch, EnvironmentProbeRenderModule environmentMapRenderModule, LightAccumulationModule lightAccumulationModule)
         {
             if (sdfDefinitionsPassed.Count < 1) return;
 
