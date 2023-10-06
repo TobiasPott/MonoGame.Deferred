@@ -26,14 +26,14 @@ namespace DeferredEngine.Renderer.PostProcessing
         private FullScreenTriangleBuffer _fullScreenTriangle;
 
         private RenderTarget2D _renderTarget;
-        
+
         private readonly EffectParameter _sizeParam;
         private readonly EffectParameter _sizeRootParam;
         private readonly EffectParameter _inputTextureParam;
         private readonly EffectParameter _lutParam;
         private readonly EffectPass _createLUTPass;
         private readonly EffectPass _applyLUTPass;
-        
+
         private int _size;
         private Texture2D _inputTexture;
         private Texture2D _lookupTable;
@@ -50,10 +50,10 @@ namespace DeferredEngine.Renderer.PostProcessing
             {
                 if (value != _size)
                 {
-                    if(value != 16 && value != 32) throw new NotImplementedException("only 16 and 32 supported right now");
+                    if (value != 16 && value != 32) throw new NotImplementedException("only 16 and 32 supported right now");
                     _size = value;
                     _sizeParam.SetValue((float)_size);
-                    _sizeRootParam.SetValue((float) (_size == 16 ? 4 : 8));
+                    _sizeRootParam.SetValue((float)(_size == 16 ? 4 : 8));
                 }
             }
         }
@@ -71,7 +71,7 @@ namespace DeferredEngine.Renderer.PostProcessing
             }
         }
 
-        private Texture2D LookUpTable 
+        private Texture2D LookUpTable
         {
             get { return _lookupTable; }
             set
@@ -108,7 +108,7 @@ namespace DeferredEngine.Renderer.PostProcessing
             LookUpTable = content.Load<Texture2D>("Shaders/PostProcessing/lut");
         }
 
-        public void Initialize(GraphicsDevice graphics )
+        public void Initialize(GraphicsDevice graphics)
         {
             _fullScreenTriangle = new FullScreenTriangleBuffer(graphics);
         }
@@ -133,7 +133,7 @@ namespace DeferredEngine.Renderer.PostProcessing
         /// <returns></returns>
         public RenderTarget2D Draw(GraphicsDevice graphics, Texture2D input, Texture2D lookupTable = null)
         {
-            if(lookupTable == null)
+            if (lookupTable == null)
                 lookupTable = _lookupTable;
 
             //Set up rendertarget
@@ -146,7 +146,7 @@ namespace DeferredEngine.Renderer.PostProcessing
             InputTexture = input;
             //LookUpTable = lookupTable;
             Size = (lookupTable.Width == 64) ? 16 : 32;
-                
+
             graphics.SetRenderTarget(_renderTarget);
             graphics.BlendState = BlendState.Opaque;
 
@@ -166,8 +166,8 @@ namespace DeferredEngine.Renderer.PostProcessing
         {
             _renderTarget?.Dispose();
 
-            _sizeParam.SetValue((float) ( lutsize == LUTSizes.Size16 ? 16 : 32));
-            _sizeRootParam.SetValue((float) (lutsize == LUTSizes.Size16 ? 4 : 8));
+            _sizeParam.SetValue((float)(lutsize == LUTSizes.Size16 ? 16 : 32));
+            _sizeRootParam.SetValue((float)(lutsize == LUTSizes.Size16 ? 4 : 8));
             int size = lutsize == LUTSizes.Size16 ? 16 * 4 : 32 * 8;
 
             _renderTarget = new RenderTarget2D(graphics, size, size, false, SurfaceFormat.Color, DepthFormat.None);
@@ -183,7 +183,7 @@ namespace DeferredEngine.Renderer.PostProcessing
             stream.Dispose();
         }
 
-#endregion
+        #endregion
 
     }
 }

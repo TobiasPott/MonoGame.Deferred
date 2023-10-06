@@ -189,7 +189,7 @@ namespace DeferredEngine.Renderer
 
             _bloomFilter.Initialize(_graphicsDevice, RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight, _fullScreenTriangle);
 
-            _temporalAntialiasingRenderModule.Initialize(graphicsDevice);
+            _temporalAntialiasingRenderModule.Initialize(graphicsDevice, _fullScreenTriangle);
             _colorGradingFilter.Initialize(graphicsDevice);
 
             _lightAccumulationModule.Initialize(graphicsDevice, _fullScreenTriangle, assets);
@@ -1243,12 +1243,10 @@ namespace DeferredEngine.Renderer
             if (!RenderingSettings.g_taa) return input;
 
             RenderTarget2D output = _temporalAAOffFrame ? _renderTargetTAA_2 : _renderTargetTAA_1;
-
-            _temporalAntialiasingRenderModule.Draw(useTonemap: RenderingSettings.g_taa_tonemapped,
-                currentFrame: input,
+            _temporalAntialiasingRenderModule.UseTonemap = RenderingSettings.g_taa_tonemapped;
+            _temporalAntialiasingRenderModule.Draw(currentFrame: input,
                 previousFrames: _temporalAAOffFrame ? _renderTargetTAA_1 : _renderTargetTAA_2,
                 output: output,
-                fullScreenTriangle: _fullScreenTriangle,
                 currentViewToPreviousViewProjection: _currentViewToPreviousViewProjection);
 
             //Performance Profiler

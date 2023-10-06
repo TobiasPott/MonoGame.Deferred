@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DeferredEngine.Renderer.PostProcessing
 {
     //Just a template
-    public class TemporalAntialiasingFx : IDisposable
+    public class TemporalAntialiasingFx : BaseFx
     {
         private Effect _taaShader;
 
@@ -23,7 +23,6 @@ namespace DeferredEngine.Renderer.PostProcessing
             Load(content, shaderPath);
         }
 
-        private GraphicsDevice _graphicsDevice;
         private Vector3[] _frustumCorners;
         private Vector2 _resolution;
         private RenderTarget2D _depthMap;
@@ -75,9 +74,10 @@ namespace DeferredEngine.Renderer.PostProcessing
             }
         }
 
-        public void Initialize(GraphicsDevice graphicsDevice)
+
+        public override void Initialize(GraphicsDevice graphicsDevice, FullScreenTriangleBuffer fullScreenTriangle)
         {
-            _graphicsDevice = graphicsDevice;
+            base.Initialize(graphicsDevice, fullScreenTriangle);
             _paramAccumulationMap = _taaShader.Parameters["AccumulationMap"];
             _paramUpdateMap = _taaShader.Parameters["UpdateMap"];
             _paramDepthMap = _taaShader.Parameters["DepthMap"];
@@ -99,11 +99,8 @@ namespace DeferredEngine.Renderer.PostProcessing
         }
 
 
-        public void Draw(bool useTonemap, RenderTarget2D currentFrame, RenderTarget2D previousFrames, RenderTarget2D output, Matrix currentViewToPreviousViewProjection, FullScreenTriangleBuffer fullScreenTriangle)
+        public void Draw(RenderTarget2D currentFrame, RenderTarget2D previousFrames, RenderTarget2D output, Matrix currentViewToPreviousViewProjection)
         {
-
-            UseTonemap = useTonemap;
-
             _graphicsDevice.SetRenderTarget(output);
             _graphicsDevice.BlendState = BlendState.Opaque;
 
@@ -112,18 +109,18 @@ namespace DeferredEngine.Renderer.PostProcessing
             _paramCurrentToPrevious.SetValue(currentViewToPreviousViewProjection);
 
             _taaPass.Apply();
-            fullScreenTriangle.Draw(_graphicsDevice);
+            _fullscreenTarget.Draw(_graphicsDevice);
 
-            if (useTonemap)
+            if (UseTonemap)
             {
                 _graphicsDevice.SetRenderTarget(currentFrame);
                 _paramUpdateMap.SetValue(output);
                 _invTonemapPass.Apply();
-                fullScreenTriangle.Draw(_graphicsDevice);
+                _fullscreenTarget.Draw(_graphicsDevice);
             }
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             _taaShader?.Dispose();
             _depthMap?.Dispose();

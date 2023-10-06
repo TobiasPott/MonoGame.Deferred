@@ -3,14 +3,22 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.PostProcessing
 {
-    public abstract class BaseFx
+    public abstract class BaseFx : IDisposable
     {
-        private GraphicsDevice _graphicsDevice;
-        private FullScreenTriangleBuffer _fullscreenTarget;
+        protected GraphicsDevice _graphicsDevice;
+        protected FullScreenTriangleBuffer _fullscreenTarget;
 
-        public abstract void Draw(Texture2D source, Texture2D destination);
-        public abstract void Draw(Texture2D source);
-        public abstract void Draw(GraphicsDevice graphics, Texture2D source, Texture2D destination);
+        public virtual void Initialize(GraphicsDevice graphicsDevice, FullScreenTriangleBuffer fullscreenTarget)
+        {
+            _graphicsDevice = graphicsDevice;
+            _fullscreenTarget = fullscreenTarget;
+        }
+        public abstract void Dispose();
+
+
+        //public abstract void Draw(Texture2D source, Texture2D destination);
+        //public abstract void Draw(Texture2D source);
+        //public abstract void Draw(GraphicsDevice graphics, Texture2D source, Texture2D destination);
 
 
 
