@@ -187,7 +187,7 @@ namespace DeferredEngine.Renderer
             _editorRender = new EditorRender();
             _editorRender.Initialize(graphicsDevice, assets);
 
-            _bloomFx.Initialize(_graphicsDevice, RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight);
+            _bloomFx.Initialize(_graphicsDevice, new Vector2(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight));
             _taaFx.Initialize(graphicsDevice, FullscreenTriangleBuffer.Instamce);
             _colorGradingFx.Initialize(graphicsDevice, FullscreenTriangleBuffer.Instamce);
 

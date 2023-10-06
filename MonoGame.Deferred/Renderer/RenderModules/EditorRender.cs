@@ -155,12 +155,22 @@ namespace DeferredEngine.Renderer.RenderModules
                 Shaders.BillboardEffectParameter_IdColor.SetValue(Color.Gray.ToVector3());
         }
 
-        public void DrawIds(MeshMaterialLibrary meshMaterialLibrary, List<Decal> decals, List<DeferredPointLight> lights, List<DeferredDirectionalLight> dirLights, EnvironmentProbe envSample, Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
+        public void DrawIds(MeshMaterialLibrary meshMaterialLibrary, 
+            List<Decal> decals, 
+            List<DeferredPointLight> lights,
+            List<DeferredDirectionalLight> dirLights, 
+            EnvironmentProbe envSample,
+            Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
         {
             _idAndOutlineRenderer.Draw(meshMaterialLibrary, decals, lights, dirLights, envSample, staticViewProjection, view, gizmoContext, _mouseMovement);
         }
 
-        public void DrawEditorElements(MeshMaterialLibrary meshMaterialLibrary, List<Decal> decals, List<DeferredPointLight> lights, List<DeferredDirectionalLight> dirLights, EnvironmentProbe envSample, Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
+        public void DrawEditorElements(MeshMaterialLibrary meshMaterialLibrary,
+            List<Decal> decals,
+            List<DeferredPointLight> lights,
+            List<DeferredDirectionalLight> dirLights,
+            EnvironmentProbe envSample,
+            Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
         {
             _graphicsDevice.SetRenderTarget(null);
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
@@ -200,8 +210,6 @@ namespace DeferredEngine.Renderer.RenderModules
             if (direction != null)
             {
                 rotation = Matrix.CreateLookAt(Vector3.Zero, (Vector3)direction, Vector3.UnitX);
-
-
             }
             else
             {

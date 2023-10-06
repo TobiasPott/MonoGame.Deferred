@@ -203,12 +203,12 @@ namespace DeferredEngine.Renderer.PostProcessing
             Load(content);
         }
         //Initialize graphicsDevice
-        public void Initialize(GraphicsDevice graphicsDevice, int width, int height)
+        public void Initialize(GraphicsDevice graphicsDevice, Vector2 resolution)
         {
             _fullScreenTriangle = FullscreenTriangleBuffer.Instamce;
 
             _graphicsDevice = graphicsDevice;
-            UpdateResolution(new Vector2(width, height));
+            UpdateResolution(resolution);
 
         }
 

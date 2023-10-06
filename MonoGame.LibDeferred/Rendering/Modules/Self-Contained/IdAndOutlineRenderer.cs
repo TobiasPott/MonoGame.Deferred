@@ -32,7 +32,12 @@ namespace DeferredEngine.Renderer.RenderModules
             _assets = assets;
         }
 
-        public void Draw(MeshMaterialLibrary meshMat, List<Decal> decals, List<DeferredPointLight> pointLights, List<DeferredDirectionalLight> dirLights, EnvironmentProbe envSample, Matrix viewProjection, Matrix view, GizmoDrawContext drawContext, bool mouseMoved)
+        public void Draw(MeshMaterialLibrary meshMat,
+            List<Decal> decals,
+            List<DeferredPointLight> pointLights,
+            List<DeferredDirectionalLight> dirLights,
+            EnvironmentProbe envSample,
+            Matrix viewProjection, Matrix view, GizmoDrawContext drawContext, bool mouseMoved)
         {
             if (drawContext.GizmoTransformationMode)
             {
@@ -50,7 +55,12 @@ namespace DeferredEngine.Renderer.RenderModules
                 DrawOutlines(meshMat, viewProjection, mouseMoved, HoveredId, drawContext, mouseMoved);
         }
 
-        public void DrawIds(MeshMaterialLibrary meshMat, List<Decal> decals, List<DeferredPointLight> pointLights, List<DeferredDirectionalLight> dirLights, EnvironmentProbe envSample, Matrix viewProjection, Matrix view, GizmoDrawContext editorData)
+        public void DrawIds(MeshMaterialLibrary meshMat,
+            List<Decal> decals,
+            List<DeferredPointLight> pointLights,
+            List<DeferredDirectionalLight> dirLights,
+            EnvironmentProbe envSample,
+            Matrix viewProjection, Matrix view, GizmoDrawContext gizmoContext)
         {
 
             _graphicsDevice.SetRenderTarget(_idRenderTarget2D);
@@ -65,7 +75,7 @@ namespace DeferredEngine.Renderer.RenderModules
             DrawBillboards(decals, pointLights, dirLights, envSample, viewProjection, view);
 
             //Now onto the gizmos
-            DrawGizmos(viewProjection, editorData, _assets);
+            DrawGizmos(viewProjection, gizmoContext, _assets);
 
             Rectangle sourceRectangle =
             new Rectangle(Mouse.GetState().X, Mouse.GetState().Y, 1, 1);
@@ -94,7 +104,11 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 2);
         }
 
-        public void DrawBillboards(List<Decal> decals, List<DeferredPointLight> lights, List<DeferredDirectionalLight> dirLights, EnvironmentProbe envSample, Matrix staticViewProjection, Matrix view)
+        public void DrawBillboards(List<Decal> decals,
+            List<DeferredPointLight> lights,
+            List<DeferredDirectionalLight> dirLights,
+            EnvironmentProbe envSample,
+            Matrix staticViewProjection, Matrix view)
         {
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             _graphicsDevice.SetVertexBuffer(_billboardBuffer.VBuffer);
@@ -133,33 +147,32 @@ namespace DeferredEngine.Renderer.RenderModules
 
         }
 
-        public void DrawGizmos(Matrix staticViewProjection, GizmoDrawContext editorData, Assets assets)
+        public void DrawGizmos(Matrix staticViewProjection, GizmoDrawContext gizmoContext, Assets assets)
         {
-            if (editorData.SelectedObjectId == 0) return;
+            if (gizmoContext.SelectedObjectId == 0) return;
 
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             _graphicsDevice.DepthStencilState = DepthStencilState.None;
             _graphicsDevice.BlendState = BlendState.Opaque;
 
-            Vector3 position = editorData.SelectedObjectPosition;
+            Vector3 position = gizmoContext.SelectedObjectPosition;
 
-            Matrix rotation = (RenderingStats.e_LocalTransformation || editorData.GizmoMode == GizmoModes.Scale) ? editorData.SelectedObject.RotationMatrix : Matrix.Identity;
+            Matrix rotation = (RenderingStats.e_LocalTransformation || gizmoContext.GizmoMode == GizmoModes.Scale) ? gizmoContext.SelectedObject.RotationMatrix : Matrix.Identity;
 
             //Z
-            DrawArrow(position, rotation, 0, 0, 0, 0.5f, new Color(1, 0, 0), staticViewProjection, assets);
-            DrawArrow(position, rotation, -Math.PI / 2, 0, 0, 0.5f, new Color(2, 0, 0), staticViewProjection, assets);
-            DrawArrow(position, rotation, 0, Math.PI / 2, 0, 0.5f, new Color(3, 0, 0), staticViewProjection, assets);
+            DrawArrow(position, rotation, new Vector3(0, 0, 0), 0.5f, new Color(1, 0, 0), staticViewProjection, assets);
+            DrawArrow(position, rotation, new Vector3((float)-Math.PI / 2.0f, 0, 0), 0.5f, new Color(2, 0, 0), staticViewProjection, assets);
+            DrawArrow(position, rotation, new Vector3(0, (float)Math.PI / 2.0f, 0), 0.5f, new Color(3, 0, 0), staticViewProjection, assets);
 
-            DrawArrow(position, rotation, Math.PI, 0, 0, 0.5f, new Color(1, 0, 0), staticViewProjection, assets);
-            DrawArrow(position, rotation, Math.PI / 2, 0, 0, 0.5f, new Color(2, 0, 0), staticViewProjection, assets);
-            DrawArrow(position, rotation, 0, -Math.PI / 2, 0, 0.5f, new Color(3, 0, 0), staticViewProjection, assets);
+            DrawArrow(position, rotation, new Vector3((float)Math.PI, 0, 0), 0.5f, new Color(1, 0, 0), staticViewProjection, assets);
+            DrawArrow(position, rotation, new Vector3((float)Math.PI / 2.0f, 0, 0), 0.5f, new Color(2, 0, 0), staticViewProjection, assets);
+            DrawArrow(position, rotation, new Vector3(0, (float)-Math.PI / 2.0f, 0), 0.5f, new Color(3, 0, 0), staticViewProjection, assets);
 
         }
 
-        private void DrawArrow(Vector3 position, Matrix rotationObject, double angleX, double angleY, double angleZ, float scale, Color color, Matrix staticViewProjection, Assets assets)
+        private void DrawArrow(Vector3 position, Matrix rotationObject, Vector3 angles, float scale, Color color, Matrix staticViewProjection, Assets assets)
         {
-            Matrix rotation = Matrix.CreateRotationX((float)angleX) * Matrix.CreateRotationY((float)angleY) *
-                               Matrix.CreateRotationZ((float)angleZ);
+            Matrix rotation = Extensions.CreateRotationXYZ(angles);
             Matrix scaleMatrix = Matrix.CreateScale(0.75f, 0.75f, scale * 1.5f);
             Matrix worldViewProj = scaleMatrix * rotation * rotationObject * Matrix.CreateTranslation(position) * staticViewProjection;
 
@@ -180,7 +193,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
         }
 
-        public void DrawOutlines(MeshMaterialLibrary meshMat, Matrix viewProjection, bool drawAll, int hoveredId, GizmoDrawContext editorData, bool mouseMoved)
+        public void DrawOutlines(MeshMaterialLibrary meshMat, Matrix viewProjection, bool drawAll, int hoveredId, GizmoDrawContext gizmoContext, bool mouseMoved)
         {
             _graphicsDevice.SetRenderTarget(_idRenderTarget2D);
 
@@ -194,7 +207,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
-            int selectedId = editorData.SelectedObjectId;
+            int selectedId = gizmoContext.SelectedObjectId;
 
             //Selected entity
             if (selectedId != 0)
