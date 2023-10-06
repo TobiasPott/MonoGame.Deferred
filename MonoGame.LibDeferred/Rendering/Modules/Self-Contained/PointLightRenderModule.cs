@@ -2,8 +2,6 @@
 using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 
 namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
 {

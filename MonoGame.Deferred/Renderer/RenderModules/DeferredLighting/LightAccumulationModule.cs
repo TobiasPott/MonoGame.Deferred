@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using DeferredEngine.Entities;
+﻿using DeferredEngine.Entities;
 using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper;
 using DeferredEngine.Renderer.RenderModules.DeferredLighting;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
 using DirectionalLight = DeferredEngine.Entities.DirectionalLight;
 
 namespace DeferredEngine.Renderer.RenderModules
@@ -29,7 +29,7 @@ namespace DeferredEngine.Renderer.RenderModules
         private Matrix _inverseViewProjection;
 
         public PointLightRenderModule PointLightRenderModule;
-        
+
 
         public LightAccumulationModule(ShaderManager shaderManager, string shaderPath)
         {
@@ -49,7 +49,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 ColorDestinationBlend = Blend.One,
                 AlphaDestinationBlend = Blend.One
             };
-            
+
         }
 
 
@@ -59,7 +59,7 @@ namespace DeferredEngine.Renderer.RenderModules
         }
         private void InitializeShader()
         {
-            
+
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace DeferredEngine.Renderer.RenderModules
         /// <param name="viewProjection"></param>
         /// <param name="staticViewProjection"></param>
         /// <param name="inverseViewProjection"></param>
-        public void UpdateViewProjection( BoundingFrustum boundingFrustum,
+        public void UpdateViewProjection(BoundingFrustum boundingFrustum,
                                          bool viewProjHasChanged,
                                          Matrix view,
                                          Matrix inverseView,
@@ -103,7 +103,7 @@ namespace DeferredEngine.Renderer.RenderModules
         /// <param name="renderTargetLightBinding"></param>
         /// <param name="renderTargetDiffuse"></param>
         public void DrawLights(List<PointLight> pointLights, List<DirectionalLight> dirLights,
-            Vector3 cameraOrigin, GameTime gameTime, RenderTargetBinding[] renderTargetLightBinding, RenderTarget2D  renderTargetDiffuse)
+            Vector3 cameraOrigin, GameTime gameTime, RenderTargetBinding[] renderTargetLightBinding, RenderTarget2D renderTargetDiffuse)
         {
             //Reconstruct Depth
             if (RenderingSettings.g_UseDepthStencilLightCulling > 0)
@@ -202,7 +202,7 @@ namespace DeferredEngine.Renderer.RenderModules
             {
                 light.DirectionViewSpace = Vector3.Transform(light.Direction, _viewIT);
                 light.LightViewProjection_ViewSpace = _inverseView * light.LightViewProjection;
-                light.LightView_ViewSpace = _inverseView*light.LightView;
+                light.LightView_ViewSpace = _inverseView * light.LightView;
             }
 
             Shaders.deferredDirectionalLightParameter_LightColor.SetValue(light.ColorV3);
