@@ -1,7 +1,6 @@
 ﻿using DeferredEngine.Recources;
 using DeferredEngine.Recources.Helper;
 using DeferredEngine.Renderer.Helper;
-using Matrix = Microsoft.Xna.Framework.Matrix;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 
 namespace DeferredEngine.Entities
@@ -21,19 +20,16 @@ namespace DeferredEngine.Entities
             ModelDefinition = modelbb;
 
             Material = material;
-            Position = position;
-            Scale = scale;
 
+            Position = position;
             RotationMatrix = Extensions.CreateRotationXYZ(rotationAngles);
+            Scale = scale;
 
             if (library != null)
                 RegisterInLibrary(library);
 
-            WorldTransform.World = Matrix.CreateScale(Scale) * RotationMatrix * Matrix.CreateTranslation(Position);
-            WorldTransform.Scale = Scale;
-            WorldTransform.InverseWorld = Matrix.Invert(Matrix.CreateTranslation(BoundingBoxOffset * Scale) * RotationMatrix * Matrix.CreateTranslation(Position));
+            this.UpdateMatrices();
         }
-
 
         public void RegisterInLibrary(MeshMaterialLibrary library)
         {
@@ -43,16 +39,6 @@ namespace DeferredEngine.Entities
         public void Dispose(MeshMaterialLibrary library)
         {
             library.DeleteFromRegistry(this);
-        }
-
-        public override void ApplyTransformation()
-        {
-            //Has something changed?
-            WorldTransform.Scale = Scale;
-            WorldTransform.World = Matrix.CreateScale(Scale) * RotationMatrix * Matrix.CreateTranslation(Position);
-
-            WorldTransform.InverseWorld = Matrix.Invert(Matrix.CreateTranslation(BoundingBoxOffset * Scale) * RotationMatrix * Matrix.CreateTranslation(Position));
-
         }
 
     }

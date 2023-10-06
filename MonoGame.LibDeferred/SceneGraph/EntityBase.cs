@@ -5,39 +5,33 @@ using Vector3 = Microsoft.Xna.Framework.Vector3;
 
 namespace DeferredEngine.Entities
 {
-    public abstract class EntityBase: TransformableObject
+    public abstract class EntityBase : TransformableObject
     {
-
-        protected Vector3 _position;
         public override Vector3 Position
         {
             get => _position;
             set
             {
+                base.Position = value;
                 WorldTransform.HasChanged = true;
-                _position = value;
             }
         }
-
-        protected Matrix _rotationMatrix;
         public override Matrix RotationMatrix
         {
             get => _rotationMatrix;
             set
             {
-                _rotationMatrix = value;
+                base.RotationMatrix = value;
                 WorldTransform.HasChanged = true;
             }
         }
-
-        protected Vector3 _scale;
         public override Vector3 Scale
         {
             get => _scale;
             set
             {
+                base.Scale = value;
                 WorldTransform.HasChanged = true;
-                _scale = value;
             }
         }
 
@@ -52,10 +46,10 @@ namespace DeferredEngine.Entities
         {
             Id = IdGenerator.GetNewId();
             Name = GetType().Name + " " + Id;
-            _position = Vector3.Zero;
-            _rotationMatrix = Matrix.Identity; 
-            _scale = Vector3.One;
             WorldTransform = new TransformMatrix(Matrix.Identity, Id);
+            Position = Vector3.Zero;
+            RotationMatrix = Matrix.Identity;
+            Scale = Vector3.One;
 
             BoundingBox = bBox;
             BoundingBoxOffset = bBoxOffset;
@@ -64,17 +58,21 @@ namespace DeferredEngine.Entities
         {
             Id = IdGenerator.GetNewId();
             Name = GetType().Name + " " + Id;
-            _position = position;
-            _rotationMatrix = rotation;
-            _scale = scale;
             WorldTransform = new TransformMatrix(Matrix.CreateScale(Scale) * RotationMatrix * Matrix.CreateTranslation(Position), Id);
+            Position = position;
+            RotationMatrix = rotation;
+            Scale = scale;
 
             BoundingBox = new BoundingBox(-Vector3.One, Vector3.One);
             BoundingBoxOffset = Vector3.Zero;
         }
 
-
-        public abstract void ApplyTransformation();
-
+        protected override void UpdateMatrices()
+        {
+            base.UpdateMatrices();
+            WorldTransform.Scale = _scale;
+            WorldTransform.World = _world;
+            WorldTransform.InverseWorld = _inverseWorld;
+        }
     }
 }

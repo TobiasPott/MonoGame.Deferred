@@ -46,11 +46,7 @@ namespace DeferredEngine.Entities
             get
             {
                 if (_worldHasChanged)
-                {
-                    _world = Matrix.CreateScale(Scale) * RotationMatrix * Matrix.CreateTranslation(Position);
-                    _inverseWorld = Matrix.Invert(_world);
-                    _worldHasChanged = false;
-                }
+                    UpdateMatrices();
                 return _world;
             }
         }
@@ -61,14 +57,17 @@ namespace DeferredEngine.Entities
             get
             {
                 if (_worldHasChanged)
-                {
-                    _world = Matrix.CreateScale(Scale) * RotationMatrix * Matrix.CreateTranslation(Position);
-                    _inverseWorld = Matrix.Invert(_world);
-                    _worldHasChanged = false;
-                }
+                    UpdateMatrices();
                 return _inverseWorld;
             }
         }
 
+
+        protected virtual void UpdateMatrices()
+        {
+            _world = Matrix.CreateScale(Scale) * RotationMatrix * Matrix.CreateTranslation(Position);
+            _inverseWorld = Matrix.Invert(_world);
+            _worldHasChanged = false;
+        }
     }
 }
