@@ -1,5 +1,4 @@
-﻿using System;
-using DeferredEngine.Recources;
+﻿using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -47,8 +46,7 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
         #region private fields
 
         //resolution
-        private int _width;
-        private int _height;
+        private Vector2 _resolution;
 
         //RenderTargets
         private RenderTarget2D _bloomRenderTarget2DMip0;
@@ -89,7 +87,7 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
         private float _bloomStrength3 = 1.0f;
         private float _bloomStrength4 = 1.0f;
         private float _bloomStrength5 = 1.0f;
-        
+
         private float _radiusMultiplier = 1.0f;
 
 
@@ -183,7 +181,8 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
         public float BloomThreshold
         {
             get { return _bloomThreshold; }
-            set {
+            set
+            {
                 if (Math.Abs(_bloomThreshold - value) > 0.001f)
                 {
                     _bloomThreshold = value;
@@ -205,7 +204,7 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
             _fullScreenTriangle = fullScreenTriangle;
 
             _graphicsDevice = graphicsDevice;
-            UpdateResolution(width, height);
+            UpdateResolution(new Vector2(width, height));
 
         }
 
@@ -217,7 +216,7 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
         /// <param name="width">initial value for creating the rendertargets</param>
         /// <param name="height">initial value for creating the rendertargets</param>
         /// <param name="quadRenderer">if you already have quadRenderer you may reuse it here</param>
-        public void Load( ContentManager content)
+        public void Load(ContentManager content)
         {
             //Load the shader parameters and passes for cheap and easy access
             _bloomEffect = content.Load<Effect>("Shaders/BloomFilter/Bloom");
@@ -232,7 +231,7 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
             _bloomPassExtractLuminance = _bloomEffect.Techniques["ExtractLuminance"].Passes[0];
             _bloomPassDownsample = _bloomEffect.Techniques["Downsample"].Passes[0];
             _bloomPassUpsample = _bloomEffect.Techniques["Upsample"].Passes[0];
-            
+
             //An interesting blendstate for merging the initial image with the bloom.
             //BlendStateBloom = new BlendState();
             //BlendStateBloom.ColorBlendFunction = BlendFunction.Add;
@@ -255,10 +254,10 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
         /// <param name="preset">See BloomPresets enums. Example: BloomPresets.Wide</param>
         private void SetBloomPreset(BloomPresets preset)
         {
-            switch(preset)
+            switch (preset)
             {
                 case BloomPresets.Wide:
-                {
+                    {
                         _bloomStrength1 = 0.5f;
                         _bloomStrength2 = 1;
                         _bloomStrength3 = 2;
@@ -272,7 +271,7 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
                         BloomStreakLength = 1;
                         BloomDownsamplePasses = 5;
                         break;
-                }
+                    }
                 case BloomPresets.SuperWide:
                     {
                         _bloomStrength1 = 0.9f;
@@ -345,22 +344,23 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
         /// The smaller this value the better performance and the worse our final image quality</param>
         /// <param name="height">see: width</param>
         /// <returns></returns>
-        public Texture2D Draw(Texture2D inputTexture, int width, int height)
-        { 
+        public Texture2D Draw(Texture2D inputTexture, int width, int height) => Draw(inputTexture, new Vector2(width, height));
+        public Texture2D Draw(Texture2D inputTexture, Vector2 resolution)
+        {
             //Check if we are initialized
-            if(_graphicsDevice==null)
+            if (_graphicsDevice == null)
                 throw new Exception("Module not yet Loaded / Initialized. Use Load() first");
 
             ApplyGameSettings();
 
             //Change renderTarget resolution if different from what we expected. If lower than the inputTexture we gain performance.
-            if (width != _width || height != _height)
+            if (resolution.X != _resolution.X || resolution.Y != _resolution.Y)
             {
-                UpdateResolution(width, height);
+                UpdateResolution(resolution);
 
                 //Adjust the blur so it looks consistent across diferrent scalings
-                _radiusMultiplier = (float)width / inputTexture.Width;
-                
+                _radiusMultiplier = (float)resolution.X / inputTexture.Width;
+
                 //Update our variables with the multiplier
                 SetBloomPreset(BloomPreset);
             }
@@ -373,12 +373,12 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
             _graphicsDevice.SetRenderTarget(_bloomRenderTarget2DMip0);
 
             BloomScreenTexture = inputTexture;
-            BloomInverseResolution = new Vector2(1.0f / _width, 1.0f / _height);
-            
-            if (BloomUseLuminance) _bloomPassExtractLuminance.Apply(); 
+            BloomInverseResolution = new Vector2(1.0f / _resolution.X, 1.0f / _resolution.Y);
+
+            if (BloomUseLuminance) _bloomPassExtractLuminance.Apply();
             else _bloomPassExtract.Apply();
             _fullScreenTriangle.Draw(_graphicsDevice);
-            
+
             //Now downsample to the next lower mip texture
             if (BloomDownsamplePasses > 0)
             {
@@ -415,7 +415,7 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
                         //Pass
                         _bloomPassDownsample.Apply();
                         _fullScreenTriangle.Draw(_graphicsDevice);
-                        
+
                         if (BloomDownsamplePasses > 3)
                         {
                             BloomInverseResolution *= 2;
@@ -445,7 +445,7 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
                                 //UPSAMPLE TO MIP4
                                 _graphicsDevice.SetRenderTarget(_bloomRenderTarget2DMip4);
                                 BloomScreenTexture = _bloomRenderTarget2DMip5;
-                                
+
                                 BloomStrength = _bloomStrength5;
                                 BloomRadius = _bloomRadius5;
                                 _bloomPassUpsample.Apply();
@@ -453,7 +453,7 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
 
                                 BloomInverseResolution /= 2;
                             }
-                            
+
                             ChangeBlendState();
 
                             //UPSAMPLE TO MIP3
@@ -512,7 +512,7 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
             }
 
             //Note the final step could be done as a blend to the final texture.
-            
+
             return _bloomRenderTarget2DMip0;
         }
 
@@ -544,10 +544,9 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
         /// </summary>
         /// <param name="width">width of the image</param>
         /// <param name="height">height of the image</param>
-        public void UpdateResolution(int width, int height)
+        public void UpdateResolution(Vector2 resolution)
         {
-            _width = width;
-            _height = height;
+            _resolution = resolution;
 
             if (_bloomRenderTarget2DMip0 != null)
             {
@@ -555,23 +554,23 @@ namespace DeferredEngine.Renderer.RenderModules.PostProcessingFilters
             }
 
             _bloomRenderTarget2DMip0 = new RenderTarget2D(_graphicsDevice,
-                (int) (width),
-                (int) (height), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+                (int)(resolution.X),
+                (int)(resolution.Y), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
             _bloomRenderTarget2DMip1 = new RenderTarget2D(_graphicsDevice,
-                (int) (width/2),
-                (int) (height/2), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+                (int)(resolution.X / 2),
+                (int)(resolution.Y / 2), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
             _bloomRenderTarget2DMip2 = new RenderTarget2D(_graphicsDevice,
-                (int) (width/4),
-                (int) (height/4), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+                (int)(resolution.X / 4),
+                (int)(resolution.Y / 4), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
             _bloomRenderTarget2DMip3 = new RenderTarget2D(_graphicsDevice,
-                (int) (width/8),
-                (int) (height/8), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+                (int)(resolution.X / 8),
+                (int)(resolution.Y / 8), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
             _bloomRenderTarget2DMip4 = new RenderTarget2D(_graphicsDevice,
-                (int) (width/16),
-                (int) (height/16), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+                (int)(resolution.X / 16),
+                (int)(resolution.Y / 16), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
             _bloomRenderTarget2DMip5 = new RenderTarget2D(_graphicsDevice,
-                (int) (width/32),
-                (int) (height/32), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+                (int)(resolution.X / 32),
+                (int)(resolution.Y / 32), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
         }
 
         /// <summary>

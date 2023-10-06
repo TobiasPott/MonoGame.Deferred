@@ -9,10 +9,10 @@ namespace DeferredEngine.Entities
 
         public float SpecularStrength = 1;
         public float DiffuseStrength = 0.2f;
+        public bool UseSDFAO = false;
 
         public bool AutoUpdate = true;
 
-        public bool UseSDFAO = false;
 
 
         public override Vector3 Position

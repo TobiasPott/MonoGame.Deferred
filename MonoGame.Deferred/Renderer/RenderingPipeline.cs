@@ -1214,8 +1214,7 @@ namespace DeferredEngine.Renderer
         {
             if (RenderingSettings.g_BloomEnable)
             {
-                Texture2D bloom = _bloomFilter.Draw(input, RenderingSettings.g_screenwidth,
-                    RenderingSettings.g_screenheight);
+                Texture2D bloom = _bloomFilter.Draw(input, RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight);
 
                 _graphicsDevice.SetRenderTargets(_renderTargetBloom);
 
