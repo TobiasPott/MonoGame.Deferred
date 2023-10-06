@@ -38,7 +38,7 @@ namespace DeferredEngine.Renderer.RenderModules
             get { return _frustumCorners; }
             set
             {
-                _frustumCorners = value; 
+                _frustumCorners = value;
                 _paramFrustumCorners.SetValue(_frustumCorners);
             }
         }
@@ -58,7 +58,7 @@ namespace DeferredEngine.Renderer.RenderModules
             get { return _depthMap; }
             set
             {
-                _depthMap = value; 
+                _depthMap = value;
                 _paramDepthMap.SetValue(value);
             }
         }
@@ -91,7 +91,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _taaPass = _taaShader.Techniques["TemporalAntialiasing"].Passes[0];
             _invTonemapPass = _taaShader.Techniques["InverseTonemap"].Passes[0];
         }
-        
+
         public void Load(ContentManager content, string shaderPath)
         {
             _taaShader = content.Load<Effect>(shaderPath);
@@ -113,7 +113,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
             _taaPass.Apply();
             fullScreenTriangle.Draw(_graphicsDevice);
-            
+
             if (useTonemap)
             {
                 _graphicsDevice.SetRenderTarget(currentFrame);
