@@ -1,14 +1,13 @@
 ﻿
-using System;
-using System.Collections.Generic;
 using DeferredEngine.Entities;
 using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
 
-namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields
+namespace DeferredEngine.Renderer.RenderModules.SDF
 {
     //Just a template
     public class DistanceFieldRenderModule : IDisposable
@@ -77,7 +76,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields
         {
             set { _meshOffset.SetValue(value); }
         }
-        
+
 
         public DistanceFieldRenderModule(ShaderManager shaderManager, string shaderPath)
         {
@@ -150,7 +149,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields
         public void UpdateDistanceFieldTransformations(List<ModelEntity> entities, List<SignedDistanceField> sdfDefinitions, DeferredEnvironmentMapRenderModule environmentMapRenderModule, GraphicsDevice graphics, SpriteBatch spriteBatch, LightAccumulationModule lightAccumulationModule)
         {
             if (!RenderingSettings.sdf_draw) return;
-            
+
             //First of all let's build the atlas
             UpdateAtlas(sdfDefinitions, graphics, spriteBatch, environmentMapRenderModule, lightAccumulationModule);
 
@@ -208,7 +207,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields
                 _signedDistanceFieldDefinitionsCount = 0;
                 updateAtlas = true;
             }
-            
+
 
             {
                 for (int i = 0; i < sdfDefinitionsPassed.Count; i++)
@@ -221,7 +220,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields
                             found = true;
                             break;
 
-                            if(sdfDefinitionsPassed[i].NeedsToBeGenerated) throw new Exception("test");
+                            if (sdfDefinitionsPassed[i].NeedsToBeGenerated) throw new Exception("test");
                         }
                     }
 
@@ -246,7 +245,7 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields
             //Count size
             for (int i = 0; i < _signedDistanceFieldDefinitionsCount; i++)
             {
-                x = (int) Math.Max(_signedDistanceFieldDefinitions[i].SdfTexture.Width, x);
+                x = (int)Math.Max(_signedDistanceFieldDefinitions[i].SdfTexture.Width, x);
                 _signedDistanceFieldDefinitions[i].TextureResolution.W = y;
                 y += _signedDistanceFieldDefinitions[i].SdfTexture.Height;
 
@@ -261,8 +260,8 @@ namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.PointClamp);
             for (int i = 0; i < _signedDistanceFieldDefinitionsCount; i++)
             {
-                spriteBatch.Draw(_signedDistanceFieldDefinitions[i].SdfTexture, 
-                    new Rectangle(0, (int) _signedDistanceFieldDefinitions[i].TextureResolution.W, _signedDistanceFieldDefinitions[i].SdfTexture.Width, _signedDistanceFieldDefinitions[i].SdfTexture.Height), Color.White);
+                spriteBatch.Draw(_signedDistanceFieldDefinitions[i].SdfTexture,
+                    new Rectangle(0, (int)_signedDistanceFieldDefinitions[i].TextureResolution.W, _signedDistanceFieldDefinitions[i].SdfTexture.Width, _signedDistanceFieldDefinitions[i].SdfTexture.Height), Color.White);
             }
             spriteBatch.End();
 

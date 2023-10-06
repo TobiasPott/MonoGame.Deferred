@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Generator
+namespace DeferredEngine.Renderer.RenderModules.SDF
 {
     public struct SdfSamplePoint
     {

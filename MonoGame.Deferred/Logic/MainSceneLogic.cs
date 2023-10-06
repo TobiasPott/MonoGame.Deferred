@@ -2,7 +2,7 @@
 using DeferredEngine.Entities;
 using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper;
-using DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Generator;
+using DeferredEngine.Renderer.RenderModules.SDF;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;

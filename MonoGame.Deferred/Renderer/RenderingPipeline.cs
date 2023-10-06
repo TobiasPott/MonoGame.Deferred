@@ -5,8 +5,7 @@ using DeferredEngine.Renderer.Helper;
 using DeferredEngine.Renderer.Helper.HelperGeometry;
 using DeferredEngine.Renderer.RenderModules;
 using DeferredEngine.Renderer.RenderModules.PostProcessingFilters;
-using DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields;
-using DeferredEngine.Renderer.RenderModules.Signed_Distance_Fields.SDF_Generator;
+using DeferredEngine.Renderer.RenderModules.SDF;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -169,7 +168,7 @@ namespace DeferredEngine.Renderer
             _gBufferRenderModule = new GBufferRenderModule(content, "Shaders/GbufferSetup/ClearGBuffer", "Shaders/GbufferSetup/Gbuffer");
             _forwardRenderModule = new ForwardRenderModule(content, "Shaders/forward/forward");
             _deferredEnvironmentMapRenderModule = new DeferredEnvironmentMapRenderModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
-            
+
             _temporalAntialiasingRenderModule = new TemporalAntialiasingRenderModule(content);
             _decalRenderModule = new DecalRenderModule(shaderManager);
             _helperGeometryRenderModule = new HelperGeometryRenderModule(content, "Shaders/Editor/LineEffect");
