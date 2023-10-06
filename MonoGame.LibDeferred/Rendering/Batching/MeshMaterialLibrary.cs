@@ -54,8 +54,8 @@ namespace DeferredEngine.Renderer.Helper
         /// </summary>
         /// <param name="mat">if "null" it will be taken from the model!</param>
         /// <param name="model"></param>
-        /// <param name="worldMatrix"></param>
-        public void Register(MaterialEffect mat, Model model, TransformableObject worldMatrix)
+        /// <param name="transform"></param>
+        public void Register(MaterialEffect mat, Model model, TransformableObject transform)
         {
             if (model == null) return;
 
@@ -65,12 +65,12 @@ namespace DeferredEngine.Renderer.Helper
                 for (int i = 0; i < mesh.MeshParts.Count; i++)
                 {
                     ModelMeshPart meshPart = mesh.MeshParts[i];
-                    Register(mat, meshPart, worldMatrix, mesh.BoundingSphere);
+                    Register(mat, meshPart, transform, mesh.BoundingSphere);
                 }
             }
         }
 
-        public void Register(MaterialEffect mat, ModelMeshPart mesh, TransformableObject worldMatrix, BoundingSphere boundingSphere) //These should be ordered by likeness, so I don't get opaque -> transparent -> opaque
+        public void Register(MaterialEffect mat, ModelMeshPart mesh, TransformableObject transform, BoundingSphere boundingSphere) //These should be ordered by likeness, so I don't get opaque -> transparent -> opaque
         {
             bool found = false;
 
@@ -93,7 +93,7 @@ namespace DeferredEngine.Renderer.Helper
                 MaterialLibrary matLib = MaterialLib[i];
                 if (matLib.HasMaterial(mat))
                 {
-                    matLib.Register(mesh, worldMatrix, boundingSphere);
+                    matLib.Register(mesh, transform, boundingSphere);
                     found = true;
                     break;
                 }
@@ -104,7 +104,7 @@ namespace DeferredEngine.Renderer.Helper
             {
                 MaterialLib[Index] = new MaterialLibrary();
                 MaterialLib[Index].SetMaterial(ref mat);
-                MaterialLib[Index].Register(mesh, worldMatrix, boundingSphere);
+                MaterialLib[Index].Register(mesh, transform, boundingSphere);
                 Index++;
             }
 
@@ -161,14 +161,14 @@ namespace DeferredEngine.Renderer.Helper
             }
         }
 
-        private void DeleteFromRegistry(MaterialEffect mat, ModelMeshPart mesh, TransformableObject worldMatrix)
+        private void DeleteFromRegistry(MaterialEffect mat, ModelMeshPart mesh, TransformableObject transform)
         {
             for (var i = 0; i < Index; i++)
             {
                 MaterialLibrary matLib = MaterialLib[i];
                 //if (matLib.HasMaterial(mat))
                 //{
-                if (matLib.DeleteFromRegistry(mesh, worldMatrix))
+                if (matLib.DeleteFromRegistry(mesh, transform))
                 {
                     for (var j = i; j < Index - 1; j++)
                     {
@@ -389,7 +389,7 @@ namespace DeferredEngine.Renderer.Helper
                         //if (!meshLib.GetWorldMatrices()[index].Rendered) continue;
                         if (!meshLib.Rendered[index]) continue;
 
-                        Matrix localWorldMatrix = meshLib.GetWorldMatrices()[index].World;
+                        Matrix localWorldMatrix = meshLib.GetTransforms()[index].World;
 
                         if (!ApplyShaders(renderType, renderModule, localWorldMatrix, view, viewProjection, meshLib, index,
                                 outlineId, outlined)) continue;
@@ -508,7 +508,7 @@ namespace DeferredEngine.Renderer.Helper
             {
                 Shaders.IdRenderEffectParameterWorldViewProj.SetValue(localWorldMatrix * viewProjection);
 
-                int id = meshLib.GetWorldMatrices()[index].Id;
+                int id = meshLib.GetTransforms()[index].Id;
 
                 if (renderType == RenderType.IdRender)
                 {

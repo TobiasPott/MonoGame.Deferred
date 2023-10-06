@@ -43,7 +43,7 @@ namespace DeferredEngine.Renderer.Helper
             return _meshLib;
         }
 
-        public void Register(ModelMeshPart mesh, TransformableObject worldMatrix, BoundingSphere boundingSphere)
+        public void Register(ModelMeshPart mesh, TransformableObject transform, BoundingSphere boundingSphere)
         {
             bool found = false;
             //Check if we already have a model like that, if yes put it in there!
@@ -52,7 +52,7 @@ namespace DeferredEngine.Renderer.Helper
                 MeshLibrary meshLib = _meshLib[i];
                 if (meshLib.HasMesh(mesh))
                 {
-                    meshLib.Register(worldMatrix);
+                    meshLib.Register(transform);
                     found = true;
                     break;
                 }
@@ -64,7 +64,7 @@ namespace DeferredEngine.Renderer.Helper
                 _meshLib[Index] = new MeshLibrary();
                 _meshLib[Index].SetMesh(mesh);
                 _meshLib[Index].SetBoundingSphere(boundingSphere);
-                _meshLib[Index].Register(worldMatrix);
+                _meshLib[Index].Register(transform);
                 Index++;
             }
 
@@ -77,14 +77,14 @@ namespace DeferredEngine.Renderer.Helper
             }
         }
 
-        public bool DeleteFromRegistry(ModelMeshPart mesh, TransformableObject worldMatrix)
+        public bool DeleteFromRegistry(ModelMeshPart mesh, TransformableObject toDelete)
         {
             for (var i = 0; i < Index; i++)
             {
                 MeshLibrary meshLib = _meshLib[i];
                 if (meshLib.HasMesh(mesh))
                 {
-                    if (meshLib.DeleteFromRegistry(worldMatrix)) //if true, we can delete it from registry
+                    if (meshLib.DeleteFromRegistry(toDelete)) //if true, we can delete it from registry
                     {
                         for (var j = i; j < Index - 1; j++)
                         {

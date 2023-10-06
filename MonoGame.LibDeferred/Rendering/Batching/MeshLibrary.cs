@@ -12,7 +12,7 @@ namespace DeferredEngine.Renderer.Helper
         public BoundingSphere MeshBoundingSphere;
 
         const int InitialLibrarySize = 4;
-        private TransformableObject[] _worldMatrices = new TransformableObject[InitialLibrarySize];
+        private TransformableObject[] _transforms = new TransformableObject[InitialLibrarySize];
 
         //the local displacement of the boundingsphere!
         private Vector3[] _worldBoundingCenters = new Vector3[InitialLibrarySize];
@@ -36,9 +36,9 @@ namespace DeferredEngine.Renderer.Helper
             return _mesh;
         }
 
-        public TransformableObject[] GetWorldMatrices()
+        public TransformableObject[] GetTransforms()
         {
-            return _worldMatrices;
+            return _transforms;
         }
 
         public Vector3 GetBoundingCenterWorld(int index)
@@ -56,15 +56,15 @@ namespace DeferredEngine.Renderer.Helper
 
             for (var i = 0; i < Index; i++)
             {
-                TransformableObject trafoMatrix = _worldMatrices[i];
+                TransformableObject transform = _transforms[i];
 
-                _worldBoundingCenters[i] = Vector3.Transform(MeshBoundingSphere.Center, trafoMatrix.World);
+                _worldBoundingCenters[i] = Vector3.Transform(MeshBoundingSphere.Center, transform.World);
 
                 //If either the trafomatrix or the camera has changed we need to check visibility
                 if (cameraHasChanged)
                 {
                     sphere.Center = _worldBoundingCenters[i];
-                    sphere.Radius = MeshBoundingSphere.Radius * trafoMatrix.Scale.X;
+                    sphere.Radius = MeshBoundingSphere.Radius * transform.Scale.X;
                     if (viewFrustumEx.Contains(sphere) == ContainmentType.Disjoint)
                     {
                         Rendered[i] = false;
@@ -95,21 +95,21 @@ namespace DeferredEngine.Renderer.Helper
         }
 
         //Basically no chance we have the same model already. We should be fine just adding it to the list if we did everything else right.
-        public void Register(TransformableObject world)
+        public void Register(TransformableObject transform)
         {
-            _worldMatrices[Index] = world;
+            _transforms[Index] = transform;
             Rendered[Index] = true;
-            _worldBoundingCenters[Index] = Vector3.Transform(MeshBoundingSphere.Center, world.World);
+            _worldBoundingCenters[Index] = Vector3.Transform(MeshBoundingSphere.Center, transform.World);
 
             Index++;
 
             //mesh.Effect = Shaders.AmbientEffect; //Just so it has few properties!
 
-            if (Index >= _worldMatrices.Length)
+            if (Index >= _transforms.Length)
             {
                 TransformableObject[] tempLib = new TransformableObject[Index + 1];
-                _worldMatrices.CopyTo(tempLib, 0);
-                _worldMatrices = tempLib;
+                _transforms.CopyTo(tempLib, 0);
+                _transforms = tempLib;
 
                 Vector3[] tempLib2 = new Vector3[Index + 1];
                 _worldBoundingCenters.CopyTo(tempLib2, 0);
@@ -121,19 +121,19 @@ namespace DeferredEngine.Renderer.Helper
             }
         }
 
-        public bool DeleteFromRegistry(TransformableObject worldMatrix)
+        public bool DeleteFromRegistry(TransformableObject toDelete)
         {
             for (var i = 0; i < Index; i++)
             {
-                TransformableObject trafoMatrix = _worldMatrices[i];
+                TransformableObject transform = _transforms[i];
 
-                if (trafoMatrix == worldMatrix)
+                if (transform == toDelete)
                 {
                     //delete this value!
                     for (var j = i; j < Index - 1; j++)
                     {
                         //slide down one
-                        _worldMatrices[j] = _worldMatrices[j + 1];
+                        _transforms[j] = _transforms[j + 1];
                         Rendered[j] = Rendered[j + 1];
                         _worldBoundingCenters[j] = _worldBoundingCenters[j + 1];
                     }
