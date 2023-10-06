@@ -59,11 +59,6 @@ namespace DeferredEngine.Renderer.Helper
         {
             if (model == null) return;
 
-            //if (mat == null)
-            //{
-            //    throw new NotImplementedException();
-            //}
-
             for (int index = 0; index < model.Meshes.Count; index++)
             {
                 var mesh = model.Meshes[index];
@@ -223,23 +218,6 @@ namespace DeferredEngine.Renderer.Helper
 
             if (!RenderingSettings.g_cpuculling) return false;
 
-            for (int index1 = 0; index1 < entities.Count; index1++)
-            {
-                ModelEntity entity = entities[index1];
-
-                if (!hasCameraChanged && !entity.WorldTransform.HasChanged)
-                {
-                    continue;
-                }
-
-                if (entity.WorldTransform.HasChanged)
-                {
-                    entity.WorldTransform.World = entity.World;
-                    entity.WorldTransform.InverseWorld = entity.InverseWorld;
-                    entity.WorldTransform.Scale = entity.Scale;
-                }
-            }
-
             bool hasAnythingChanged = false;
             //Ok we applied the transformation to all the entities, now update the submesh boundingboxes!
             // Parallel.For(0, Index, index1 =>
@@ -298,13 +276,6 @@ namespace DeferredEngine.Renderer.Helper
         /// <param name="entities"></param>
         public void FrustumCullingFinalizeFrame(List<ModelEntity> entities)
         {
-
-            //Set Changed to false
-            for (int index1 = 0; index1 < entities.Count; index1++)
-            {
-                ModelEntity entity = entities[index1];
-                entity.WorldTransform.HasChanged = false;
-            }
 
             for (int index1 = 0; index1 < Index; index1++)
             {

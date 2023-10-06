@@ -152,7 +152,7 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
             //Transform
             for (var index = 0; index < vertices.Length; index++)
             {
-                vertices[index] = Vector3.Transform(vertices[index], entity.WorldTransform.World);
+                vertices[index] = Vector3.Transform(vertices[index], entity.World);
             }
 
             AddLineStartEnd(vertices[0], vertices[1], 1);

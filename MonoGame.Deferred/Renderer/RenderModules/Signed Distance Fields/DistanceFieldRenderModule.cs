@@ -160,8 +160,8 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
                 SdfModelDefinition sdfModelDefinition = entity.ModelDefinition as SdfModelDefinition;
                 if (sdfModelDefinition != null && sdfModelDefinition.SDF.IsUsed)
                 {
-                    _instanceInverseMatrixArray[i] = entity.WorldTransform.InverseWorld;
-                    _instanceScaleArray[i] = entity.WorldTransform.Scale;
+                    _instanceInverseMatrixArray[i] = entity.InverseWorld;
+                    _instanceScaleArray[i] = entity.Scale;
                     _instanceSDFIndexArray[i] = sdfModelDefinition.SDF.ArrayIndex;
 
                     i++;
