@@ -198,6 +198,10 @@ namespace DeferredEngine.Renderer.PostProcessing
 
         #region initialize
 
+        public BloomFx(ContentManager content)
+        {
+            Load(content);
+        }
         //Initialize graphicsDevice
         public void Initialize(GraphicsDevice graphicsDevice, int width, int height)
         {
@@ -211,11 +215,7 @@ namespace DeferredEngine.Renderer.PostProcessing
         /// <summary>
         /// Loads all needed components for the BloomEffect. This effect won't work without calling load
         /// </summary>
-        /// <param name="graphicsDevice"></param>
         /// <param name="content"></param>
-        /// <param name="width">initial value for creating the rendertargets</param>
-        /// <param name="height">initial value for creating the rendertargets</param>
-        /// <param name="quadRenderer">if you already have quadRenderer you may reuse it here</param>
         public void Load(ContentManager content)
         {
             //Load the shader parameters and passes for cheap and easy access

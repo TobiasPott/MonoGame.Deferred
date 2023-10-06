@@ -155,8 +155,6 @@ namespace DeferredEngine.Renderer
         /// <param name="content"></param>
         public void Load(ContentManager content, ShaderManager shaderManager)
         {
-            _bloomFx = new BloomFx();
-            _bloomFx.Load(content);
             _inverseResolution = new Vector3(1.0f / RenderingSettings.g_screenwidth, 1.0f / RenderingSettings.g_screenheight, 0);
 
 
@@ -166,11 +164,13 @@ namespace DeferredEngine.Renderer
             _forwardRenderModule = new ForwardRenderModule(content, "Shaders/forward/forward");
             _deferredEnvironmentMapRenderModule = new EnvironmentProbeRenderModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
 
+            _bloomFx = new BloomFx(content);
             _taaFx = new TemporalAntialiasingFx(content);
+            _colorGradingFx = new ColorGradingFx(content);
+
             _decalRenderModule = new DecalRenderModule(shaderManager);
             _helperGeometryRenderModule = new HelperGeometryRenderModule(content, "Shaders/Editor/LineEffect");
             _distanceFieldRenderModule = new DistanceFieldRenderModule(shaderManager, "Shaders/SignedDistanceFields/volumeProjection");
-            _colorGradingFx = new ColorGradingFx(content);
         }
 
         /// <summary>

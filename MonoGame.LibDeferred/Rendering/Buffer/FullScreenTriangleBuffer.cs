@@ -46,7 +46,6 @@ namespace DeferredEngine.Renderer.Helper
         {
             graphics.SetVertexBuffer(vertexBuffer);
             graphics.Indices = null;
-
             graphics.DrawPrimitives(PrimitiveType.TriangleList, 0, 1);
         }
 
