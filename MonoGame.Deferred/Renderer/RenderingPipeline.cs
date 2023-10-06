@@ -34,16 +34,16 @@ namespace DeferredEngine.Renderer
         private LightAccumulationModule _lightAccumulationModule;
         private ShadowMapRenderModule _shadowMapRenderModule;
         private GBufferRenderModule _gBufferRenderModule;
-        private TemporalAntialiasingRenderModule _temporalAntialiasingRenderModule;
+        private TemporalAntialiasingFx _temporalAntialiasingRenderModule;
         private EnvironmentProbeRenderModule _deferredEnvironmentMapRenderModule;
         private DecalRenderModule _decalRenderModule;
         private ForwardRenderModule _forwardRenderModule;
         private HelperGeometryRenderModule _helperGeometryRenderModule;
         private DistanceFieldRenderModule _distanceFieldRenderModule;
 
-        private GaussianBlur _gaussianBlur;
-        private BloomFilter _bloomFilter;
-        private ColorGradingFilter _colorGradingFilter;
+        private GaussianBlurFx _gaussianBlur;
+        private BloomFx _bloomFilter;
+        private ColorGradingFx _colorGradingFilter;
 
         //Assets
         private Assets _assets;
@@ -154,7 +154,7 @@ namespace DeferredEngine.Renderer
         /// <param name="content"></param>
         public void Load(ContentManager content, ShaderManager shaderManager)
         {
-            _bloomFilter = new BloomFilter();
+            _bloomFilter = new BloomFx();
             _bloomFilter.Load(content);
             _inverseResolution = new Vector3(1.0f / RenderingSettings.g_screenwidth, 1.0f / RenderingSettings.g_screenheight, 0);
 
@@ -165,11 +165,11 @@ namespace DeferredEngine.Renderer
             _forwardRenderModule = new ForwardRenderModule(content, "Shaders/forward/forward");
             _deferredEnvironmentMapRenderModule = new EnvironmentProbeRenderModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
 
-            _temporalAntialiasingRenderModule = new TemporalAntialiasingRenderModule(content);
+            _temporalAntialiasingRenderModule = new TemporalAntialiasingFx(content);
             _decalRenderModule = new DecalRenderModule(shaderManager);
             _helperGeometryRenderModule = new HelperGeometryRenderModule(content, "Shaders/Editor/LineEffect");
             _distanceFieldRenderModule = new DistanceFieldRenderModule(shaderManager, "Shaders/SignedDistanceFields/volumeProjection");
-            _colorGradingFilter = new ColorGradingFilter(content);
+            _colorGradingFilter = new ColorGradingFx(content);
 
 
         }
@@ -185,7 +185,7 @@ namespace DeferredEngine.Renderer
 
             _fullScreenTriangle = new FullScreenTriangleBuffer(graphicsDevice);
             _spriteBatch = new SpriteBatch(graphicsDevice);
-            _gaussianBlur = new GaussianBlur();
+            _gaussianBlur = new GaussianBlurFx();
             _gaussianBlur.Initialize(graphicsDevice);
 
             _editorRender = new EditorRender();

@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DeferredEngine.Renderer.PostProcessing
 {
     //Just a template
-    public class TemporalAntialiasingRenderModule : IDisposable
+    public class TemporalAntialiasingFx : IDisposable
     {
         private Effect _taaShader;
 
@@ -18,7 +18,7 @@ namespace DeferredEngine.Renderer.PostProcessing
         private EffectParameter _paramFrustumCorners;
         private EffectParameter _paramUseTonemap;
 
-        public TemporalAntialiasingRenderModule(ContentManager content, string shaderPath = "Shaders/TemporalAntiAliasing/TemporalAntiAliasing")
+        public TemporalAntialiasingFx(ContentManager content, string shaderPath = "Shaders/TemporalAntiAliasing/TemporalAntiAliasing")
         {
             Load(content, shaderPath);
             Initialize();

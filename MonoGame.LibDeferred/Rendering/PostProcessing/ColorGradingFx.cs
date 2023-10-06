@@ -16,7 +16,7 @@ namespace DeferredEngine.Renderer.PostProcessing
     /// You can use Draw() to apply the color grading / color correction to an image and use the returned texture for output.
     /// You can use CreateLUT to create default Look-up tables with unmodified colors.
     /// </summary>
-    public class ColorGradingFilter : IDisposable
+    public class ColorGradingFx : IDisposable
     {
 
         #region fields & properties
@@ -94,7 +94,7 @@ namespace DeferredEngine.Renderer.PostProcessing
         /// <param name="graphics"></param>
         /// <param name="content"></param>
         /// <param name="shaderPath">the relative shader path needed for the content manager to load. For example "Shaders/ColorGrading/Colorgrading"</param>
-        public ColorGradingFilter(ContentManager content, string shaderPath = "Shaders/PostProcessing/ColorGrading")
+        public ColorGradingFx(ContentManager content, string shaderPath = "Shaders/PostProcessing/ColorGrading")
         {
             _shaderEffect = content.Load<Effect>(shaderPath);
             _sizeParam = _shaderEffect.Parameters["Size"];

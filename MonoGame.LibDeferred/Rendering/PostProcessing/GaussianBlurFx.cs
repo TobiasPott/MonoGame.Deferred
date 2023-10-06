@@ -5,8 +5,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.PostProcessing
 {
-    [Obsolete($"{nameof(GaussianBlur)} is unused and needs refactoring when the rendering pipeline is modularized.")]
-    public class GaussianBlur : IDisposable
+    [Obsolete($"{nameof(GaussianBlurFx)} is unused and needs refactoring when the rendering pipeline is modularized.")]
+    public class GaussianBlurFx : IDisposable
     {
         private GraphicsDevice _graphicsDevice;
 

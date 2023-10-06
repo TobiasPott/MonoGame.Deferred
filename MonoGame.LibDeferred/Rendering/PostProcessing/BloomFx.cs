@@ -39,7 +39,7 @@ namespace DeferredEngine.Renderer.PostProcessing
     /// 
     /// If you use ToneMapping you should apply Bloom before that step.
     /// </summary>
-    public partial class BloomFilter : IDisposable
+    public partial class BloomFx : IDisposable
     {
         #region fields & properties
 
