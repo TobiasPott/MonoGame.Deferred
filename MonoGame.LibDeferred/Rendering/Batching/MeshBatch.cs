@@ -12,11 +12,11 @@ namespace DeferredEngine.Renderer.Helper
 
 
         private ModelMeshPart _mesh;
-        public BoundingSphere MeshBoundingSphere;
+        private BoundingSphere _meshBoundingSphere;
 
         private List<TransformableObject> _transforms = new List<TransformableObject>(InitialLibrarySize);
         private List<Vector3> _worldBoundingCenters = new List<Vector3>(InitialLibrarySize);
-        public List<bool> Rendered = new List<bool>(InitialLibrarySize);
+        private List<bool> _rendered = new List<bool>(InitialLibrarySize);
 
         public int Count => _transforms.Count;
 
@@ -24,6 +24,7 @@ namespace DeferredEngine.Renderer.Helper
         public bool HasMesh(ModelMeshPart mesh) => _mesh == mesh;
         public ModelMeshPart GetMesh() => _mesh;
         public List<TransformableObject> GetTransforms() => _transforms;
+        public List<bool> Rendered => _rendered;
 
         public Vector3 GetBoundingCenterWorld(int index)
         {
@@ -42,20 +43,20 @@ namespace DeferredEngine.Renderer.Helper
             {
                 TransformableObject transform = _transforms[i];
 
-                _worldBoundingCenters[i] = Vector3.Transform(MeshBoundingSphere.Center, transform.World);
+                _worldBoundingCenters[i] = Vector3.Transform(_meshBoundingSphere.Center, transform.World);
 
                 //If either the trafomatrix or the camera has changed we need to check visibility
                 if (cameraHasChanged)
                 {
                     sphere.Center = _worldBoundingCenters[i];
-                    sphere.Radius = MeshBoundingSphere.Radius * transform.Scale.X;
+                    sphere.Radius = _meshBoundingSphere.Radius * transform.Scale.X;
                     if (viewFrustumEx.Contains(sphere) == ContainmentType.Disjoint)
                     {
-                        Rendered[i] = false;
+                        _rendered[i] = false;
                     }
                     else
                     {
-                        Rendered[i] = true;
+                        _rendered[i] = true;
                     }
 
                     //we just register that something has changed
@@ -82,8 +83,8 @@ namespace DeferredEngine.Renderer.Helper
         public void Register(TransformableObject transform)
         {
             _transforms.Add(transform);
-            Rendered.Add(true);
-            _worldBoundingCenters.Add(Vector3.Transform(MeshBoundingSphere.Center, transform.World));
+            _rendered.Add(true);
+            _worldBoundingCenters.Add(Vector3.Transform(_meshBoundingSphere.Center, transform.World));
         }
 
         public bool DeleteFromRegistry(TransformableObject toDelete)
@@ -92,7 +93,7 @@ namespace DeferredEngine.Renderer.Helper
             if (index != -1)
             {
                 _transforms.RemoveAt(index);
-                Rendered.RemoveAt(index);
+                _rendered.RemoveAt(index);
                 _worldBoundingCenters.RemoveAt(index);
             }
             if (_transforms.Count <= 0) return true; //this meshtype no longer needed!
@@ -101,7 +102,7 @@ namespace DeferredEngine.Renderer.Helper
 
         public void SetBoundingSphere(BoundingSphere boundingSphere)
         {
-            MeshBoundingSphere = boundingSphere;
+            _meshBoundingSphere = boundingSphere;
         }
     }
 }
