@@ -43,7 +43,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
         }
 
         // ToDo: @tpott: temporarily extract to static method to move SDFGenerator to LibDeferred (due to DistanceFieldRenderModule use)
-        public void GenerateDistanceFields(ModelDefinition modelDefinition, GraphicsDevice graphics, DistanceFieldRenderModule distanceFieldRenderModule, FullScreenTriangleBuffer fullScreenTriangle)
+        public void GenerateDistanceFields(ModelDefinition modelDefinition, GraphicsDevice graphics, DistanceFieldRenderModule distanceFieldRenderModule)
         {
             if (modelDefinition is SdfModelDefinition)
             {
@@ -93,7 +93,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
                     triangleData.SetData(data);
 
                     output = distanceFieldRenderModule.CreateSDFTexture(graphics, triangleData, xsteps, ysteps,
-                        zsteps, uncomputedSignedDistanceField, fullScreenTriangle, triangles.Length);
+                        zsteps, uncomputedSignedDistanceField, triangles.Length);
 
                     stopwatch.Stop();
 
@@ -197,7 +197,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
 
 
         // ToDo: @tpott: temporarily extract to static method to move SDFGenerator to LibDeferred (due to DistanceFieldRenderModule use)
-        public void Update(List<ModelEntity> entities, GraphicsDevice graphics, DistanceFieldRenderModule distanceFieldRenderModule, FullScreenTriangleBuffer fullScreenTriangle, ref List<SignedDistanceField> sdfDefinitionsOut)
+        public void Update(List<ModelEntity> entities, GraphicsDevice graphics, DistanceFieldRenderModule distanceFieldRenderModule, ref List<SignedDistanceField> sdfDefinitionsOut)
         {
             //First let's check which entities need building, if at all!
             sdfDefinitions.Clear();
@@ -212,7 +212,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
                 {
                     if (!sdfModelDefinition.SDF.IsUsed) continue;
                     if (sdfModelDefinition.SDF.NeedsToBeGenerated)
-                        GenerateDistanceFields(entity.ModelDefinition, graphics, distanceFieldRenderModule, fullScreenTriangle);
+                        GenerateDistanceFields(entity.ModelDefinition, graphics, distanceFieldRenderModule);
 
                     bool found = false;
                     //Compile a list of all mbbs used right now

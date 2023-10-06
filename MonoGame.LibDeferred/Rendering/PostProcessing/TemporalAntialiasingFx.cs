@@ -76,7 +76,7 @@ namespace DeferredEngine.Renderer.PostProcessing
 
 
 
-        public override void Initialize(GraphicsDevice graphicsDevice, FullScreenTriangleBuffer fullScreenTriangle)
+        public override void Initialize(GraphicsDevice graphicsDevice, FullscreenTriangleBuffer fullScreenTriangle)
         {
             base.Initialize(graphicsDevice, fullScreenTriangle);
             _paramAccumulationMap = _taaShader.Parameters["AccumulationMap"];

@@ -3,11 +3,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.Helper
 {
-    public class FullScreenTriangleBuffer
+    public class FullscreenTriangleBuffer
     {
-        public static FullScreenTriangleBuffer Instamce {  get; private set; }
+        public static FullscreenTriangleBuffer Instamce {  get; private set; }
         public static void InitClass(GraphicsDevice graphicsDevice)
-        { Instamce = new FullScreenTriangleBuffer(graphicsDevice); }
+        { Instamce = new FullscreenTriangleBuffer(graphicsDevice); }
 
 
 
@@ -31,7 +31,7 @@ namespace DeferredEngine.Renderer.Helper
             public const int SizeInBytes = 8;
         }
 
-        public FullScreenTriangleBuffer(GraphicsDevice graphics)
+        public FullscreenTriangleBuffer(GraphicsDevice graphics)
         {
             FullScreenQuadVertex[] vertices = new FullScreenQuadVertex[3];
             vertices[0] = new FullScreenQuadVertex(new Vector2(-1, -1));

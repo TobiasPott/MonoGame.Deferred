@@ -149,7 +149,7 @@ namespace DeferredEngine
         {
             GUIControl.Initialize(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight);
 
-            FullScreenTriangleBuffer.InitClass(GraphicsDevice);
+            FullscreenTriangleBuffer.InitClass(GraphicsDevice);
             _screenManager.Load(Content, GraphicsDevice);
             // TODO: Add your initialization logic here
             _screenManager.Initialize(GraphicsDevice, _physicsSpace);

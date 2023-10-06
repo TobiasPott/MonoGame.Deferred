@@ -200,7 +200,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
         }
 
-        public void DrawEnvironmentMap(GraphicsDevice graphicsDevice, Camera camera, Matrix view, FullScreenTriangleBuffer fullScreenTriangle, EnvironmentProbe envSample, GameTime gameTime, bool fireflyReduction, float ffThreshold)
+        public void DrawEnvironmentMap(GraphicsDevice graphicsDevice, Camera camera, Matrix view, FullscreenTriangleBuffer fullScreenTriangle, EnvironmentProbe envSample, GameTime gameTime, bool fireflyReduction, float ffThreshold)
         {
             FireflyReduction = fireflyReduction;
             FireflyThreshold = ffThreshold;
@@ -219,7 +219,7 @@ namespace DeferredEngine.Renderer.RenderModules
             fullScreenTriangle.Draw(graphicsDevice);
         }
 
-        public void DrawSky(GraphicsDevice graphicsDevice, FullScreenTriangleBuffer quadRenderer)
+        public void DrawSky(GraphicsDevice graphicsDevice, FullscreenTriangleBuffer quadRenderer)
         {
             graphicsDevice.DepthStencilState = DepthStencilState.None;
             graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;

@@ -10,7 +10,7 @@ namespace DeferredEngine.Renderer.RenderModules
     public class LightAccumulationModule : IDisposable
     {
         private GraphicsDevice _graphicsDevice;
-        private FullScreenTriangleBuffer _fullScreenTriangle;
+        private FullscreenTriangleBuffer _fullScreenTriangle;
         private Assets _assets;
         private bool _g_UseDepthStencilLightCulling;
         private BlendState _lightBlendState;
@@ -33,10 +33,10 @@ namespace DeferredEngine.Renderer.RenderModules
             PointLightRenderModule = new PointLightRenderModule(shaderManager, shaderPath);
         }
 
-        public void Initialize(GraphicsDevice graphicsDevice, FullScreenTriangleBuffer fullScreenTriangle, Assets assets)
+        public void Initialize(GraphicsDevice graphicsDevice, Assets assets)
         {
             _graphicsDevice = graphicsDevice;
-            _fullScreenTriangle = fullScreenTriangle;
+            _fullScreenTriangle = FullscreenTriangleBuffer.Instamce;
             _assets = assets;
 
             _lightBlendState = new BlendState

@@ -45,7 +45,7 @@ namespace DeferredEngine.Renderer.RenderModules
         private EffectTechnique _DrawNormal;
         private EffectTechnique _DrawBasic;
 
-        private FullScreenTriangleBuffer _fullScreenTriangle;
+        private FullscreenTriangleBuffer _fullScreenTriangle;
 
         public GBufferRenderModule(ContentManager content, string shaderPathClear, string shaderPathGbuffer)
         {
@@ -75,11 +75,11 @@ namespace DeferredEngine.Renderer.RenderModules
         }
 
 
-        public void Initialize(GraphicsDevice graphicsDevice)
+        public void Initialize()
         {
             _clearGBufferPass = _clearShader.Techniques["Clear"].Passes[0];
 
-            _fullScreenTriangle = new FullScreenTriangleBuffer(graphicsDevice);
+            _fullScreenTriangle = FullscreenTriangleBuffer.Instamce;
 
             _WorldView = _gbufferShader.Parameters["WorldView"];
             _WorldViewProj = _gbufferShader.Parameters["WorldViewProj"];

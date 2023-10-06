@@ -6,9 +6,9 @@ namespace DeferredEngine.Renderer.PostProcessing
     public abstract class BaseFx : IDisposable
     {
         protected GraphicsDevice _graphicsDevice;
-        protected FullScreenTriangleBuffer _fullscreenTarget;
+        protected FullscreenTriangleBuffer _fullscreenTarget;
 
-        public virtual void Initialize(GraphicsDevice graphicsDevice, FullScreenTriangleBuffer fullscreenTarget)
+        public virtual void Initialize(GraphicsDevice graphicsDevice, FullscreenTriangleBuffer fullscreenTarget)
         {
             _graphicsDevice = graphicsDevice;
             _fullscreenTarget = fullscreenTarget;

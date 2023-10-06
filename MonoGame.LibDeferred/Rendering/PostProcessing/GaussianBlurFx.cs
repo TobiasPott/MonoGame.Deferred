@@ -18,7 +18,7 @@ namespace DeferredEngine.Renderer.PostProcessing
         private RenderTarget2D _rt20482;
 
 
-        public override void Initialize(GraphicsDevice graphicsDevice, FullScreenTriangleBuffer fullScreenTarget)
+        public override void Initialize(GraphicsDevice graphicsDevice, FullscreenTriangleBuffer fullScreenTarget)
         {
             base.Initialize(graphicsDevice, fullScreenTarget);
             _gaussEffect = Shaders.GaussianBlurEffect;
