@@ -21,9 +21,9 @@ namespace DeferredEngine.Renderer.PostProcessing
         public TemporalAntialiasingFx(ContentManager content, string shaderPath = "Shaders/TemporalAntiAliasing/TemporalAntiAliasing")
         {
             Load(content, shaderPath);
-            Initialize();
         }
 
+        private GraphicsDevice _graphicsDevice;
         private Vector3[] _frustumCorners;
         private Vector2 _resolution;
         private RenderTarget2D _depthMap;
@@ -75,8 +75,9 @@ namespace DeferredEngine.Renderer.PostProcessing
             }
         }
 
-        public void Initialize()
+        public void Initialize(GraphicsDevice graphicsDevice)
         {
+            _graphicsDevice = graphicsDevice;
             _paramAccumulationMap = _taaShader.Parameters["AccumulationMap"];
             _paramUpdateMap = _taaShader.Parameters["UpdateMap"];
             _paramDepthMap = _taaShader.Parameters["DepthMap"];
@@ -98,7 +99,7 @@ namespace DeferredEngine.Renderer.PostProcessing
         }
 
 
-        public void Draw(GraphicsDevice _graphicsDevice, bool useTonemap, RenderTarget2D currentFrame, RenderTarget2D previousFrames, RenderTarget2D output, Matrix currentViewToPreviousViewProjection, FullScreenTriangleBuffer fullScreenTriangle)
+        public void Draw(bool useTonemap, RenderTarget2D currentFrame, RenderTarget2D previousFrames, RenderTarget2D output, Matrix currentViewToPreviousViewProjection, FullScreenTriangleBuffer fullScreenTriangle)
         {
 
             UseTonemap = useTonemap;

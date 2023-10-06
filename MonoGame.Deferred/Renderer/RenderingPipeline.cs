@@ -41,7 +41,7 @@ namespace DeferredEngine.Renderer
         private HelperGeometryRenderModule _helperGeometryRenderModule;
         private DistanceFieldRenderModule _distanceFieldRenderModule;
 
-        private GaussianBlurFx _gaussianBlur;
+
         private BloomFx _bloomFilter;
         private ColorGradingFx _colorGradingFilter;
 
@@ -170,8 +170,6 @@ namespace DeferredEngine.Renderer
             _helperGeometryRenderModule = new HelperGeometryRenderModule(content, "Shaders/Editor/LineEffect");
             _distanceFieldRenderModule = new DistanceFieldRenderModule(shaderManager, "Shaders/SignedDistanceFields/volumeProjection");
             _colorGradingFilter = new ColorGradingFx(content);
-
-
         }
 
         /// <summary>
@@ -185,14 +183,13 @@ namespace DeferredEngine.Renderer
 
             _fullScreenTriangle = new FullScreenTriangleBuffer(graphicsDevice);
             _spriteBatch = new SpriteBatch(graphicsDevice);
-            _gaussianBlur = new GaussianBlurFx();
-            _gaussianBlur.Initialize(graphicsDevice);
 
             _editorRender = new EditorRender();
             _editorRender.Initialize(graphicsDevice, assets);
 
             _bloomFilter.Initialize(_graphicsDevice, RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight, _fullScreenTriangle);
 
+            _temporalAntialiasingRenderModule.Initialize(graphicsDevice);
             _colorGradingFilter.Initialize(graphicsDevice);
 
             _lightAccumulationModule.Initialize(graphicsDevice, _fullScreenTriangle, assets);
@@ -1247,8 +1244,7 @@ namespace DeferredEngine.Renderer
 
             RenderTarget2D output = _temporalAAOffFrame ? _renderTargetTAA_2 : _renderTargetTAA_1;
 
-            _temporalAntialiasingRenderModule.Draw(_graphicsDevice,
-                useTonemap: RenderingSettings.g_taa_tonemapped,
+            _temporalAntialiasingRenderModule.Draw(useTonemap: RenderingSettings.g_taa_tonemapped,
                 currentFrame: input,
                 previousFrames: _temporalAAOffFrame ? _renderTargetTAA_1 : _renderTargetTAA_2,
                 output: output,
@@ -1639,7 +1635,6 @@ namespace DeferredEngine.Renderer
         {
             _graphicsDevice?.Dispose();
             _spriteBatch?.Dispose();
-            _gaussianBlur?.Dispose();
             _bloomFilter?.Dispose();
             _lightAccumulationModule?.Dispose();
             _gBufferRenderModule?.Dispose();
