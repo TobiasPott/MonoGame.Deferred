@@ -90,7 +90,7 @@ namespace DeferredEngine.Renderer.RenderModules
         /// <param name="pointLights"></param>
         /// <param name="frustum"></param>
         /// <returns></returns>
-        public RenderTarget2D Draw(GraphicsDevice graphicsDevice, RenderTarget2D output, MeshMaterialLibrary meshMat, Matrix viewProjection, Camera camera, List<PointLight> pointLights, BoundingFrustum frustum)
+        public RenderTarget2D Draw(GraphicsDevice graphicsDevice, RenderTarget2D output, MeshMaterialLibrary meshMat, Matrix viewProjection, Camera camera, List<DeferredPointLight> pointLights, BoundingFrustum frustum)
         {
             graphicsDevice.DepthStencilState = DepthStencilState.Default;
 
@@ -112,7 +112,7 @@ namespace DeferredEngine.Renderer.RenderModules
             return output;
         }
 
-        private void TiledLighting(BoundingFrustum frustum, List<PointLight> pointLights, int cols, int rows)
+        private void TiledLighting(BoundingFrustum frustum, List<DeferredPointLight> pointLights, int cols, int rows)
         {
             if (TiledList == null || TiledList.Length != cols * rows)
             {
@@ -209,7 +209,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _tiledListLengthParam.SetValue(TiledListLength);
         }
 
-        private void SetupLighting(Camera camera, List<PointLight> pointLights, BoundingFrustum frustum)
+        private void SetupLighting(Camera camera, List<DeferredPointLight> pointLights, BoundingFrustum frustum)
         {
             //Setup camera
             _cameraPositionWSParam.SetValue(camera.Position);
@@ -229,7 +229,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
             for (var index = 0; index < count; index++)
             {
-                PointLight light = pointLights[index];
+                DeferredPointLight light = pointLights[index];
 
                 //Check frustum culling
                 if (frustum.Contains(light.BoundingSphere) == ContainmentType.Disjoint) continue;

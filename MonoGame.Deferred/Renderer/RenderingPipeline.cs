@@ -13,7 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using static DeferredEngine.Renderer.RenderModules.IdAndOutlineRenderer;
-using DirectionalLight = DeferredEngine.Entities.DirectionalLight;
+using DeferredDirectionalLight = DeferredEngine.Entities.DeferredDirectionalLight;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //    MAIN RENDER FUNCTIONS, TheKosmonaut 2016
@@ -257,7 +257,7 @@ namespace DeferredEngine.Renderer
         /// <param name="gizmoContext">The data passed from our editor logic</param>
         /// <param name="gameTime"></param>
         /// <returns></returns>
-        public EditorLogic.EditorReceivedData Draw(Camera camera, MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<Decal> decals, List<PointLight> pointLights, List<DirectionalLight> directionalLights, EnvironmentProbe envSample, GizmoDrawContext gizmoContext, GameTime gameTime)
+        public EditorLogic.EditorReceivedData Draw(Camera camera, MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<Decal> decals, List<DeferredPointLight> pointLights, List<DeferredDirectionalLight> directionalLights, EnvironmentProbe envSample, GizmoDrawContext gizmoContext, GameTime gameTime)
         {
             //Reset the stat counter, so we can count stats/information for this frame only
             ResetStats();
@@ -373,7 +373,7 @@ namespace DeferredEngine.Renderer
             };
         }
 
-        private bool IsSDFUsed(List<PointLight> pointLights)
+        private bool IsSDFUsed(List<DeferredPointLight> pointLights)
         {
             for (var index = 0; index < pointLights.Count; index++)
             {
@@ -385,7 +385,7 @@ namespace DeferredEngine.Renderer
             return false;
         }
 
-        private void RenderEditorOverlays(GizmoDrawContext gizmoContext, MeshMaterialLibrary meshMaterialLibrary, List<Decal> decals, List<PointLight> pointLights, List<DirectionalLight> directionalLights, EnvironmentProbe envSample)
+        private void RenderEditorOverlays(GizmoDrawContext gizmoContext, MeshMaterialLibrary meshMaterialLibrary, List<Decal> decals, List<DeferredPointLight> pointLights, List<DeferredDirectionalLight> directionalLights, EnvironmentProbe envSample)
         {
 
             if (RenderingSettings.e_enableeditor && RenderingStats.e_EnableSelection)
@@ -451,7 +451,7 @@ namespace DeferredEngine.Renderer
         /// <param name="farPlane"></param>
         /// <param name="gameTime"></param>
         /// <param name="camera"></param>
-        private void DrawCubeMap(Vector3 origin, MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<PointLight> pointLights, List<DirectionalLight> dirLights, EnvironmentProbe envSample, float farPlane, GameTime gameTime, Camera camera)
+        private void DrawCubeMap(Vector3 origin, MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<DeferredPointLight> pointLights, List<DeferredDirectionalLight> dirLights, EnvironmentProbe envSample, float farPlane, GameTime gameTime, Camera camera)
         {
             //If our cubemap is not yet initialized, create a new one
             if (_renderTargetCubeMap == null)
@@ -609,7 +609,7 @@ namespace DeferredEngine.Renderer
         /// Check whether any GameSettings have changed that need setup
         /// </summary>
         /// <param name="dirLights"></param>
-        private void CheckRenderChanges(List<DirectionalLight> dirLights)
+        private void CheckRenderChanges(List<DeferredDirectionalLight> dirLights)
         {
             if (Math.Abs(_g_FarClip - RenderingSettings.g_farplane) > 0.0001f)
             {
@@ -645,11 +645,11 @@ namespace DeferredEngine.Renderer
 
                 for (var index = 0; index < dirLights.Count; index++)
                 {
-                    DirectionalLight light = dirLights[index];
+                    DeferredDirectionalLight light = dirLights[index];
                     if (light.ShadowMap != null) light.ShadowMap.Dispose();
                     light.ShadowMap = null;
 
-                    light.ShadowFiltering = (DirectionalLight.ShadowFilteringTypes)(_forceShadowFiltering - 1);
+                    light.ShadowFiltering = (DeferredDirectionalLight.ShadowFilteringTypes)(_forceShadowFiltering - 1);
 
                     light.HasChanged = true;
                 }
@@ -661,7 +661,7 @@ namespace DeferredEngine.Renderer
 
                 for (var index = 0; index < dirLights.Count; index++)
                 {
-                    DirectionalLight light = dirLights[index];
+                    DeferredDirectionalLight light = dirLights[index];
                     light.ScreenSpaceShadowBlur = _forceShadowSS;
 
                     light.HasChanged = true;
@@ -694,7 +694,7 @@ namespace DeferredEngine.Renderer
         /// <param name="pointLights"></param>
         /// <param name="dirLights"></param>
         /// <param name="camera"></param>
-        private void DrawShadowMaps(MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<PointLight> pointLights, List<DirectionalLight> dirLights, Camera camera)
+        private void DrawShadowMaps(MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<DeferredPointLight> pointLights, List<DeferredDirectionalLight> dirLights, Camera camera)
         {
             //Don't render for the first frame, we need a guideline first
             if (_boundingFrustum == null) UpdateViewProjection(camera, meshMaterialLibrary, entities);
@@ -1007,7 +1007,7 @@ namespace DeferredEngine.Renderer
         /// Screen space blur for directional lights
         /// </summary>
         /// <param name="dirLights"></param>
-        private void DrawScreenSpaceDirectionalShadow(List<DirectionalLight> dirLights)
+        private void DrawScreenSpaceDirectionalShadow(List<DeferredDirectionalLight> dirLights)
         {
             if (_viewProjectionHasChanged)
             {
@@ -1017,7 +1017,7 @@ namespace DeferredEngine.Renderer
             }
             for (var index = 0; index < dirLights.Count; index++)
             {
-                DirectionalLight light = dirLights[index];
+                DeferredDirectionalLight light = dirLights[index];
                 if (light.CastShadows && light.ScreenSpaceShadowBlur)
                 {
                     throw new NotImplementedException();
@@ -1203,7 +1203,7 @@ namespace DeferredEngine.Renderer
             _fullScreenTriangle.Draw(_graphicsDevice);
         }
 
-        private RenderTarget2D DrawForward(RenderTarget2D input, MeshMaterialLibrary meshMaterialLibrary, Camera camera, List<PointLight> pointLights)
+        private RenderTarget2D DrawForward(RenderTarget2D input, MeshMaterialLibrary meshMaterialLibrary, Camera camera, List<DeferredPointLight> pointLights)
         {
             if (!RenderingSettings.g_forwardenable) return input;
 

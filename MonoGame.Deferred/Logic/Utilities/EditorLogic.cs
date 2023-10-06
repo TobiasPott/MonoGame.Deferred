@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using static DeferredEngine.Renderer.RenderModules.IdAndOutlineRenderer;
-using DirectionalLight = DeferredEngine.Entities.DirectionalLight;
+using DeferredDirectionalLight = DeferredEngine.Entities.DeferredDirectionalLight;
 
 namespace DeferredEngine.Logic
 {
@@ -66,8 +66,8 @@ namespace DeferredEngine.Logic
         public void Update(GameTime gameTime,
             List<ModelEntity> entities,
             List<Decal> decals,
-            List<PointLight> pointLights,
-            List<DirectionalLight> dirLights,
+            List<DeferredPointLight> pointLights,
+            List<DeferredDirectionalLight> dirLights,
             EnvironmentProbe envSample,
             EditorReceivedData data,
             MeshMaterialLibrary meshMaterialLibrary)
@@ -138,7 +138,7 @@ namespace DeferredEngine.Logic
 
                     for (int index = 0; index < pointLights.Count; index++)
                     {
-                        PointLight pointLight = pointLights[index];
+                        DeferredPointLight pointLight = pointLights[index];
                         if (pointLight.Id == hoveredId)
                         {
                             SelectedObject = pointLight;
@@ -148,7 +148,7 @@ namespace DeferredEngine.Logic
 
                     for (int index = 0; index < dirLights.Count; index++)
                     {
-                        DirectionalLight directionalLight = dirLights[index];
+                        DeferredDirectionalLight directionalLight = dirLights[index];
                         if (directionalLight.Id == hoveredId)
                         {
                             SelectedObject = directionalLight;
@@ -185,15 +185,15 @@ namespace DeferredEngine.Logic
 
                     SelectedObject = null;
                 }
-                else if (SelectedObject is PointLight)
+                else if (SelectedObject is DeferredPointLight)
                 {
-                    pointLights.Remove((PointLight)SelectedObject);
+                    pointLights.Remove((DeferredPointLight)SelectedObject);
 
                     SelectedObject = null;
                 }
-                else if (SelectedObject is DirectionalLight)
+                else if (SelectedObject is DeferredDirectionalLight)
                 {
-                    dirLights.Remove((DirectionalLight)SelectedObject);
+                    dirLights.Remove((DeferredDirectionalLight)SelectedObject);
 
                     SelectedObject = null;
                 }

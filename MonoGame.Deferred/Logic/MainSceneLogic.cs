@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
-using DirectionalLight = DeferredEngine.Entities.DirectionalLight;
+using DeferredDirectionalLight = DeferredEngine.Entities.DeferredDirectionalLight;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 
 namespace DeferredEngine.Logic
@@ -32,8 +32,8 @@ namespace DeferredEngine.Logic
 
         public readonly List<ModelEntity> BasicEntities = new List<ModelEntity>();
         public readonly List<Decal> Decals = new List<Decal>();
-        public readonly List<PointLight> PointLights = new List<PointLight>();
-        public readonly List<DirectionalLight> DirectionalLights = new List<DirectionalLight>();
+        public readonly List<DeferredPointLight> PointLights = new List<DeferredPointLight>();
+        public readonly List<DeferredDirectionalLight> DirectionalLights = new List<DeferredDirectionalLight>();
         public EnvironmentProbe EnvironmentSample;
 
         //Which render target are we currently displaying?
@@ -174,7 +174,7 @@ namespace DeferredEngine.Logic
                 shadowWorldSize: 450,
                 shadowDepth: 180,
                 shadowResolution: 1024,
-                shadowFilteringFiltering: DirectionalLight.ShadowFilteringTypes.SoftPCF3x,
+                shadowFilteringFiltering: DeferredDirectionalLight.ShadowFilteringTypes.SoftPCF3x,
                 screenspaceShadowBlur: false);
         }
 
@@ -251,9 +251,9 @@ namespace DeferredEngine.Logic
         /// <param name="screenspaceShadowBlur"></param>
         /// <param name="staticshadows">These shadows will not be updated once they are created, moving objects will be shadowed incorrectly</param>
         /// <returns></returns>
-        private DirectionalLight AddDirectionalLight(Vector3 direction, int intensity, Color color, Vector3 position = default(Vector3), bool drawShadows = false, float shadowWorldSize = 100, float shadowDepth = 100, int shadowResolution = 512, DirectionalLight.ShadowFilteringTypes shadowFilteringFiltering = DirectionalLight.ShadowFilteringTypes.Poisson, bool screenspaceShadowBlur = false, bool staticshadows = false)
+        private DeferredDirectionalLight AddDirectionalLight(Vector3 direction, int intensity, Color color, Vector3 position = default(Vector3), bool drawShadows = false, float shadowWorldSize = 100, float shadowDepth = 100, int shadowResolution = 512, DeferredDirectionalLight.ShadowFilteringTypes shadowFilteringFiltering = DeferredDirectionalLight.ShadowFilteringTypes.Poisson, bool screenspaceShadowBlur = false, bool staticshadows = false)
         {
-            DirectionalLight light = new DirectionalLight(color: color,
+            DeferredDirectionalLight light = new DeferredDirectionalLight(color: color,
                 intensity: intensity,
                 direction: direction,
                 position: position,
@@ -282,9 +282,9 @@ namespace DeferredEngine.Logic
         /// <param name="shadowResolution">shadow map resolution per face. Optional</param>
         /// <param name="staticShadow">if set to true the shadows will not update at all. Dynamic shadows in contrast update only when needed.</param>
         /// <returns></returns>
-        private PointLight AddPointLight(Vector3 position, float radius, Color color, float intensity, bool castShadows, bool isVolumetric = false, float volumetricDensity = 1, int shadowResolution = 256, int softShadowBlurAmount = 0, bool staticShadow = false)
+        private DeferredPointLight AddPointLight(Vector3 position, float radius, Color color, float intensity, bool castShadows, bool isVolumetric = false, float volumetricDensity = 1, int shadowResolution = 256, int softShadowBlurAmount = 0, bool staticShadow = false)
         {
-            PointLight light = new PointLight(position, radius, color, intensity, castShadows, isVolumetric, shadowResolution, softShadowBlurAmount, staticShadow, volumetricDensity);
+            DeferredPointLight light = new DeferredPointLight(position, radius, color, intensity, castShadows, isVolumetric, shadowResolution, softShadowBlurAmount, staticShadow, volumetricDensity);
             PointLights.Add(light);
             return light;
         }

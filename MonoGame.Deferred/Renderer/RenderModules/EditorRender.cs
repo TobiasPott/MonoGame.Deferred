@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using static DeferredEngine.Renderer.RenderModules.IdAndOutlineRenderer;
-using DirectionalLight = DeferredEngine.Entities.DirectionalLight;
+using DeferredDirectionalLight = DeferredEngine.Entities.DeferredDirectionalLight;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
@@ -67,7 +67,7 @@ namespace DeferredEngine.Renderer.RenderModules
         }
 
 
-        public void DrawBillboards(List<Decal> decals, List<PointLight> lights, List<DirectionalLight> dirLights, EnvironmentProbe envSample, Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
+        public void DrawBillboards(List<Decal> decals, List<DeferredPointLight> lights, List<DeferredDirectionalLight> dirLights, EnvironmentProbe envSample, Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
         {
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             _graphicsDevice.SetVertexBuffer(_billboardBuffer.VBuffer);
@@ -98,7 +98,7 @@ namespace DeferredEngine.Renderer.RenderModules
             //DirectionalLights
             for (var index = 0; index < dirLights.Count; index++)
             {
-                DirectionalLight light = dirLights[index];
+                DeferredDirectionalLight light = dirLights[index];
                 DrawBillboard(light, staticViewProjection, view, gizmoContext);
 
                 HelperGeometryManager.GetInstance()
@@ -156,12 +156,12 @@ namespace DeferredEngine.Renderer.RenderModules
                 Shaders.BillboardEffectParameter_IdColor.SetValue(Color.Gray.ToVector3());
         }
 
-        public void DrawIds(MeshMaterialLibrary meshMaterialLibrary, List<Decal> decals, List<PointLight> lights, List<DirectionalLight> dirLights, EnvironmentProbe envSample, Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
+        public void DrawIds(MeshMaterialLibrary meshMaterialLibrary, List<Decal> decals, List<DeferredPointLight> lights, List<DeferredDirectionalLight> dirLights, EnvironmentProbe envSample, Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
         {
             _idAndOutlineRenderer.Draw(meshMaterialLibrary, decals, lights, dirLights, envSample, staticViewProjection, view, gizmoContext, _mouseMovement);
         }
 
-        public void DrawEditorElements(MeshMaterialLibrary meshMaterialLibrary, List<Decal> decals, List<PointLight> lights, List<DirectionalLight> dirLights, EnvironmentProbe envSample, Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
+        public void DrawEditorElements(MeshMaterialLibrary meshMaterialLibrary, List<Decal> decals, List<DeferredPointLight> lights, List<DeferredDirectionalLight> dirLights, EnvironmentProbe envSample, Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
         {
             _graphicsDevice.SetRenderTarget(null);
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;

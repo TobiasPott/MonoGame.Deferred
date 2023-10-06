@@ -156,7 +156,7 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
         /// <param name="pointLights"></param>
         /// <param name="cameraOrigin"></param>
         /// <param name="gameTime"></param>
-        public void Draw(List<PointLight> pointLights, Vector3 cameraOrigin, GameTime gameTime, Assets assets, BoundingFrustum _boundingFrustum, bool _viewProjectionHasChanged, Matrix _view, Matrix _viewProjection, Matrix _inverseView, GraphicsDevice _graphicsDevice)
+        public void Draw(List<DeferredPointLight> pointLights, Vector3 cameraOrigin, GameTime gameTime, Assets assets, BoundingFrustum _boundingFrustum, bool _viewProjectionHasChanged, Matrix _view, Matrix _viewProjection, Matrix _inverseView, GraphicsDevice _graphicsDevice)
         {
 
             if (pointLights.Count < 1) return;
@@ -173,7 +173,7 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
 
             for (int index = 0; index < pointLights.Count; index++)
             {
-                PointLight light = pointLights[index];
+                DeferredPointLight light = pointLights[index];
                 DrawPointLight(light, cameraOrigin, vertexOffset, startIndex, primitiveCount, _boundingFrustum, _viewProjectionHasChanged, _view, _viewProjection, _inverseView, _graphicsDevice);
             }
         }
@@ -183,7 +183,7 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
         /// </summary>
         /// <param name="light"></param>
         /// <param name="cameraOrigin"></param>
-        private void DrawPointLight(PointLight light, Vector3 cameraOrigin, int vertexOffset, int startIndex, int primitiveCount, BoundingFrustum _boundingFrustum, bool _viewProjectionHasChanged, Matrix _view, Matrix _viewProjection, Matrix _inverseView, GraphicsDevice _graphicsDevice)
+        private void DrawPointLight(DeferredPointLight light, Vector3 cameraOrigin, int vertexOffset, int startIndex, int primitiveCount, BoundingFrustum _boundingFrustum, bool _viewProjectionHasChanged, Matrix _view, Matrix _viewProjection, Matrix _inverseView, GraphicsDevice _graphicsDevice)
         {
             if (!light.IsEnabled) return;
 
@@ -249,7 +249,7 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
             //Draw the sphere
         }
 
-        private void ApplyShader(PointLight light)
+        private void ApplyShader(DeferredPointLight light)
         {
             // Experimental
             if (light.CastSDFShadows)

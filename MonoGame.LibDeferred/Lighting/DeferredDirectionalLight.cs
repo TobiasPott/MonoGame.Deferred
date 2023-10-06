@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Entities
 {
-    public sealed class DirectionalLight : TransformableObject
+    public sealed class DeferredDirectionalLight : TransformableObject
     {
         public float Intensity;
         private Vector3 _direction;
@@ -50,7 +50,7 @@ namespace DeferredEngine.Entities
         /// <param name="shadowFiltering"></param>
         /// <param name="screenspaceshadowblur"></param>
         /// <param name="staticshadows"></param>
-        public DirectionalLight(Color color, float intensity, Vector3 direction,Vector3 position = default(Vector3), bool castShadows = false, float shadowSize = 100, float shadowDepth = 100, int shadowResolution = 512, ShadowFilteringTypes shadowFiltering = ShadowFilteringTypes.Poisson, bool screenspaceshadowblur = false, bool staticshadows = false)
+        public DeferredDirectionalLight(Color color, float intensity, Vector3 direction,Vector3 position = default(Vector3), bool castShadows = false, float shadowSize = 100, float shadowDepth = 100, int shadowResolution = 512, ShadowFilteringTypes shadowFiltering = ShadowFilteringTypes.Poisson, bool screenspaceshadowblur = false, bool staticshadows = false)
         {
             Color = color;
             Intensity = intensity;

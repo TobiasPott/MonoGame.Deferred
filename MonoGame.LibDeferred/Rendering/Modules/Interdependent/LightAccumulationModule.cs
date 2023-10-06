@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using DirectionalLight = DeferredEngine.Entities.DirectionalLight;
+using DeferredDirectionalLight = DeferredEngine.Entities.DeferredDirectionalLight;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
@@ -102,7 +102,7 @@ namespace DeferredEngine.Renderer.RenderModules
         /// <param name="gameTime"></param>
         /// <param name="renderTargetLightBinding"></param>
         /// <param name="renderTargetDiffuse"></param>
-        public void DrawLights(List<PointLight> pointLights, List<DirectionalLight> dirLights,
+        public void DrawLights(List<DeferredPointLight> pointLights, List<DeferredDirectionalLight> dirLights,
             Vector3 cameraOrigin, GameTime gameTime, RenderTargetBinding[] renderTargetLightBinding, RenderTarget2D renderTargetDiffuse)
         {
             //Reconstruct Depth
@@ -166,7 +166,7 @@ namespace DeferredEngine.Renderer.RenderModules
         /// </summary>
         /// <param name="dirLights"></param>
         /// <param name="cameraOrigin"></param>
-        private void DrawDirectionalLights(List<DirectionalLight> dirLights, Vector3 cameraOrigin)
+        private void DrawDirectionalLights(List<DeferredDirectionalLight> dirLights, Vector3 cameraOrigin)
         {
             if (dirLights.Count < 1) return;
 
@@ -185,7 +185,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
             for (int index = 0; index < dirLights.Count; index++)
             {
-                DirectionalLight light = dirLights[index];
+                DeferredDirectionalLight light = dirLights[index];
                 DrawDirectionalLight(light);
             }
         }
@@ -194,7 +194,7 @@ namespace DeferredEngine.Renderer.RenderModules
         /// Draw the individual light, full screen effect
         /// </summary>
         /// <param name="light"></param>
-        private void DrawDirectionalLight(DirectionalLight light)
+        private void DrawDirectionalLight(DeferredDirectionalLight light)
         {
             if (!light.IsEnabled) return;
 
