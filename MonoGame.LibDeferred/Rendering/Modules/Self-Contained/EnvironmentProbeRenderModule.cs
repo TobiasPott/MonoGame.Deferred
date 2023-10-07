@@ -10,6 +10,7 @@ namespace DeferredEngine.Renderer.RenderModules
     public class EnvironmentProbeRenderModule : IDisposable
     {
         private Effect _deferredEnvironmentShader;
+
         private EffectParameter _paramAlbedoMap;
         private EffectParameter _paramNormalMap;
         private EffectParameter _paramSSRMap;
@@ -45,11 +46,7 @@ namespace DeferredEngine.Renderer.RenderModules
         private float _diffuseStrength;
         private bool _useSDFAO;
 
-        public EnvironmentProbeRenderModule(ContentManager content, string shaderPath)
-        {
-            Load(content, shaderPath);
-            Initialize();
-        }
+        private GraphicsDevice _graphicsDevice;
 
         public RenderTargetCube Cubemap
         {
@@ -160,8 +157,18 @@ namespace DeferredEngine.Renderer.RenderModules
             }
         }
 
-        public void Initialize()
+        public EnvironmentProbeRenderModule(ContentManager content, string shaderPath)
         {
+            Load(content, shaderPath);
+        }
+
+        public void Load(ContentManager content, string shaderPath)
+        {
+            _deferredEnvironmentShader = content.Load<Effect>(shaderPath);
+        }
+        public void Initialize(GraphicsDevice graphicsDevice)
+        {
+            _graphicsDevice = graphicsDevice;
             //Environment
             _paramAlbedoMap = _deferredEnvironmentShader.Parameters["AlbedoMap"];
             _paramNormalMap = _deferredEnvironmentShader.Parameters["NormalMap"];
@@ -194,13 +201,8 @@ namespace DeferredEngine.Renderer.RenderModules
             _passBasic = _deferredEnvironmentShader.Techniques["Basic"].Passes[0];
         }
 
-        public void Load(ContentManager content, string shaderPath)
-        {
-            _deferredEnvironmentShader = content.Load<Effect>(shaderPath);
 
-        }
-
-        public void DrawEnvironmentMap(GraphicsDevice graphicsDevice, Camera camera, Matrix view, FullscreenTriangleBuffer fullScreenTriangle, EnvironmentProbe envSample, GameTime gameTime, bool fireflyReduction, float ffThreshold)
+        public void DrawEnvironmentMap(Camera camera, Matrix view, FullscreenTriangleBuffer fullScreenTriangle, EnvironmentProbe envSample, GameTime gameTime, bool fireflyReduction, float ffThreshold)
         {
             FireflyReduction = fireflyReduction;
             FireflyThreshold = ffThreshold;
@@ -211,12 +213,12 @@ namespace DeferredEngine.Renderer.RenderModules
 
             Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
 
-            graphicsDevice.DepthStencilState = DepthStencilState.None;
-            graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+            _graphicsDevice.DepthStencilState = DepthStencilState.None;
+            _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             UseSDFAO = envSample.UseSDFAO;
             _paramTransposeView.SetValue(Matrix.Transpose(view));
             _passBasic.Apply();
-            fullScreenTriangle.Draw(graphicsDevice);
+            fullScreenTriangle.Draw(_graphicsDevice);
         }
 
         public void DrawSky(GraphicsDevice graphicsDevice, FullscreenTriangleBuffer quadRenderer)

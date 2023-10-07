@@ -26,6 +26,7 @@ namespace DeferredEngine.Renderer.RenderModules
         private BlendState _decalBlend;
         private int _shaderIndex;
         private ShaderManager _shaderManagerReference;
+        private GraphicsDevice _graphicsDevice;
 
         public float FarClip { set { _paramFarClip.SetValue(value); } }
         public Texture2D DepthMap { set { _paramDepthMap.SetValue(value); } }
@@ -62,6 +63,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
         public void Initialize(GraphicsDevice graphicsDevice)
         {
+            _graphicsDevice = graphicsDevice;
             _decalBlend = new BlendState()
             {
                 AlphaDestinationBlend = Blend.One,
@@ -137,14 +139,14 @@ namespace DeferredEngine.Renderer.RenderModules
             _indexBufferCube.SetData(Indices2);
         }
 
-        public void Draw(GraphicsDevice graphics, List<Decal> decals, Matrix view, Matrix viewProjection, Matrix inverseView)
+        public void Draw(List<Decal> decals, Matrix view, Matrix viewProjection, Matrix inverseView)
         {
             CheckForShaderChanges();
 
-            graphics.SetVertexBuffer(_vertexBuffer);
-            graphics.Indices = _indexBufferCube;
-            graphics.RasterizerState = RasterizerState.CullClockwise;
-            graphics.BlendState = _decalBlend;
+            _graphicsDevice.SetVertexBuffer(_vertexBuffer);
+            _graphicsDevice.Indices = _indexBufferCube;
+            _graphicsDevice.RasterizerState = RasterizerState.CullClockwise;
+            _graphicsDevice.BlendState = _decalBlend;
 
             for (int index = 0; index < decals.Count; index++)
             {
@@ -159,14 +161,14 @@ namespace DeferredEngine.Renderer.RenderModules
 
                 _decalPass.Apply();
 
-                graphics.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 12);
+                _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 12);
             }
         }
 
-        public void DrawOutlines(GraphicsDevice graphics, Decal decal, Matrix viewProjection, Matrix view)
+        public void DrawOutlines(Decal decal, Matrix viewProjection, Matrix view)
         {
-            graphics.SetVertexBuffer(_vertexBuffer);
-            graphics.Indices = _indexBufferCage;
+            _graphicsDevice.SetVertexBuffer(_vertexBuffer);
+            _graphicsDevice.Indices = _indexBufferCage;
 
             Matrix localMatrix = decal.World;
 
@@ -175,7 +177,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
             _outlinePass.Apply();
 
-            graphics.DrawIndexedPrimitives(PrimitiveType.LineList, 0, 0, 12);
+            _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.LineList, 0, 0, 12);
 
         }
 
