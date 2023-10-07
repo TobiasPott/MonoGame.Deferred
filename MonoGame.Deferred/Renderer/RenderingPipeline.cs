@@ -192,8 +192,8 @@ namespace DeferredEngine.Renderer
             _colorGradingFx.Initialize(graphicsDevice, FullscreenTriangleBuffer.Instamce);
 
             _lightAccumulationModule.Initialize(graphicsDevice, assets);
-            _gBufferRenderModule.Initialize();
-            _forwardRenderModule.Initialize();
+            _gBufferRenderModule.Initialize(graphicsDevice);
+            _forwardRenderModule.Initialize(graphicsDevice);
 
             _environmentProbeRenderModule.Initialize(graphicsDevice);
             _shadowMapRenderModule.Initialize(graphicsDevice);
@@ -909,7 +909,7 @@ namespace DeferredEngine.Renderer
         /// <param name="meshMaterialLibrary"></param>
         private void DrawGBuffer(MeshMaterialLibrary meshMaterialLibrary)
         {
-            _gBufferRenderModule.Draw(_graphicsDevice, _renderTargetBinding, meshMaterialLibrary, _viewProjection, _view);
+            _gBufferRenderModule.Draw(_renderTargetBinding, meshMaterialLibrary, _viewProjection, _view);
 
             //Performance Profiler
             if (RenderingSettings.d_profiler)
@@ -1218,7 +1218,7 @@ namespace DeferredEngine.Renderer
             _graphicsDevice.SetRenderTarget(input);
             ReconstructDepth();
 
-            return _forwardRenderModule.Draw(_graphicsDevice, input, meshMaterialLibrary, _viewProjection, camera, pointLights, _boundingFrustum);
+            return _forwardRenderModule.Draw(input, meshMaterialLibrary, _viewProjection, camera, pointLights, _boundingFrustum);
         }
 
         private RenderTarget2D DrawBloom(RenderTarget2D input)

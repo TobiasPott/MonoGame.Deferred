@@ -202,7 +202,7 @@ namespace DeferredEngine.Renderer.RenderModules
         }
 
 
-        public void DrawEnvironmentMap(Camera camera, Matrix view, FullscreenTriangleBuffer fullScreenTriangle, EnvironmentProbe envSample, GameTime gameTime, bool fireflyReduction, float ffThreshold)
+        public void DrawEnvironmentMap(Camera camera, Matrix view, FullscreenTriangleBuffer fullscreenTarget, EnvironmentProbe envSample, GameTime gameTime, bool fireflyReduction, float ffThreshold)
         {
             FireflyReduction = fireflyReduction;
             FireflyThreshold = ffThreshold;
@@ -218,16 +218,16 @@ namespace DeferredEngine.Renderer.RenderModules
             UseSDFAO = envSample.UseSDFAO;
             _paramTransposeView.SetValue(Matrix.Transpose(view));
             _passBasic.Apply();
-            fullScreenTriangle.Draw(_graphicsDevice);
+            fullscreenTarget.Draw(_graphicsDevice);
         }
 
-        public void DrawSky(GraphicsDevice graphicsDevice, FullscreenTriangleBuffer quadRenderer)
+        public void DrawSky(GraphicsDevice graphicsDevice, FullscreenTriangleBuffer fullscreenTarget)
         {
             graphicsDevice.DepthStencilState = DepthStencilState.None;
             graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
             _passSky.Apply();
-            quadRenderer.Draw(graphicsDevice);
+            fullscreenTarget.Draw(graphicsDevice);
         }
 
         public void Dispose()

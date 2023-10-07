@@ -45,7 +45,8 @@ namespace DeferredEngine.Renderer.RenderModules
         private EffectTechnique _DrawNormal;
         private EffectTechnique _DrawBasic;
 
-        private FullscreenTriangleBuffer _fullScreenTriangle;
+        private GraphicsDevice _graphicsDevice;
+        private FullscreenTriangleBuffer _fullscreenTarget;
 
         public GBufferRenderModule(ContentManager content, string shaderPathClear, string shaderPathGbuffer)
         {
@@ -75,11 +76,17 @@ namespace DeferredEngine.Renderer.RenderModules
         }
 
 
-        public void Initialize()
+        public void Load(ContentManager content, string shaderPathClear, string shaderPathGbuffer)
         {
+            _clearShader = content.Load<Effect>(shaderPathClear);
+            _gbufferShader = content.Load<Effect>(shaderPathGbuffer);
+        }
+        public void Initialize(GraphicsDevice graphicsDevice)
+        {
+            _graphicsDevice = graphicsDevice;
             _clearGBufferPass = _clearShader.Techniques["Clear"].Passes[0];
 
-            _fullScreenTriangle = FullscreenTriangleBuffer.Instamce;
+            _fullscreenTarget = FullscreenTriangleBuffer.Instamce;
 
             _WorldView = _gbufferShader.Parameters["WorldView"];
             _WorldViewProj = _gbufferShader.Parameters["WorldViewProj"];
@@ -117,13 +124,8 @@ namespace DeferredEngine.Renderer.RenderModules
             _DrawBasic = _gbufferShader.Techniques["DrawBasic"];
         }
 
-        public void Load(ContentManager content, string shaderPathClear, string shaderPathGbuffer)
-        {
-            _clearShader = content.Load<Effect>(shaderPathClear);
-            _gbufferShader = content.Load<Effect>(shaderPathGbuffer);
-        }
 
-        public void Draw(GraphicsDevice _graphicsDevice, RenderTargetBinding[] _renderTargetBinding, MeshMaterialLibrary meshMaterialLibrary, Matrix _viewProjection, Matrix _view)
+        public void Draw(RenderTargetBinding[] _renderTargetBinding, MeshMaterialLibrary meshMaterialLibrary, Matrix _viewProjection, Matrix _view)
         {
             _graphicsDevice.SetRenderTargets(_renderTargetBinding);
 
@@ -135,7 +137,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 _graphicsDevice.DepthStencilState = DepthStencilState.Default;
 
                 _clearGBufferPass.Apply();
-                _fullScreenTriangle.Draw(_graphicsDevice);
+                _fullscreenTarget.Draw(_graphicsDevice);
             }
 
             //Draw the Gbuffer!
@@ -318,7 +320,6 @@ namespace DeferredEngine.Renderer.RenderModules
         {
             _clearShader?.Dispose();
             _gbufferShader?.Dispose();
-            _fullScreenTriangle?.Dispose();
         }
     }
 }

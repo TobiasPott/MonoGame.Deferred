@@ -10,7 +10,7 @@ namespace DeferredEngine.Renderer.RenderModules
     public class LightAccumulationModule : IDisposable
     {
         private GraphicsDevice _graphicsDevice;
-        private FullscreenTriangleBuffer _fullScreenTriangle;
+        private FullscreenTriangleBuffer _fullscreenTarget;
         private Assets _assets;
         private bool _g_UseDepthStencilLightCulling;
         private BlendState _lightBlendState;
@@ -36,7 +36,7 @@ namespace DeferredEngine.Renderer.RenderModules
         public void Initialize(GraphicsDevice graphicsDevice, Assets assets)
         {
             _graphicsDevice = graphicsDevice;
-            _fullScreenTriangle = FullscreenTriangleBuffer.Instamce;
+            _fullscreenTarget = FullscreenTriangleBuffer.Instamce;
             _assets = assets;
 
             _lightBlendState = new BlendState
@@ -154,7 +154,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             Shaders.ReconstructDepth.CurrentTechnique.Passes[0].Apply();
-            _fullScreenTriangle.Draw(_graphicsDevice);
+            _fullscreenTarget.Draw(_graphicsDevice);
         }
 
 
@@ -206,7 +206,7 @@ namespace DeferredEngine.Renderer.RenderModules
             Shaders.deferredDirectionalLightParameter_LightDirection.SetValue(light.DirectionViewSpace);
             Shaders.deferredDirectionalLightParameter_LightIntensity.SetValue(light.Intensity);
             light.ApplyShader();
-            _fullScreenTriangle.Draw(_graphicsDevice);
+            _fullscreenTarget.Draw(_graphicsDevice);
         }
 
         public void Dispose()

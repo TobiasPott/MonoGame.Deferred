@@ -58,7 +58,7 @@ namespace DeferredEngine.Renderer.PostProcessing
 
         //Objects
         private GraphicsDevice _graphicsDevice;
-        private FullscreenTriangleBuffer _fullScreenTriangle;
+        private FullscreenTriangleBuffer _fullscreenTarget;
 
         //Shader + variables
         private Effect _bloomEffect;
@@ -205,7 +205,7 @@ namespace DeferredEngine.Renderer.PostProcessing
         //Initialize graphicsDevice
         public void Initialize(GraphicsDevice graphicsDevice, Vector2 resolution)
         {
-            _fullScreenTriangle = FullscreenTriangleBuffer.Instamce;
+            _fullscreenTarget = FullscreenTriangleBuffer.Instamce;
 
             _graphicsDevice = graphicsDevice;
             UpdateResolution(resolution);
@@ -378,7 +378,7 @@ namespace DeferredEngine.Renderer.PostProcessing
 
             if (BloomUseLuminance) _bloomPassExtractLuminance.Apply();
             else _bloomPassExtract.Apply();
-            _fullScreenTriangle.Draw(_graphicsDevice);
+            _fullscreenTarget.Draw(_graphicsDevice);
 
             //Now downsample to the next lower mip texture
             if (BloomDownsamplePasses > 0)
@@ -390,7 +390,7 @@ namespace DeferredEngine.Renderer.PostProcessing
                 BloomScreenTexture = _bloomRenderTarget2DMip0;
                 //Pass
                 _bloomPassDownsample.Apply();
-                _fullScreenTriangle.Draw(_graphicsDevice);
+                _fullscreenTarget.Draw(_graphicsDevice);
 
                 if (BloomDownsamplePasses > 1)
                 {
@@ -403,7 +403,7 @@ namespace DeferredEngine.Renderer.PostProcessing
                     BloomScreenTexture = _bloomRenderTarget2DMip1;
                     //Pass
                     _bloomPassDownsample.Apply();
-                    _fullScreenTriangle.Draw(_graphicsDevice);
+                    _fullscreenTarget.Draw(_graphicsDevice);
 
                     if (BloomDownsamplePasses > 2)
                     {
@@ -415,7 +415,7 @@ namespace DeferredEngine.Renderer.PostProcessing
                         BloomScreenTexture = _bloomRenderTarget2DMip2;
                         //Pass
                         _bloomPassDownsample.Apply();
-                        _fullScreenTriangle.Draw(_graphicsDevice);
+                        _fullscreenTarget.Draw(_graphicsDevice);
 
                         if (BloomDownsamplePasses > 3)
                         {
@@ -427,7 +427,7 @@ namespace DeferredEngine.Renderer.PostProcessing
                             BloomScreenTexture = _bloomRenderTarget2DMip3;
                             //Pass
                             _bloomPassDownsample.Apply();
-                            _fullScreenTriangle.Draw(_graphicsDevice);
+                            _fullscreenTarget.Draw(_graphicsDevice);
 
                             if (BloomDownsamplePasses > 4)
                             {
@@ -439,7 +439,7 @@ namespace DeferredEngine.Renderer.PostProcessing
                                 BloomScreenTexture = _bloomRenderTarget2DMip4;
                                 //Pass
                                 _bloomPassDownsample.Apply();
-                                _fullScreenTriangle.Draw(_graphicsDevice);
+                                _fullscreenTarget.Draw(_graphicsDevice);
 
                                 ChangeBlendState();
 
@@ -450,7 +450,7 @@ namespace DeferredEngine.Renderer.PostProcessing
                                 BloomStrength = _bloomStrength5;
                                 BloomRadius = _bloomRadius5;
                                 _bloomPassUpsample.Apply();
-                                _fullScreenTriangle.Draw(_graphicsDevice);
+                                _fullscreenTarget.Draw(_graphicsDevice);
 
                                 BloomInverseResolution /= 2;
                             }
@@ -464,7 +464,7 @@ namespace DeferredEngine.Renderer.PostProcessing
                             BloomStrength = _bloomStrength4;
                             BloomRadius = _bloomRadius4;
                             _bloomPassUpsample.Apply();
-                            _fullScreenTriangle.Draw(_graphicsDevice);
+                            _fullscreenTarget.Draw(_graphicsDevice);
 
                             BloomInverseResolution /= 2;
 
@@ -479,7 +479,7 @@ namespace DeferredEngine.Renderer.PostProcessing
                         BloomStrength = _bloomStrength3;
                         BloomRadius = _bloomRadius3;
                         _bloomPassUpsample.Apply();
-                        _fullScreenTriangle.Draw(_graphicsDevice);
+                        _fullscreenTarget.Draw(_graphicsDevice);
 
                         BloomInverseResolution /= 2;
 
@@ -494,7 +494,7 @@ namespace DeferredEngine.Renderer.PostProcessing
                     BloomStrength = _bloomStrength2;
                     BloomRadius = _bloomRadius2;
                     _bloomPassUpsample.Apply();
-                    _fullScreenTriangle.Draw(_graphicsDevice);
+                    _fullscreenTarget.Draw(_graphicsDevice);
 
                     BloomInverseResolution /= 2;
                 }
@@ -509,7 +509,7 @@ namespace DeferredEngine.Renderer.PostProcessing
                 BloomRadius = _bloomRadius1;
 
                 _bloomPassUpsample.Apply();
-                _fullScreenTriangle.Draw(_graphicsDevice);
+                _fullscreenTarget.Draw(_graphicsDevice);
             }
 
             //Note the final step could be done as a blend to the final texture.

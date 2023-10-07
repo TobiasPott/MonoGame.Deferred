@@ -23,7 +23,7 @@ namespace DeferredEngine.Renderer.Helper
         private readonly BoundingSphere _defaultBoundingSphere;
         private RasterizerState _shadowGenerationRasterizerState;
         private DepthStencilState _depthWrite;
-        private FullscreenTriangleBuffer _fullScreenTriangle;
+        private FullscreenTriangleBuffer _fullscreenTarget;
 
         private GraphicsDevice graphicsDevice;
 
@@ -46,7 +46,7 @@ namespace DeferredEngine.Renderer.Helper
                 DepthBufferFunction = CompareFunction.Always
             };
 
-            _fullScreenTriangle = FullscreenTriangleBuffer.Instamce;
+            _fullscreenTarget = FullscreenTriangleBuffer.Instamce;
         }
 
         /// <summary>
@@ -568,7 +568,7 @@ namespace DeferredEngine.Renderer.Helper
         private void ClearFrame(GraphicsDevice graphicsDevice)
         {
             Shaders.DeferredClear.CurrentTechnique.Passes[0].Apply();
-            _fullScreenTriangle.Draw(graphicsDevice);
+            _fullscreenTarget.Draw(graphicsDevice);
         }
 
         //I don't want to fill up the main Draw as much! Not used right  now

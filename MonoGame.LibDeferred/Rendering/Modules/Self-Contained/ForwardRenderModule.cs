@@ -43,6 +43,8 @@ namespace DeferredEngine.Renderer.RenderModules
 
         private EffectPass _pass1;
 
+        private GraphicsDevice _graphicsDevice;
+
         public Matrix World { set { _worldParam.SetValue(value); } }
         public Matrix WorldViewProj { set { _worldViewProjParam.SetValue(value); } }
         public Matrix WorldViewIT { set { _worldViewITParam.SetValue(value); } }
@@ -50,11 +52,18 @@ namespace DeferredEngine.Renderer.RenderModules
         public ForwardRenderModule(ContentManager content, string shaderPath)
         {
             Load(content, shaderPath);
-            Initialize();
         }
 
-        public void Initialize()
+        public void Load(ContentManager content, string shaderPath)
         {
+            _shader = content.Load<Effect>(shaderPath);
+
+        }
+
+        public void Initialize(GraphicsDevice graphicsDevice)
+        {
+            _graphicsDevice = graphicsDevice;
+
             _worldParam = _shader.Parameters["World"];
             _worldViewProjParam = _shader.Parameters["WorldViewProj"];
             _worldViewITParam = _shader.Parameters["WorldViewIT"];
@@ -73,16 +82,10 @@ namespace DeferredEngine.Renderer.RenderModules
             _pass1 = _shader.Techniques["Default"].Passes[0];
         }
 
-        public void Load(ContentManager content, string shaderPath)
-        {
-            _shader = content.Load<Effect>(shaderPath);
-
-        }
 
         /// <summary>
         /// Draw forward shaded, alpha blended materials. Very basic and unoptimized algorithm. Can be improved to use tiling in future.
         /// </summary>
-        /// <param name="graphicsDevice"></param>
         /// <param name="output"></param>
         /// <param name="meshMat"></param>
         /// <param name="viewProjection"></param>
@@ -90,9 +93,14 @@ namespace DeferredEngine.Renderer.RenderModules
         /// <param name="pointLights"></param>
         /// <param name="frustum"></param>
         /// <returns></returns>
-        public RenderTarget2D Draw(GraphicsDevice graphicsDevice, RenderTarget2D output, MeshMaterialLibrary meshMat, Matrix viewProjection, Camera camera, List<DeferredPointLight> pointLights, BoundingFrustum frustum)
+        public RenderTarget2D Draw(RenderTarget2D output,
+            MeshMaterialLibrary meshMat,
+            Matrix viewProjection,
+            Camera camera,
+            List<DeferredPointLight> pointLights,
+            BoundingFrustum frustum)
         {
-            graphicsDevice.DepthStencilState = DepthStencilState.Default;
+            _graphicsDevice.DepthStencilState = DepthStencilState.Default;
 
             SetupLighting(camera, pointLights, frustum);
 
