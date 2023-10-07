@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 namespace DeferredEngine.Recources
 {
-    public sealed class DisplaySettings
+    public sealed class ScreenSettings
     {
         //Default & Display settings
         public int g_screenwidth = 1280;
@@ -24,7 +24,7 @@ namespace DeferredEngine.Recources
     public static class RenderingSettings
     {
         //Default & Display settings
-        public static DisplaySettings Display = new DisplaySettings();
+        public static ScreenSettings Screen = new ScreenSettings();
 
         public static int g_screenwidth = 1280;
         public static int g_screenheight = 720;
