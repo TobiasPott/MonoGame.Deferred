@@ -28,13 +28,13 @@ namespace DeferredEngine.Recources
 
         public static int g_screenwidth = 1280;
         public static int g_screenheight = 720;
-        public static Vector2 g_resolution = new Vector2(1280, 720);
+        public static Vector2 g_screenresolution = new Vector2(1280, 720);
         public static Rectangle g_screenrect = new Rectangle(0, 0, 1280, 720);
         public static bool g_vsync = false;
         public static int g_fixedfps = 0;
         public static int u_showdisplayinfo = 3;
         public static bool p_physics = false;
-        public static Renderer.RenderModes g_rendermode = Renderer.RenderModes.Deferred;
+        public static RenderModes g_rendermode = RenderModes.Deferred;
 
         //Editor
         public static bool e_enableeditor = true;

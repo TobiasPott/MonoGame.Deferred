@@ -51,7 +51,7 @@ namespace DeferredEngine.Renderer
 
         //View Projection
         private bool _viewProjectionHasChanged;
-        private Vector3 _inverseResolution;
+        private Vector2 _inverseResolution;
 
         //Temporal Anti Aliasing
         private bool _temporalAAOffFrame = true;
@@ -155,8 +155,7 @@ namespace DeferredEngine.Renderer
         /// <param name="content"></param>
         public void Load(ContentManager content, ShaderManager shaderManager)
         {
-            _inverseResolution = new Vector3(1.0f / RenderingSettings.g_screenwidth, 1.0f / RenderingSettings.g_screenheight, 0);
-
+            _inverseResolution = Vector2.One / RenderingSettings.g_screenresolution;
 
             _lightAccumulationModule = new LightAccumulationModule(shaderManager, "Shaders/Deferred/DeferredPointLight");
             _shadowMapRenderModule = new ShadowMapRenderModule(content, "Shaders/Shadow/ShadowMap");
@@ -197,7 +196,7 @@ namespace DeferredEngine.Renderer
             _decalRenderModule.Initialize(graphicsDevice);
             _helperGeometryRenderModule.Initialize(graphicsDevice);
 
-            _bloomFx.Initialize(_graphicsDevice, RenderingSettings.g_resolution);
+            _bloomFx.Initialize(_graphicsDevice, RenderingSettings.g_screenresolution);
             _taaFx.Initialize(graphicsDevice, FullscreenTriangleBuffer.Instance);
             _colorGradingFx.Initialize(graphicsDevice, FullscreenTriangleBuffer.Instance);
 
@@ -1390,7 +1389,7 @@ namespace DeferredEngine.Renderer
         /// </summary>
         public void UpdateResolution()
         {
-            _inverseResolution = new Vector3(1.0f / RenderingSettings.g_screenwidth, 1.0f / RenderingSettings.g_screenheight, 0);
+            _inverseResolution = Vector2.One / RenderingSettings.g_screenresolution;
             _haltonSequence = null;
 
             SetUpRenderTargets(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight, false);

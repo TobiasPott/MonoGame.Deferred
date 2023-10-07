@@ -1,8 +1,8 @@
-﻿using System;
-using DeferredEngine.Entities;
+﻿using DeferredEngine.Entities;
 using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace DeferredEngine.Logic
 {
@@ -37,8 +37,8 @@ namespace DeferredEngine.Logic
                 float y = mouseState.Y - mouseLastState.Y;
                 float x = mouseState.X - mouseLastState.X;
 
-                y *= RenderingSettings.g_screenheight/800.0f;
-                x *= RenderingSettings.g_screenwidth/1280.0f;
+                y *= RenderingSettings.g_screenheight / 800.0f;
+                x *= RenderingSettings.g_screenwidth / 1280.0f;
 
                 camera.Forward += x * mouseAmount * normal;
 
@@ -55,7 +55,7 @@ namespace DeferredEngine.Logic
 
         public static Vector2 GetMousePositionNormalized()
         {
-            return new Vector2((float)mouseState.X/RenderingSettings.g_screenwidth, (float)mouseState.Y/RenderingSettings.g_screenheight);
+            return new Vector2((float)mouseState.X, (float)mouseState.Y) / RenderingSettings.g_screenresolution;
         }
 
         private static void KeyboardEvents(GameTime gameTime, Camera camera)
@@ -104,7 +104,7 @@ namespace DeferredEngine.Logic
         {
             return mouseState.LeftButton == ButtonState.Pressed && mouseLastState.LeftButton == ButtonState.Released;
         }
-        
+
         public static bool IsLMBPressed()
         {
             return mouseState.LeftButton == ButtonState.Pressed;
@@ -126,7 +126,7 @@ namespace DeferredEngine.Logic
                 if (keyboardLastState.IsKeyUp(key))
                 {
                     Char keyChar = TranslateChar(key, keyboardState.IsKeyDown(Keys.LeftShift), false, false);
-                    if (keyChar == (char) 0) return null;
+                    if (keyChar == (char)0) return null;
                     if (keyChar == '\t' || keyChar == '\\' || keyChar == '\'') return null;
                     return keyChar.ToString();
                 }
