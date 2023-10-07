@@ -10,10 +10,4 @@
 		<PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.1.303" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Reference Include="BEPUutilities">
-	    <HintPath>..\MonoGame.Deferred\Content\BEPUutilities.dll</HintPath>
-	  </Reference>
-	</ItemGroup>
-
 </Project>
