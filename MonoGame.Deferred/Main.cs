@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using BEPUutilities;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
+using DeferredEngine.Renderer.Helper;
 
 namespace DeferredEngine
 {
@@ -48,8 +49,8 @@ namespace DeferredEngine
             };
             
             //Size of our application / starting back buffer
-            _graphics.PreferredBackBufferWidth = GameSettings.g_screenwidth;
-            _graphics.PreferredBackBufferHeight = GameSettings.g_screenheight;
+            _graphics.PreferredBackBufferWidth = RenderingSettings.g_screenwidth;
+            _graphics.PreferredBackBufferHeight = RenderingSettings.g_screenheight;
 
             //HiDef enables usable shaders
             _graphics.GraphicsProfile = GraphicsProfile.HiDef;
@@ -74,18 +75,18 @@ namespace DeferredEngine
 
         private void CheckFPSLimitChange()
         {
-            if(_vsync != GameSettings.g_vsync || _fixFPS != GameSettings.g_fixedfps)
+            if(_vsync != RenderingSettings.g_vsync || _fixFPS != RenderingSettings.g_fixedfps)
             {
                 
                 SetFPSLimit();
-                _vsync = GameSettings.g_vsync;
-                _fixFPS = GameSettings.g_fixedfps;
+                _vsync = RenderingSettings.g_vsync;
+                _fixFPS = RenderingSettings.g_fixedfps;
             }
         }
 
         private void SetFPSLimit()
         {
-            if (!GameSettings.g_vsync && GameSettings.g_fixedfps <= 0)
+            if (!RenderingSettings.g_vsync && RenderingSettings.g_fixedfps <= 0)
             {
                 _graphics.SynchronizeWithVerticalRetrace = false;
                 IsFixedTimeStep = false;
@@ -93,11 +94,11 @@ namespace DeferredEngine
             }
             else
             {
-                if(GameSettings.g_fixedfps > 0)
+                if(RenderingSettings.g_fixedfps > 0)
                 {
                     _graphics.SynchronizeWithVerticalRetrace = false;
                     IsFixedTimeStep = true;
-                    TargetElapsedTime = TimeSpan.FromMilliseconds(1000.0f/GameSettings.g_fixedfps);
+                    TargetElapsedTime = TimeSpan.FromMilliseconds(1000.0f/RenderingSettings.g_fixedfps);
                 }
                 else //Vsync
                 {
@@ -131,8 +132,8 @@ namespace DeferredEngine
                 _graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
                 _graphics.ApplyChanges();
 
-                GameSettings.g_screenwidth = Window.ClientBounds.Width;
-                GameSettings.g_screenheight = Window.ClientBounds.Height;
+                RenderingSettings.g_screenwidth = Window.ClientBounds.Width;
+                RenderingSettings.g_screenheight = Window.ClientBounds.Height;
 
                 _screenManager.UpdateResolution();
             }
@@ -146,8 +147,9 @@ namespace DeferredEngine
         /// </summary>
         protected override void Initialize()
         {
-            GUIControl.Initialize(GameSettings.g_screenwidth, GameSettings.g_screenheight);
+            GUIControl.Initialize(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight);
 
+            FullscreenTriangleBuffer.InitClass(GraphicsDevice);
             _screenManager.Load(Content, GraphicsDevice);
             // TODO: Add your initialization logic here
             _screenManager.Initialize(GraphicsDevice, _physicsSpace);
@@ -188,7 +190,7 @@ namespace DeferredEngine
             _screenManager.Update(gameTime, _isActive);
 
             //BEPU Physics
-            if(!GameSettings.e_enableeditor && GameSettings.p_physics)
+            if(!RenderingSettings.e_enableeditor && RenderingSettings.p_physics)
                 _physicsSpace.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
 
             //base.Update(gameTime);

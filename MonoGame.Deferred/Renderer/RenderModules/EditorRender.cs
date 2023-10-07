@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using DeferredEngine.Entities;
+﻿using DeferredEngine.Entities;
 using DeferredEngine.Logic;
 using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper;
 using DeferredEngine.Renderer.Helper.Editor;
 using DeferredEngine.Renderer.Helper.HelperGeometry;
+using DeferredEngine.Renderer.PostProcessing;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using DirectionalLight = DeferredEngine.Entities.DirectionalLight;
+using System;
+using System.Collections.Generic;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
@@ -39,7 +39,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
         public void Update(GameTime gameTime)
         {
-            if (GameStats.UIIsHovered || Input.mouseState.RightButton == ButtonState.Pressed)
+            if (RenderingStats.UIIsHovered || Input.mouseState.RightButton == ButtonState.Pressed)
             {
                 _mouseMovement = false;
                 return;
@@ -66,7 +66,7 @@ namespace DeferredEngine.Renderer.RenderModules
         }
 
 
-        public void DrawBillboards(List<Decal> decals, List<PointLight> lights, List<DirectionalLight> dirLights, EnvironmentSample envSample, List<DebugEntity> debug, Matrix staticViewProjection, Matrix view, EditorLogic.EditorSendData sendData)
+        public void DrawBillboards(List<Decal> decals, List<DeferredPointLight> lights, List<DeferredDirectionalLight> dirLights, EnvironmentProbe envSample, Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
         {
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             _graphicsDevice.SetVertexBuffer(_billboardBuffer.VBuffer);
@@ -82,7 +82,7 @@ namespace DeferredEngine.Renderer.RenderModules
             for (int index = 0; index < decals.Count; index++)
             {
                 var decal = decals[index];
-                DrawBillboard(decal, staticViewProjection, view, sendData);
+                DrawBillboard(decal, staticViewProjection, view, gizmoContext);
             }
 
             //Lights
@@ -91,14 +91,14 @@ namespace DeferredEngine.Renderer.RenderModules
             for (int index = 0; index < lights.Count; index++)
             {
                 var light = lights[index];
-                DrawBillboard(light, staticViewProjection, view, sendData);
+                DrawBillboard(light, staticViewProjection, view, gizmoContext);
             }
 
             //DirectionalLights
             for (var index = 0; index < dirLights.Count; index++)
             {
-                DirectionalLight light = dirLights[index];
-                DrawBillboard(light, staticViewProjection, view, sendData);
+                DeferredDirectionalLight light = dirLights[index];
+                DrawBillboard(light, staticViewProjection, view, gizmoContext);
 
                 HelperGeometryManager.GetInstance()
                     .AddLineStartDir(light.Position, light.Direction * 10, 1, Color.Black, light.Color);
@@ -132,18 +132,11 @@ namespace DeferredEngine.Renderer.RenderModules
             //EnvMap
 
             Shaders.BillboardEffectParameter_Texture.SetValue(_assets.IconEnvmap);
-            
-            DrawBillboard(envSample, staticViewProjection, view, sendData);
 
-            //Dbg
-            for (int index = 0; index < debug.Count; index++)
-            {
-                var dbgEntity = debug[index];
-                DrawBillboard(dbgEntity, staticViewProjection, view, sendData);
-            }
+            DrawBillboard(envSample, staticViewProjection, view, gizmoContext);
 
         }
-        private void DrawBillboard(TransformableObject billboardObject, Matrix staticViewProjection, Matrix view, EditorLogic.EditorSendData sendData)
+        private void DrawBillboard(TransformableObject billboardObject, Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
         {
             Matrix world = Matrix.CreateTranslation(billboardObject.Position);
             Shaders.BillboardEffectParameter_WorldViewProj.SetValue(world * staticViewProjection);
@@ -151,42 +144,52 @@ namespace DeferredEngine.Renderer.RenderModules
 
             if (billboardObject.Id == GetHoveredId())
                 Shaders.BillboardEffectParameter_IdColor.SetValue(Color.White.ToVector3());
-            if (billboardObject.Id == sendData.SelectedObjectId)
+            if (billboardObject.Id == gizmoContext.SelectedObjectId)
                 Shaders.BillboardEffectParameter_IdColor.SetValue(Color.Gold.ToVector3());
 
             Shaders.BillboardEffect.CurrentTechnique.Passes[0].Apply();
 
             _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 2);
 
-            if (billboardObject.Id == GetHoveredId() || billboardObject.Id == sendData.SelectedObjectId)
+            if (billboardObject.Id == GetHoveredId() || billboardObject.Id == gizmoContext.SelectedObjectId)
                 Shaders.BillboardEffectParameter_IdColor.SetValue(Color.Gray.ToVector3());
         }
 
-        public void DrawIds(MeshMaterialLibrary meshMaterialLibrary, List<Decal> decals, List<PointLight>lights, List<DirectionalLight> dirLights, EnvironmentSample envSample, List<DebugEntity> debug, Matrix staticViewProjection, Matrix view, EditorLogic.EditorSendData editorData)
+        public void DrawIds(MeshMaterialLibrary meshMaterialLibrary, 
+            List<Decal> decals, 
+            List<DeferredPointLight> lights,
+            List<DeferredDirectionalLight> dirLights, 
+            EnvironmentProbe envSample,
+            Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
         {
-            _idAndOutlineRenderer.Draw(meshMaterialLibrary, decals, lights, dirLights, envSample, debug, staticViewProjection, view, editorData, _mouseMovement);
+            _idAndOutlineRenderer.Draw(meshMaterialLibrary, decals, lights, dirLights, envSample, staticViewProjection, view, gizmoContext, _mouseMovement);
         }
 
-        public void DrawEditorElements(MeshMaterialLibrary meshMaterialLibrary, List<Decal> decals, List<PointLight> lights, List<DirectionalLight> dirLights, EnvironmentSample envSample, List<DebugEntity> debug, Matrix staticViewProjection, Matrix view, EditorLogic.EditorSendData editorData)
+        public void DrawEditorElements(MeshMaterialLibrary meshMaterialLibrary,
+            List<Decal> decals,
+            List<DeferredPointLight> lights,
+            List<DeferredDirectionalLight> dirLights,
+            EnvironmentProbe envSample,
+            Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
         {
             _graphicsDevice.SetRenderTarget(null);
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             _graphicsDevice.BlendState = BlendState.Opaque;
-            
-            DrawGizmo(staticViewProjection, editorData);
-            DrawBillboards(decals, lights, dirLights, envSample, debug, staticViewProjection, view, editorData);
+
+            DrawGizmo(staticViewProjection, gizmoContext);
+            DrawBillboards(decals, lights, dirLights, envSample, staticViewProjection, view, gizmoContext);
         }
 
-        public void DrawGizmo(Matrix staticViewProjection, EditorLogic.EditorSendData editorData)
+        public void DrawGizmo(Matrix staticViewProjection, GizmoDrawContext gizmoContext)
         {
-            if (editorData.SelectedObjectId == 0) return;
+            if (gizmoContext.SelectedObjectId == 0) return;
 
-            
 
-            Vector3 position = editorData.SelectedObjectPosition;
-            EditorLogic.GizmoModes gizmoMode = editorData.GizmoMode;
-            Matrix rotation = (GameStats.e_LocalTransformation || gizmoMode == EditorLogic.GizmoModes.Scale ) ? editorData.SelectedObject.RotationMatrix : Matrix.Identity;
+
+            Vector3 position = gizmoContext.SelectedObjectPosition;
+            GizmoModes gizmoMode = gizmoContext.GizmoMode;
+            Matrix rotation = (RenderingStats.e_LocalTransformation || gizmoMode == GizmoModes.Scale) ? gizmoContext.SelectedObject.RotationMatrix : Matrix.Identity;
 
             //Z
             DrawArrow(position, rotation, 0, 0, 0, GetHoveredId() == 1 ? 1 : 0.5f, Color.Blue, staticViewProjection, gizmoMode); //z 1
@@ -201,14 +204,12 @@ namespace DeferredEngine.Renderer.RenderModules
             //DrawArrowRound(position, rotation,0, Math.PI / 2, 0, GetHoveredId() == 3 ? 1 : 0.5f, Color.Red, staticViewProjection); //x 3
         }
 
-        private void DrawArrow(Vector3 position, Matrix rotationObject, double angleX, double angleY, double angleZ, float scale, Color color, Matrix staticViewProjection, EditorLogic.GizmoModes gizmoMode, Vector3? direction = null)
+        private void DrawArrow(Vector3 position, Matrix rotationObject, double angleX, double angleY, double angleZ, float scale, Color color, Matrix staticViewProjection, GizmoModes gizmoMode, Vector3? direction = null)
         {
             Matrix rotation;
             if (direction != null)
             {
-                rotation = Matrix.CreateLookAt(Vector3.Zero, (Vector3) direction, Vector3.UnitX);
-              
-
+                rotation = Matrix.CreateLookAt(Vector3.Zero, (Vector3)direction, Vector3.UnitX);
             }
             else
             {
@@ -216,19 +217,19 @@ namespace DeferredEngine.Renderer.RenderModules
                                    Matrix.CreateRotationZ((float)angleZ);
             }
 
-            Matrix scaleMatrix = Matrix.CreateScale(0.75f, 0.75f,scale*1.5f);
-            Matrix worldViewProj = scaleMatrix *  rotation * rotationObject * Matrix.CreateTranslation(position) * staticViewProjection;
+            Matrix scaleMatrix = Matrix.CreateScale(0.75f, 0.75f, scale * 1.5f);
+            Matrix worldViewProj = scaleMatrix * rotation * rotationObject * Matrix.CreateTranslation(position) * staticViewProjection;
 
             Shaders.IdRenderEffectParameterWorldViewProj.SetValue(worldViewProj);
             Shaders.IdRenderEffectParameterColorId.SetValue(color.ToVector4());
 
-            Model model = gizmoMode == EditorLogic.GizmoModes.Translation
+            Model model = gizmoMode == GizmoModes.Translation
                 ? _assets.EditorArrow
                 : _assets.EditorArrowRound;
 
 
             ModelMeshPart meshpart = model.Meshes[0].MeshParts[0];
-                
+
             Shaders.IdRenderEffectDrawId.Apply();
 
             _graphicsDevice.SetVertexBuffer(meshpart.VertexBuffer);

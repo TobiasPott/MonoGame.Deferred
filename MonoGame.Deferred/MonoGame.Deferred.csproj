@@ -10,13 +10,23 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Entities\**" />
+    <Compile Remove="Renderer\Helper\**" />
+    <EmbeddedResource Remove="Entities\**" />
+    <EmbeddedResource Remove="Renderer\Helper\**" />
+    <None Remove="Entities\**" />
+    <None Remove="Renderer\Helper\**" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.1.303" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoGame.HelperSuite\MonoGame.HelperSuite.csproj" />
+    <ProjectReference Include="..\MonoGame.LibDeferred\MonoGame.LibDeferred.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="BEPUphysics">

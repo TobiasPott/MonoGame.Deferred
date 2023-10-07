@@ -1,10 +1,10 @@
-﻿using System;
-using BEPUphysics;
+﻿using BEPUphysics;
 using DeferredEngine.Recources;
 using HelperSuite.GUIRenderer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace DeferredEngine.Logic
 {
@@ -17,7 +17,7 @@ namespace DeferredEngine.Logic
         //  VARIABLES
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        private Renderer.Renderer _renderer;
+        private Renderer.RenderingPipeline _renderer;
         private GUIRenderer _guiRenderer;
         private MainSceneLogic _sceneLogic;
         private GUILogic _guiLogic;
@@ -39,26 +39,27 @@ namespace DeferredEngine.Logic
             _guiLogic.Initialize(_assets, _sceneLogic.Camera);
             _editorLogic.Initialize(graphicsDevice);
             _debug.Initialize(graphicsDevice);
-            _guiRenderer.Initialize(graphicsDevice, GameSettings.g_screenwidth, GameSettings.g_screenheight);
+            _guiRenderer.Initialize(graphicsDevice, RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight);
         }
 
         //Update per frame
         public void Update(GameTime gameTime, bool isActive)
         {
+#if DEBUG
             _shaderManager.CheckForChanges();
-
+#endif
             _guiLogic.Update(gameTime, isActive, _editorLogic.SelectedObject);
-            _editorLogic.Update(gameTime, _sceneLogic.BasicEntities, _sceneLogic.Decals, _sceneLogic.PointLights, _sceneLogic.DirectionalLights, _sceneLogic.EnvironmentSample, _sceneLogic.DebugEntities, _editorReceivedDataBuffer, _sceneLogic.MeshMaterialLibrary);
+            _editorLogic.Update(gameTime, _sceneLogic.BasicEntities, _sceneLogic.Decals, _sceneLogic.PointLights, _sceneLogic.DirectionalLights, _sceneLogic.EnvironmentSample, _editorReceivedDataBuffer, _sceneLogic.MeshMaterialLibrary);
             _sceneLogic.Update(gameTime, isActive);
             _renderer.Update(gameTime, isActive, _sceneLogic._sdfGenerator, _sceneLogic.BasicEntities);
-            
+
             _debug.Update(gameTime);
         }
 
         //Load content
         public void Load(ContentManager content, GraphicsDevice graphicsDevice)
         {
-            _renderer = new Renderer.Renderer();
+            _renderer = new Renderer.RenderingPipeline();
             _sceneLogic = new MainSceneLogic();
             _guiLogic = new GUILogic();
             _editorLogic = new EditorLogic();
@@ -80,21 +81,20 @@ namespace DeferredEngine.Logic
         {
             content.Dispose();
         }
-        
+
         public void Draw(GameTime gameTime)
         {
             //Our renderer gives us information on what id is currently hovered over so we can update / manipulate objects in the logic functions
-            _editorReceivedDataBuffer = _renderer.Draw(_sceneLogic.Camera, 
-                _sceneLogic.MeshMaterialLibrary, 
+            _editorReceivedDataBuffer = _renderer.Draw(_sceneLogic.Camera,
+                _sceneLogic.MeshMaterialLibrary,
                 _sceneLogic.BasicEntities, _sceneLogic.Decals,
                 pointLights: _sceneLogic.PointLights,
-                directionalLights: _sceneLogic.DirectionalLights, 
+                directionalLights: _sceneLogic.DirectionalLights,
                 envSample: _sceneLogic.EnvironmentSample,
-                debugEntities: _sceneLogic.DebugEntities, 
-                editorData: _editorLogic.GetEditorData(), 
+                gizmoContext: _editorLogic.GetEditorData(),
                 gameTime: gameTime);
-            
-            if (GameSettings.e_enableeditor && GameSettings.ui_enabled)
+
+            if (RenderingSettings.e_enableeditor && RenderingSettings.ui_enabled)
                 _guiRenderer.Draw(_guiLogic.GuiCanvas);
 
             _debug.Draw(gameTime);

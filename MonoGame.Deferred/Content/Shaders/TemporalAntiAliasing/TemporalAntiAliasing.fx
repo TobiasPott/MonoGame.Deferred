@@ -268,7 +268,7 @@ PixelShaderOutput PixelShaderFunction(VertexShaderOutput input) : SV_Target
 	if (!foundOverlap) alpha = 0;*/
 
  //   //alpha = 1 - 0.1f;
-	alpha = min(1 - 1 / (1 / (1 - alpha) + 1), 0.9375);
+	alpha = min(1 - 1 / (1 / (1 - alpha) + 1), 0.9375); // ToDo: @tpott: last parameter impacts TAA lerp speed
 /*
 	if (Threshold > 0) alpha = 0.6f;*/
 	//if (linearDepth >= 0.999999) alpha = 0.5f;

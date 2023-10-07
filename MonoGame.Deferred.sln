@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGame.Deferred", "MonoGa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGame.HelperSuite", "MonoGame.HelperSuite\MonoGame.HelperSuite.csproj", "{062C6625-A99A-4367-9CEE-C13F06A51480}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoGame.LibDeferred", "MonoGame.LibDeferred\MonoGame.LibDeferred.csproj", "{CBCDF959-CE80-48AE-8BE1-426EC2606EFA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{062C6625-A99A-4367-9CEE-C13F06A51480}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{062C6625-A99A-4367-9CEE-C13F06A51480}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{062C6625-A99A-4367-9CEE-C13F06A51480}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBCDF959-CE80-48AE-8BE1-426EC2606EFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBCDF959-CE80-48AE-8BE1-426EC2606EFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBCDF959-CE80-48AE-8BE1-426EC2606EFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBCDF959-CE80-48AE-8BE1-426EC2606EFA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
