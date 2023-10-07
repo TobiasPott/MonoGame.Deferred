@@ -17,9 +17,9 @@ namespace HelperSuite.GUIHelper
         public static int ScreenWidth;
         public static int ScreenHeight;
 
-        public static void Initialize(int width, int height)
+        public static void Initialize(Vector2 resolution)
         {
-            UpdateResolution(width, height);
+            UpdateResolution(resolution);
         }
 
         public static void Update(MouseState lastMouseState, MouseState currentMouseState)
@@ -33,10 +33,10 @@ namespace HelperSuite.GUIHelper
             mousePosition.Y = CurrentMouseState.Y;
         }
 
-        public static void UpdateResolution(int width, int height)
+        public static void UpdateResolution(Vector2 resolution)
         {
-            ScreenWidth = width;
-            ScreenHeight = height;
+            ScreenWidth = (int)resolution.X;
+            ScreenHeight = (int)resolution.Y;
         }
 
         public static bool IsLMBPressed()

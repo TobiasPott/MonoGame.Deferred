@@ -197,7 +197,7 @@ namespace DeferredEngine.Renderer
             _decalRenderModule.Initialize(graphicsDevice);
             _helperGeometryRenderModule.Initialize(graphicsDevice);
 
-            _bloomFx.Initialize(_graphicsDevice, new Vector2(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight));
+            _bloomFx.Initialize(_graphicsDevice, RenderingSettings.g_resolution);
             _taaFx.Initialize(graphicsDevice, FullscreenTriangleBuffer.Instance);
             _colorGradingFx.Initialize(graphicsDevice, FullscreenTriangleBuffer.Instance);
 
@@ -773,25 +773,22 @@ namespace DeferredEngine.Renderer
                         case 0: //2 frames, just basic translation. Worst taa implementation. Not good with the continous integration used
                             {
                                 float translation = _temporalAAOffFrame ? 0.5f : -0.5f;
-                                _viewProjection = _viewProjection *
-                                                  Matrix.CreateTranslation(new Vector3(translation / RenderingSettings.g_screenwidth,
-                                                      translation / RenderingSettings.g_screenheight, 0));
+                                _viewProjection = _viewProjection * Matrix.CreateTranslation(new Vector3(translation / RenderingSettings.g_screenwidth,
+                                                                                                        translation / RenderingSettings.g_screenheight, 0));
                             }
                             break;
                         case 1: // Just random translation
                             {
                                 float randomAngle = FastRand.NextAngle();
                                 Vector3 translation = new Vector3((float)Math.Sin(randomAngle) / RenderingSettings.g_screenwidth, (float)Math.Cos(randomAngle) / RenderingSettings.g_screenheight, 0) * 0.5f;
-                                _viewProjection = _viewProjection *
-                                                  Matrix.CreateTranslation(translation);
+                                _viewProjection = _viewProjection * Matrix.CreateTranslation(translation);
 
                             }
                             break;
                         case 2: // Halton sequence, default
                             {
                                 Vector3 translation = GetHaltonSequence();
-                                _viewProjection = _viewProjection *
-                                                  Matrix.CreateTranslation(translation);
+                                _viewProjection = _viewProjection * Matrix.CreateTranslation(translation);
                             }
                             break;
                     }
@@ -1232,10 +1229,8 @@ namespace DeferredEngine.Renderer
 
                 _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
 
-                _spriteBatch.Draw(input,
-                    new Rectangle(0, 0, RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight), Color.White);
-                _spriteBatch.Draw(bloom, new Rectangle(0, 0, RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight),
-                    Color.White);
+                _spriteBatch.Draw(input, RenderingSettings.g_screenrect, Color.White);
+                _spriteBatch.Draw(bloom, RenderingSettings.g_screenrect, Color.White);
 
                 _spriteBatch.End();
 

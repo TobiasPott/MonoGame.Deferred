@@ -147,7 +147,7 @@ namespace DeferredEngine
         /// </summary>
         protected override void Initialize()
         {
-            GUIControl.Initialize(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight);
+            GUIControl.Initialize(RenderingSettings.g_resolution);
 
             FullscreenTriangleBuffer.InitClass(GraphicsDevice);
             _screenManager.Load(Content, GraphicsDevice);

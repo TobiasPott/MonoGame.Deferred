@@ -1,5 +1,5 @@
 ﻿using DeferredEngine.Renderer;
-using System.Numerics;
+using Microsoft.Xna.Framework;
 
 // ReSharper disable InconsistentNaming
 
@@ -10,6 +10,7 @@ namespace DeferredEngine.Recources
         //Default & Display settings
         public int g_screenwidth = 1280;
         public int g_screenheight = 720;
+        public Vector2 g_resolution = new Vector2(1280, 720);
         public bool g_vsync = false;
         public int g_fixedfps = 0;
         public int u_showdisplayinfo = 3;
@@ -27,6 +28,8 @@ namespace DeferredEngine.Recources
 
         public static int g_screenwidth = 1280;
         public static int g_screenheight = 720;
+        public static Vector2 g_resolution = new Vector2(1280, 720);
+        public static Rectangle g_screenrect = new Rectangle(0, 0, 1280, 720);
         public static bool g_vsync = false;
         public static int g_fixedfps = 0;
         public static int u_showdisplayinfo = 3;
