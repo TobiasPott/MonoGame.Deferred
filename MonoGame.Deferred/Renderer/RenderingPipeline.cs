@@ -195,8 +195,9 @@ namespace DeferredEngine.Renderer
             _gBufferRenderModule.Initialize();
             _forwardRenderModule.Initialize();
 
+            _shadowMapRenderModule.Initialize(graphicsDevice);
             _decalRenderModule.Initialize(graphicsDevice);
-            _helperGeometryRenderModule.Initialize();
+            _helperGeometryRenderModule.Initialize(graphicsDevice);
 
             _assets = assets;
             //Apply some base settings to overwrite shader defaults with game settings defaults
@@ -284,7 +285,7 @@ namespace DeferredEngine.Renderer
             }
 
             //Update our view projection matrices if the camera moved
-            UpdateViewProjection(camera, meshMaterialLibrary, entities);
+            UpdateViewProjection(meshMaterialLibrary, entities, camera);
 
             //Draw our meshes to the G Buffer
             DrawGBuffer(meshMaterialLibrary);
@@ -341,7 +342,7 @@ namespace DeferredEngine.Renderer
 
             //Draw debug geometry
             _helperGeometryRenderModule.ViewProjection = _staticViewProjection;
-            _helperGeometryRenderModule.Draw(_graphicsDevice);
+            _helperGeometryRenderModule.Draw();
 
             //Set up the frustum culling for the next frame
             meshMaterialLibrary.FrustumCullingFinalizeFrame(entities);
@@ -374,7 +375,12 @@ namespace DeferredEngine.Renderer
             return false;
         }
 
-        private void RenderEditorOverlays(GizmoDrawContext gizmoContext, MeshMaterialLibrary meshMaterialLibrary, List<Decal> decals, List<DeferredPointLight> pointLights, List<DeferredDirectionalLight> directionalLights, EnvironmentProbe envSample)
+        private void RenderEditorOverlays(GizmoDrawContext gizmoContext,
+            MeshMaterialLibrary meshMaterialLibrary,
+            List<Decal> decals,
+            List<DeferredPointLight> pointLights,
+            List<DeferredDirectionalLight> directionalLights,
+            EnvironmentProbe envSample)
         {
 
             if (RenderingSettings.e_enableeditor && RenderingStats.e_EnableSelection)
@@ -440,7 +446,13 @@ namespace DeferredEngine.Renderer
         /// <param name="farPlane"></param>
         /// <param name="gameTime"></param>
         /// <param name="camera"></param>
-        private void DrawCubeMap(Vector3 origin, MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<DeferredPointLight> pointLights, List<DeferredDirectionalLight> dirLights, EnvironmentProbe envSample, float farPlane, GameTime gameTime, Camera camera)
+        private void DrawCubeMap(Vector3 origin,
+            MeshMaterialLibrary meshMaterialLibrary,
+            List<ModelEntity> entities,
+            List<DeferredPointLight> pointLights,
+            List<DeferredDirectionalLight> dirLights,
+            EnvironmentProbe envSample,
+            float farPlane, GameTime gameTime, Camera camera)
         {
             //If our cubemap is not yet initialized, create a new one
             if (_renderTargetCubeMap == null)
@@ -683,12 +695,16 @@ namespace DeferredEngine.Renderer
         /// <param name="pointLights"></param>
         /// <param name="dirLights"></param>
         /// <param name="camera"></param>
-        private void DrawShadowMaps(MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<DeferredPointLight> pointLights, List<DeferredDirectionalLight> dirLights, Camera camera)
+        private void DrawShadowMaps(MeshMaterialLibrary meshMaterialLibrary,
+            List<ModelEntity> entities,
+            List<DeferredPointLight> pointLights,
+            List<DeferredDirectionalLight> dirLights,
+            Camera camera)
         {
             //Don't render for the first frame, we need a guideline first
-            if (_boundingFrustum == null) UpdateViewProjection(camera, meshMaterialLibrary, entities);
+            if (_boundingFrustum == null) UpdateViewProjection(meshMaterialLibrary, entities, camera);
 
-            _shadowMapRenderModule.Draw(_graphicsDevice, meshMaterialLibrary, entities, pointLights, dirLights, camera);
+            _shadowMapRenderModule.Draw(meshMaterialLibrary, entities, pointLights, dirLights, camera);
 
             //Performance Profiler
             if (RenderingSettings.d_profiler)
@@ -703,10 +719,13 @@ namespace DeferredEngine.Renderer
         /// <summary>
         /// Create the projection matrices
         /// </summary>
-        /// <param name="camera"></param>
         /// <param name="meshMaterialLibrary"></param>
         /// <param name="entities"></param>
-        private void UpdateViewProjection(Camera camera, MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities)
+        /// <param name="camera"></param>
+        private void UpdateViewProjection(
+            MeshMaterialLibrary meshMaterialLibrary,
+            List<ModelEntity> entities,
+            Camera camera)
         {
             _viewProjectionHasChanged = camera.HasChanged;
 

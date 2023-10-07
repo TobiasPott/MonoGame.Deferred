@@ -30,6 +30,8 @@ namespace DeferredEngine.Renderer.RenderModules
         private Passes _pass;
 
         private BoundingFrustum _boundingFrustumShadow;
+        private GraphicsDevice _graphicsDevice;
+
 
         private enum Passes
         {
@@ -41,11 +43,12 @@ namespace DeferredEngine.Renderer.RenderModules
         public ShadowMapRenderModule(ContentManager content, string shaderPath)
         {
             Load(content, shaderPath);
-            Initialize();
         }
 
-        public void Initialize()
+        public void Initialize(GraphicsDevice graphicsDevice)
         {
+            _graphicsDevice = graphicsDevice;
+
             _WorldViewProj = _shader.Parameters["WorldViewProj"];
             _WorldView = _shader.Parameters["WorldView"];
             _World = _shader.Parameters["World"];
@@ -64,7 +67,11 @@ namespace DeferredEngine.Renderer.RenderModules
             _shader = content.Load<Effect>(shaderPath);
         }
 
-        public void Draw(GraphicsDevice graphicsDevice, MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<DeferredPointLight> pointLights, List<DeferredDirectionalLight> dirLights, Camera camera)
+        public void Draw(MeshMaterialLibrary meshMaterialLibrary, 
+            List<ModelEntity> entities, 
+            List<DeferredPointLight> pointLights, 
+            List<DeferredDirectionalLight> dirLights, 
+            Camera camera)
         {
             _pass = Passes.Omnidirectional;
 
@@ -90,7 +97,7 @@ namespace DeferredEngine.Renderer.RenderModules
                     //Update if we didn't initialize yet or if we are dynamic
                     if (!light.StaticShadows || light.ShadowMap == null)
                     {
-                        CreateShadowCubeMap(graphicsDevice, light, light.ShadowResolution, meshMaterialLibrary, entities);
+                        CreateShadowCubeMap(light, light.ShadowResolution, meshMaterialLibrary, entities);
 
                         light.HasChanged = false;
                         camera.HasChanged = true;
@@ -110,7 +117,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 {
                     RenderingStats.shadowMaps += 1;
 
-                    CreateShadowMapDirectionalLight(graphicsDevice, light, light.ShadowResolution, meshMaterialLibrary, entities);
+                    CreateShadowMapDirectionalLight(light, light.ShadowResolution, meshMaterialLibrary, entities);
 
                     camera.HasChanged = true;
                     light.HasChanged = false;
@@ -133,19 +140,19 @@ namespace DeferredEngine.Renderer.RenderModules
         /// <param name="size"></param>
         /// <param name="meshMaterialLibrary"></param>
         /// <param name="entities"></param>
-        private void CreateShadowCubeMap(GraphicsDevice graphicsDevice, DeferredPointLight light, int size, MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities)
+        private void CreateShadowCubeMap(DeferredPointLight light, int size, MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities)
         {
             //For VSM we need 2 channels, -> Vector2
             //todo: check if we need preserve contents
             if (light.ShadowMap == null)
-                light.ShadowMap = new RenderTarget2D(graphicsDevice, size, size * 6, false, SurfaceFormat.HalfSingle, DepthFormat.Depth24, 0, RenderTargetUsage.PreserveContents);
+                light.ShadowMap = new RenderTarget2D(_graphicsDevice, size, size * 6, false, SurfaceFormat.HalfSingle, DepthFormat.Depth24, 0, RenderTargetUsage.PreserveContents);
 
             Matrix lightViewProjection = new Matrix();
             CubeMapFace cubeMapFace; // = CubeMapFace.NegativeX;
 
             if (light.HasChanged)
             {
-                graphicsDevice.SetRenderTarget(light.ShadowMap);
+                _graphicsDevice.SetRenderTarget(light.ShadowMap);
 
                 Matrix lightProjection = Matrix.CreatePerspectiveFieldOfView((float)(Math.PI / 2), 1, 1, light.Radius);
                 Matrix lightView; // = identity
@@ -153,8 +160,8 @@ namespace DeferredEngine.Renderer.RenderModules
                 //Reset the blur array
                 light.faceBlurCount = new int[6];
 
-                graphicsDevice.SetRenderTarget(light.ShadowMap);
-                graphicsDevice.Clear(Color.Black);
+                _graphicsDevice.SetRenderTarget(light.ShadowMap);
+                _graphicsDevice.Clear(Color.Black);
 
                 for (int i = 0; i < 6; i++)
                 {
@@ -213,13 +220,13 @@ namespace DeferredEngine.Renderer.RenderModules
 
                     // Rendering!
 
-                    graphicsDevice.Viewport = new Viewport(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
+                    _graphicsDevice.Viewport = new Viewport(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
                     //_graphicsDevice.ScissorRectangle = new Rectangle(0, light.ShadowResolution* (int) cubeMapFace,  light.ShadowResolution, light.ShadowResolution);
 
                     _FarClip.SetValue(light.Radius);
                     _LightPositionWS.SetValue(light.Position);
 
-                    graphicsDevice.ScissorRectangle = new Rectangle(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
+                    _graphicsDevice.ScissorRectangle = new Rectangle(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
 
                     meshMaterialLibrary.Draw(renderType: MeshMaterialLibrary.RenderType.ShadowOmnidirectional,
                         viewProjection: lightViewProjection,
@@ -270,15 +277,15 @@ namespace DeferredEngine.Renderer.RenderModules
                     if (!draw)
                     {
 
-                        graphicsDevice.SetRenderTarget(light.ShadowMap);
+                        _graphicsDevice.SetRenderTarget(light.ShadowMap);
                         draw = true;
                     }
 
-                    graphicsDevice.Viewport = new Viewport(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
+                    _graphicsDevice.Viewport = new Viewport(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
 
                     //_graphicsDevice.Clear(Color.TransparentBlack);
                     //_graphicsDevice.Clear(ClearOptions.DepthBuffer, Color.White, 0, 0);
-                    graphicsDevice.ScissorRectangle = new Rectangle(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
+                    _graphicsDevice.ScissorRectangle = new Rectangle(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
 
                     meshMaterialLibrary.Draw(renderType: MeshMaterialLibrary.RenderType.ShadowOmnidirectional,
                         viewProjection: lightViewProjection,
@@ -296,14 +303,14 @@ namespace DeferredEngine.Renderer.RenderModules
         /// <param name="shadowResolution"></param>
         /// <param name="meshMaterialLibrary"></param>
         /// <param name="entities"></param>
-        private void CreateShadowMapDirectionalLight(GraphicsDevice graphicsDevice, DeferredDirectionalLight light, int shadowResolution, MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities)
+        private void CreateShadowMapDirectionalLight(DeferredDirectionalLight light, int shadowResolution, MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities)
         {
             //Create a renderTarget if we don't have one yet
             if (light.ShadowMap == null)
             {
                 //if (lightSource.ShadowFiltering != DirectionalLightSource.ShadowFilteringTypes.VSM)
                 //{
-                light.ShadowMap = new RenderTarget2D(graphicsDevice, shadowResolution, shadowResolution, false,
+                light.ShadowMap = new RenderTarget2D(_graphicsDevice, shadowResolution, shadowResolution, false,
                     SurfaceFormat.Single, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
                 //}
                 //else //For a VSM shadowMap we need 2 components
@@ -324,8 +331,8 @@ namespace DeferredEngine.Renderer.RenderModules
 
                 _boundingFrustumShadow = new BoundingFrustum(light.LightViewProjection);
 
-                graphicsDevice.SetRenderTarget(light.ShadowMap);
-                graphicsDevice.Clear(ClearOptions.DepthBuffer, Color.White, 1, 0);
+                _graphicsDevice.SetRenderTarget(light.ShadowMap);
+                _graphicsDevice.Clear(ClearOptions.DepthBuffer, Color.White, 1, 0);
 
                 meshMaterialLibrary.FrustumCulling(entities, _boundingFrustumShadow, true, light.Position);
 
@@ -346,8 +353,8 @@ namespace DeferredEngine.Renderer.RenderModules
 
                 meshMaterialLibrary.FrustumCulling(entities: entities, boundingFrustrum: _boundingFrustumShadow, hasCameraChanged: true, cameraPosition: light.Position);
 
-                graphicsDevice.SetRenderTarget(light.ShadowMap);
-                graphicsDevice.Clear(ClearOptions.DepthBuffer, Color.White, 1, 0);
+                _graphicsDevice.SetRenderTarget(light.ShadowMap);
+                _graphicsDevice.Clear(ClearOptions.DepthBuffer, Color.White, 1, 0);
 
                 _FarClip.SetValue(light.ShadowDepth);
                 _SizeBias.SetValue(RenderingSettings.ShadowBias * 2048 / light.ShadowResolution);
