@@ -1,11 +1,30 @@
-﻿using System;
+﻿using DeferredEngine.Renderer;
+using System.Numerics;
+
 // ReSharper disable InconsistentNaming
 
 namespace DeferredEngine.Recources
 {
+    public sealed class DisplaySettings
+    {
+        //Default & Display settings
+        public int g_screenwidth = 1280;
+        public int g_screenheight = 720;
+        public bool g_vsync = false;
+        public int g_fixedfps = 0;
+        public int u_showdisplayinfo = 3;
+        public bool p_physics = false;
+        public RenderModes g_rendermode = RenderModes.Deferred;
+
+        public Vector2 Resolution => new Vector2(g_screenwidth, g_screenheight);
+    }
+
+
     public static class RenderingSettings
     {
         //Default & Display settings
+        public static DisplaySettings Display = new DisplaySettings();
+
         public static int g_screenwidth = 1280;
         public static int g_screenheight = 720;
         public static bool g_vsync = false;
@@ -30,7 +49,7 @@ namespace DeferredEngine.Recources
         //Default Material
         public static bool d_defaultmaterial = false;
         public static float m_defaultroughness = 0.5f;
-        
+
         //Settings
         public static float g_farplane = 500;
         public static bool g_cpusort = true;
@@ -73,7 +92,7 @@ namespace DeferredEngine.Recources
                 Shaders.DeferredCompose.Parameters["useSSAO"].SetValue(_g_ssao_draw);
             }
         }
-        
+
         private static float _g_ssao_falloffmin = 0.001f;
         public static float g_ssao_falloffmin
         {
@@ -84,7 +103,7 @@ namespace DeferredEngine.Recources
                 Shaders.ScreenSpaceEffect_FalloffMin.SetValue(value);
             }
         }
-        
+
         private static float _g_ssao_falloffmax = 0.03f;
         public static float g_ssao_falloffmax
         {
@@ -95,7 +114,7 @@ namespace DeferredEngine.Recources
                 Shaders.ScreenSpaceEffect_FalloffMax.SetValue(value);
             }
         }
-        
+
         private static int _g_ssao_samples = 8;
         public static int g_ssao_samples
         {
@@ -169,8 +188,8 @@ namespace DeferredEngine.Recources
                 _chromaticAbberationStrength = value;
                 Shaders.PostProcessingParameter_ChromaticAbberationStrength.SetValue(_chromaticAbberationStrength);
 
-                if(_chromaticAbberationStrength<=0)
-                Shaders.PostProcessing.CurrentTechnique = Shaders.PostProcessingTechnique_Base;
+                if (_chromaticAbberationStrength <= 0)
+                    Shaders.PostProcessing.CurrentTechnique = Shaders.PostProcessingTechnique_Base;
                 else
                 {
                     Shaders.PostProcessing.CurrentTechnique = Shaders.PostProcessingTechnique_VignetteChroma;
@@ -207,7 +226,7 @@ namespace DeferredEngine.Recources
             set
             {
                 _exposure = value;
-                Shaders.PostProcessingParameter_PowExposure.SetValue((float) Math.Pow(2,_exposure));
+                Shaders.PostProcessingParameter_PowExposure.SetValue((float)Math.Pow(2, _exposure));
             }
         }
 
@@ -219,7 +238,7 @@ namespace DeferredEngine.Recources
 
         public static bool g_SSReflection
         {
-            get { return _g_SSReflection;}
+            get { return _g_SSReflection; }
             set
             {
                 _g_SSReflection = value;
@@ -271,7 +290,7 @@ namespace DeferredEngine.Recources
 
         public static bool g_SSReflectionTaa
         {
-            get { return _g_SSReflection_Taa;}
+            get { return _g_SSReflection_Taa; }
             set
             {
                 _g_SSReflection_Taa = value;
@@ -284,7 +303,7 @@ namespace DeferredEngine.Recources
         }
 
         // Screen Space Ambient Occlusion
-        
+
 
         //5 and 5 are good, 3 and 3 are cheap
         private static int msamples = 3;
@@ -336,7 +355,7 @@ namespace DeferredEngine.Recources
         public static float g_BloomStrength4 = 1.0f;
         public static float g_BloomStrength5 = 1.0f;
 
-        
+
         public static float ShadowBias = 0.005f;
         public static int sdf_threads = 4;
         public static bool sdf_cpu = false;
@@ -353,7 +372,7 @@ namespace DeferredEngine.Recources
         public static void ApplySettings()
         {
             ApplySSAO();
-            
+
             g_ssao_draw = true;
             g_PostProcessing = true;
             g_taa = true;
@@ -371,7 +390,7 @@ namespace DeferredEngine.Recources
             SCurveStrength = _sCurveStrength;
             Exposure = _exposure;
             ChromaticAbberationStrength = _chromaticAbberationStrength;
-            
+
         }
 
         public static void ApplySSAO()
