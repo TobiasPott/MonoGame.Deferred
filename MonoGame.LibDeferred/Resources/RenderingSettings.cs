@@ -63,7 +63,6 @@ namespace DeferredEngine.Recources
         //Screen Space Ambient Occlusion
 
         public static bool g_ssao_blur = true;
-
         private static bool _g_ssao_draw = true;
         public static bool g_ssao_draw
         {
