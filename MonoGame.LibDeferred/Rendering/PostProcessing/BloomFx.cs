@@ -340,12 +340,10 @@ namespace DeferredEngine.Renderer.PostProcessing
         /// Main draw function
         /// </summary>
         /// <param name="inputTexture">the image from which we want to extract bright parts and blur these</param>
-        /// <param name="width">width of our target. If different to the input.Texture width our final texture will be smaller/larger.
+        /// <param name="resolution">resolution of our target. If different to the input.Texture width our final texture will be smaller/larger.
         /// For example we can use half resolution. Input: 1280px wide -> width = 640px
         /// The smaller this value the better performance and the worse our final image quality</param>
-        /// <param name="height">see: width</param>
         /// <returns></returns>
-        public Texture2D Draw(Texture2D inputTexture, int width, int height) => Draw(inputTexture, new Vector2(width, height));
         public Texture2D Draw(Texture2D inputTexture, Vector2 resolution)
         {
             //Check if we are initialized

@@ -1073,7 +1073,7 @@ namespace DeferredEngine.Renderer
 
             _spriteBatch.Begin(0, BlendState.Additive);
 
-            _spriteBatch.Draw(_renderTargetSSAOEffect, new Rectangle(0, 0, RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight), Color.Red);
+            _spriteBatch.Draw(_renderTargetSSAOEffect, RenderingSettings.g_screenrect, Color.Red);
 
             _spriteBatch.End();
 
@@ -1222,7 +1222,7 @@ namespace DeferredEngine.Renderer
         {
             if (RenderingSettings.g_BloomEnable)
             {
-                Texture2D bloom = _bloomFx.Draw(input, RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight);
+                Texture2D bloom = _bloomFx.Draw(input, RenderingSettings.g_screenresolution);
 
                 _graphicsDevice.SetRenderTargets(_renderTargetBloom);
 
