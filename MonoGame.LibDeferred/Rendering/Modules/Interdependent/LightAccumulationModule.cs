@@ -36,8 +36,8 @@ namespace DeferredEngine.Renderer.RenderModules
         public void Initialize(GraphicsDevice graphicsDevice, Assets assets)
         {
             _graphicsDevice = graphicsDevice;
-            _fullscreenTarget = FullscreenTriangleBuffer.Instamce;
             _assets = assets;
+            _fullscreenTarget = FullscreenTriangleBuffer.Instance;
 
             _lightBlendState = new BlendState
             {

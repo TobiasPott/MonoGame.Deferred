@@ -86,7 +86,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice = graphicsDevice;
             _clearGBufferPass = _clearShader.Techniques["Clear"].Passes[0];
 
-            _fullscreenTarget = FullscreenTriangleBuffer.Instamce;
+            _fullscreenTarget = FullscreenTriangleBuffer.Instance;
 
             _WorldView = _gbufferShader.Parameters["WorldView"];
             _WorldViewProj = _gbufferShader.Parameters["WorldViewProj"];

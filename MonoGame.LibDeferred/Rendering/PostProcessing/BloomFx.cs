@@ -205,7 +205,7 @@ namespace DeferredEngine.Renderer.PostProcessing
         //Initialize graphicsDevice
         public void Initialize(GraphicsDevice graphicsDevice, Vector2 resolution)
         {
-            _fullscreenTarget = FullscreenTriangleBuffer.Instamce;
+            _fullscreenTarget = FullscreenTriangleBuffer.Instance;
 
             _graphicsDevice = graphicsDevice;
             UpdateResolution(resolution);

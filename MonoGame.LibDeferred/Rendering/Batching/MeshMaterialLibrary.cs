@@ -46,7 +46,7 @@ namespace DeferredEngine.Renderer.Helper
                 DepthBufferFunction = CompareFunction.Always
             };
 
-            _fullscreenTarget = FullscreenTriangleBuffer.Instamce;
+            _fullscreenTarget = FullscreenTriangleBuffer.Instance;
         }
 
         /// <summary>

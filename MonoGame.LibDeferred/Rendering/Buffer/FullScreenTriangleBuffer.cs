@@ -5,9 +5,9 @@ namespace DeferredEngine.Renderer.Helper
 {
     public class FullscreenTriangleBuffer
     {
-        public static FullscreenTriangleBuffer Instamce {  get; private set; }
+        public static FullscreenTriangleBuffer Instance {  get; private set; }
         public static void InitClass(GraphicsDevice graphicsDevice)
-        { Instamce = new FullscreenTriangleBuffer(graphicsDevice); }
+        { Instance = new FullscreenTriangleBuffer(graphicsDevice); }
 
 
 

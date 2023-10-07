@@ -28,7 +28,7 @@ namespace DeferredEngine.Renderer
         //Graphics & Helpers
         private GraphicsDevice _graphicsDevice;
         private SpriteBatch _spriteBatch;
-        private FullscreenTriangleBuffer FullscreenTarget { get => FullscreenTriangleBuffer.Instamce; }
+        private FullscreenTriangleBuffer FullscreenTarget { get => FullscreenTriangleBuffer.Instance; }
 
         private EditorRender _editorRender;
 
@@ -187,9 +187,6 @@ namespace DeferredEngine.Renderer
             _editorRender = new EditorRender();
             _editorRender.Initialize(graphicsDevice, assets);
 
-            _bloomFx.Initialize(_graphicsDevice, new Vector2(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight));
-            _taaFx.Initialize(graphicsDevice, FullscreenTriangleBuffer.Instamce);
-            _colorGradingFx.Initialize(graphicsDevice, FullscreenTriangleBuffer.Instamce);
 
             _lightAccumulationModule.Initialize(graphicsDevice, assets);
             _gBufferRenderModule.Initialize(graphicsDevice);
@@ -199,6 +196,10 @@ namespace DeferredEngine.Renderer
             _shadowMapRenderModule.Initialize(graphicsDevice);
             _decalRenderModule.Initialize(graphicsDevice);
             _helperGeometryRenderModule.Initialize(graphicsDevice);
+
+            _bloomFx.Initialize(_graphicsDevice, new Vector2(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight));
+            _taaFx.Initialize(graphicsDevice, FullscreenTriangleBuffer.Instance);
+            _colorGradingFx.Initialize(graphicsDevice, FullscreenTriangleBuffer.Instance);
 
             _assets = assets;
             //Apply some base settings to overwrite shader defaults with game settings defaults

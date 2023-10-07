@@ -133,7 +133,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
                 _volumePass.Apply();
             else
                 _distancePass.Apply();
-            FullscreenTriangleBuffer.Instamce.Draw(graphicsDevice);
+            FullscreenTriangleBuffer.Instance.Draw(graphicsDevice);
             //quadRenderer.RenderFullscreenQuad(graphicsDevice);
         }
 
@@ -301,7 +301,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
             _triangleAmount.SetValue((float)trianglesLength);
 
             _generateSDFPass.Apply();
-            FullscreenTriangleBuffer.Instamce.Draw(graphics);
+            FullscreenTriangleBuffer.Instance.Draw(graphics);
 
             _signedDistanceFieldDefinitionsCount = -1;
 
