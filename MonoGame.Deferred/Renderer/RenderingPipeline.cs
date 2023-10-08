@@ -525,7 +525,7 @@ namespace DeferredEngine.Renderer
             SetUpRenderTargets(RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight, true);
 
             //Our camera has changed we need to reinitialize stuff because we used a different camera in the cubemap render
-            camera.HasChanged = true;
+            //camera.HasChanged = true;
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)
@@ -655,7 +655,7 @@ namespace DeferredEngine.Renderer
             //Don't render for the first frame, we need a guideline first
             if (_boundingFrustum == null) UpdateViewProjection(meshMaterialLibrary, entities, camera);
 
-            _shadowMapModule.Draw(meshMaterialLibrary, entities, pointLights, dirLights, camera);
+            _shadowMapModule.Draw(meshMaterialLibrary, entities, pointLights, dirLights);
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)
@@ -690,10 +690,6 @@ namespace DeferredEngine.Renderer
             //If the camera didn't do anything we don't need to update this stuff
             if (_viewProjectionHasChanged)
             {
-                //We have processed the change, now setup for next frame as false
-                camera.HasChanged = false;
-                camera.HasMoved = false;
-
                 //View matrix
                 _view = Matrix.CreateLookAt(camera.Position, camera.Lookat, camera.Up);
                 _inverseView = Matrix.Invert(_view);

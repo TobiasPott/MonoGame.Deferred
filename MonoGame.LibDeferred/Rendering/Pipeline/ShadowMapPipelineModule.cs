@@ -64,7 +64,7 @@ namespace DeferredEngine.Renderer.RenderModules
             Pass_DistanceAlphaPass = Effect.Techniques["DrawDistanceDepthAlpha"].Passes[0];
         }
 
-        public void Draw(MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<DeferredPointLight> pointLights, List<DeferredDirectionalLight> dirLights, Camera camera)
+        public void Draw(MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<DeferredPointLight> pointLights, List<DeferredDirectionalLight> dirLights)
         {
             _pass = Passes.Omnidirectional;
 
@@ -93,7 +93,6 @@ namespace DeferredEngine.Renderer.RenderModules
                         CreateShadowCubeMap(light, light.ShadowResolution, meshMaterialLibrary, entities);
 
                         light.HasChanged = false;
-                        camera.HasChanged = true;
                     }
                 }
             }
@@ -112,7 +111,6 @@ namespace DeferredEngine.Renderer.RenderModules
 
                     CreateShadowMapDirectionalLight(light, light.ShadowResolution, meshMaterialLibrary, entities);
 
-                    camera.HasChanged = true;
                     light.HasChanged = false;
 
                     if (light.ScreenSpaceShadowBlur) dirLightShadowedWithSSBlur++;

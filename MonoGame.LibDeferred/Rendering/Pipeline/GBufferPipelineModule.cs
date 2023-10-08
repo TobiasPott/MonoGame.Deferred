@@ -126,7 +126,7 @@ namespace DeferredEngine.Renderer.RenderModules
         }
 
 
-        public void Draw(MeshMaterialLibrary meshMaterialLibrary, RenderTargetBinding[] _renderTargetBinding, Matrix _viewProjection, Matrix _view)
+        public void Draw(MeshMaterialLibrary meshMaterialLibrary, RenderTargetBinding[] _renderTargetBinding, Matrix viewProjection, Matrix view)
         {
             _graphicsDevice.SetRenderTargets(_renderTargetBinding);
 
@@ -143,7 +143,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
             //Draw the Gbuffer!
 
-            meshMaterialLibrary.Draw(renderType: MeshMaterialLibrary.RenderType.Opaque, viewProjection: _viewProjection, lightViewPointChanged: true, view: _view, renderModule: this);
+            meshMaterialLibrary.Draw(renderType: MeshMaterialLibrary.RenderType.Opaque, viewProjection: viewProjection, lightViewPointChanged: true, view: view, renderModule: this);
 
         }
 
