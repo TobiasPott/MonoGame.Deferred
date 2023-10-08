@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using DeferredEngine.Renderer;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Recources
@@ -192,8 +193,17 @@ namespace DeferredEngine.Recources
             public static readonly EffectParameter Param_AlbedoMap = Effect.Parameters["AlbedoMap"];
             public static readonly EffectParameter Param_NormalMap = Effect.Parameters["NormalMap"];
             public static readonly EffectParameter Param_DepthMap = Effect.Parameters["DepthMap"];
+
             public static readonly EffectParameter Param_ShadowMap = Effect.Parameters["ShadowMap"];
             public static readonly EffectParameter Param_SSShadowMap = Effect.Parameters["SSShadowMap"];
+
+            public static void SetGBufferParams(GBufferTarget gBufferTarget)
+            {
+                Param_AlbedoMap.SetValue(gBufferTarget.Albedo);
+                Param_NormalMap.SetValue(gBufferTarget.Normal);
+                Param_DepthMap.SetValue(gBufferTarget.Depth);
+            }
+
         }
 
     }

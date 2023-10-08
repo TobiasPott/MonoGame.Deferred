@@ -3,6 +3,7 @@ using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Ext;
 
 namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
 {
@@ -39,15 +40,15 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
         public EffectParameter Param_VolumeTexParam;
         public EffectParameter Param_VolumeTexSizeParam;
         public EffectParameter Param_VolumeTexResolution;
+
         public EffectParameter Param_InstanceInverseMatrix;
         public EffectParameter Param_InstanceScale;
         public EffectParameter Param_InstanceSDFIndex;
         public EffectParameter Param_InstancesCount;
 
-        public EffectParameter Param_NoiseMap;
-        public EffectParameter Param_AlbedoMap;
-        public EffectParameter Param_NormalMap;
-        public EffectParameter Param_DepthMap;
+        private EffectParameter Param_AlbedoMap;
+        private EffectParameter Param_NormalMap;
+        private EffectParameter Param_DepthMap;
 
         private DepthStencilState _stencilCullPass1;
         private DepthStencilState _stencilCullPass2;
@@ -93,6 +94,12 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
 
         }
 
+        public void SetGBufferParams(GBufferTarget gBufferTarget)
+        {
+            Param_AlbedoMap.SetValue(gBufferTarget.Albedo);
+            Param_NormalMap.SetValue(gBufferTarget.Normal);
+            Param_DepthMap.SetValue(gBufferTarget.Depth);
+        }
 
         private void Load(ContentManager content, string shaderPath = "Shaders/Deferred/DeferredPointLight")
         {
@@ -106,7 +113,7 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
             Technique_WriteStencil = Effect.Techniques["WriteStencilMask"];
 
             Param_ShadowMap = Effect.Parameters["ShadowMap"];
-
+            
             Param_Resolution = Effect.Parameters["Resolution"];
             Param_WorldView = Effect.Parameters["WorldView"];
             Param_WorldViewProjection = Effect.Parameters["WorldViewProj"];

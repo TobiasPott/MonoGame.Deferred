@@ -13,8 +13,9 @@ namespace DeferredEngine.Renderer.RenderModules
 
         private EffectParameter _paramAlbedoMap;
         private EffectParameter _paramNormalMap;
-        private EffectParameter _paramSSRMap;
         private EffectParameter _paramDepthMap;
+
+        private EffectParameter _paramSSRMap;
         private EffectParameter _paramFrustumCorners;
         private EffectParameter _paramCameraPositionWS;
         private EffectParameter _paramReflectionCubeMap;
@@ -53,19 +54,6 @@ namespace DeferredEngine.Renderer.RenderModules
             set { _paramReflectionCubeMap.SetValue(value); }
         }
 
-        public Texture2D AlbedoMap
-        {
-            set { _paramAlbedoMap.SetValue(value); }
-        }
-        public Texture2D DepthMap
-        {
-            set { _paramDepthMap.SetValue(value); }
-        }
-
-        public Texture2D NormalMap
-        {
-            set { _paramNormalMap.SetValue(value); }
-        }
         public Texture2D SSRMap
         {
             set { _paramSSRMap.SetValue(value); }
@@ -160,6 +148,13 @@ namespace DeferredEngine.Renderer.RenderModules
         public EnvironmentProbeRenderModule(ContentManager content, string shaderPath)
         {
             Load(content, shaderPath);
+        }
+
+        public void SetGBufferParams(GBufferTarget gBufferTarget)
+        {
+            _paramAlbedoMap.SetValue(gBufferTarget.Albedo);
+            _paramNormalMap.SetValue(gBufferTarget.Normal);
+            _paramDepthMap.SetValue(gBufferTarget.Depth);
         }
 
         public void Load(ContentManager content, string shaderPath)

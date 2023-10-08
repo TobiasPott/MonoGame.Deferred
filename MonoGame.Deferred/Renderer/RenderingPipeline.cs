@@ -1391,20 +1391,14 @@ namespace DeferredEngine.Renderer
 
             Shaders.ReconstructDepth.Param_DepthMap.SetValue(_gBufferTarget.Depth);
 
-            _lightAccumulationModule.PointLightRenderModule.Param_AlbedoMap.SetValue(_gBufferTarget.Albedo);
-            _lightAccumulationModule.PointLightRenderModule.Param_DepthMap.SetValue(_gBufferTarget.Depth);
-            _lightAccumulationModule.PointLightRenderModule.Param_NormalMap.SetValue(_gBufferTarget.Normal);
+            _lightAccumulationModule.PointLightRenderModule.SetGBufferParams(_gBufferTarget);
 
-            Shaders.DeferredDirectionalLight.Param_AlbedoMap.SetValue(_gBufferTarget.Albedo);
-            Shaders.DeferredDirectionalLight.Param_DepthMap.SetValue(_gBufferTarget.Depth);
-            Shaders.DeferredDirectionalLight.Param_NormalMap.SetValue(_gBufferTarget.Normal);
+            Shaders.DeferredDirectionalLight.SetGBufferParams(_gBufferTarget);
 
             Shaders.DeferredDirectionalLight.Param_SSShadowMap.SetValue(onlyEssentials ? _renderTargetScreenSpaceEffectUpsampleBlurVertical : _renderTargetScreenSpaceEffectBlurFinal);
 
-            _environmentProbeRenderModule.AlbedoMap = _gBufferTarget.Albedo;
-            _environmentProbeRenderModule.NormalMap = _gBufferTarget.Normal;
+            _environmentProbeRenderModule.SetGBufferParams(_gBufferTarget);
             _environmentProbeRenderModule.SSRMap = _renderTargetSSR;
-            _environmentProbeRenderModule.DepthMap = _gBufferTarget.Depth;
 
             _decalRenderModule.DepthMap = _gBufferTarget.Depth;
 
@@ -1419,12 +1413,11 @@ namespace DeferredEngine.Renderer
             Shaders.DeferredCompose.Param_SSAOMap.SetValue(_renderTargetScreenSpaceEffectBlurFinal);
 
             Shaders.SSAO.Param_NormalMap.SetValue(_gBufferTarget.Normal);
-
             Shaders.SSAO.Param_DepthMap.SetValue(_gBufferTarget.Depth);
             Shaders.SSAO.Param_SSAOMap.SetValue(_renderTargetSSAOEffect);
 
-            Shaders.SSR.Param_DepthMap.SetValue(_gBufferTarget.Depth);
             Shaders.SSR.Param_NormalMap.SetValue(_gBufferTarget.Normal);
+            Shaders.SSR.Param_DepthMap.SetValue(_gBufferTarget.Depth);
 
             _taaFx.DepthMap = _gBufferTarget.Depth;
         }

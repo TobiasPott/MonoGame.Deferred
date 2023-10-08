@@ -52,8 +52,6 @@ Texture2D NormalMap;
 //depth
 Texture2D DepthMap;
 
-Texture2D NoiseMap;
-
 SamplerState PointSampler
 {
     Texture = (AlbedoMap);
@@ -837,8 +835,6 @@ PixelShaderOutput VolumetricPixelShaderFunctionShadowed(VertexShaderOutput input
 		float3 ray = end_vector - start_vector;
 
 		float noiseX =  (frac(sin(dot(texCoord* (frac(Time)+1), float2(15.8989f, 76.132f) )) * 46336.23745f));
-
-		//float noiseX = NoiseMap.Sample(PointSampler, frac(((texCoord)* Resolution) / 64)).r; // + frac(input.TexCoord* Projection)).r;
 
 		[loop]
 		for (int i = 0; i < steps; i++)
