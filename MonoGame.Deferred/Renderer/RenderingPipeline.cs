@@ -151,7 +151,7 @@ namespace DeferredEngine.Renderer
             _inverseResolution = Vector2.One / RenderingSettings.g_ScreenResolution;
 
             _pointLightRenderModule = new PointLightRenderModule(content, "Shaders/Deferred/DeferredPointLight");
-            _lightAccumulationModule = new LightAccumulationModule(shaderManager) { PointLightRenderModule = _pointLightRenderModule };
+            _lightAccumulationModule = new LightAccumulationModule() { PointLightRenderModule = _pointLightRenderModule };
             _shadowMapRenderModule = new ShadowMapRenderModule(content, "Shaders/Shadow/ShadowMap");
             _gBufferRenderModule = new GBufferRenderModule(content, "Shaders/GbufferSetup/ClearGBuffer", "Shaders/GbufferSetup/Gbuffer");
             _forwardRenderModule = new ForwardRenderModule(content, "Shaders/forward/forward");

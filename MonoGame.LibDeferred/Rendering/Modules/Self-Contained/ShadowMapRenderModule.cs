@@ -40,7 +40,7 @@ namespace DeferredEngine.Renderer.RenderModules
             OmnidirectionalAlpha
         };
 
-        public ShadowMapRenderModule(ContentManager content, string shaderPath)
+        public ShadowMapRenderModule(ContentManager content, string shaderPath = "Shaders/Shadow/ShadowMap")
         {
             Load(content, shaderPath);
         }
@@ -62,7 +62,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _distanceAlphaPass = _shader.Techniques["DrawDistanceDepthAlpha"].Passes[0];
         }
 
-        public void Load(ContentManager content, string shaderPath)
+        public void Load(ContentManager content, string shaderPath = "Shaders/Shadow/ShadowMap")
         {
             _shader = content.Load<Effect>(shaderPath);
         }

@@ -54,9 +54,7 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
 
         public PointLightRenderModule(ContentManager content, string shaderPath = "Shaders/Deferred/DeferredPointLight")
         {
-            Effect = content.Load<Effect>(shaderPath);
-
-            InitializeShader();
+            Load(content, shaderPath);
 
             _stencilCullPass1 = new DepthStencilState()
             {
@@ -96,8 +94,10 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
         }
 
 
-        private void InitializeShader()
+        private void Load(ContentManager content, string shaderPath = "Shaders/Deferred/DeferredPointLight")
         {
+            Effect = content.Load<Effect>(shaderPath);
+
             Technique_Unshadowed = Effect.Techniques["Unshadowed"];
             Technique_UnshadowedVolumetric = Effect.Techniques["UnshadowedVolume"];
             Technique_Shadowed = Effect.Techniques["Shadowed"];
