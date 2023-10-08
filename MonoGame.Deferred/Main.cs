@@ -139,11 +139,20 @@ namespace DeferredEngine
             GUIControl.Initialize(RenderingSettings.g_ScreenResolution);
 
             FullscreenTriangleBuffer.InitClass(GraphicsDevice);
+            StaticAssets.InitClass(Content, GraphicsDevice);
+
             _screenManager.Load(Content, GraphicsDevice);
             // TODO: Add your initialization logic here
             _screenManager.Initialize(GraphicsDevice);
 
             base.Initialize();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            FullscreenTriangleBuffer.UnloadClass();
+            StaticAssets.UnloadClass();
+            base.Dispose(disposing);
         }
 
         /// <summary>
@@ -152,7 +161,6 @@ namespace DeferredEngine
         /// </summary>
         protected override void LoadContent()
         {
-            StaticAssets.Load(Content, GraphicsDevice);
         }
 
         /// <summary>
@@ -161,7 +169,6 @@ namespace DeferredEngine
         /// </summary>
         protected override void UnloadContent()
         {
-            StaticAssets.Unload();
             _screenManager.Unload(Content);
         }
 

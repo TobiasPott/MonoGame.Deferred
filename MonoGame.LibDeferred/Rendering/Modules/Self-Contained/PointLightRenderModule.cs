@@ -156,12 +156,12 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
         /// <param name="pointLights"></param>
         /// <param name="cameraOrigin"></param>
         /// <param name="gameTime"></param>
-        public void Draw(List<DeferredPointLight> pointLights, Vector3 cameraOrigin, GameTime gameTime, Assets assets, BoundingFrustum _boundingFrustum, bool _viewProjectionHasChanged, Matrix _view, Matrix _viewProjection, Matrix _inverseView, GraphicsDevice _graphicsDevice)
+        public void Draw(List<DeferredPointLight> pointLights, Vector3 cameraOrigin, GameTime gameTime, BoundingFrustum _boundingFrustum, bool _viewProjectionHasChanged, Matrix _view, Matrix _viewProjection, Matrix _inverseView, GraphicsDevice _graphicsDevice)
         {
 
             if (pointLights.Count < 1) return;
 
-            ModelMeshPart meshpart = assets.SphereMeshPart;
+            ModelMeshPart meshpart = StaticAssets.Instance.SphereMeshPart;
             _graphicsDevice.SetVertexBuffer(meshpart.VertexBuffer);
             _graphicsDevice.Indices = (meshpart.IndexBuffer);
             int primitiveCount = meshpart.PrimitiveCount;

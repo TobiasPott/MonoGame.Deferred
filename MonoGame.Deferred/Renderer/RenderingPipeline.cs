@@ -172,8 +172,7 @@ namespace DeferredEngine.Renderer
         /// Initialize all our rendermodules and helpers. Done after the Load() function
         /// </summary>
         /// <param name="graphicsDevice"></param>
-        /// <param name="assets"></param>
-        public void Initialize(GraphicsDevice graphicsDevice, Assets assets)
+        public void Initialize(GraphicsDevice graphicsDevice)
         {
             _graphicsDevice = graphicsDevice;
             _spriteBatch = new SpriteBatch(graphicsDevice);
@@ -183,10 +182,10 @@ namespace DeferredEngine.Renderer
             _lightingBufferTarget = new LightingBufferTarget(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
 
             _editorRender = new EditorRender();
-            _editorRender.Initialize(graphicsDevice, assets);
+            _editorRender.Initialize(graphicsDevice);
 
 
-            _lightAccumulationModule.Initialize(graphicsDevice, assets);
+            _lightAccumulationModule.Initialize(graphicsDevice);
             _gBufferRenderModule.Initialize(graphicsDevice);
             _forwardRenderModule.Initialize(graphicsDevice);
 
@@ -199,11 +198,10 @@ namespace DeferredEngine.Renderer
             _taaFx.Initialize(graphicsDevice, FullscreenTriangleBuffer.Instance);
             _colorGradingFx.Initialize(graphicsDevice, FullscreenTriangleBuffer.Instance);
 
-            _assets = assets;
             //Apply some base settings to overwrite shader defaults with game settings defaults
             RenderingSettings.ApplySettings();
 
-            Shaders.SSR.Param_NoiseMap.SetValue(_assets.NoiseMap);
+            Shaders.SSR.Param_NoiseMap.SetValue(StaticAssets.Instance.NoiseMap);
             SetUpRenderTargets(RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight, false);
 
         }
@@ -1490,7 +1488,6 @@ namespace DeferredEngine.Renderer
             _taaFx?.Dispose();
             _environmentProbeRenderModule?.Dispose();
             _decalRenderModule?.Dispose();
-            _assets?.Dispose();
             _gBufferTarget?.Dispose();
             _lightingBufferTarget?.Dispose();
             _renderTargetDecalOffTarget?.Dispose();

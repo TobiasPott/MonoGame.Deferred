@@ -20,20 +20,18 @@ namespace DeferredEngine.Renderer.RenderModules
 
         private BillboardBuffer _billboardBuffer;
 
-        private Assets _assets;
 
         private double _mouseMoved;
         private bool _mouseMovement;
         private readonly double mouseMoveTimer = 400;
 
-        public void Initialize(GraphicsDevice graphics, Assets assets)
+        public void Initialize(GraphicsDevice graphics)
         {
             _graphicsDevice = graphics;
-            _assets = assets;
 
             _billboardBuffer = new BillboardBuffer(Color.White, graphics);
             _idAndOutlineRenderer = new IdAndOutlineRenderer();
-            _idAndOutlineRenderer.Initialize(graphics, _billboardBuffer, _assets);
+            _idAndOutlineRenderer.Initialize(graphics, _billboardBuffer);
 
         }
 
@@ -78,7 +76,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
             //Decals
 
-            Shaders.Billboard.Param_Texture.SetValue(_assets.IconDecal);
+            Shaders.Billboard.Param_Texture.SetValue(StaticAssets.Instance.IconDecal);
             for (int index = 0; index < decals.Count; index++)
             {
                 var decal = decals[index];
@@ -87,7 +85,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
             //Lights
 
-            Shaders.Billboard.Param_Texture.SetValue(_assets.IconLight);
+            Shaders.Billboard.Param_Texture.SetValue(StaticAssets.Instance.IconLight);
             for (int index = 0; index < lights.Count; index++)
             {
                 var light = lights[index];
@@ -131,7 +129,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
             //EnvMap
 
-            Shaders.Billboard.Param_Texture.SetValue(_assets.IconEnvmap);
+            Shaders.Billboard.Param_Texture.SetValue(StaticAssets.Instance.IconEnvmap);
 
             DrawBillboard(envSample, staticViewProjection, view, gizmoContext);
 
@@ -224,8 +222,8 @@ namespace DeferredEngine.Renderer.RenderModules
             Shaders.IdRender.Param_ColorId.SetValue(color.ToVector4());
 
             Model model = gizmoMode == GizmoModes.Translation
-                ? _assets.EditorArrow
-                : _assets.EditorArrowRound;
+                ? StaticAssets.Instance.EditorArrow3D
+                : StaticAssets.Instance.EditorArrow3DRound;
 
 
             ModelMeshPart meshpart = model.Meshes[0].MeshParts[0];

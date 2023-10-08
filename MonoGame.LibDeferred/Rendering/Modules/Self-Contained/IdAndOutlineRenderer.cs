@@ -24,13 +24,11 @@ namespace DeferredEngine.Renderer.RenderModules
         private readonly Vector4 _selectedColor = new Vector4(1, 1, 0, 0.1f);
 
         private BillboardBuffer _billboardBuffer;
-        private Assets _assets;
 
-        public void Initialize(GraphicsDevice graphicsDevice, BillboardBuffer billboardBuffer, Assets assets)
+        public void Initialize(GraphicsDevice graphicsDevice, BillboardBuffer billboardBuffer)
         {
             _graphicsDevice = graphicsDevice;
             _billboardBuffer = billboardBuffer;
-            _assets = assets;
         }
 
         public void Draw(MeshMaterialLibrary meshMat,
@@ -76,7 +74,7 @@ namespace DeferredEngine.Renderer.RenderModules
             DrawBillboards(decals, pointLights, dirLights, envSample, viewProjection, view);
 
             //Now onto the gizmos
-            DrawGizmos(viewProjection, gizmoContext, _assets);
+            DrawGizmos(viewProjection, gizmoContext);
 
             Rectangle sourceRectangle =
             new Rectangle(Mouse.GetState().X, Mouse.GetState().Y, 1, 1);
@@ -115,7 +113,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.SetVertexBuffer(_billboardBuffer.VBuffer);
             _graphicsDevice.Indices = (_billboardBuffer.IBuffer);
 
-            Shaders.Billboard.Param_Texture.SetValue(_assets.IconLight);
+            Shaders.Billboard.Param_Texture.SetValue(StaticAssets.Instance.IconLight);
 
             Shaders.Billboard.Effect.CurrentTechnique = Shaders.Billboard.Technique_Id;
 
@@ -140,7 +138,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 DrawBillboard(world, view, staticViewProjection, light.Id);
             }
 
-            Shaders.Billboard.Param_Texture.SetValue(_assets.IconEnvmap);
+            Shaders.Billboard.Param_Texture.SetValue(StaticAssets.Instance.IconEnvmap);
             {
                 Matrix world = Matrix.CreateTranslation(envSample.Position);
                 DrawBillboard(world, view, staticViewProjection, envSample.Id);
@@ -148,7 +146,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
         }
 
-        public void DrawGizmos(Matrix staticViewProjection, GizmoDrawContext gizmoContext, Assets assets)
+        public void DrawGizmos(Matrix staticViewProjection, GizmoDrawContext gizmoContext)
         {
             if (gizmoContext.SelectedObjectId == 0) return;
 
@@ -161,17 +159,17 @@ namespace DeferredEngine.Renderer.RenderModules
             Matrix rotation = (RenderingStats.e_LocalTransformation || gizmoContext.GizmoMode == GizmoModes.Scale) ? gizmoContext.SelectedObject.RotationMatrix : Matrix.Identity;
 
             //Z
-            DrawArrow(position, rotation, new Vector3(0, 0, 0), 0.5f, new Color(1, 0, 0), staticViewProjection, assets);
-            DrawArrow(position, rotation, new Vector3((float)-Math.PI / 2.0f, 0, 0), 0.5f, new Color(2, 0, 0), staticViewProjection, assets);
-            DrawArrow(position, rotation, new Vector3(0, (float)Math.PI / 2.0f, 0), 0.5f, new Color(3, 0, 0), staticViewProjection, assets);
+            DrawArrow(position, rotation, new Vector3(0, 0, 0), 0.5f, new Color(1, 0, 0), staticViewProjection);
+            DrawArrow(position, rotation, new Vector3((float)-Math.PI / 2.0f, 0, 0), 0.5f, new Color(2, 0, 0), staticViewProjection);
+            DrawArrow(position, rotation, new Vector3(0, (float)Math.PI / 2.0f, 0), 0.5f, new Color(3, 0, 0), staticViewProjection);
 
-            DrawArrow(position, rotation, new Vector3((float)Math.PI, 0, 0), 0.5f, new Color(1, 0, 0), staticViewProjection, assets);
-            DrawArrow(position, rotation, new Vector3((float)Math.PI / 2.0f, 0, 0), 0.5f, new Color(2, 0, 0), staticViewProjection, assets);
-            DrawArrow(position, rotation, new Vector3(0, (float)-Math.PI / 2.0f, 0), 0.5f, new Color(3, 0, 0), staticViewProjection, assets);
+            DrawArrow(position, rotation, new Vector3((float)Math.PI, 0, 0), 0.5f, new Color(1, 0, 0), staticViewProjection);
+            DrawArrow(position, rotation, new Vector3((float)Math.PI / 2.0f, 0, 0), 0.5f, new Color(2, 0, 0), staticViewProjection);
+            DrawArrow(position, rotation, new Vector3(0, (float)-Math.PI / 2.0f, 0), 0.5f, new Color(3, 0, 0), staticViewProjection);
 
         }
 
-        private void DrawArrow(Vector3 position, Matrix rotationObject, Vector3 angles, float scale, Color color, Matrix staticViewProjection, Assets assets)
+        private void DrawArrow(Vector3 position, Matrix rotationObject, Vector3 angles, float scale, Color color, Matrix staticViewProjection)
         {
             Matrix rotation = angles.ToMatrixRotationXYZ();
             Matrix scaleMatrix = Matrix.CreateScale(0.75f, 0.75f, scale * 1.5f);
@@ -179,7 +177,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
             Shaders.IdRender.Param_WorldViewProj.SetValue(worldViewProj);
             Shaders.IdRender.Param_ColorId.SetValue(color.ToVector4());
-            ModelMeshPart meshpart = assets.EditorArrow.Meshes[0].MeshParts[0];
+            ModelMeshPart meshpart = StaticAssets.Instance.EditorArrow3D.Meshes[0].MeshParts[0];
 
             Shaders.IdRender.Technique_Id.Apply();
 

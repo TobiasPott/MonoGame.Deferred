@@ -15,7 +15,6 @@ namespace DeferredEngine.Renderer.RenderModules
         private bool _g_UseDepthStencilLightCulling;
         private BlendState _lightBlendState;
         private BoundingFrustum _boundingFrustum;
-        private Assets _assets;
 
         private bool _viewProjectionHasChanged;
 
@@ -32,10 +31,9 @@ namespace DeferredEngine.Renderer.RenderModules
         public LightAccumulationModule()
         { }
 
-        public void Initialize(GraphicsDevice graphicsDevice, Assets assets)
+        public void Initialize(GraphicsDevice graphicsDevice)
         {
             _graphicsDevice = graphicsDevice;
-            _assets = assets;
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
 
             _lightBlendState = new BlendState
@@ -133,7 +131,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.Clear(ClearOptions.Target, new Color(0, 0, 0, 0.0f), 1, 0);
             _graphicsDevice.BlendState = _lightBlendState;
 
-            PointLightRenderModule.Draw(pointLights, cameraOrigin, gameTime, _assets, _boundingFrustum, _viewProjectionHasChanged, _view, _viewProjection, _inverseView, _graphicsDevice);
+            PointLightRenderModule.Draw(pointLights, cameraOrigin, gameTime, _boundingFrustum, _viewProjectionHasChanged, _view, _viewProjection, _inverseView, _graphicsDevice);
             DrawDirectionalLights(dirLights, cameraOrigin);
 
             ////Performance Profiler
@@ -211,7 +209,6 @@ namespace DeferredEngine.Renderer.RenderModules
         public void Dispose()
         {
             _graphicsDevice?.Dispose();
-            _assets?.Dispose();
             _lightBlendState?.Dispose();
 
             PointLightRenderModule.Dispose();

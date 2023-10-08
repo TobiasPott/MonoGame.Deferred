@@ -33,7 +33,7 @@ namespace DeferredEngine.Logic
 
         public void Initialize(GraphicsDevice graphicsDevice)
         {
-            _renderer.Initialize(graphicsDevice, _assets);
+            _renderer.Initialize(graphicsDevice);
             _sceneLogic.Initialize(_assets, graphicsDevice);
             _guiLogic.Initialize(_assets, _sceneLogic.Camera);
             _editorLogic.Initialize(graphicsDevice);

@@ -5,11 +5,16 @@ namespace DeferredEngine.Renderer.Helper
 {
     public class FullscreenTriangleBuffer
     {
-        public static FullscreenTriangleBuffer Instance {  get; private set; }
+        #region Singleton & Static Load/Unload
+        public static FullscreenTriangleBuffer Instance { get; private set; }
         public static void InitClass(GraphicsDevice graphicsDevice)
-        { Instance = new FullscreenTriangleBuffer(graphicsDevice); }
+        {
+            if (Instance == null)
+                Instance = new FullscreenTriangleBuffer(graphicsDevice);
+        }
+        public static void UnloadClass() => Instance?.Dispose();
 
-
+        #endregion
 
         private VertexBuffer vertexBuffer;
 
