@@ -4,12 +4,11 @@ using DeferredEngine.Renderer.RenderModules.Default;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.LibDeferred.Rendering.Modules;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
     //Just a template
-    public class GBufferRenderModule : RenderingPipelineModule, IRenderModule
+    public class GBufferPipelineModule : RenderingPipelineModule, IRenderModule
     {
         private Effect Effect_Clear;
         private Effect Effect_GBuffer;
@@ -49,8 +48,8 @@ namespace DeferredEngine.Renderer.RenderModules
 
         private FullscreenTriangleBuffer _fullscreenTarget;
 
-        public GBufferRenderModule(ContentManager content, string shaderPathGbuffer = "Shaders/GbufferSetup/Gbuffer")
-            :base(content, shaderPathGbuffer)
+        public GBufferPipelineModule(ContentManager content, string shaderPathGbuffer = "Shaders/GbufferSetup/Gbuffer")
+            : base(content, shaderPathGbuffer)
         { }
 
         private float _farClip;
@@ -81,12 +80,13 @@ namespace DeferredEngine.Renderer.RenderModules
             Effect_GBuffer = content.Load<Effect>(shaderPathGBuffer);
             Effect_Clear = content.Load<Effect>(shaderPathGBufferClear);
         }
-        public void Initialize(GraphicsDevice graphicsDevice)
+        public override void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         {
-            _graphicsDevice = graphicsDevice;
+            base.Initialize(graphicsDevice, spriteBatch);
+            _fullscreenTarget = FullscreenTriangleBuffer.Instance;
+
             Pass_ClearGBuffer = Effect_Clear.Techniques["Clear"].Passes[0];
 
-            _fullscreenTarget = FullscreenTriangleBuffer.Instance;
 
             Param_WorldView = Effect_GBuffer.Parameters["WorldView"];
             Param_WorldViewProj = Effect_GBuffer.Parameters["WorldViewProj"];

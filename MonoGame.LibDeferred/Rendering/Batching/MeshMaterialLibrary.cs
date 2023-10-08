@@ -561,7 +561,7 @@ namespace DeferredEngine.Renderer.Helper
             //todo: We only need textures for non shadow mapping, right? Not quite actually, for alpha textures we need materials
             else if (renderType == RenderType.Opaque)
             {
-                ((GBufferRenderModule)renderModule).SetMaterialSettings(material);
+                ((GBufferPipelineModule)renderModule).SetMaterialSettings(material);
             }
         }
 

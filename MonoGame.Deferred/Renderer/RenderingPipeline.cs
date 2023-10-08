@@ -37,10 +37,10 @@ namespace DeferredEngine.Renderer
         private PointLightRenderModule _pointLightRenderModule;
         private LightAccumulationModule _lightAccumulationModule;
         private ShadowMapRenderModule _shadowMapRenderModule;
-        private GBufferRenderModule _gBufferRenderModule;
+        private GBufferPipelineModule _gBufferRenderModule;
         private EnvironmentProbeRenderModule _environmentProbeRenderModule;
         private DecalRenderModule _decalRenderModule;
-        private ForwardRenderModule _forwardRenderModule;
+        private ForwardPipelineModule _forwardRenderModule;
         private HelperGeometryRenderModule _helperGeometryRenderModule;
         private DistanceFieldRenderModule _distanceFieldRenderModule;
 
@@ -146,11 +146,12 @@ namespace DeferredEngine.Renderer
         {
             _inverseResolution = Vector2.One / RenderingSettings.g_ScreenResolution;
 
+            _gBufferRenderModule = new GBufferPipelineModule(content, "Shaders/GbufferSetup/GBuffer");
+            _forwardRenderModule = new ForwardPipelineModule(content, "Shaders/forward/forward");
+            _shadowMapRenderModule = new ShadowMapRenderModule(content, "Shaders/Shadow/ShadowMap");
+            
             _pointLightRenderModule = new PointLightRenderModule(content, "Shaders/Deferred/DeferredPointLight");
             _lightAccumulationModule = new LightAccumulationModule() { PointLightRenderModule = _pointLightRenderModule };
-            _shadowMapRenderModule = new ShadowMapRenderModule(content, "Shaders/Shadow/ShadowMap");
-            _gBufferRenderModule = new GBufferRenderModule(content, "Shaders/GbufferSetup/GBuffer");
-            _forwardRenderModule = new ForwardRenderModule(content, "Shaders/forward/forward");
             _environmentProbeRenderModule = new EnvironmentProbeRenderModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
 
             _bloomFx = new BloomFx(content);
@@ -181,12 +182,12 @@ namespace DeferredEngine.Renderer
             _editorRender.Initialize(graphicsDevice);
 
 
-            _lightAccumulationModule.Initialize(graphicsDevice);
-            _gBufferRenderModule.Initialize(graphicsDevice);
-            _forwardRenderModule.Initialize(graphicsDevice);
-
-            _environmentProbeRenderModule.Initialize(graphicsDevice);
+            _gBufferRenderModule.Initialize(graphicsDevice, _spriteBatch);
+            _forwardRenderModule.Initialize(graphicsDevice, _spriteBatch);
             _shadowMapRenderModule.Initialize(graphicsDevice);
+
+            _lightAccumulationModule.Initialize(graphicsDevice);
+            _environmentProbeRenderModule.Initialize(graphicsDevice);
             _decalRenderModule.Initialize(graphicsDevice);
             _helperGeometryRenderModule.Initialize(graphicsDevice);
 

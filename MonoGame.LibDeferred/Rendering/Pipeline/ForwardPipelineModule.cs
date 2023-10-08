@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
-    public class ForwardRenderModule : IRenderModule, IDisposable
+    public class ForwardPipelineModule : RenderingPipelineModule, IRenderModule
     {
         private const int MAXLIGHTS = 40;
         private const int MAXLIGHTSPERTILE = 40;
@@ -42,15 +42,11 @@ namespace DeferredEngine.Renderer.RenderModules
         private BoundingFrustumEx _tileFrustum;
         private Vector3[] _tileFrustumCorners = new Vector3[8];
 
-        private GraphicsDevice _graphicsDevice;
+        public ForwardPipelineModule(ContentManager content, string shaderPath = "Shaders/forward/forward")
+            : base(content, shaderPath)
+        { }
 
-
-        public ForwardRenderModule(ContentManager content, string shaderPath = "Shaders/forward/forward")
-        {
-            Load(content, shaderPath);
-        }
-
-        public void Load(ContentManager content, string shaderPath = "Shaders/forward/forward")
+        protected override void Load(ContentManager content, string shaderPath = "Shaders/forward/forward")
         {
             Effect = content.Load<Effect>(shaderPath);
 
@@ -70,11 +66,6 @@ namespace DeferredEngine.Renderer.RenderModules
             Param_CameraPositionWS = Effect.Parameters["CameraPositionWS"];
 
             Pass_Default = Effect.Techniques["Default"].Passes[0];
-        }
-
-        public void Initialize(GraphicsDevice graphicsDevice)
-        {
-            _graphicsDevice = graphicsDevice;
         }
 
 
@@ -244,7 +235,7 @@ namespace DeferredEngine.Renderer.RenderModules
         }
 
 
-        public void Dispose()
+        public override void Dispose()
         {
             Effect?.Dispose();
         }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MonoGame.LibDeferred.Rendering.Modules
+namespace DeferredEngine.Renderer.RenderModules
 {
 
     public abstract class RenderingPipelineModule :IDisposable
@@ -13,13 +13,13 @@ namespace MonoGame.LibDeferred.Rendering.Modules
         {
             Load(content, shaderPath);
         }
-        protected abstract void Load(ContentManager content, string shaderPath);
-        protected virtual void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
+        public virtual void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         {
             _graphicsDevice = graphicsDevice;
             _spriteBatch = spriteBatch;
         }
 
+        protected abstract void Load(ContentManager content, string shaderPath);
         public abstract void Dispose();
 
     }
