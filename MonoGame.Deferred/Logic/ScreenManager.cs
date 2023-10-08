@@ -67,7 +67,6 @@ namespace DeferredEngine.Logic
             _guiRenderer = new GUIRenderer();
 
             ShaderGlobals.content = content;
-            Shaders.Load(content);
 
             _shaderManager = new ShaderManager(content, graphicsDevice);
             _assets.Load(content, graphicsDevice);

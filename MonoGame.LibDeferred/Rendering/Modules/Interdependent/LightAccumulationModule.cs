@@ -28,10 +28,8 @@ namespace DeferredEngine.Renderer.RenderModules
         public PointLightRenderModule PointLightRenderModule;
 
 
-        public LightAccumulationModule(ShaderManager shaderManager, string shaderPath)
-        {
-            PointLightRenderModule = new PointLightRenderModule(shaderManager, shaderPath);
-        }
+        public LightAccumulationModule(ShaderManager shaderManager)
+        { }
 
         public void Initialize(GraphicsDevice graphicsDevice, Assets assets)
         {

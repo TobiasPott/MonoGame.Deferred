@@ -196,51 +196,6 @@ namespace DeferredEngine.Recources
             public static readonly EffectParameter Param_SSShadowMap = Effect.Parameters["SSShadowMap"];
         }
 
-        //Directional light
-        public static class DeferredPointLight
-        {
-            public static Effect deferredPointLight_Effect = ShaderGlobals.content.Load<Effect>("Shaders/Deferred/DeferredPointLight");
-
-            public static EffectTechnique deferredPointLightTechnique_Unshadowed = deferredPointLight_Effect.Techniques["Unshadowed"];
-            public static EffectTechnique deferredPointLightUnshadowedVolumetric = deferredPointLight_Effect.Techniques["UnshadowedVolume"];
-            public static EffectTechnique deferredPointLightShadowedSDF = deferredPointLight_Effect.Techniques["Shadowed"];
-            public static EffectTechnique deferredPointLightShadowed = deferredPointLight_Effect.Techniques["ShadowedSDF"];
-            public static EffectTechnique deferredPointLightShadowedVolumetric = deferredPointLight_Effect.Techniques["ShadowedVolume"];
-            public static EffectTechnique deferredPointLightWriteStencil = deferredPointLight_Effect.Techniques["WriteStencilMask"];
-
-            public static EffectParameter deferredPointLightParameterShadowMap = deferredPointLight_Effect.Parameters["ShadowMap"];
-
-            public static EffectParameter deferredPointLightParameterResolution = deferredPointLight_Effect.Parameters["Resolution"];
-            public static EffectParameter deferredPointLightParameter_WorldView = deferredPointLight_Effect.Parameters["WorldView"];
-            public static EffectParameter deferredPointLightParameter_WorldViewProjection = deferredPointLight_Effect.Parameters["WorldViewProj"];
-            public static EffectParameter deferredPointLightParameter_InverseView = deferredPointLight_Effect.Parameters["InverseView"];
-
-            public static EffectParameter deferredPointLightParameter_LightPosition = deferredPointLight_Effect.Parameters["lightPosition"];
-            public static EffectParameter deferredPointLightParameter_LightColor = deferredPointLight_Effect.Parameters["lightColor"];
-            public static EffectParameter deferredPointLightParameter_LightRadius = deferredPointLight_Effect.Parameters["lightRadius"];
-            public static EffectParameter deferredPointLightParameter_LightIntensity = deferredPointLight_Effect.Parameters["lightIntensity"];
-            public static EffectParameter deferredPointLightParameter_ShadowMapSize = deferredPointLight_Effect.Parameters["ShadowMapSize"];
-            public static EffectParameter deferredPointLightParameter_ShadowMapRadius = deferredPointLight_Effect.Parameters["ShadowMapRadius"];
-            public static EffectParameter deferredPointLightParameter_Inside = deferredPointLight_Effect.Parameters["inside"];
-            public static EffectParameter deferredPointLightParameter_Time = deferredPointLight_Effect.Parameters["Time"];
-            public static EffectParameter deferredPointLightParameter_FarClip = deferredPointLight_Effect.Parameters["FarClip"];
-            public static EffectParameter deferredPointLightParameter_LightVolumeDensity = deferredPointLight_Effect.Parameters["lightVolumeDensity"];
-
-            public static EffectParameter deferredPointLightParameter_VolumeTexParam = deferredPointLight_Effect.Parameters["VolumeTex"];
-            public static EffectParameter deferredPointLightParameter_VolumeTexSizeParam = deferredPointLight_Effect.Parameters["VolumeTexSize"];
-            public static EffectParameter deferredPointLightParameter_VolumeTexResolution = deferredPointLight_Effect.Parameters["VolumeTexResolution"];
-            public static EffectParameter deferredPointLightParameter_InstanceInverseMatrix = deferredPointLight_Effect.Parameters["InstanceInverseMatrix"];
-            public static EffectParameter deferredPointLightParameter_InstanceScale = deferredPointLight_Effect.Parameters["InstanceScale"];
-            public static EffectParameter deferredPointLightParameter_InstanceSDFIndex = deferredPointLight_Effect.Parameters["InstanceSDFIndex"];
-            public static EffectParameter deferredPointLightParameter_InstancesCount = deferredPointLight_Effect.Parameters["InstancesCount"];
-
-            public static EffectParameter deferredPointLightParameter_NoiseMap = deferredPointLight_Effect.Parameters["NoiseMap"];
-            public static EffectParameter deferredPointLightParameter_AlbedoMap = deferredPointLight_Effect.Parameters["AlbedoMap"];
-            public static EffectParameter deferredPointLightParameter_NormalMap = deferredPointLight_Effect.Parameters["NormalMap"];
-            public static EffectParameter deferredPointLightParameter_DepthMap = deferredPointLight_Effect.Parameters["DepthMap"];
-
-        }
-
     }
 
 }

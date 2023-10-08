@@ -5,6 +5,7 @@ using DeferredEngine.Renderer.Helper;
 using DeferredEngine.Renderer.Helper.HelperGeometry;
 using DeferredEngine.Renderer.PostProcessing;
 using DeferredEngine.Renderer.RenderModules;
+using DeferredEngine.Renderer.RenderModules.DeferredLighting;
 using DeferredEngine.Renderer.RenderModules.SDF;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -33,6 +34,7 @@ namespace DeferredEngine.Renderer
 
         private EditorRender _editorRender;
 
+        private PointLightRenderModule _pointLightRenderModule;
         private LightAccumulationModule _lightAccumulationModule;
         private ShadowMapRenderModule _shadowMapRenderModule;
         private GBufferRenderModule _gBufferRenderModule;
@@ -148,7 +150,8 @@ namespace DeferredEngine.Renderer
         {
             _inverseResolution = Vector2.One / RenderingSettings.g_ScreenResolution;
 
-            _lightAccumulationModule = new LightAccumulationModule(shaderManager, "Shaders/Deferred/DeferredPointLight");
+            _pointLightRenderModule = new PointLightRenderModule(shaderManager);
+            _lightAccumulationModule = new LightAccumulationModule(shaderManager) { PointLightRenderModule = _pointLightRenderModule };
             _shadowMapRenderModule = new ShadowMapRenderModule(content, "Shaders/Shadow/ShadowMap");
             _gBufferRenderModule = new GBufferRenderModule(content, "Shaders/GbufferSetup/ClearGBuffer", "Shaders/GbufferSetup/Gbuffer");
             _forwardRenderModule = new ForwardRenderModule(content, "Shaders/forward/forward");
@@ -1321,7 +1324,7 @@ namespace DeferredEngine.Renderer
             _renderTargetDecalOffTarget = new RenderTarget2D(_graphicsDevice, targetWidth,
                 targetHeight, false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
 
-            _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameterResolution.SetValue(new Vector2(targetWidth, targetHeight));
+            _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
 
             _renderTargetComposed = new RenderTarget2D(_graphicsDevice, targetWidth,
                targetHeight, false, SurfaceFormat.HalfVector4, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
