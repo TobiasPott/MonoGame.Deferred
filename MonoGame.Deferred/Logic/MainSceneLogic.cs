@@ -111,7 +111,7 @@ namespace DeferredEngine.Logic
             // NOTE: Our physics entity's position will be overwritten, so it doesn't matter
             // NOTE: If a physics object has mass it will move, otherwise it is static
 
-            AddEntity(model: _assets.IsoSphere,
+            AddEntity(model: StaticAssets.Instance.IsoSphere,
                 materialEffect: _assets.AlphaBlendRim,
                 position: new Vector3(20, 0, 10), angleX: Math.PI / 2, angleY: 0, angleZ: 0, scale: 5);
 
@@ -121,7 +121,7 @@ namespace DeferredEngine.Logic
                 MaterialEffect test = _assets.SilverMaterial.Clone();
                 test.Roughness = i / 9.0f + 0.1f;
                 test.Metallic = 1;
-                AddEntity(model: _assets.IsoSphere,
+                AddEntity(model: StaticAssets.Instance.IsoSphere,
                     materialEffect: test,
                     position: new Vector3(30 + i * 10, 0, 10), angleX: Math.PI / 2, angleY: 0, angleZ: 0, scale: 5);
             }
@@ -129,7 +129,7 @@ namespace DeferredEngine.Logic
             ////////////////////////////////////////////////////////////////////////
             // Decals
 
-            Decals.Add(new Decal(_assets.IconDecal, new Vector3(-6, 22, 15), new Vector3((float)(-Math.PI / 2), 0, 0), Vector3.One * 10));
+            Decals.Add(new Decal(StaticAssets.Instance.IconDecal, new Vector3(-6, 22, 15), new Vector3((float)(-Math.PI / 2), 0, 0), Vector3.One * 10));
 
             ////////////////////////////////////////////////////////////////////////
             // Dynamic lights

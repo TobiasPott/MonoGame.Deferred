@@ -5,72 +5,6 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DeferredEngine.Recources
 {
 
-    public class StaticAssets : IDisposable
-    {
-        #region Singleton & Static Load/Unload
-        public static StaticAssets Instance { get; private set; }
-        public static void InitClass(ContentManager content, GraphicsDevice graphicsDevice)
-        {
-            if (Instance == null)
-                Instance = new StaticAssets(content, graphicsDevice);
-        }
-        public static void UnloadClass() => Instance?.Dispose();
-        
-        #endregion
-
-        private GraphicsDevice _graphicsDevice;
-        private ContentManager _content;
-
-
-
-        public Texture2D IconLight { get; protected set; }
-        public Texture2D IconEnvmap { get; protected set; }
-        public Texture2D IconDecal { get; protected set; }
-
-        public Model EditorArrow3D { get; protected set; }
-        public Model EditorArrow3DRound { get; protected set; }
-
-
-        public Model Sphere { get; protected set; }
-        public ModelMeshPart SphereMeshPart { get; protected set; }
-        public ModelDefinition IsoSphere { get; protected set; }
-
-
-        public Texture2D NoiseMap { get; protected set; }
-
-
-        private StaticAssets(ContentManager content, GraphicsDevice graphicsDevice)
-        {
-            _graphicsDevice = graphicsDevice;
-            _content = content;
-
-            // Icons and UI Textures
-            IconDecal = content.Load<Texture2D>("Art/Editor/icon_decal");
-            IconLight = content.Load<Texture2D>("Art/Editor/icon_light");
-            IconEnvmap = content.Load<Texture2D>("Art/Editor/icon_envmap");
-
-            // Models and Meshes
-            EditorArrow3D = content.Load<Model>("Art/Editor/Arrow");
-            EditorArrow3DRound = content.Load<Model>("Art/Editor/ArrowRound");
-
-            IsoSphere = new SdfModelDefinition(content, "Art/default/isosphere", graphicsDevice, true);
-            Sphere = content.Load<Model>("Art/default/sphere");
-            SphereMeshPart = Sphere.Meshes[0].MeshParts[0];
-            // Textures and Maps
-            NoiseMap = content.Load<Texture2D>("Shaders/noise_blur");
-        }
-
-        public void Dispose()
-        {
-            IconLight?.Dispose();
-            IconEnvmap?.Dispose();
-            IconDecal?.Dispose();
-        }
-
-
-    }
-
-
     public class Assets : IDisposable
     {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -78,14 +12,6 @@ namespace DeferredEngine.Recources
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         //Default Meshes + Editor
-
-        public Model EditorArrow3D;
-        public Model EditorArrow3DRound;
-
-        public Model Sphere;
-        public ModelMeshPart SphereMeshPart;
-        public ModelDefinition IsoSphere;
-
         public ModelDefinition Plane;
 
         public ModelDefinition Cube;
@@ -94,10 +20,6 @@ namespace DeferredEngine.Recources
         public ModelDefinition Tiger;
 
         public ModelDefinition HumanModel;
-
-        public Texture2D IconLight;
-        public Texture2D IconEnvmap;
-        public Texture2D IconDecal;
 
         //Default Materials
 
@@ -118,8 +40,6 @@ namespace DeferredEngine.Recources
         public MaterialEffect MirrorMaterial;
 
         //Shader stuff
-
-        public Texture2D NoiseMap;
 
         public static Texture2D BaseTex;
 
@@ -156,14 +76,6 @@ namespace DeferredEngine.Recources
         public void Load(ContentManager content, GraphicsDevice graphicsDevice)
         {
             //Default Meshes + Editor
-            EditorArrow3D = content.Load<Model>("Art/Editor/Arrow");
-            EditorArrow3DRound = content.Load<Model>("Art/Editor/ArrowRound");
-
-            IsoSphere = new SdfModelDefinition(content, "Art/default/isosphere", graphicsDevice, true);
-
-            Sphere = content.Load<Model>("Art/default/sphere");
-            SphereMeshPart = Sphere.Meshes[0].MeshParts[0];
-
             Plane = new SdfModelDefinition(content, "Art/Plane", graphicsDevice);
 
             Cube = new SdfModelDefinition(content, "Art/test/cube", graphicsDevice, true);
@@ -171,9 +83,6 @@ namespace DeferredEngine.Recources
             Tiger = new SdfModelDefinition(content, "Art/Tiger/Tiger", graphicsDevice, true);
             HumanModel = new SdfModelDefinition(content, "Art/Human/human", graphicsDevice, true);
 
-            IconDecal = content.Load<Texture2D>("Art/Editor/icon_decal");
-            IconLight = content.Load<Texture2D>("Art/Editor/icon_light");
-            IconEnvmap = content.Load<Texture2D>("Art/Editor/icon_envmap");
             //Default Materials
 
             BaseMaterial = CreateMaterial(Color.Red, 0.5f, 0, type: MaterialEffect.MaterialTypes.Basic);
@@ -205,29 +114,7 @@ namespace DeferredEngine.Recources
             BaseTex = new Texture2D(graphicsDevice, 1, 1);
             BaseTex.SetData(new Color[] { Color.White });
 
-            NoiseMap = content.Load<Texture2D>("Shaders/noise_blur");
             //Meshes and Materials
-
-            //Trabant = content.Load<Model>("Art/test/source/trabant_realtime_v3");
-
-            //TrabantBigParts = CreateMaterial(Color.White, roughness: 1, metallic: 0,
-            //    albedoMap: content.Load<Texture2D>("Art/test/textures/big_parts_col"),
-            //    normalMap: content.Load<Texture2D>("Art/test/textures/big_parts_nor"),
-            //    roughnessMap: content.Load<Texture2D>("Art/test/textures/big_parts_rough"));
-
-            //MaterialEffect TrabantWindow = CreateMaterial(Color.White, roughness: 0.04f, metallic: 0.5f);
-
-            //MaterialEffect TrabantSmallParts = CreateMaterial(Color.White, roughness: 1, metallic: 0,
-            //    albedoMap: content.Load<Texture2D>("Art/test/textures/small_parts_col"),
-            //    normalMap: null,
-            //    roughnessMap: content.Load<Texture2D>("Art/test/textures/small_parts_rough"));
-
-            //Trabant.Meshes[0].MeshParts[0].Effect = TrabantWindow;
-            //Trabant.Meshes[1].MeshParts[0].Effect = TrabantBigParts;
-            //Trabant.Meshes[3].MeshParts[0].Effect = TrabantSmallParts;
-
-            //
-
             StanfordDragon = new SdfModelDefinition(content, "Art/default/dragon_uv_smooth", graphicsDevice, false, SdfModelDefinition.DefaultSdfResolution * 1.4f);
             StanfordDragonLowpoly = new SdfModelDefinition(content, "Art/default/dragon_lowpoly", graphicsDevice, true, SdfModelDefinition.DefaultSdfResolution * 1.2f);
 
@@ -538,9 +425,6 @@ namespace DeferredEngine.Recources
 
         public void Dispose()
         {
-            IconLight?.Dispose();
-            IconEnvmap?.Dispose();
-            IconDecal?.Dispose();
             BaseMaterial?.Dispose();
             GoldMaterial?.Dispose();
             EmissiveMaterial?.Dispose();
@@ -552,7 +436,6 @@ namespace DeferredEngine.Recources
             MetalRough03Material?.Dispose();
             AlphaBlendRim?.Dispose();
             MirrorMaterial?.Dispose();
-            NoiseMap?.Dispose();
             sponza_fabric_metallic?.Dispose();
             sponza_fabric_spec?.Dispose();
             sponza_curtain_metallic?.Dispose();
