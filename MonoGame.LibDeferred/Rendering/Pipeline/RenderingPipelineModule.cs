@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using DeferredEngine.Entities;
+using DeferredEngine.Renderer.Helper;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.RenderModules
@@ -21,6 +23,16 @@ namespace DeferredEngine.Renderer.RenderModules
 
         protected abstract void Load(ContentManager content, string shaderPath);
         public abstract void Dispose();
+
+
+        public virtual void Draw(MeshMaterialLibrary meshMat)
+        {
+
+        }
+
+        //public RenderTarget2D Draw(RenderTarget2D output, MeshMaterialLibrary meshMat, Matrix viewProjection, Camera camera, List<DeferredPointLight> pointLights, BoundingFrustum frustum)
+        //public void Draw(MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<DeferredPointLight> pointLights, List<DeferredDirectionalLight> dirLights, Camera camera)
+        //public void Draw(RenderTargetBinding[] _renderTargetBinding, MeshMaterialLibrary meshMaterialLibrary, Matrix _viewProjection, Matrix _view)
 
     }
 

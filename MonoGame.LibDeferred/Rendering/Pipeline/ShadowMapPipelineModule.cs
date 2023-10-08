@@ -64,11 +64,7 @@ namespace DeferredEngine.Renderer.RenderModules
             Pass_DistanceAlphaPass = Effect.Techniques["DrawDistanceDepthAlpha"].Passes[0];
         }
 
-        public void Draw(MeshMaterialLibrary meshMaterialLibrary,
-            List<ModelEntity> entities,
-            List<DeferredPointLight> pointLights,
-            List<DeferredDirectionalLight> dirLights,
-            Camera camera)
+        public void Draw(MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<DeferredPointLight> pointLights, List<DeferredDirectionalLight> dirLights, Camera camera)
         {
             _pass = Passes.Omnidirectional;
 

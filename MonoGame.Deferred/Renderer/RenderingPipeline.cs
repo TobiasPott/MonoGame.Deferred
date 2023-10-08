@@ -855,7 +855,7 @@ namespace DeferredEngine.Renderer
         /// <param name="meshMaterialLibrary"></param>
         private void DrawGBuffer(MeshMaterialLibrary meshMaterialLibrary)
         {
-            _gBufferModule.Draw(_gBufferTarget.Bindings, meshMaterialLibrary, _viewProjection, _view);
+            _gBufferModule.Draw(meshMaterialLibrary, _gBufferTarget.Bindings, _viewProjection, _view);
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)
@@ -1130,7 +1130,8 @@ namespace DeferredEngine.Renderer
             _graphicsDevice.SetRenderTarget(input);
             ReconstructDepth();
 
-            return _forwardModule.Draw(input, meshMaterialLibrary, _viewProjection, camera, pointLights, _boundingFrustum);
+            _forwardModule.PrepareDraw(camera, pointLights, _boundingFrustum);
+            return _forwardModule.Draw(meshMaterialLibrary, input, _viewProjection);
         }
 
         private RenderTarget2D DrawBloom(RenderTarget2D input)

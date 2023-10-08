@@ -126,8 +126,7 @@ namespace DeferredEngine.Renderer.RenderModules
         }
 
 
-
-        public void Draw(RenderTargetBinding[] _renderTargetBinding, MeshMaterialLibrary meshMaterialLibrary, Matrix _viewProjection, Matrix _view)
+        public void Draw(MeshMaterialLibrary meshMaterialLibrary, RenderTargetBinding[] _renderTargetBinding, Matrix _viewProjection, Matrix _view)
         {
             _graphicsDevice.SetRenderTargets(_renderTargetBinding);
 

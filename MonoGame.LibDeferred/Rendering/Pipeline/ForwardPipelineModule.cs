@@ -76,29 +76,20 @@ namespace DeferredEngine.Renderer.RenderModules
         /// <summary>
         /// Draw forward shaded, alpha blended materials. Very basic and unoptimized algorithm. Can be improved to use tiling in future.
         /// </summary>
-        /// <param name="output"></param>
-        /// <param name="meshMat"></param>
-        /// <param name="viewProjection"></param>
-        /// <param name="camera"></param>
-        /// <param name="pointLights"></param>
-        /// <param name="frustum"></param>
-        /// <returns></returns>
-        public RenderTarget2D Draw(RenderTarget2D output,
-            MeshMaterialLibrary meshMat,
-            Matrix viewProjection,
-            Camera camera,
-            List<DeferredPointLight> pointLights,
-            BoundingFrustum frustum)
+        public RenderTarget2D Draw(MeshMaterialLibrary meshMat, RenderTarget2D output, Matrix viewProjection)
         {
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
-
-            SetupLighting(camera, pointLights, frustum);
-
-            //TiledLighting(frustum, pointLights, 20, 10);
 
             meshMat.Draw(MeshMaterialLibrary.RenderType.Forward, viewProjection, renderModule: this);
 
             return output;
+        }
+
+        public void PrepareDraw(Camera camera, List<DeferredPointLight> pointLights, BoundingFrustum frustum)
+        {
+            SetupLighting(camera, pointLights, frustum);
+
+            //TiledLighting(frustum, pointLights, 20, 10);
         }
 
         private void TiledLighting(BoundingFrustum frustum, List<DeferredPointLight> pointLights, int cols, int rows)
