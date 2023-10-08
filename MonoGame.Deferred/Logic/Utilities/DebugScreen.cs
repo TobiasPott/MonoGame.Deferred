@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using DeferredEngine.Recources;
+﻿using DeferredEngine.Recources;
 using DeferredEngine.Recources.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Text;
 
 namespace DeferredEngine.Logic
 {
@@ -90,7 +89,7 @@ namespace DeferredEngine.Logic
             //_state = state;
             _spriteBatch = new SpriteBatch(graphicsDevice);
             _graphicsDevice = graphicsDevice;
-            
+
         }
 
         public void LoadContent(ContentManager content)
@@ -177,9 +176,9 @@ namespace DeferredEngine.Logic
             if (cmds.Length < 2) return false;
             if (prop != null)
             {
-                
+
                 Object value = ConvertStringToType(cmds[1], prop.FieldType);
-                
+
                 if (cmds.Length > 0 && value != null)
                 {
                     prop.SetValue(null, value);
@@ -281,7 +280,7 @@ namespace DeferredEngine.Logic
                             new Vector2(10.0f + strLength.X, 105.0f + strLength.Y * index), consoleColorLocal);
                     }
 
-                    
+
                 }
 
 
@@ -311,7 +310,7 @@ namespace DeferredEngine.Logic
 
                 long totalmemory = GC.GetTotalMemory(false);
                 if (_maxGcMemory < totalmemory) _maxGcMemory = totalmemory;
-                
+
                 //clear
                 _mngStringBuilder.Length = 0;
 
@@ -320,22 +319,22 @@ namespace DeferredEngine.Logic
                 _mngStringBuilder.Append(sb_ms);
 
                 _mngStringBuilder.AppendAt(30, sb_fps);
-                _mngStringBuilder.Append((int) Math.Round(_fps));
+                _mngStringBuilder.Append((int)Math.Round(_fps));
                 _mngStringBuilder.Append(sb_dotdotdot);
-                _mngStringBuilder.Append((int) Math.Round(_smoothfpsShow));
+                _mngStringBuilder.Append((int)Math.Round(_smoothfpsShow));
                 _mngStringBuilder.Append(sb_greaterthan);
-                _mngStringBuilder.Append((int) Math.Round(_minfps));
+                _mngStringBuilder.Append((int)Math.Round(_minfps));
                 _mngStringBuilder.AppendLine(sb_closeBracket);
-                    
+
                 _mngStringBuilder.Append(RenderingSettings.g_screenwidth);
                 _mngStringBuilder.Append(sb_multipliedBy);
                 _mngStringBuilder.Append(RenderingSettings.g_screenheight);
                 _mngStringBuilder.Append(sb_emptySpace);
-                _mngStringBuilder.Append(RenderModesToString( RenderingSettings.g_rendermode));
+                _mngStringBuilder.Append(RenderModesToString(RenderingSettings.g_rendermode));
                 _mngStringBuilder.Append(sb_memoryGc);
-                _mngStringBuilder.Append(totalmemory/1024);
+                _mngStringBuilder.Append(totalmemory / 1024);
                 _mngStringBuilder.Append(sb_dotdotdot);
-                _mngStringBuilder.Append(_maxGcMemory/1024);
+                _mngStringBuilder.Append(_maxGcMemory / 1024);
 
                 _mngStringBuilder.Append(sb_meshes);
                 _mngStringBuilder.Append(RenderingStats.MeshDraws);
@@ -371,7 +370,7 @@ namespace DeferredEngine.Logic
 
 
         }
-        
+
         /// <summary>
         /// We want to extract all the strings starting with d_profile
         /// </summary>
@@ -386,7 +385,7 @@ namespace DeferredEngine.Logic
                 FieldInfo info = info2[index];
                 if (info.Name.Contains("d_profile"))
                 {
-                    _spriteBatch.DrawString(_sprFont, info.Name +" "+ info.GetValue(null), new Vector2(10.0f, 55.0f + foundIndex*15),
+                    _spriteBatch.DrawString(_sprFont, info.Name + " " + info.GetValue(null), new Vector2(10.0f, 55.0f + foundIndex * 15),
                         Color.White);
                     foundIndex++;
                     //return;
@@ -441,7 +440,7 @@ namespace DeferredEngine.Logic
 
         public static void AddString(string info)
         {
-                StringList.Add(info);
+            StringList.Add(info);
         }
 
         public static void AddAiStringPosition(string info, Color color, Vector3 position)
@@ -452,7 +451,7 @@ namespace DeferredEngine.Logic
 
         public void DrawScreenSpace(Matrix projection, Matrix view)
         {
-            
+
             if (_clearCommand)
             {
                 AiDebugString.Clear();
@@ -508,10 +507,10 @@ namespace DeferredEngine.Logic
                             break;
                         }
                     case "System.Single":
-                    {
-                        if(input.Contains('.'))
-                            input = input.Replace('.', ',');
-                        output = Convert.ToSingle(input);
+                        {
+                            if (input.Contains('.'))
+                                input = input.Replace('.', ',');
+                            output = Convert.ToSingle(input);
                             break;
                         }
                     case "System.Int32":
@@ -546,7 +545,7 @@ namespace DeferredEngine.Logic
         }
     }
 
-    class SampleComparator : Comparer<String>
+    internal class SampleComparator : Comparer<String>
     {
 
         public override int Compare(string x, string y)

@@ -640,7 +640,7 @@ namespace DeferredEngine.Logic
         public void UpdateResolution()
         {
             GUIControl.UpdateResolution(RenderingSettings.g_screenresolution);
-            GuiCanvas.Resize(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight);
+            GuiCanvas.Resize(RenderingSettings.g_screenresolution);
         }
     }
 }

@@ -9,6 +9,7 @@ using DeferredEngine.Renderer.RenderModules.SDF;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Ext;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -771,16 +772,15 @@ namespace DeferredEngine.Renderer
                     {
                         case 0: //2 frames, just basic translation. Worst taa implementation. Not good with the continous integration used
                             {
-                                float translation = _temporalAAOffFrame ? 0.5f : -0.5f;
-                                _viewProjection = _viewProjection * Matrix.CreateTranslation(new Vector3(translation / RenderingSettings.g_screenwidth,
-                                                                                                        translation / RenderingSettings.g_screenheight, 0));
+                                Vector2 translation = Vector2.One * (_temporalAAOffFrame ? 0.5f : -0.5f);
+                                _viewProjection = _viewProjection * (translation / RenderingSettings.g_screenresolution).ToMatrixTranslationXY();
                             }
                             break;
                         case 1: // Just random translation
                             {
                                 float randomAngle = FastRand.NextAngle();
-                                Vector3 translation = new Vector3((float)Math.Sin(randomAngle) / RenderingSettings.g_screenwidth, (float)Math.Cos(randomAngle) / RenderingSettings.g_screenheight, 0) * 0.5f;
-                                _viewProjection = _viewProjection * Matrix.CreateTranslation(translation);
+                                Vector2 translation = (new Vector2((float)Math.Sin(randomAngle), (float)Math.Cos(randomAngle)) / RenderingSettings.g_screenresolution) * 0.5f; ;
+                                _viewProjection = _viewProjection * translation.ToMatrixTranslationXY();
 
                             }
                             break;

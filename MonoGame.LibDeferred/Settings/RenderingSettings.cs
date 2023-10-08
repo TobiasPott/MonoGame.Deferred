@@ -26,6 +26,17 @@ namespace DeferredEngine.Recources
         //Default & Display settings
         public static ScreenSettings Screen = new ScreenSettings();
 
+        public static void SetResolution(int width, int height) => SetResolution(new Vector2(width, height));
+        public static void SetResolution(Vector2 resolution)
+        {
+            g_screenwidth = (int)resolution.X;
+            g_screenheight = (int)resolution.Y;
+            g_screenresolution = resolution;
+            g_screenrect.Width = g_screenwidth;
+            g_screenrect.Height = g_screenheight;
+
+        }
+
         public static int g_screenwidth = 1280;
         public static int g_screenheight = 720;
         public static Vector2 g_screenresolution = new Vector2(1280, 720);

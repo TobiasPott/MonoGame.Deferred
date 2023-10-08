@@ -28,7 +28,7 @@ namespace DeferredEngine
         private bool _vsync = true;
         private int _fixFPS = 0;
         private bool _isActive = true;
-        
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@ namespace DeferredEngine
             {
                 ForceUpdater = { Gravity = new BEPUutilities.Vector3(0, 0, -9.81f) }
             };
-            
+
             //Size of our application / starting back buffer
             _graphics.PreferredBackBufferWidth = RenderingSettings.g_screenwidth;
             _graphics.PreferredBackBufferHeight = RenderingSettings.g_screenheight;
@@ -66,7 +66,7 @@ namespace DeferredEngine
 
             //Update all our rendertargets when we resize
             Window.ClientSizeChanged += ClientChangedWindowSize;
-            
+
             //Update framerate etc. when not the active window
             Activated += IsActivated;
             Deactivated += IsDeactivated;
@@ -75,9 +75,9 @@ namespace DeferredEngine
 
         private void CheckFPSLimitChange()
         {
-            if(_vsync != RenderingSettings.g_vsync || _fixFPS != RenderingSettings.g_fixedfps)
+            if (_vsync != RenderingSettings.g_vsync || _fixFPS != RenderingSettings.g_fixedfps)
             {
-                
+
                 SetFPSLimit();
                 _vsync = RenderingSettings.g_vsync;
                 _fixFPS = RenderingSettings.g_fixedfps;
@@ -94,11 +94,11 @@ namespace DeferredEngine
             }
             else
             {
-                if(RenderingSettings.g_fixedfps > 0)
+                if (RenderingSettings.g_fixedfps > 0)
                 {
                     _graphics.SynchronizeWithVerticalRetrace = false;
                     IsFixedTimeStep = true;
-                    TargetElapsedTime = TimeSpan.FromMilliseconds(1000.0f/RenderingSettings.g_fixedfps);
+                    TargetElapsedTime = TimeSpan.FromMilliseconds(1000.0f / RenderingSettings.g_fixedfps);
                 }
                 else //Vsync
                 {
@@ -132,9 +132,8 @@ namespace DeferredEngine
                 _graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
                 _graphics.ApplyChanges();
 
-                RenderingSettings.g_screenwidth = Window.ClientBounds.Width;
-                RenderingSettings.g_screenheight = Window.ClientBounds.Height;
-
+                RenderingSettings.SetResolution(Window.ClientBounds.Width, Window.ClientBounds.Height);
+                
                 _screenManager.UpdateResolution();
             }
         }
@@ -186,11 +185,11 @@ namespace DeferredEngine
             //Exit the game when pressing escape
             if (Input.WasKeyPressed(Keys.Escape))
                 Exit();
-            
+
             _screenManager.Update(gameTime, _isActive);
 
             //BEPU Physics
-            if(!RenderingSettings.e_enableeditor && RenderingSettings.p_physics)
+            if (!RenderingSettings.e_enableeditor && RenderingSettings.p_physics)
                 _physicsSpace.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
 
             //base.Update(gameTime);
