@@ -14,22 +14,23 @@ namespace DeferredEngine.Renderer.RenderModules
         private const int MAXLIGHTS = 40;
         private const int MAXLIGHTSPERTILE = 40;
 
-        private Effect _shader;
+        private Effect Effect;
 
-        private EffectParameter _worldParam;
-        private EffectParameter _worldViewProjParam;
-        private EffectParameter _worldViewITParam;
+        private EffectPass Pass_Default;
 
-        private EffectParameter _lightAmountParam;
+        private EffectParameter Param_World;
+        private EffectParameter Param_WorldViewProj;
+        private EffectParameter Param_WorldViewIT;
+        private EffectParameter Param_CameraPositionWS;
 
-        private EffectParameter _lightPositionWSParam;
-        private EffectParameter _lightRadiusParam;
-        private EffectParameter _lightIntensityParam;
-        private EffectParameter _lightColorParam;
+        private EffectParameter Param_LightAmount;
+        private EffectParameter Param_LightPositionWS;
+        private EffectParameter Param_LightRadius;
+        private EffectParameter Param_LightIntensity;
+        private EffectParameter Param_LightColor;
 
-        private EffectParameter _tiledListLengthParam;
+        private EffectParameter Param_TiledListLength;
 
-        private EffectParameter _cameraPositionWSParam;
 
         private Vector3[] LightPositionWS;
         private float[] LightRadius;
@@ -41,45 +42,39 @@ namespace DeferredEngine.Renderer.RenderModules
         private BoundingFrustumEx _tileFrustum;
         private Vector3[] _tileFrustumCorners = new Vector3[8];
 
-        private EffectPass _pass1;
-
         private GraphicsDevice _graphicsDevice;
 
-        public Matrix World { set { _worldParam.SetValue(value); } }
-        public Matrix WorldViewProj { set { _worldViewProjParam.SetValue(value); } }
-        public Matrix WorldViewIT { set { _worldViewITParam.SetValue(value); } }
 
-        public ForwardRenderModule(ContentManager content, string shaderPath)
+        public ForwardRenderModule(ContentManager content, string shaderPath = "Shaders/forward/forward")
         {
             Load(content, shaderPath);
         }
 
-        public void Load(ContentManager content, string shaderPath)
+        public void Load(ContentManager content, string shaderPath = "Shaders/forward/forward")
         {
-            _shader = content.Load<Effect>(shaderPath);
+            Effect = content.Load<Effect>(shaderPath);
 
+            Param_World = Effect.Parameters["World"];
+            Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
+            Param_WorldViewIT = Effect.Parameters["WorldViewIT"];
+
+            Param_LightAmount = Effect.Parameters["LightAmount"];
+
+            Param_LightPositionWS = Effect.Parameters["LightPositionWS"];
+            Param_LightRadius = Effect.Parameters["LightRadius"];
+            Param_LightIntensity = Effect.Parameters["LightIntensity"];
+            Param_LightColor = Effect.Parameters["LightColor"];
+
+            Param_TiledListLength = Effect.Parameters["TiledListLength"];
+
+            Param_CameraPositionWS = Effect.Parameters["CameraPositionWS"];
+
+            Pass_Default = Effect.Techniques["Default"].Passes[0];
         }
 
         public void Initialize(GraphicsDevice graphicsDevice)
         {
             _graphicsDevice = graphicsDevice;
-
-            _worldParam = _shader.Parameters["World"];
-            _worldViewProjParam = _shader.Parameters["WorldViewProj"];
-            _worldViewITParam = _shader.Parameters["WorldViewIT"];
-
-            _lightAmountParam = _shader.Parameters["LightAmount"];
-
-            _lightPositionWSParam = _shader.Parameters["LightPositionWS"];
-            _lightRadiusParam = _shader.Parameters["LightRadius"];
-            _lightIntensityParam = _shader.Parameters["LightIntensity"];
-            _lightColorParam = _shader.Parameters["LightColor"];
-
-            _tiledListLengthParam = _shader.Parameters["TiledListLength"];
-
-            _cameraPositionWSParam = _shader.Parameters["CameraPositionWS"];
-
-            _pass1 = _shader.Techniques["Default"].Passes[0];
         }
 
 
@@ -103,15 +98,6 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
 
             SetupLighting(camera, pointLights, frustum);
-
-            //Draw Frustum debug test
-            //Matrix view = Matrix.CreateLookAt(new Vector3(-88, -11f, 4), new Vector3(38, 8, 32), Vector3.UnitZ);
-            //Matrix projection = Matrix.CreatePerspectiveFieldOfView((float)(Math.PI / 2), 1.6f, 1, 100);
-            //BoundingFrustumEx frustum2 = new BoundingFrustumEx(view * projection);
-            //LineHelperManager.AddFrustum(frustum2, 1, Color.Red);
-
-            //Vector3[] corners = frustum.GetCorners();
-            //BoundingFrustumEx frustum3 = new BoundingFrustumEx(ref corners);
 
             //TiledLighting(frustum, pointLights, 20, 10);
 
@@ -214,13 +200,13 @@ namespace DeferredEngine.Renderer.RenderModules
             }
 
             //Note: This needs a custom monogame version, since the default doesn't like to pass int[];
-            _tiledListLengthParam.SetValue(TiledListLength);
+            Param_TiledListLength.SetValue(TiledListLength);
         }
 
         private void SetupLighting(Camera camera, List<DeferredPointLight> pointLights, BoundingFrustum frustum)
         {
             //Setup camera
-            _cameraPositionWSParam.SetValue(camera.Position);
+            Param_CameraPositionWS.SetValue(camera.Position);
 
             int count = pointLights.Count > 40 ? MAXLIGHTS : pointLights.Count;
 
@@ -249,32 +235,27 @@ namespace DeferredEngine.Renderer.RenderModules
                 lightsInBounds++;
             }
 
-            _lightAmountParam.SetValue(lightsInBounds);
+            Param_LightAmount.SetValue(lightsInBounds);
 
-            _lightPositionWSParam.SetValue(LightPositionWS);
-            _lightColorParam.SetValue(LightColor);
-            _lightIntensityParam.SetValue(LightIntensity);
-            _lightRadiusParam.SetValue(LightRadius);
+            Param_LightPositionWS.SetValue(LightPositionWS);
+            Param_LightColor.SetValue(LightColor);
+            Param_LightIntensity.SetValue(LightIntensity);
+            Param_LightRadius.SetValue(LightRadius);
         }
 
 
         public void Dispose()
         {
-            _shader?.Dispose();
+            Effect?.Dispose();
         }
 
         public void Apply(Matrix localWorldMatrix, Matrix? view, Matrix viewProjection)
         {
-            //Matrix worldView = localWorldMatrix * (Matrix)view;
-            World = localWorldMatrix;
-            WorldViewProj = localWorldMatrix * viewProjection;
-            WorldViewIT = Matrix.Transpose(Matrix.Invert(localWorldMatrix));
+            Param_World.SetValue(localWorldMatrix);
+            Param_WorldViewProj.SetValue(localWorldMatrix * viewProjection);
+            Param_WorldViewIT.SetValue(Matrix.Transpose(Matrix.Invert(localWorldMatrix)));
 
-            _pass1.Apply();
-            //_WorldViewProj.SetValue(localWorldMatrix * viewProjection);
-
-            //worldView = Matrix.Transpose(Matrix.Invert(worldView));
-            //_WorldViewIT.SetValue(worldView);
+            Pass_Default.Apply();
         }
     }
 }

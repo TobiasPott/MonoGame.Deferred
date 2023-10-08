@@ -9,32 +9,32 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
     public class PointLightRenderModule : IDisposable
     {
 
-        public Effect Effect;
+        private Effect Effect;
 
-        public EffectTechnique Technique_Unshadowed;
-        public EffectTechnique Technique_UnshadowedVolumetric;
-        public EffectTechnique Technique_ShadowedSDF;
-        public EffectTechnique Technique_Shadowed;
-        public EffectTechnique Technique_ShadowedVolumetric;
-        public EffectTechnique Technique_WriteStencil;
+        private EffectTechnique Technique_Unshadowed;
+        private EffectTechnique Technique_UnshadowedVolumetric;
+        private EffectTechnique Technique_ShadowedSDF;
+        private EffectTechnique Technique_Shadowed;
+        private EffectTechnique Technique_ShadowedVolumetric;
+        private EffectTechnique Technique_WriteStencil;
 
-        public EffectParameter Param_ShadowMap;
+        private EffectParameter Param_ShadowMap;
 
         public EffectParameter Param_Resolution;
-        public EffectParameter Param_WorldView;
-        public EffectParameter Param_WorldViewProjection;
+        private EffectParameter Param_WorldView;
+        private EffectParameter Param_WorldViewProjection;
         public EffectParameter Param_InverseView;
 
-        public EffectParameter Param_LightPosition;
-        public EffectParameter Param_LightColor;
-        public EffectParameter Param_LightRadius;
-        public EffectParameter Param_LightIntensity;
-        public EffectParameter Param_ShadowMapSize;
-        public EffectParameter Param_ShadowMapRadius;
-        public EffectParameter Param_Inside;
-        public EffectParameter Param_Time;
+        private EffectParameter Param_LightPosition;
+        private EffectParameter Param_LightColor;
+        private EffectParameter Param_LightRadius;
+        private EffectParameter Param_LightIntensity;
+        private EffectParameter Param_ShadowMapSize;
+        private EffectParameter Param_ShadowMapRadius;
+        private EffectParameter Param_Inside;
+        private EffectParameter Param_Time;
         public EffectParameter Param_FarClip;
-        public EffectParameter Param_LightVolumeDensity;
+        private EffectParameter Param_LightVolumeDensity;
 
         public EffectParameter Param_VolumeTexParam;
         public EffectParameter Param_VolumeTexSizeParam;
