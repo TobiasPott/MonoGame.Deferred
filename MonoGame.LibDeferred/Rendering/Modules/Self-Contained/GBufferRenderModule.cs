@@ -4,11 +4,12 @@ using DeferredEngine.Renderer.RenderModules.Default;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.LibDeferred.Rendering.Modules;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
     //Just a template
-    public class GBufferRenderModule : IRenderModule, IDisposable
+    public class GBufferRenderModule : RenderingPipelineModule, IRenderModule
     {
         private Effect Effect_Clear;
         private Effect Effect_GBuffer;
@@ -46,13 +47,11 @@ namespace DeferredEngine.Renderer.RenderModules
         private EffectTechnique Technique_DrawNormal;
         private EffectTechnique Technique_DrawBasic;
 
-        private GraphicsDevice _graphicsDevice;
         private FullscreenTriangleBuffer _fullscreenTarget;
 
-        public GBufferRenderModule(ContentManager content, string shaderPathClear, string shaderPathGbuffer)
-        {
-            Load(content, shaderPathClear, shaderPathGbuffer);
-        }
+        public GBufferRenderModule(ContentManager content, string shaderPathGbuffer = "Shaders/GbufferSetup/Gbuffer")
+            :base(content, shaderPathGbuffer)
+        { }
 
         private float _farClip;
         public float FarClip
@@ -76,11 +75,11 @@ namespace DeferredEngine.Renderer.RenderModules
             }
         }
 
-
-        public void Load(ContentManager content, string shaderPathClear, string shaderPathGbuffer)
+        protected override void Load(ContentManager content, string shaderPath = "Shaders/GbufferSetup/GBuffer") => Load(content, shaderPath, "Shaders/GbufferSetup/ClearGBuffer");
+        public void Load(ContentManager content, string shaderPathGBuffer, string shaderPathGBufferClear)
         {
-            Effect_Clear = content.Load<Effect>(shaderPathClear);
-            Effect_GBuffer = content.Load<Effect>(shaderPathGbuffer);
+            Effect_GBuffer = content.Load<Effect>(shaderPathGBuffer);
+            Effect_Clear = content.Load<Effect>(shaderPathGBufferClear);
         }
         public void Initialize(GraphicsDevice graphicsDevice)
         {
@@ -317,7 +316,7 @@ namespace DeferredEngine.Renderer.RenderModules
             }
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             Effect_Clear?.Dispose();
             Effect_GBuffer?.Dispose();

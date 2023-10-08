@@ -149,7 +149,7 @@ namespace DeferredEngine.Renderer
             _pointLightRenderModule = new PointLightRenderModule(content, "Shaders/Deferred/DeferredPointLight");
             _lightAccumulationModule = new LightAccumulationModule() { PointLightRenderModule = _pointLightRenderModule };
             _shadowMapRenderModule = new ShadowMapRenderModule(content, "Shaders/Shadow/ShadowMap");
-            _gBufferRenderModule = new GBufferRenderModule(content, "Shaders/GbufferSetup/ClearGBuffer", "Shaders/GbufferSetup/Gbuffer");
+            _gBufferRenderModule = new GBufferRenderModule(content, "Shaders/GbufferSetup/GBuffer");
             _forwardRenderModule = new ForwardRenderModule(content, "Shaders/forward/forward");
             _environmentProbeRenderModule = new EnvironmentProbeRenderModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
 
