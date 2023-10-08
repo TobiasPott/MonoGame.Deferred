@@ -13,8 +13,6 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
 
         public PointLightRenderModule(ContentManager content)
         {
-            Load(content);
-
             _stencilCullPass1 = new DepthStencilState()
             {
                 DepthBufferEnable = true,
@@ -72,11 +70,6 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
             Shaders.DeferredPointLight.Param_VolumeTexResolution.SetValue(texResolutions);
         }
 
-
-        private void Load(ContentManager content)
-        {
-            Shaders.DeferredPointLight.LoadShader(content, "Shaders/Deferred/DeferredPointLight");
-        }
 
         /// <summary>
         /// Draw the point lights, set up some stuff first
