@@ -260,7 +260,7 @@ namespace DeferredEngine.Renderer
             //Update SDFs
             if (IsSDFUsed(pointLights))
             {
-                _distanceFieldRenderModule.UpdateDistanceFieldTransformations(entities, _sdfDefinitions, _graphicsDevice, _spriteBatch);
+                _distanceFieldRenderModule.UpdateDistanceFieldTransformations(entities, _sdfDefinitions);
             }
             //Render EnvironmentMaps
             //We do this either when pressing C or at the start of the program (_renderTargetCube == null) or when the game settings want us to do it every frame
@@ -1188,7 +1188,7 @@ namespace DeferredEngine.Renderer
         {
             if (!RenderingSettings.sdf_drawdistance) return;
 
-            _distanceFieldRenderModule.Draw(_graphicsDevice, camera);
+            _distanceFieldRenderModule.Draw(camera);
         }
 
         /// <summary>
