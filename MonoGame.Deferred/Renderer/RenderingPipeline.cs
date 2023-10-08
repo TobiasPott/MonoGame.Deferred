@@ -480,7 +480,7 @@ namespace DeferredEngine.Renderer
                 _viewIT = Matrix.Transpose(_inverseView);
 
                 //Pass these values to our shader
-                Shaders.ScreenSpaceEffectParameter_InverseViewProjection.SetValue(_inverseView);
+                Shaders.ScreenSpaceEffectParam_InverseViewProjection.SetValue(_inverseView);
                 _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_InverseView.SetValue(_inverseView);
 
                 //yep we changed
@@ -838,7 +838,7 @@ namespace DeferredEngine.Renderer
             _currentFrustumCorners[2] = temp;
 
             Shaders.SSR.Param_FrustumCorners.SetValue(_currentFrustumCorners);
-            Shaders.ScreenSpaceEffectParameter_FrustumCorners.SetValue(_currentFrustumCorners);
+            Shaders.ScreenSpaceEffectParam_FrustumCorners.SetValue(_currentFrustumCorners);
             _taaFx.FrustumCorners = _currentFrustumCorners;
             Shaders.ReconstructDepth.Param_FrustumCorners.SetValue(_currentFrustumCorners);
             Shaders.DeferredDirectionalLight.Param_FrustumCorners.SetValue(_currentFrustumCorners);
@@ -933,13 +933,13 @@ namespace DeferredEngine.Renderer
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
-            Shaders.ScreenSpaceEffectParameter_InverseViewProjection.SetValue(_inverseViewProjection);
-            Shaders.ScreenSpaceEffectParameter_Projection.SetValue(_projection);
-            Shaders.ScreenSpaceEffectParameter_ViewProjection.SetValue(_viewProjection);
-            Shaders.ScreenSpaceEffectParameter_CameraPosition.SetValue(camera.Position);
+            Shaders.ScreenSpaceEffectParam_InverseViewProjection.SetValue(_inverseViewProjection);
+            Shaders.ScreenSpaceEffectParam_Projection.SetValue(_projection);
+            Shaders.ScreenSpaceEffectParam_ViewProjection.SetValue(_viewProjection);
+            Shaders.ScreenSpaceEffectParam_CameraPosition.SetValue(camera.Position);
 
-            Shaders.ScreenSpaceEffect.CurrentTechnique = Shaders.ScreenSpaceEffectTechnique_SSAO;
-            Shaders.ScreenSpaceEffect.CurrentTechnique.Passes[0].Apply();
+            Shaders.ScreenSpace_Effect.CurrentTechnique = Shaders.ScreenSpaceEffectTechnique_SSAO;
+            Shaders.ScreenSpace_Effect.CurrentTechnique.Passes[0].Apply();
             FullscreenTarget.Draw(_graphicsDevice);
 
             //Performance Profiler
@@ -1027,18 +1027,16 @@ namespace DeferredEngine.Renderer
 
                 _graphicsDevice.SetRenderTarget(_renderTargetScreenSpaceEffectUpsampleBlurHorizontal);
 
-                Shaders.ScreenSpaceEffectParameter_InverseResolution.SetValue(new Vector2(1.0f / _renderTargetScreenSpaceEffectUpsampleBlurVertical.Width,
-                    1.0f / _renderTargetScreenSpaceEffectUpsampleBlurVertical.Height) * 2);
-                Shaders.ScreenSpaceEffectParameter_SSAOMap.SetValue(_renderTargetScreenSpaceEffectUpsampleBlurVertical);
+                Shaders.ScreenSpaceEffectParam_InverseResolution.SetValue(new Vector2(1.0f / _renderTargetScreenSpaceEffectUpsampleBlurVertical.Width, 1.0f / _renderTargetScreenSpaceEffectUpsampleBlurVertical.Height) * 2);
+                Shaders.ScreenSpaceEffectParam_SSAOMap.SetValue(_renderTargetScreenSpaceEffectUpsampleBlurVertical);
                 Shaders.ScreenSpaceEffectTechnique_BlurVertical.Passes[0].Apply();
 
                 FullscreenTarget.Draw(_graphicsDevice);
 
                 _graphicsDevice.SetRenderTarget(_renderTargetScreenSpaceEffectBlurFinal);
 
-                Shaders.ScreenSpaceEffectParameter_InverseResolution.SetValue(new Vector2(1.0f / _renderTargetScreenSpaceEffectUpsampleBlurHorizontal.Width,
-                    1.0f / _renderTargetScreenSpaceEffectUpsampleBlurHorizontal.Height) * 0.5f);
-                Shaders.ScreenSpaceEffectParameter_SSAOMap.SetValue(_renderTargetScreenSpaceEffectUpsampleBlurHorizontal);
+                Shaders.ScreenSpaceEffectParam_InverseResolution.SetValue(new Vector2(1.0f / _renderTargetScreenSpaceEffectUpsampleBlurHorizontal.Width, 1.0f / _renderTargetScreenSpaceEffectUpsampleBlurHorizontal.Height) * 0.5f);
+                Shaders.ScreenSpaceEffectParam_SSAOMap.SetValue(_renderTargetScreenSpaceEffectUpsampleBlurHorizontal);
                 Shaders.ScreenSpaceEffectTechnique_BlurHorizontal.Passes[0].Apply();
 
                 FullscreenTarget.Draw(_graphicsDevice);
@@ -1257,7 +1255,7 @@ namespace DeferredEngine.Renderer
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
-            Shaders.PostProcessing.CurrentTechnique.Passes[0].Apply();
+            Shaders.PostProcessing_Effect.CurrentTechnique.Passes[0].Apply();
             FullscreenTarget.Draw(_graphicsDevice);
 
             if (RenderingSettings.g_ColorGrading)
@@ -1371,13 +1369,13 @@ namespace DeferredEngine.Renderer
 
 
 
-                Shaders.ScreenSpaceEffectParameter_InverseResolution.SetValue(new Vector2(1.0f / targetWidth,
+                Shaders.ScreenSpaceEffectParam_InverseResolution.SetValue(new Vector2(1.0f / targetWidth,
                     1.0f / targetHeight));
 
 
                 Vector2 aspectRatio = new Vector2(Math.Min(1.0f, targetWidth / (float)targetHeight), Math.Min(1.0f, targetHeight / (float)targetWidth));
 
-                Shaders.ScreenSpaceEffectParameter_AspectRatio.SetValue(aspectRatio);
+                Shaders.ScreenSpaceEffectParam_AspectRatio.SetValue(aspectRatio);
 
             }
 
@@ -1417,10 +1415,10 @@ namespace DeferredEngine.Renderer
             Shaders.DeferredCompose.Param_volumeLightMap.SetValue(_lightingBufferTarget.Volume);
             Shaders.DeferredCompose.Param_SSAOMap.SetValue(_renderTargetScreenSpaceEffectBlurFinal);
 
-            Shaders.ScreenSpaceEffectParameter_NormalMap.SetValue(_gBufferTarget.Normal);
+            Shaders.ScreenSpaceEffectParam_NormalMap.SetValue(_gBufferTarget.Normal);
 
-            Shaders.ScreenSpaceEffectParameter_DepthMap.SetValue(_gBufferTarget.Depth);
-            Shaders.ScreenSpaceEffectParameter_SSAOMap.SetValue(_renderTargetSSAOEffect);
+            Shaders.ScreenSpaceEffectParam_DepthMap.SetValue(_gBufferTarget.Depth);
+            Shaders.ScreenSpaceEffectParam_SSAOMap.SetValue(_renderTargetSSAOEffect);
 
             Shaders.SSR.Param_DepthMap.SetValue(_gBufferTarget.Depth);
             Shaders.SSR.Param_NormalMap.SetValue(_gBufferTarget.Normal);

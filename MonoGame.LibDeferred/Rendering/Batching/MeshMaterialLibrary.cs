@@ -499,10 +499,10 @@ namespace DeferredEngine.Renderer.Helper
             }
             else if (renderType == RenderType.Hologram)
             {
-                Shaders.HologramEffectParameter_World.SetValue(localWorldMatrix);
-                Shaders.HologramEffectParameter_WorldViewProj.SetValue(localWorldMatrix * viewProjection);
+                Shaders.HologramEffectParam_World.SetValue(localWorldMatrix);
+                Shaders.HologramEffectParam_WorldViewProj.SetValue(localWorldMatrix * viewProjection);
 
-                Shaders.HologramEffect.CurrentTechnique.Passes[0].Apply();
+                Shaders.Hologram_Effect.CurrentTechnique.Passes[0].Apply();
             }
             else if (renderType == RenderType.IdRender || renderType == RenderType.IdOutline)
             {

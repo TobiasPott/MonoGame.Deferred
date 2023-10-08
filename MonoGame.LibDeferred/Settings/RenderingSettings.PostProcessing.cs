@@ -24,10 +24,10 @@
                 Shaders.PostProcessingParameter_ChromaticAbberationStrength.SetValue(_chromaticAbberationStrength);
 
                 if (_chromaticAbberationStrength <= 0)
-                    Shaders.PostProcessing.CurrentTechnique = Shaders.PostProcessingTechnique_Base;
+                    Shaders.PostProcessing_Effect.CurrentTechnique = Shaders.PostProcessingTechnique_Base;
                 else
                 {
-                    Shaders.PostProcessing.CurrentTechnique = Shaders.PostProcessingTechnique_VignetteChroma;
+                    Shaders.PostProcessing_Effect.CurrentTechnique = Shaders.PostProcessingTechnique_VignetteChroma;
                 }
             }
         }

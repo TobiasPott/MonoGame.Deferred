@@ -63,20 +63,20 @@ namespace DeferredEngine.Recources
 
 
         //Vignette and CA
-        public static readonly Effect PostProcessing = Globals.content.Load<Effect>("shaders/postprocessing/postprocessing");
-        public static readonly EffectParameter PostProcessingParameter_ScreenTexture = PostProcessing.Parameters["ScreenTexture"];
-        public static readonly EffectParameter PostProcessingParameter_ChromaticAbberationStrength = PostProcessing.Parameters["ChromaticAbberationStrength"];
-        public static readonly EffectParameter PostProcessingParameter_SCurveStrength = PostProcessing.Parameters["SCurveStrength"];
-        public static readonly EffectParameter PostProcessingParameter_WhitePoint = PostProcessing.Parameters["WhitePoint"];
-        public static readonly EffectParameter PostProcessingParameter_PowExposure = PostProcessing.Parameters["PowExposure"];
-        public static readonly EffectTechnique PostProcessingTechnique_VignetteChroma = PostProcessing.Techniques["VignetteChroma"];
-        public static readonly EffectTechnique PostProcessingTechnique_Base = PostProcessing.Techniques["Base"];
+        public static readonly Effect PostProcessing_Effect = Globals.content.Load<Effect>("shaders/postprocessing/postprocessing");
+        public static readonly EffectParameter PostProcessingParameter_ScreenTexture = PostProcessing_Effect.Parameters["ScreenTexture"];
+        public static readonly EffectParameter PostProcessingParameter_ChromaticAbberationStrength = PostProcessing_Effect.Parameters["ChromaticAbberationStrength"];
+        public static readonly EffectParameter PostProcessingParameter_SCurveStrength = PostProcessing_Effect.Parameters["SCurveStrength"];
+        public static readonly EffectParameter PostProcessingParameter_WhitePoint = PostProcessing_Effect.Parameters["WhitePoint"];
+        public static readonly EffectParameter PostProcessingParameter_PowExposure = PostProcessing_Effect.Parameters["PowExposure"];
+        public static readonly EffectTechnique PostProcessingTechnique_VignetteChroma = PostProcessing_Effect.Techniques["VignetteChroma"];
+        public static readonly EffectTechnique PostProcessingTechnique_Base = PostProcessing_Effect.Techniques["Base"];
 
 
         //Hologram Effect
-        public static readonly Effect HologramEffect = Globals.content.Load<Effect>("Shaders/Hologram/HologramEffect");
-        public static readonly EffectParameter HologramEffectParameter_World = HologramEffect.Parameters["World"];
-        public static readonly EffectParameter HologramEffectParameter_WorldViewProj = HologramEffect.Parameters["WorldViewProj"];
+        public static readonly Effect Hologram_Effect = Globals.content.Load<Effect>("Shaders/Hologram/HologramEffect");
+        public static readonly EffectParameter HologramEffectParam_World = Hologram_Effect.Parameters["World"];
+        public static readonly EffectParameter HologramEffectParam_WorldViewProj = Hologram_Effect.Parameters["WorldViewProj"];
 
         //ScreenSpaceReflection Effect
         public static class SSR
@@ -99,36 +99,36 @@ namespace DeferredEngine.Recources
 
         //Screen Space Ambient Occlusion Effect
 
-        public static readonly Effect ScreenSpaceEffect = Globals.content.Load<Effect>("Shaders/ScreenSpace/ScreenSpaceAO");
+        public static readonly Effect ScreenSpace_Effect = Globals.content.Load<Effect>("Shaders/ScreenSpace/ScreenSpaceAO");
 
-        public static readonly EffectParameter ScreenSpaceEffectParameter_SSAOMap = ScreenSpaceEffect.Parameters["SSAOMap"];
-        public static readonly EffectParameter ScreenSpaceEffectParameter_NormalMap = ScreenSpaceEffect.Parameters["NormalMap"];
-        public static readonly EffectParameter ScreenSpaceEffectParameter_DepthMap = ScreenSpaceEffect.Parameters["DepthMap"];
-        public static readonly EffectParameter ScreenSpaceEffectParameter_CameraPosition = ScreenSpaceEffect.Parameters["CameraPosition"];
-        public static readonly EffectParameter ScreenSpaceEffectParameter_InverseViewProjection = ScreenSpaceEffect.Parameters["InverseViewProjection"];
-        public static readonly EffectParameter ScreenSpaceEffectParameter_Projection = ScreenSpaceEffect.Parameters["Projection"];
-        public static readonly EffectParameter ScreenSpaceEffectParameter_ViewProjection = ScreenSpaceEffect.Parameters["ViewProjection"];
+        public static readonly EffectParameter ScreenSpaceEffectParam_SSAOMap = ScreenSpace_Effect.Parameters["SSAOMap"];
+        public static readonly EffectParameter ScreenSpaceEffectParam_NormalMap = ScreenSpace_Effect.Parameters["NormalMap"];
+        public static readonly EffectParameter ScreenSpaceEffectParam_DepthMap = ScreenSpace_Effect.Parameters["DepthMap"];
+        public static readonly EffectParameter ScreenSpaceEffectParam_CameraPosition = ScreenSpace_Effect.Parameters["CameraPosition"];
+        public static readonly EffectParameter ScreenSpaceEffectParam_InverseViewProjection = ScreenSpace_Effect.Parameters["InverseViewProjection"];
+        public static readonly EffectParameter ScreenSpaceEffectParam_Projection = ScreenSpace_Effect.Parameters["Projection"];
+        public static readonly EffectParameter ScreenSpaceEffectParam_ViewProjection = ScreenSpace_Effect.Parameters["ViewProjection"];
 
-        public static readonly EffectParameter ScreenSpaceEffect_FalloffMin = ScreenSpaceEffect.Parameters["FalloffMin"];
-        public static readonly EffectParameter ScreenSpaceEffect_FalloffMax = ScreenSpaceEffect.Parameters["FalloffMax"];
-        public static readonly EffectParameter ScreenSpaceEffect_Samples = ScreenSpaceEffect.Parameters["Samples"];
-        public static readonly EffectParameter ScreenSpaceEffect_Strength = ScreenSpaceEffect.Parameters["Strength"];
-        public static readonly EffectParameter ScreenSpaceEffect_SampleRadius = ScreenSpaceEffect.Parameters["SampleRadius"];
-        public static readonly EffectParameter ScreenSpaceEffectParameter_InverseResolution = ScreenSpaceEffect.Parameters["InverseResolution"];
-        public static readonly EffectParameter ScreenSpaceEffectParameter_AspectRatio = ScreenSpaceEffect.Parameters["AspectRatio"];
-        public static readonly EffectParameter ScreenSpaceEffectParameter_FrustumCorners = ScreenSpaceEffect.Parameters["FrustumCorners"];
+        public static readonly EffectParameter ScreenSpaceEffectParam_FalloffMin = ScreenSpace_Effect.Parameters["FalloffMin"];
+        public static readonly EffectParameter ScreenSpaceEffectParam_FalloffMax = ScreenSpace_Effect.Parameters["FalloffMax"];
+        public static readonly EffectParameter ScreenSpaceEffectParam_Samples = ScreenSpace_Effect.Parameters["Samples"];
+        public static readonly EffectParameter ScreenSpaceEffectParam_Strength = ScreenSpace_Effect.Parameters["Strength"];
+        public static readonly EffectParameter ScreenSpaceEffectParam_SampleRadius = ScreenSpace_Effect.Parameters["SampleRadius"];
+        public static readonly EffectParameter ScreenSpaceEffectParam_InverseResolution = ScreenSpace_Effect.Parameters["InverseResolution"];
+        public static readonly EffectParameter ScreenSpaceEffectParam_AspectRatio = ScreenSpace_Effect.Parameters["AspectRatio"];
+        public static readonly EffectParameter ScreenSpaceEffectParam_FrustumCorners = ScreenSpace_Effect.Parameters["FrustumCorners"];
 
-        public static readonly EffectTechnique ScreenSpaceEffectTechnique_SSAO = ScreenSpaceEffect.Techniques["SSAO"];
-        public static readonly EffectTechnique ScreenSpaceEffectTechnique_BlurHorizontal = ScreenSpaceEffect.Techniques["BilateralHorizontal"];
-        public static readonly EffectTechnique ScreenSpaceEffectTechnique_BlurVertical = ScreenSpaceEffect.Techniques["BilateralVertical"];
+        public static readonly EffectTechnique ScreenSpaceEffectTechnique_SSAO = ScreenSpace_Effect.Techniques["SSAO"];
+        public static readonly EffectTechnique ScreenSpaceEffectTechnique_BlurHorizontal = ScreenSpace_Effect.Techniques["BilateralHorizontal"];
+        public static readonly EffectTechnique ScreenSpaceEffectTechnique_BlurVertical = ScreenSpace_Effect.Techniques["BilateralVertical"];
 
 
         //Gaussian Blur
         public static class GaussianBlur
         {
             public static readonly Effect GaussianBlur_Effect = Globals.content.Load<Effect>("Shaders/ScreenSpace/GaussianBlur");
-            public static readonly EffectParameter GaussianBlurEffectParameter_InverseResolution = GaussianBlur_Effect.Parameters["InverseResolution"];
-            public static readonly EffectParameter GaussianBlurEffectParameter_TargetMap = GaussianBlur_Effect.Parameters["TargetMap"];
+            public static readonly EffectParameter GaussianBlurEffectParam_InverseResolution = GaussianBlur_Effect.Parameters["InverseResolution"];
+            public static readonly EffectParameter GaussianBlurEffectParam_TargetMap = GaussianBlur_Effect.Parameters["TargetMap"];
         }
 
         //DeferredCompose
