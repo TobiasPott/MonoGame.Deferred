@@ -1,41 +1,11 @@
 ﻿using DeferredEngine.Renderer;
-using Microsoft.Xna.Framework;
 
 namespace DeferredEngine.Recources
 {
 
-    public class SubSettings
-    {
-        public void Apply()
-        {
-
-        }
-    }
-
-
 
     public static partial class RenderingSettings
     {
-        //Default & Display settings
-        public static int g_ScreenWidth => (int)g_ScreenResolution.X;
-        public static int g_ScreenHeight => (int)g_ScreenResolution.Y;
-        public static Vector2 g_ScreenResolution = new Vector2(1280, 720);
-        public static Rectangle g_ScreenRect = new Rectangle(0, 0, 1280, 720);
-        public static float g_ScreenAspect = g_ScreenResolution.X / g_ScreenResolution.Y;
-
-        public static bool g_ScreenVSync = false;
-        public static int g_ScreenFixedFPS = 0;
-
-        public static void SetResolution(int width, int height) => SetResolution(new Vector2(width, height));
-        public static void SetResolution(Vector2 resolution)
-        {
-            g_ScreenResolution = resolution;
-            g_ScreenRect.Width = g_ScreenWidth;
-            g_ScreenRect.Height = g_ScreenHeight;
-            g_ScreenAspect = g_ScreenWidth / g_ScreenHeight;
-        }
-
-
 
         public static int u_showdisplayinfo = 3;
         public static bool p_physics = false;
@@ -90,6 +60,21 @@ namespace DeferredEngine.Recources
 
         // Bloom
         public static float g_BloomThreshold = 0.0f;
+
+        public static bool g_BloomEnable = true;
+
+        public static float g_BloomRadius1 = 1.0f;
+        public static float g_BloomRadius2 = 1.0f;
+        public static float g_BloomRadius3 = 2.0f;
+        public static float g_BloomRadius4 = 3.0f;
+        public static float g_BloomRadius5 = 4.0f;
+
+        public static float g_BloomStrength1 = 0.5f;
+        public static float g_BloomStrength2 = 1;
+        public static float g_BloomStrength3 = 1;
+        public static float g_BloomStrength4 = 1.0f;
+        public static float g_BloomStrength5 = 1.0f;
+
 
         // Emissive 
 
@@ -280,20 +265,6 @@ namespace DeferredEngine.Recources
 
         //private static float _g_TemporalAntiAliasingThreshold = 0.9f;
         public static int g_UseDepthStencilLightCulling = 1; //None, Depth, Depth+Stencil
-        public static bool g_BloomEnable = true;
-
-        public static float g_BloomRadius1 = 1.0f;
-        public static float g_BloomRadius2 = 1.0f;
-        public static float g_BloomRadius3 = 2.0f;
-        public static float g_BloomRadius4 = 3.0f;
-        public static float g_BloomRadius5 = 4.0f;
-
-        public static float g_BloomStrength1 = 0.5f;
-        public static float g_BloomStrength2 = 1;
-        public static float g_BloomStrength3 = 1;
-        public static float g_BloomStrength4 = 1.0f;
-        public static float g_BloomStrength5 = 1.0f;
-
 
         public static float ShadowBias = 0.005f;
         public static int sdf_threads = 4;
@@ -311,7 +282,7 @@ namespace DeferredEngine.Recources
         public static void ApplySettings()
         {
             ApplyDefaultsSSAO();
-            
+
             g_ssao_draw = true;
 
 
