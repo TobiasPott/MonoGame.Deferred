@@ -62,22 +62,27 @@ namespace DeferredEngine.Recources
         //Temporal AntiAliasing
 
 
-        //Vignette and CA
-        public static readonly Effect PostProcessing_Effect = ShaderGlobals.content.Load<Effect>("shaders/postprocessing/postprocessing");
-        public static readonly EffectParameter PostProcessingParam_ScreenTexture = PostProcessing_Effect.Parameters["ScreenTexture"];
-        public static readonly EffectParameter PostProcessingParam_ChromaticAbberationStrength = PostProcessing_Effect.Parameters["ChromaticAbberationStrength"];
-        public static readonly EffectParameter PostProcessingParam_SCurveStrength = PostProcessing_Effect.Parameters["SCurveStrength"];
-        public static readonly EffectParameter PostProcessingParam_WhitePoint = PostProcessing_Effect.Parameters["WhitePoint"];
-        public static readonly EffectParameter PostProcessingParam_PowExposure = PostProcessing_Effect.Parameters["PowExposure"];
-        public static readonly EffectTechnique PostProcessingTechnique_VignetteChroma = PostProcessing_Effect.Techniques["VignetteChroma"];
-        public static readonly EffectTechnique PostProcessingTechnique_Base = PostProcessing_Effect.Techniques["Base"];
+        public static class PostProcssing
+        {
+            //Vignette and CA
+            public static readonly Effect Effect = ShaderGlobals.content.Load<Effect>("shaders/postprocessing/postprocessing");
+            public static readonly EffectParameter Param_ScreenTexture = Effect.Parameters["ScreenTexture"];
+            public static readonly EffectParameter Param_ChromaticAbberationStrength = Effect.Parameters["ChromaticAbberationStrength"];
+            public static readonly EffectParameter Param_SCurveStrength = Effect.Parameters["SCurveStrength"];
+            public static readonly EffectParameter Param_WhitePoint = Effect.Parameters["WhitePoint"];
+            public static readonly EffectParameter Param_PowExposure = Effect.Parameters["PowExposure"];
 
+            public static readonly EffectTechnique Technique_VignetteChroma = Effect.Techniques["VignetteChroma"];
+            public static readonly EffectTechnique Technique_Base = Effect.Techniques["Base"];
+        }
 
         //Hologram Effect
-        public static readonly Effect Hologram_Effect = ShaderGlobals.content.Load<Effect>("Shaders/Hologram/HologramEffect");
-        public static readonly EffectParameter HologramEffectParam_World = Hologram_Effect.Parameters["World"];
-        public static readonly EffectParameter HologramEffectParam_WorldViewProj = Hologram_Effect.Parameters["WorldViewProj"];
-
+        public static class Hologram
+        {
+            public static readonly Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/Hologram/HologramEffect");
+            public static readonly EffectParameter Param_World = Effect.Parameters["World"];
+            public static readonly EffectParameter Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
+        }
         //ScreenSpaceReflection Effect
         public static class SSR
         {

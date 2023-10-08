@@ -1249,13 +1249,13 @@ namespace DeferredEngine.Renderer
 
             destinationRenderTarget = _renderTargetOutput;
 
-            Shaders.PostProcessingParam_ScreenTexture.SetValue(currentInput);
+            Shaders.PostProcssing.Param_ScreenTexture.SetValue(currentInput);
             _graphicsDevice.SetRenderTarget(destinationRenderTarget);
 
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
-            Shaders.PostProcessing_Effect.CurrentTechnique.Passes[0].Apply();
+            Shaders.PostProcssing.Effect.CurrentTechnique.Passes[0].Apply();
             FullscreenTarget.Draw(_graphicsDevice);
 
             if (RenderingSettings.g_ColorGrading)
