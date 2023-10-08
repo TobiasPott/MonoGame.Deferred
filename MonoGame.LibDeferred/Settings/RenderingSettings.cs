@@ -29,23 +29,27 @@ namespace DeferredEngine.Recources
         public static void SetResolution(int width, int height) => SetResolution(new Vector2(width, height));
         public static void SetResolution(Vector2 resolution)
         {
-            g_screenwidth = (int)resolution.X;
-            g_screenheight = (int)resolution.Y;
             g_screenresolution = resolution;
             g_screenrect.Width = g_screenwidth;
             g_screenrect.Height = g_screenheight;
-
+            g_screenaspectratio = g_screenwidth / g_screenheight;
         }
 
-        public static int g_screenwidth = 1280;
-        public static int g_screenheight = 720;
+        public static int g_screenwidth => (int)g_screenresolution.X;
+        public static int g_screenheight => (int)g_screenresolution.Y;
         public static Vector2 g_screenresolution = new Vector2(1280, 720);
         public static Rectangle g_screenrect = new Rectangle(0, 0, 1280, 720);
+        public static float g_screenaspectratio = g_screenresolution.X / g_screenresolution.Y;
+
         public static bool g_vsync = false;
         public static int g_fixedfps = 0;
         public static int u_showdisplayinfo = 3;
         public static bool p_physics = false;
         public static RenderModes g_rendermode = RenderModes.Deferred;
+
+
+
+
 
         //Editor
         public static bool e_enableeditor = true;

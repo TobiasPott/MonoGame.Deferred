@@ -49,8 +49,8 @@ namespace DeferredEngine
             };
 
             //Size of our application / starting back buffer
-            _graphics.PreferredBackBufferWidth = RenderingSettings.g_screenwidth;
-            _graphics.PreferredBackBufferHeight = RenderingSettings.g_screenheight;
+            _graphics.PreferredBackBufferWidth = (int)RenderingSettings.g_screenresolution.X;
+            _graphics.PreferredBackBufferHeight = (int)RenderingSettings.g_screenresolution.Y;
 
             //HiDef enables usable shaders
             _graphics.GraphicsProfile = GraphicsProfile.HiDef;

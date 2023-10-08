@@ -752,8 +752,7 @@ namespace DeferredEngine.Renderer
 
                 _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_InverseView.SetValue(_inverseView);
 
-                _projection = Matrix.CreatePerspectiveFieldOfView(camera.FieldOfView,
-                    RenderingSettings.g_screenwidth / (float)RenderingSettings.g_screenheight, 1, RenderingSettings.g_farplane);
+                _projection = Matrix.CreatePerspectiveFieldOfView(camera.FieldOfView, RenderingSettings.g_screenaspectratio, 1, RenderingSettings.g_farplane);
 
                 _gBufferRenderModule.Camera = camera.Position;
 
