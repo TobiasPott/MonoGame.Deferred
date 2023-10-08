@@ -163,7 +163,7 @@ namespace DeferredEngine.Renderer
 
             _decalRenderModule = new DecalRenderModule(shaderManager);
             _helperGeometryRenderModule = new HelperGeometryRenderModule(content, "Shaders/Editor/LineEffect");
-            _distanceFieldRenderModule = new DistanceFieldRenderModule(shaderManager, "Shaders/SignedDistanceFields/volumeProjection");
+            _distanceFieldRenderModule = new DistanceFieldRenderModule(content, "Shaders/SignedDistanceFields/volumeProjection");
 
         }
 
