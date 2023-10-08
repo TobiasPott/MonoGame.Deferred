@@ -161,9 +161,10 @@ namespace DeferredEngine.Renderer
             _taaFx = new TemporalAntialiasingFx(content);
             _colorGradingFx = new ColorGradingFx(content);
 
-            _decalRenderModule = new DecalRenderModule(shaderManager);
+            _decalRenderModule = new DecalRenderModule(content, "Shaders/Deferred/DeferredDecal");
             _helperGeometryRenderModule = new HelperGeometryRenderModule(content, "Shaders/Editor/LineEffect");
-            _distanceFieldRenderModule = new DistanceFieldRenderModule(content, "Shaders/SignedDistanceFields/volumeProjection");
+            _distanceFieldRenderModule = new DistanceFieldRenderModule(content, "Shaders/SignedDistanceFields/volumeProjection")
+            { EnvironmentProbeRenderModule = _environmentProbeRenderModule, PointLightRenderModule = _pointLightRenderModule };
 
         }
 
@@ -259,7 +260,7 @@ namespace DeferredEngine.Renderer
             //Update SDFs
             if (IsSDFUsed(pointLights))
             {
-                _distanceFieldRenderModule.UpdateDistanceFieldTransformations(entities, _sdfDefinitions, _environmentProbeRenderModule, _graphicsDevice, _spriteBatch, _lightAccumulationModule);
+                _distanceFieldRenderModule.UpdateDistanceFieldTransformations(entities, _sdfDefinitions, _graphicsDevice, _spriteBatch);
             }
             //Render EnvironmentMaps
             //We do this either when pressing C or at the start of the program (_renderTargetCube == null) or when the game settings want us to do it every frame
@@ -323,8 +324,7 @@ namespace DeferredEngine.Renderer
             RenderEditorOverlays(gizmoContext, meshMaterialLibrary, decals, pointLights, directionalLights, envSample);
 
             //Draw debug geometry
-            _helperGeometryRenderModule.ViewProjection = _staticViewProjection;
-            _helperGeometryRenderModule.Draw();
+            RenderHelperGeometry();
 
             //Set up the frustum culling for the next frame
             meshMaterialLibrary.FrustumCullingFinalizeFrame(entities);
@@ -343,6 +343,7 @@ namespace DeferredEngine.Renderer
                 ViewMatrix = _view,
                 ProjectionMatrix = _projection
             };
+
         }
 
         private bool IsSDFUsed(List<DeferredPointLight> pointLights)
@@ -398,6 +399,11 @@ namespace DeferredEngine.Renderer
 
         }
 
+        private void RenderHelperGeometry()
+        {
+            _helperGeometryRenderModule.ViewProjection = _staticViewProjection;
+            _helperGeometryRenderModule.Draw();
+        }
         /// <summary>
         /// Another draw function, but this time for cubemaps. Doesn't need all the stuff we have in the main draw function
         /// </summary>

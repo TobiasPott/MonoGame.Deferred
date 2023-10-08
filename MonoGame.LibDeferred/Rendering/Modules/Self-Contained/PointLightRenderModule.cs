@@ -100,6 +100,13 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
             Param_NormalMap.SetValue(gBufferTarget.Normal);
             Param_DepthMap.SetValue(gBufferTarget.Depth);
         }
+        public void SetInstanceData(Matrix[] inverseMatrices, Vector3[] scales, float[] sdfIndices, int count)
+        {
+            this.Param_InstanceInverseMatrix.SetValue(inverseMatrices);
+            this.Param_InstanceScale.SetValue(scales);
+            this.Param_InstanceSDFIndex.SetValue(sdfIndices);
+            this.Param_InstancesCount.SetValue((float)count);
+        }
 
         private void Load(ContentManager content, string shaderPath = "Shaders/Deferred/DeferredPointLight")
         {
@@ -138,7 +145,6 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
             Param_InstanceSDFIndex = Effect.Parameters["InstanceSDFIndex"];
             Param_InstancesCount = Effect.Parameters["InstancesCount"];
 
-            Param_NoiseMap = Effect.Parameters["NoiseMap"];
             Param_AlbedoMap = Effect.Parameters["AlbedoMap"];
             Param_NormalMap = Effect.Parameters["NormalMap"];
             Param_DepthMap = Effect.Parameters["DepthMap"];

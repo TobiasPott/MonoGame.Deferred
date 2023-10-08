@@ -9,38 +9,40 @@ namespace DeferredEngine.Renderer.RenderModules
     //Just a template
     public class EnvironmentProbeRenderModule : IDisposable
     {
-        private Effect _deferredEnvironmentShader;
+        private Effect Effect;
 
-        private EffectParameter _paramAlbedoMap;
-        private EffectParameter _paramNormalMap;
-        private EffectParameter _paramDepthMap;
+        private EffectParameter Param_AlbedoMap;
+        private EffectParameter Param_NormalMap;
+        private EffectParameter Param_DepthMap;
 
-        private EffectParameter _paramSSRMap;
-        private EffectParameter _paramFrustumCorners;
-        private EffectParameter _paramCameraPositionWS;
-        private EffectParameter _paramReflectionCubeMap;
-        private EffectParameter _paramResolution;
-        private EffectParameter _paramFireflyReduction;
-        private EffectParameter _paramFireflyThreshold;
-        private EffectParameter _paramTransposeView;
-        private EffectParameter _paramSpecularStrength;
-        private EffectParameter _paramSpecularStrengthRcp;
-        private EffectParameter _paramDiffuseStrength;
-        private EffectParameter _paramTime;
+        private EffectParameter Param_SSRMap;
+        private EffectParameter Param_FrustumCorners;
+        private EffectParameter Param_CameraPositionWS;
+        private EffectParameter Param_ReflectionCubeMap;
+        private EffectParameter Param_Resolution;
+        private EffectParameter Param_FireflyReduction;
+        private EffectParameter Param_FireflyThreshold;
+        private EffectParameter Param_TransposeView;
+        private EffectParameter Param_SpecularStrength;
+        private EffectParameter Param_SpecularStrengthRcp;
+        private EffectParameter Param_DiffuseStrength;
+        private EffectParameter Param_Time;
 
-        public EffectParameter ParamVolumeTexParam;
-        public EffectParameter ParamVolumeTexSizeParam;
-        public EffectParameter ParamVolumeTexResolution;
-        public EffectParameter ParamInstanceInverseMatrix;
-        public EffectParameter ParamInstanceScale;
-        public EffectParameter ParamInstanceSDFIndex;
-        public EffectParameter ParamInstancesCount;
+        public EffectParameter Param_VolumeTex;
+        public EffectParameter Param_VolumeTexSize;
+        public EffectParameter Param_VolumeTexResolution;
 
-        public EffectParameter ParamUseSDFAO;
+        public EffectParameter Param_InstanceInverseMatrix;
+        public EffectParameter Param_InstanceScale;
+        public EffectParameter Param_InstanceSDFIndex;
+        public EffectParameter Param_InstancesCount;
+
+        public EffectParameter Param_UseSDFAO;
 
 
-        private EffectPass _passBasic;
-        private EffectPass _passSky;
+        private EffectPass Pass_Basic;
+        private EffectPass Pass_Sky;
+
         private bool _fireflyReduction;
         private float _fireflyThreshold;
         private float _specularStrength;
@@ -51,32 +53,32 @@ namespace DeferredEngine.Renderer.RenderModules
 
         public RenderTargetCube Cubemap
         {
-            set { _paramReflectionCubeMap.SetValue(value); }
+            set { Param_ReflectionCubeMap.SetValue(value); }
         }
 
         public Texture2D SSRMap
         {
-            set { _paramSSRMap.SetValue(value); }
+            set { Param_SSRMap.SetValue(value); }
         }
 
         public Vector3[] FrustumCornersWS
         {
-            set { _paramFrustumCorners.SetValue(value); }
+            set { Param_FrustumCorners.SetValue(value); }
         }
 
         public Vector3 CameraPositionWS
         {
-            set { _paramCameraPositionWS.SetValue(value); }
+            set { Param_CameraPositionWS.SetValue(value); }
         }
 
         public Vector2 Resolution
         {
-            set { _paramResolution.SetValue(value); }
+            set { Param_Resolution.SetValue(value); }
         }
 
         public float Time
         {
-            set { _paramTime.SetValue(value); }
+            set { Param_Time.SetValue(value); }
         }
 
         public bool FireflyReduction
@@ -87,7 +89,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 if (value != _fireflyReduction)
                 {
                     _fireflyReduction = value;
-                    _paramFireflyReduction.SetValue(value);
+                    Param_FireflyReduction.SetValue(value);
                 }
             }
         }
@@ -100,7 +102,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 if (Math.Abs(value - _fireflyThreshold) > 0.0001f)
                 {
                     _fireflyThreshold = value;
-                    _paramFireflyThreshold.SetValue(value);
+                    Param_FireflyThreshold.SetValue(value);
                 }
             }
         }
@@ -113,8 +115,8 @@ namespace DeferredEngine.Renderer.RenderModules
                 if (Math.Abs(value - _specularStrength) > 0.0001f)
                 {
                     _specularStrength = value;
-                    _paramSpecularStrength.SetValue(value);
-                    _paramSpecularStrengthRcp.SetValue(1.0f / value);
+                    Param_SpecularStrength.SetValue(value);
+                    Param_SpecularStrengthRcp.SetValue(1.0f / value);
                 }
             }
         }
@@ -127,7 +129,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 if (Math.Abs(value - _diffuseStrength) > 0.0001f)
                 {
                     _diffuseStrength = value;
-                    _paramDiffuseStrength.SetValue(value);
+                    Param_DiffuseStrength.SetValue(value);
                 }
             }
         }
@@ -140,7 +142,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 if (_useSDFAO != value)
                 {
                     _useSDFAO = value;
-                    ParamUseSDFAO.SetValue(value);
+                    Param_UseSDFAO.SetValue(value);
                 }
             }
         }
@@ -152,48 +154,56 @@ namespace DeferredEngine.Renderer.RenderModules
 
         public void SetGBufferParams(GBufferTarget gBufferTarget)
         {
-            _paramAlbedoMap.SetValue(gBufferTarget.Albedo);
-            _paramNormalMap.SetValue(gBufferTarget.Normal);
-            _paramDepthMap.SetValue(gBufferTarget.Depth);
+            Param_AlbedoMap.SetValue(gBufferTarget.Albedo);
+            Param_NormalMap.SetValue(gBufferTarget.Normal);
+            Param_DepthMap.SetValue(gBufferTarget.Depth);
         }
+        public void SetInstanceData(Matrix[] inverseMatrices, Vector3[] scales, float[] sdfIndices, int count)
+        {
+            this.Param_InstanceInverseMatrix.SetValue(inverseMatrices);
+            this.Param_InstanceScale.SetValue(scales);
+            this.Param_InstanceSDFIndex.SetValue(sdfIndices);
+            this.Param_InstancesCount.SetValue((float)count);
+        }
+
 
         public void Load(ContentManager content, string shaderPath)
         {
-            _deferredEnvironmentShader = content.Load<Effect>(shaderPath);
+            Effect = content.Load<Effect>(shaderPath);
         }
         public void Initialize(GraphicsDevice graphicsDevice)
         {
             _graphicsDevice = graphicsDevice;
             //Environment
-            _paramAlbedoMap = _deferredEnvironmentShader.Parameters["AlbedoMap"];
-            _paramNormalMap = _deferredEnvironmentShader.Parameters["NormalMap"];
-            _paramDepthMap = _deferredEnvironmentShader.Parameters["DepthMap"];
-            _paramFrustumCorners = _deferredEnvironmentShader.Parameters["FrustumCorners"];
-            _paramSSRMap = _deferredEnvironmentShader.Parameters["ReflectionMap"];
-            _paramReflectionCubeMap = _deferredEnvironmentShader.Parameters["ReflectionCubeMap"];
-            _paramResolution = _deferredEnvironmentShader.Parameters["Resolution"];
-            _paramFireflyReduction = _deferredEnvironmentShader.Parameters["FireflyReduction"];
-            _paramFireflyThreshold = _deferredEnvironmentShader.Parameters["FireflyThreshold"];
-            _paramTransposeView = _deferredEnvironmentShader.Parameters["TransposeView"];
-            _paramSpecularStrength = _deferredEnvironmentShader.Parameters["EnvironmentMapSpecularStrength"];
-            _paramSpecularStrengthRcp = _deferredEnvironmentShader.Parameters["EnvironmentMapSpecularStrengthRcp"];
-            _paramDiffuseStrength = _deferredEnvironmentShader.Parameters["EnvironmentMapDiffuseStrength"];
-            _paramCameraPositionWS = _deferredEnvironmentShader.Parameters["CameraPositionWS"];
-            _paramTime = _deferredEnvironmentShader.Parameters["Time"];
+            Param_AlbedoMap = Effect.Parameters["AlbedoMap"];
+            Param_NormalMap = Effect.Parameters["NormalMap"];
+            Param_DepthMap = Effect.Parameters["DepthMap"];
+            Param_FrustumCorners = Effect.Parameters["FrustumCorners"];
+            Param_SSRMap = Effect.Parameters["ReflectionMap"];
+            Param_ReflectionCubeMap = Effect.Parameters["ReflectionCubeMap"];
+            Param_Resolution = Effect.Parameters["Resolution"];
+            Param_FireflyReduction = Effect.Parameters["FireflyReduction"];
+            Param_FireflyThreshold = Effect.Parameters["FireflyThreshold"];
+            Param_TransposeView = Effect.Parameters["TransposeView"];
+            Param_SpecularStrength = Effect.Parameters["EnvironmentMapSpecularStrength"];
+            Param_SpecularStrengthRcp = Effect.Parameters["EnvironmentMapSpecularStrengthRcp"];
+            Param_DiffuseStrength = Effect.Parameters["EnvironmentMapDiffuseStrength"];
+            Param_CameraPositionWS = Effect.Parameters["CameraPositionWS"];
+            Param_Time = Effect.Parameters["Time"];
 
             //SDF
-            ParamVolumeTexParam = _deferredEnvironmentShader.Parameters["VolumeTex"];
-            ParamVolumeTexSizeParam = _deferredEnvironmentShader.Parameters["VolumeTexSize"];
-            ParamVolumeTexResolution = _deferredEnvironmentShader.Parameters["VolumeTexResolution"];
-            ParamInstanceInverseMatrix = _deferredEnvironmentShader.Parameters["InstanceInverseMatrix"];
-            ParamInstanceScale = _deferredEnvironmentShader.Parameters["InstanceScale"];
-            ParamInstanceSDFIndex = _deferredEnvironmentShader.Parameters["InstanceSDFIndex"];
-            ParamInstancesCount = _deferredEnvironmentShader.Parameters["InstancesCount"];
+            Param_VolumeTex = Effect.Parameters["VolumeTex"];
+            Param_VolumeTexSize = Effect.Parameters["VolumeTexSize"];
+            Param_VolumeTexResolution = Effect.Parameters["VolumeTexResolution"];
+            Param_InstanceInverseMatrix = Effect.Parameters["InstanceInverseMatrix"];
+            Param_InstanceScale = Effect.Parameters["InstanceScale"];
+            Param_InstanceSDFIndex = Effect.Parameters["InstanceSDFIndex"];
+            Param_InstancesCount = Effect.Parameters["InstancesCount"];
 
-            ParamUseSDFAO = _deferredEnvironmentShader.Parameters["UseSDFAO"];
+            Param_UseSDFAO = Effect.Parameters["UseSDFAO"];
 
-            _passSky = _deferredEnvironmentShader.Techniques["Sky"].Passes[0];
-            _passBasic = _deferredEnvironmentShader.Techniques["Basic"].Passes[0];
+            Pass_Sky = Effect.Techniques["Sky"].Passes[0];
+            Pass_Basic = Effect.Techniques["Basic"].Passes[0];
         }
 
 
@@ -211,8 +221,8 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.DepthStencilState = DepthStencilState.None;
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             UseSDFAO = envSample.UseSDFAO;
-            _paramTransposeView.SetValue(Matrix.Transpose(view));
-            _passBasic.Apply();
+            Param_TransposeView.SetValue(Matrix.Transpose(view));
+            Pass_Basic.Apply();
             fullscreenTarget.Draw(_graphicsDevice);
         }
 
@@ -221,13 +231,13 @@ namespace DeferredEngine.Renderer.RenderModules
             graphicsDevice.DepthStencilState = DepthStencilState.None;
             graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
-            _passSky.Apply();
+            Pass_Sky.Apply();
             fullscreenTarget.Draw(graphicsDevice);
         }
 
         public void Dispose()
         {
-            _deferredEnvironmentShader?.Dispose();
+            Effect?.Dispose();
         }
     }
 }
