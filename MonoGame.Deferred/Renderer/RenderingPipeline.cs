@@ -109,7 +109,6 @@ namespace DeferredEngine.Renderer
         private RenderTarget2D _renderTargetSSAOEffect;
 
         private RenderTarget2D _renderTargetScreenSpaceEffectUpsampleBlurVertical;
-
         private RenderTarget2D _renderTargetScreenSpaceEffectUpsampleBlurHorizontal;
         private RenderTarget2D _renderTargetScreenSpaceEffectBlurFinal;
 
@@ -143,7 +142,7 @@ namespace DeferredEngine.Renderer
         /// Initialize variables
         /// </summary>
         /// <param name="content"></param>
-        public void Load(ContentManager content, ShaderManager shaderManager)
+        public void Load(ContentManager content)
         {
             _inverseResolution = Vector2.One / RenderingSettings.g_ScreenResolution;
 

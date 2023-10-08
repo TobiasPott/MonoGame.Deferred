@@ -3,6 +3,7 @@ using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper;
 using DeferredEngine.Renderer.RenderModules.DeferredLighting;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.RenderModules
@@ -30,7 +31,10 @@ namespace DeferredEngine.Renderer.RenderModules
 
         public LightAccumulationModule()
         { }
+        public void Load(ContentManager content, string shaderPath = "")
+        {
 
+        }
         public void Initialize(GraphicsDevice graphicsDevice)
         {
             _graphicsDevice = graphicsDevice;
@@ -46,15 +50,6 @@ namespace DeferredEngine.Renderer.RenderModules
 
         }
 
-
-        private void Load(ShaderManager shaderManager, string shaderPath)
-        {
-            //"Shaders/Deferred/DeferredPointLight"
-        }
-        private void InitializeShader()
-        {
-
-        }
 
         /// <summary>
         /// Needs to be called before draw
