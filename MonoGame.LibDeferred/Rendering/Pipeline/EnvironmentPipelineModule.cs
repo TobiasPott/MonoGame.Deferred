@@ -7,9 +7,13 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DeferredEngine.Renderer.RenderModules
 {
     //Just a template
-    public class EnvironmentProbeRenderModule : IDisposable
+    public class EnvironmentPipelineModule : RenderingPipelineModule
     {
         private Effect Effect;
+
+        private EffectPass Pass_Basic;
+        private EffectPass Pass_Sky;
+
 
         private EffectParameter Param_AlbedoMap;
         private EffectParameter Param_NormalMap;
@@ -40,16 +44,11 @@ namespace DeferredEngine.Renderer.RenderModules
         public EffectParameter Param_UseSDFAO;
 
 
-        private EffectPass Pass_Basic;
-        private EffectPass Pass_Sky;
-
         private bool _fireflyReduction;
         private float _fireflyThreshold;
         private float _specularStrength;
         private float _diffuseStrength;
         private bool _useSDFAO;
-
-        private GraphicsDevice _graphicsDevice;
 
         public RenderTargetCube Cubemap
         {
@@ -147,10 +146,9 @@ namespace DeferredEngine.Renderer.RenderModules
             }
         }
 
-        public EnvironmentProbeRenderModule(ContentManager content, string shaderPath)
-        {
-            Load(content, shaderPath);
-        }
+        public EnvironmentPipelineModule(ContentManager content, string shaderPath)
+            : base(content, shaderPath)
+        { }
 
         public void SetGBufferParams(GBufferTarget gBufferTarget)
         {
@@ -165,9 +163,14 @@ namespace DeferredEngine.Renderer.RenderModules
             this.Param_InstanceSDFIndex.SetValue(sdfIndices);
             this.Param_InstancesCount.SetValue((float)count);
         }
+        public void SetVolumeTexParams(Texture atlas, Vector3[] texSizes, Vector4[] texResolutions)
+        {
+            this.Param_VolumeTex.SetValue(atlas);
+            this.Param_VolumeTexSize.SetValue(texSizes);
+            this.Param_VolumeTexResolution.SetValue(texResolutions);
+        }
 
-
-        public void Load(ContentManager content, string shaderPath)
+        protected override void Load(ContentManager content, string shaderPath)
         {
             Effect = content.Load<Effect>(shaderPath);
 
@@ -202,10 +205,6 @@ namespace DeferredEngine.Renderer.RenderModules
             Pass_Sky = Effect.Techniques["Sky"].Passes[0];
             Pass_Basic = Effect.Techniques["Basic"].Passes[0];
         }
-        public void Initialize(GraphicsDevice graphicsDevice)
-        {
-            _graphicsDevice = graphicsDevice;
-        }
 
 
         public void DrawEnvironmentMap(Camera camera, Matrix view, FullscreenTriangleBuffer fullscreenTarget, EnvironmentProbe envSample, GameTime gameTime, bool fireflyReduction, float ffThreshold)
@@ -236,7 +235,7 @@ namespace DeferredEngine.Renderer.RenderModules
             fullscreenTarget.Draw(graphicsDevice);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             Effect?.Dispose();
         }

@@ -37,8 +37,8 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
         public EffectParameter Param_FarClip;
         private EffectParameter Param_LightVolumeDensity;
 
-        public EffectParameter Param_VolumeTexParam;
-        public EffectParameter Param_VolumeTexSizeParam;
+        public EffectParameter Param_VolumeTex;
+        public EffectParameter Param_VolumeTexSize;
         public EffectParameter Param_VolumeTexResolution;
 
         public EffectParameter Param_InstanceInverseMatrix;
@@ -107,6 +107,13 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
             this.Param_InstanceSDFIndex.SetValue(sdfIndices);
             this.Param_InstancesCount.SetValue((float)count);
         }
+        public void SetVolumeTexParams(Texture atlas, Vector3[] texSizes, Vector4[] texResolutions)
+        {
+            this.Param_VolumeTex.SetValue(atlas);
+            this.Param_VolumeTexSize.SetValue(texSizes);
+            this.Param_VolumeTexResolution.SetValue(texResolutions);
+        }
+
 
         private void Load(ContentManager content, string shaderPath = "Shaders/Deferred/DeferredPointLight")
         {
@@ -137,8 +144,8 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
             Param_FarClip = Effect.Parameters["FarClip"];
             Param_LightVolumeDensity = Effect.Parameters["lightVolumeDensity"];
 
-            Param_VolumeTexParam = Effect.Parameters["VolumeTex"];
-            Param_VolumeTexSizeParam = Effect.Parameters["VolumeTexSize"];
+            Param_VolumeTex = Effect.Parameters["VolumeTex"];
+            Param_VolumeTexSize = Effect.Parameters["VolumeTexSize"];
             Param_VolumeTexResolution = Effect.Parameters["VolumeTexResolution"];
             Param_InstanceInverseMatrix = Effect.Parameters["InstanceInverseMatrix"];
             Param_InstanceScale = Effect.Parameters["InstanceScale"];

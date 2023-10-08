@@ -40,7 +40,7 @@ namespace DeferredEngine.Renderer
 
         private PointLightRenderModule _pointLightRenderModule;
         private LightAccumulationModule _lightAccumulationModule;
-        private EnvironmentProbeRenderModule _environmentProbeRenderModule;
+        private EnvironmentPipelineModule _environmentModule;
         private DecalRenderModule _decalRenderModule;
         private HelperGeometryRenderModule _helperGeometryRenderModule;
         private DistanceFieldRenderModule _distanceFieldRenderModule;
@@ -153,7 +153,7 @@ namespace DeferredEngine.Renderer
 
             _pointLightRenderModule = new PointLightRenderModule(content, "Shaders/Deferred/DeferredPointLight");
             _lightAccumulationModule = new LightAccumulationModule() { PointLightRenderModule = _pointLightRenderModule };
-            _environmentProbeRenderModule = new EnvironmentProbeRenderModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
+            _environmentModule = new EnvironmentPipelineModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
 
             _bloomFx = new BloomFx(content);
             _taaFx = new TemporalAntialiasingFx(content);
@@ -162,7 +162,7 @@ namespace DeferredEngine.Renderer
             _decalRenderModule = new DecalRenderModule(content, "Shaders/Deferred/DeferredDecal");
             _helperGeometryRenderModule = new HelperGeometryRenderModule(content, "Shaders/Editor/LineEffect");
             _distanceFieldRenderModule = new DistanceFieldRenderModule(content, "Shaders/SignedDistanceFields/volumeProjection")
-            { EnvironmentProbeRenderModule = _environmentProbeRenderModule, PointLightRenderModule = _pointLightRenderModule };
+            { EnvironmentProbeRenderModule = _environmentModule, PointLightRenderModule = _pointLightRenderModule };
 
         }
 
@@ -187,8 +187,10 @@ namespace DeferredEngine.Renderer
             _forwardModule.Initialize(graphicsDevice, _spriteBatch);
             _shadowMapModule.Initialize(graphicsDevice, _spriteBatch);
 
+            _environmentModule.Initialize(graphicsDevice, _spriteBatch);
+
+
             _lightAccumulationModule.Initialize(graphicsDevice);
-            _environmentProbeRenderModule.Initialize(graphicsDevice);
             _decalRenderModule.Initialize(graphicsDevice);
             _helperGeometryRenderModule.Initialize(graphicsDevice);
 
@@ -427,7 +429,7 @@ namespace DeferredEngine.Renderer
                     DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
 
                 //Set this cubemap in the shader of the environment map
-                _environmentProbeRenderModule.Cubemap = _renderTargetCubeMap;
+                _environmentModule.Cubemap = _renderTargetCubeMap;
             }
 
             //Set up all the base rendertargets with the resolution of our cubemap
@@ -506,7 +508,7 @@ namespace DeferredEngine.Renderer
                 RenderingSettings.g_VolumetricLights = false;
                 _lightAccumulationModule.DrawLights(pointLights, dirLights, origin, gameTime, _lightingBufferTarget.Bindings, _lightingBufferTarget.Diffuse);
 
-                _environmentProbeRenderModule.DrawSky(_graphicsDevice, FullscreenTarget);
+                _environmentModule.DrawSky(_graphicsDevice, FullscreenTarget);
 
                 RenderingSettings.g_VolumetricLights = volumeEnabled;
 
@@ -825,7 +827,7 @@ namespace DeferredEngine.Renderer
             _currentFrustumCorners[2] = temp;
 
             _distanceFieldRenderModule.FrustumCornersWorldSpace = _currentFrustumCorners;
-            _environmentProbeRenderModule.FrustumCornersWS = _currentFrustumCorners;
+            _environmentModule.FrustumCornersWS = _currentFrustumCorners;
 
             //View Space Corners
             //this is the inverse of our camera transform
@@ -1071,7 +1073,7 @@ namespace DeferredEngine.Renderer
         {
             if (!RenderingSettings.g_environmentmapping) return;
 
-            _environmentProbeRenderModule.DrawEnvironmentMap(camera, _view, FullscreenTarget, envSample, gameTime, RenderingSettings.g_SSReflection_FireflyReduction, RenderingSettings.g_SSReflection_FireflyThreshold);
+            _environmentModule.DrawEnvironmentMap(camera, _view, FullscreenTarget, envSample, gameTime, RenderingSettings.g_SSReflection_FireflyReduction, RenderingSettings.g_SSReflection_FireflyThreshold);
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)
@@ -1347,7 +1349,7 @@ namespace DeferredEngine.Renderer
                 _taaFx.Resolution = new Vector2(targetWidth, targetHeight);
 
                 Shaders.SSR.Param_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
-                _environmentProbeRenderModule.Resolution = new Vector2(targetWidth, targetHeight);
+                _environmentModule.Resolution = new Vector2(targetWidth, targetHeight);
                 _renderTargetSSR = new RenderTarget2D(_graphicsDevice, targetWidth,
                     targetHeight, false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
 
@@ -1396,8 +1398,8 @@ namespace DeferredEngine.Renderer
 
             Shaders.DeferredDirectionalLight.Param_SSShadowMap.SetValue(onlyEssentials ? _renderTargetScreenSpaceEffectUpsampleBlurVertical : _renderTargetScreenSpaceEffectBlurFinal);
 
-            _environmentProbeRenderModule.SetGBufferParams(_gBufferTarget);
-            _environmentProbeRenderModule.SSRMap = _renderTargetSSR;
+            _environmentModule.SetGBufferParams(_gBufferTarget);
+            _environmentModule.SSRMap = _renderTargetSSR;
 
             _decalRenderModule.DepthMap = _gBufferTarget.Depth;
 
@@ -1481,7 +1483,7 @@ namespace DeferredEngine.Renderer
             _lightAccumulationModule?.Dispose();
             _gBufferModule?.Dispose();
             _taaFx?.Dispose();
-            _environmentProbeRenderModule?.Dispose();
+            _environmentModule?.Dispose();
             _decalRenderModule?.Dispose();
             _gBufferTarget?.Dispose();
             _lightingBufferTarget?.Dispose();

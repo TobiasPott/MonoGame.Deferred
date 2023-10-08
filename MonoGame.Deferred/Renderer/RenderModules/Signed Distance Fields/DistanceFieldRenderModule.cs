@@ -25,8 +25,8 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
         private EffectParameter Param_FrustumCorners;
         private EffectParameter Param_CameraPositon;
         private EffectParameter Param_DepthMap;
-        private EffectParameter Param_VolumeTex;
         private EffectParameter Param_MeshOffset;
+        private EffectParameter Param_VolumeTex;
         private EffectParameter Param_VolumeTexSize;
         private EffectParameter Param_VolumeTexResolution;
 
@@ -40,7 +40,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
 
 
         public PointLightRenderModule PointLightRenderModule;
-        public EnvironmentProbeRenderModule EnvironmentProbeRenderModule;
+        public EnvironmentPipelineModule EnvironmentProbeRenderModule;
 
         private const int InstanceMaxCount = 40;
 
@@ -80,6 +80,13 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
             this.Param_InstanceSDFIndex.SetValue(sdfIndices);
             this.Param_InstancesCount.SetValue((float)count);
         }
+        public void SetVolumeTexParams(Texture atlas, Vector3[] texSizes, Vector4[] texResolutions)
+        {
+            this.Param_VolumeTex.SetValue(atlas);
+            this.Param_VolumeTexSize.SetValue(texSizes);
+            this.Param_VolumeTexResolution.SetValue(texResolutions);
+        }
+
 
         public void Load(ContentManager content, string shaderPath = "Shaders/SignedDistanceFields/volumeProjection")
         {
@@ -233,17 +240,9 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
 
 
             //Atlas
-            Param_VolumeTex.SetValue(_atlasRenderTarget2D);
-            Param_VolumeTexSize.SetValue(_volumeTexSizeArray);
-            Param_VolumeTexResolution.SetValue(_volumeTexResolutionArray);
-
-            PointLightRenderModule.Param_VolumeTexParam.SetValue(_atlasRenderTarget2D);
-            PointLightRenderModule.Param_VolumeTexSizeParam.SetValue(_volumeTexSizeArray);
-            PointLightRenderModule.Param_VolumeTexResolution.SetValue(_volumeTexResolutionArray);
-
-            EnvironmentProbeRenderModule.Param_VolumeTex.SetValue(_atlasRenderTarget2D);
-            EnvironmentProbeRenderModule.Param_VolumeTexSize.SetValue(_volumeTexSizeArray);
-            EnvironmentProbeRenderModule.Param_VolumeTexResolution.SetValue(_volumeTexResolutionArray);
+            this.SetVolumeTexParams(_atlasRenderTarget2D, _volumeTexSizeArray, _volumeTexResolutionArray);
+            PointLightRenderModule.SetVolumeTexParams(_atlasRenderTarget2D, _volumeTexSizeArray, _volumeTexResolutionArray);
+            EnvironmentProbeRenderModule.SetVolumeTexParams(_atlasRenderTarget2D, _volumeTexSizeArray, _volumeTexResolutionArray);
         }
 
 
@@ -257,12 +256,10 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
             _volumeTexResolutionArray[0] = new Vector4(xsteps, ysteps, zsteps, 0);
             _volumeTexSizeArray[0] = sdf.VolumeSize;
 
-            Param_VolumeTexSize.SetValue(_volumeTexSizeArray);
-            Param_VolumeTexResolution.SetValue(_volumeTexResolutionArray);
+            this.SetVolumeTexParams(triangleData, _volumeTexSizeArray, _volumeTexResolutionArray);
 
             MeshOffset = sdf.Offset;
 
-            Param_VolumeTex.SetValue(triangleData);
             Param_TriangleTexResolution.SetValue(new Vector2(triangleData.Width, triangleData.Height));
             Param_TriangleAmount.SetValue((float)trianglesLength);
 
