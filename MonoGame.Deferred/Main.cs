@@ -49,8 +49,8 @@ namespace DeferredEngine
             };
 
             //Size of our application / starting back buffer
-            _graphics.PreferredBackBufferWidth = (int)RenderingSettings.g_screenresolution.X;
-            _graphics.PreferredBackBufferHeight = (int)RenderingSettings.g_screenresolution.Y;
+            _graphics.PreferredBackBufferWidth = (int)RenderingSettings.g_ScreenResolution.X;
+            _graphics.PreferredBackBufferHeight = (int)RenderingSettings.g_ScreenResolution.Y;
 
             //HiDef enables usable shaders
             _graphics.GraphicsProfile = GraphicsProfile.HiDef;
@@ -75,18 +75,18 @@ namespace DeferredEngine
 
         private void CheckFPSLimitChange()
         {
-            if (_vsync != RenderingSettings.g_vsync || _fixFPS != RenderingSettings.g_fixedfps)
+            if (_vsync != RenderingSettings.g_ScreenVSync || _fixFPS != RenderingSettings.g_ScreenFixedFPS)
             {
 
                 SetFPSLimit();
-                _vsync = RenderingSettings.g_vsync;
-                _fixFPS = RenderingSettings.g_fixedfps;
+                _vsync = RenderingSettings.g_ScreenVSync;
+                _fixFPS = RenderingSettings.g_ScreenFixedFPS;
             }
         }
 
         private void SetFPSLimit()
         {
-            if (!RenderingSettings.g_vsync && RenderingSettings.g_fixedfps <= 0)
+            if (!RenderingSettings.g_ScreenVSync && RenderingSettings.g_ScreenFixedFPS <= 0)
             {
                 _graphics.SynchronizeWithVerticalRetrace = false;
                 IsFixedTimeStep = false;
@@ -94,11 +94,11 @@ namespace DeferredEngine
             }
             else
             {
-                if (RenderingSettings.g_fixedfps > 0)
+                if (RenderingSettings.g_ScreenFixedFPS > 0)
                 {
                     _graphics.SynchronizeWithVerticalRetrace = false;
                     IsFixedTimeStep = true;
-                    TargetElapsedTime = TimeSpan.FromMilliseconds(1000.0f / RenderingSettings.g_fixedfps);
+                    TargetElapsedTime = TimeSpan.FromMilliseconds(1000.0f / RenderingSettings.g_ScreenFixedFPS);
                 }
                 else //Vsync
                 {
@@ -146,7 +146,7 @@ namespace DeferredEngine
         /// </summary>
         protected override void Initialize()
         {
-            GUIControl.Initialize(RenderingSettings.g_screenresolution);
+            GUIControl.Initialize(RenderingSettings.g_ScreenResolution);
 
             FullscreenTriangleBuffer.InitClass(GraphicsDevice);
             _screenManager.Load(Content, GraphicsDevice);

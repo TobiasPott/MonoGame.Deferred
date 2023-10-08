@@ -37,8 +37,8 @@ namespace DeferredEngine.Logic
                 float y = mouseState.Y - mouseLastState.Y;
                 float x = mouseState.X - mouseLastState.X;
 
-                y *= RenderingSettings.g_screenheight / 800.0f;
-                x *= RenderingSettings.g_screenwidth / 1280.0f;
+                y *= RenderingSettings.g_ScreenHeight / 800.0f;
+                x *= RenderingSettings.g_ScreenWidth / 1280.0f;
 
                 camera.Forward += x * mouseAmount * normal;
 
@@ -55,7 +55,7 @@ namespace DeferredEngine.Logic
 
         public static Vector2 GetMousePositionNormalized()
         {
-            return new Vector2((float)mouseState.X, (float)mouseState.Y) / RenderingSettings.g_screenresolution;
+            return new Vector2((float)mouseState.X, (float)mouseState.Y) / RenderingSettings.g_ScreenResolution;
         }
 
         private static void KeyboardEvents(GameTime gameTime, Camera camera)

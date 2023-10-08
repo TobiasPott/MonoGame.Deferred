@@ -156,7 +156,7 @@ namespace DeferredEngine.Renderer
         /// <param name="content"></param>
         public void Load(ContentManager content, ShaderManager shaderManager)
         {
-            _inverseResolution = Vector2.One / RenderingSettings.g_screenresolution;
+            _inverseResolution = Vector2.One / RenderingSettings.g_ScreenResolution;
 
             _lightAccumulationModule = new LightAccumulationModule(shaderManager, "Shaders/Deferred/DeferredPointLight");
             _shadowMapRenderModule = new ShadowMapRenderModule(content, "Shaders/Shadow/ShadowMap");
@@ -197,7 +197,7 @@ namespace DeferredEngine.Renderer
             _decalRenderModule.Initialize(graphicsDevice);
             _helperGeometryRenderModule.Initialize(graphicsDevice);
 
-            _bloomFx.Initialize(_graphicsDevice, RenderingSettings.g_screenresolution);
+            _bloomFx.Initialize(_graphicsDevice, RenderingSettings.g_ScreenResolution);
             _taaFx.Initialize(graphicsDevice, FullscreenTriangleBuffer.Instance);
             _colorGradingFx.Initialize(graphicsDevice, FullscreenTriangleBuffer.Instance);
 
@@ -206,7 +206,7 @@ namespace DeferredEngine.Renderer
             RenderingSettings.ApplySettings();
 
             Shaders.ScreenSpaceReflectionParameter_NoiseMap.SetValue(_assets.NoiseMap);
-            SetUpRenderTargets(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight, false);
+            SetUpRenderTargets(RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight, false);
 
         }
 
@@ -412,7 +412,7 @@ namespace DeferredEngine.Renderer
             if (RenderingSettings.sdf_debug && _distanceFieldRenderModule.GetAtlas() != null)
             {
                 _spriteBatch.Begin(0, BlendState.Opaque, SamplerState.PointClamp);
-                _spriteBatch.Draw(_distanceFieldRenderModule.GetAtlas(), new Rectangle(0, RenderingSettings.g_screenheight - 200, RenderingSettings.g_screenwidth, 200), Color.White);
+                _spriteBatch.Draw(_distanceFieldRenderModule.GetAtlas(), new Rectangle(0, RenderingSettings.g_ScreenHeight - 200, RenderingSettings.g_ScreenWidth, 200), Color.White);
                 _spriteBatch.End();
             }
 
@@ -561,7 +561,7 @@ namespace DeferredEngine.Renderer
             Shaders.DeferredComposeEffectParameter_UseSSAO.SetValue(RenderingSettings.g_ssao_draw);
 
             //Change RTs back to normal
-            SetUpRenderTargets(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight, true);
+            SetUpRenderTargets(RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight, true);
 
             //Our camera has changed we need to reinitialize stuff because we used a different camera in the cubemap render
             camera.HasChanged = true;
@@ -752,7 +752,7 @@ namespace DeferredEngine.Renderer
 
                 _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_InverseView.SetValue(_inverseView);
 
-                _projection = Matrix.CreatePerspectiveFieldOfView(camera.FieldOfView, RenderingSettings.g_screenaspectratio, 1, RenderingSettings.g_farplane);
+                _projection = Matrix.CreatePerspectiveFieldOfView(camera.FieldOfView, RenderingSettings.g_ScreenAspect, 1, RenderingSettings.g_farplane);
 
                 _gBufferRenderModule.Camera = camera.Position;
 
@@ -772,13 +772,13 @@ namespace DeferredEngine.Renderer
                         case 0: //2 frames, just basic translation. Worst taa implementation. Not good with the continous integration used
                             {
                                 Vector2 translation = Vector2.One * (_temporalAAOffFrame ? 0.5f : -0.5f);
-                                _viewProjection = _viewProjection * (translation / RenderingSettings.g_screenresolution).ToMatrixTranslationXY();
+                                _viewProjection = _viewProjection * (translation / RenderingSettings.g_ScreenResolution).ToMatrixTranslationXY();
                             }
                             break;
                         case 1: // Just random translation
                             {
                                 float randomAngle = FastRand.NextAngle();
-                                Vector2 translation = (new Vector2((float)Math.Sin(randomAngle), (float)Math.Cos(randomAngle)) / RenderingSettings.g_screenresolution) * 0.5f; ;
+                                Vector2 translation = (new Vector2((float)Math.Sin(randomAngle), (float)Math.Cos(randomAngle)) / RenderingSettings.g_ScreenResolution) * 0.5f; ;
                                 _viewProjection = _viewProjection * translation.ToMatrixTranslationXY();
 
                             }
@@ -1072,7 +1072,7 @@ namespace DeferredEngine.Renderer
 
             _spriteBatch.Begin(0, BlendState.Additive);
 
-            _spriteBatch.Draw(_renderTargetSSAOEffect, RenderingSettings.g_screenrect, Color.Red);
+            _spriteBatch.Draw(_renderTargetSSAOEffect, RenderingSettings.g_ScreenRect, Color.Red);
 
             _spriteBatch.End();
 
@@ -1221,14 +1221,14 @@ namespace DeferredEngine.Renderer
         {
             if (RenderingSettings.g_BloomEnable)
             {
-                Texture2D bloom = _bloomFx.Draw(input, RenderingSettings.g_screenresolution);
+                Texture2D bloom = _bloomFx.Draw(input, RenderingSettings.g_ScreenResolution);
 
                 _graphicsDevice.SetRenderTargets(_renderTargetBloom);
 
                 _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
 
-                _spriteBatch.Draw(input, RenderingSettings.g_screenrect, Color.White);
-                _spriteBatch.Draw(bloom, RenderingSettings.g_screenrect, Color.White);
+                _spriteBatch.Draw(input, RenderingSettings.g_ScreenRect, Color.White);
+                _spriteBatch.Draw(bloom, RenderingSettings.g_ScreenRect, Color.White);
 
                 _spriteBatch.End();
 
@@ -1388,10 +1388,10 @@ namespace DeferredEngine.Renderer
         /// </summary>
         public void UpdateResolution()
         {
-            _inverseResolution = Vector2.One / RenderingSettings.g_screenresolution;
+            _inverseResolution = Vector2.One / RenderingSettings.g_ScreenResolution;
             _haltonSequence = null;
 
-            SetUpRenderTargets(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight, false);
+            SetUpRenderTargets(RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight, false);
         }
 
         private void SetUpRenderTargets(int width, int height, bool onlyEssentials)
@@ -1606,24 +1606,24 @@ namespace DeferredEngine.Renderer
 
             int height;
             int width;
-            if (Math.Abs(texture.Width / (float)texture.Height - RenderingSettings.g_screenwidth / (float)RenderingSettings.g_screenheight) < 0.001)
+            if (Math.Abs(texture.Width / (float)texture.Height - RenderingSettings.g_ScreenWidth / (float)RenderingSettings.g_ScreenHeight) < 0.001)
             //If same aspectratio
             {
-                height = RenderingSettings.g_screenheight;
-                width = RenderingSettings.g_screenwidth;
+                height = RenderingSettings.g_ScreenHeight;
+                width = RenderingSettings.g_ScreenWidth;
             }
             else
             {
-                if (RenderingSettings.g_screenheight < RenderingSettings.g_screenwidth)
+                if (RenderingSettings.g_ScreenHeight < RenderingSettings.g_ScreenWidth)
                 {
                     //Should be squared!
-                    height = RenderingSettings.g_screenheight;
-                    width = RenderingSettings.g_screenheight;
+                    height = RenderingSettings.g_ScreenHeight;
+                    width = RenderingSettings.g_ScreenHeight;
                 }
                 else
                 {
-                    height = RenderingSettings.g_screenwidth;
-                    width = RenderingSettings.g_screenwidth;
+                    height = RenderingSettings.g_ScreenWidth;
+                    width = RenderingSettings.g_ScreenWidth;
                 }
             }
             _graphicsDevice.SetRenderTarget(output);
