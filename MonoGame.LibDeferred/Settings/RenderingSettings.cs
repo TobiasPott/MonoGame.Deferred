@@ -51,7 +51,7 @@ namespace DeferredEngine.Recources
             set
             {
                 _g_Linear = value;
-                Shaders.DeferredCompose.CurrentTechnique = value
+                Shaders.DeferredCompose_Effect.CurrentTechnique = value
                     ? Shaders.DeferredComposeTechnique_Linear
                     : Shaders.DeferredComposeTechnique_NonLinear;
             }

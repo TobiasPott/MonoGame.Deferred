@@ -173,9 +173,9 @@ namespace DeferredEngine.Renderer.RenderModules
             //If nothing has changed we don't need to update
             if (_viewProjectionHasChanged)
             {
-                Shaders.deferredDirectionalLightParameterViewProjection.SetValue(_viewProjection);
-                Shaders.deferredDirectionalLightParameterCameraPosition.SetValue(cameraOrigin);
-                Shaders.deferredDirectionalLightParameterInverseViewProjection.SetValue(_inverseViewProjection);
+                Shaders.DeferredDirectionalLightParameterViewProjection.SetValue(_viewProjection);
+                Shaders.DeferredDirectionalLightParameterCameraPosition.SetValue(cameraOrigin);
+                Shaders.DeferredDirectionalLightParameterInverseViewProjection.SetValue(_inverseViewProjection);
             }
 
             _graphicsDevice.DepthStencilState = DepthStencilState.None;
@@ -202,9 +202,9 @@ namespace DeferredEngine.Renderer.RenderModules
                 light.LightView_ViewSpace = _inverseView * light.LightView;
             }
 
-            Shaders.deferredDirectionalLightParameter_LightColor.SetValue(light.ColorV3);
-            Shaders.deferredDirectionalLightParameter_LightDirection.SetValue(light.DirectionViewSpace);
-            Shaders.deferredDirectionalLightParameter_LightIntensity.SetValue(light.Intensity);
+            Shaders.DeferredDirectionalLightParameter_LightColor.SetValue(light.ColorV3);
+            Shaders.DeferredDirectionalLightParameter_LightDirection.SetValue(light.DirectionViewSpace);
+            Shaders.DeferredDirectionalLightParameter_LightIntensity.SetValue(light.Intensity);
             light.ApplyShader();
             _fullscreenTarget.Draw(_graphicsDevice);
         }

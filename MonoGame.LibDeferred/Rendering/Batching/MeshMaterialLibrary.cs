@@ -567,7 +567,7 @@ namespace DeferredEngine.Renderer.Helper
 
         private void ClearFrame(GraphicsDevice graphicsDevice)
         {
-            Shaders.DeferredClear.CurrentTechnique.Passes[0].Apply();
+            Shaders.DeferredClear_Effect.CurrentTechnique.Passes[0].Apply();
             _fullscreenTarget.Draw(graphicsDevice);
         }
 

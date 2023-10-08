@@ -841,7 +841,7 @@ namespace DeferredEngine.Renderer
             Shaders.ScreenSpaceEffectParameter_FrustumCorners.SetValue(_currentFrustumCorners);
             _taaFx.FrustumCorners = _currentFrustumCorners;
             Shaders.ReconstructDepth.Param_FrustumCorners.SetValue(_currentFrustumCorners);
-            Shaders.deferredDirectionalLightParameterFrustumCorners.SetValue(_currentFrustumCorners);
+            Shaders.DeferredDirectionalLightParameterFrustumCorners.SetValue(_currentFrustumCorners);
         }
 
         /// <summary>
@@ -960,8 +960,8 @@ namespace DeferredEngine.Renderer
         {
             if (_viewProjectionHasChanged)
             {
-                Shaders.deferredDirectionalLightParameterViewProjection.SetValue(_viewProjection);
-                Shaders.deferredDirectionalLightParameterInverseViewProjection.SetValue(_inverseViewProjection);
+                Shaders.DeferredDirectionalLightParameterViewProjection.SetValue(_viewProjection);
+                Shaders.DeferredDirectionalLightParameterInverseViewProjection.SetValue(_inverseViewProjection);
 
             }
             for (var index = 0; index < dirLights.Count; index++)
@@ -1095,7 +1095,7 @@ namespace DeferredEngine.Renderer
             _graphicsDevice.BlendState = BlendState.Opaque;
 
             //combine!
-            Shaders.DeferredCompose.CurrentTechnique.Passes[0].Apply();
+            Shaders.DeferredCompose_Effect.CurrentTechnique.Passes[0].Apply();
             FullscreenTarget.Draw(_graphicsDevice);
 
             //Performance Profiler
@@ -1394,11 +1394,11 @@ namespace DeferredEngine.Renderer
             _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_DepthMap.SetValue(_gBufferTarget.Depth);
             _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_NormalMap.SetValue(_gBufferTarget.Normal);
 
-            Shaders.deferredDirectionalLightParameter_AlbedoMap.SetValue(_gBufferTarget.Albedo);
-            Shaders.deferredDirectionalLightParameter_DepthMap.SetValue(_gBufferTarget.Depth);
-            Shaders.deferredDirectionalLightParameter_NormalMap.SetValue(_gBufferTarget.Normal);
+            Shaders.DeferredDirectionalLightParameter_AlbedoMap.SetValue(_gBufferTarget.Albedo);
+            Shaders.DeferredDirectionalLightParameter_DepthMap.SetValue(_gBufferTarget.Depth);
+            Shaders.DeferredDirectionalLightParameter_NormalMap.SetValue(_gBufferTarget.Normal);
 
-            Shaders.deferredDirectionalLightParameter_SSShadowMap.SetValue(onlyEssentials ? _renderTargetScreenSpaceEffectUpsampleBlurVertical : _renderTargetScreenSpaceEffectBlurFinal);
+            Shaders.DeferredDirectionalLightParameter_SSShadowMap.SetValue(onlyEssentials ? _renderTargetScreenSpaceEffectUpsampleBlurVertical : _renderTargetScreenSpaceEffectBlurFinal);
 
             _environmentProbeRenderModule.AlbedoMap = _gBufferTarget.Albedo;
             _environmentProbeRenderModule.NormalMap = _gBufferTarget.Normal;

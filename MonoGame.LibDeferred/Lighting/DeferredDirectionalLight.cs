@@ -146,18 +146,18 @@ namespace DeferredEngine.Entities
                 }
                 else
                 {
-                    Shaders.deferredDirectionalLightParameterLightView.SetValue(LightView_ViewSpace);
-                    Shaders.deferredDirectionalLightParameterLightViewProjection.SetValue(LightViewProjection_ViewSpace);
-                    Shaders.deferredDirectionalLightParameterLightFarClip.SetValue(ShadowDepth);
-                    Shaders.deferredDirectionalLightParameter_ShadowMap.SetValue(ShadowMap);
-                    Shaders.deferredDirectionalLightParameter_ShadowFiltering.SetValue((int)ShadowFiltering);
-                    Shaders.deferredDirectionalLightParameter_ShadowMapSize.SetValue((float)ShadowResolution);
-                    Shaders.deferredDirectionalLightShadowed.Passes[0].Apply();
+                    Shaders.DeferredDirectionalLightParameterLightView.SetValue(LightView_ViewSpace);
+                    Shaders.DeferredDirectionalLightParameterLightViewProjection.SetValue(LightViewProjection_ViewSpace);
+                    Shaders.DeferredDirectionalLightParameterLightFarClip.SetValue(ShadowDepth);
+                    Shaders.DeferredDirectionalLightParameter_ShadowMap.SetValue(ShadowMap);
+                    Shaders.DeferredDirectionalLightParameter_ShadowFiltering.SetValue((int)ShadowFiltering);
+                    Shaders.DeferredDirectionalLightParameter_ShadowMapSize.SetValue((float)ShadowResolution);
+                    Shaders.DeferredDirectionalLightShadowed.Passes[0].Apply();
                 }
             }
             else
             {
-                Shaders.deferredDirectionalLightUnshadowed.Passes[0].Apply();
+                Shaders.DeferredDirectionalLightUnshadowed.Passes[0].Apply();
             }
         }
     }
