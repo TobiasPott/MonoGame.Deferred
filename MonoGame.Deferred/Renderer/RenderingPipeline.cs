@@ -577,7 +577,7 @@ namespace DeferredEngine.Renderer
                 _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_FarClip.SetValue(_g_FarClip);
                 Shaders.Billboard.Param_FarClip.SetValue(_g_FarClip);
                 Shaders.SSR.Param_FarClip.SetValue(_g_FarClip);
-                Shaders.ReconstructDepthParameter_FarClip.SetValue(_g_FarClip);
+                Shaders.ReconstructDepth.Param_FarClip.SetValue(_g_FarClip);
             }
 
             if (_g_SSReflectionNoise != RenderingSettings.g_SSReflectionNoise)
@@ -840,7 +840,7 @@ namespace DeferredEngine.Renderer
             Shaders.SSR.Param_FrustumCorners.SetValue(_currentFrustumCorners);
             Shaders.ScreenSpaceEffectParameter_FrustumCorners.SetValue(_currentFrustumCorners);
             _taaFx.FrustumCorners = _currentFrustumCorners;
-            Shaders.ReconstructDepthParameter_FrustumCorners.SetValue(_currentFrustumCorners);
+            Shaders.ReconstructDepth.Param_FrustumCorners.SetValue(_currentFrustumCorners);
             Shaders.deferredDirectionalLightParameterFrustumCorners.SetValue(_currentFrustumCorners);
         }
 
@@ -1113,10 +1113,10 @@ namespace DeferredEngine.Renderer
         private void ReconstructDepth()
         {
             if (_viewProjectionHasChanged)
-                Shaders.ReconstructDepthParameter_Projection.SetValue(_projection);
+                Shaders.ReconstructDepth.Param_Projection.SetValue(_projection);
 
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
-            Shaders.ReconstructDepth.CurrentTechnique.Passes[0].Apply();
+            Shaders.ReconstructDepth.Effect.CurrentTechnique.Passes[0].Apply();
             FullscreenTarget.Draw(_graphicsDevice);
         }
 
@@ -1388,7 +1388,7 @@ namespace DeferredEngine.Renderer
         {
             Shaders.Billboard.Param_DepthMap.SetValue(_gBufferTarget.Depth);
 
-            Shaders.ReconstructDepthParameter_DepthMap.SetValue(_gBufferTarget.Depth);
+            Shaders.ReconstructDepth.Param_DepthMap.SetValue(_gBufferTarget.Depth);
 
             _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_AlbedoMap.SetValue(_gBufferTarget.Albedo);
             _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_DepthMap.SetValue(_gBufferTarget.Depth);

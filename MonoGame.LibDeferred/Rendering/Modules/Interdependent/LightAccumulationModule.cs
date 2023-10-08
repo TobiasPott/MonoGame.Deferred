@@ -150,10 +150,10 @@ namespace DeferredEngine.Renderer.RenderModules
         private void ReconstructDepth()
         {
             if (_viewProjectionHasChanged)
-                Shaders.ReconstructDepthParameter_Projection.SetValue(_projection);
+                Shaders.ReconstructDepth.Param_Projection.SetValue(_projection);
 
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
-            Shaders.ReconstructDepth.CurrentTechnique.Passes[0].Apply();
+            Shaders.ReconstructDepth.Effect.CurrentTechnique.Passes[0].Apply();
             _fullscreenTarget.Draw(_graphicsDevice);
         }
 

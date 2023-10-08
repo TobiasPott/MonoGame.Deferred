@@ -18,11 +18,14 @@ namespace DeferredEngine.Recources
         //Born out of need for quick thoughtless shader building
         //I am working on making seperate shading modules instead and will slowly shorten this one.
         //Depth Reconstruction
-        public static readonly Effect ReconstructDepth = Globals.content.Load<Effect>("Shaders/ScreenSpace/ReconstructDepth");
-        public static readonly EffectParameter ReconstructDepthParameter_DepthMap = ReconstructDepth.Parameters["DepthMap"];
-        public static readonly EffectParameter ReconstructDepthParameter_Projection = ReconstructDepth.Parameters["Projection"];
-        public static readonly EffectParameter ReconstructDepthParameter_FarClip = ReconstructDepth.Parameters["FarClip"];
-        public static readonly EffectParameter ReconstructDepthParameter_FrustumCorners = ReconstructDepth.Parameters["FrustumCorners"];
+        public static class ReconstructDepth
+        {
+            public static readonly Effect Effect = Globals.content.Load<Effect>("Shaders/ScreenSpace/ReconstructDepth");
+            public static readonly EffectParameter Param_DepthMap = Effect.Parameters["DepthMap"];
+            public static readonly EffectParameter Param_Projection = Effect.Parameters["Projection"];
+            public static readonly EffectParameter Param_FarClip = Effect.Parameters["FarClip"];
+            public static readonly EffectParameter Param_FrustumCorners = Effect.Parameters["FrustumCorners"];
+        }
 
         //Id Generator
         public static class IdRender
