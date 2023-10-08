@@ -20,7 +20,7 @@ namespace DeferredEngine.Logic
         //  VARIABLES
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        private Assets _assets;
+        private DemoAssets _assets;
 
         public Camera Camera;
 
@@ -51,7 +51,7 @@ namespace DeferredEngine.Logic
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         //Done after Load
-        public void Initialize(Assets assets, GraphicsDevice graphicsDevice)
+        public void Initialize(DemoAssets assets, GraphicsDevice graphicsDevice)
         {
             _assets = assets;
 

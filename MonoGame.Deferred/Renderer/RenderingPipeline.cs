@@ -49,9 +49,6 @@ namespace DeferredEngine.Renderer
         private BloomFx _bloomFx;
         private ColorGradingFx _colorGradingFx;
 
-        //Assets
-        private Assets _assets;
-
         //View Projection
         private bool _viewProjectionHasChanged;
         private Vector2 _inverseResolution;

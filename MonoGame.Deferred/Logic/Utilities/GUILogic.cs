@@ -9,7 +9,7 @@ namespace DeferredEngine.Logic
 {
     public class GUILogic
     {
-        private Assets _assets;
+        private DemoAssets _assets;
         public GUICanvas GuiCanvas;
 
         private GuiListToggleScroll _rightSideList;
@@ -41,7 +41,7 @@ namespace DeferredEngine.Logic
         private Vector3 activeObjectPos;
 
 
-        public void Initialize(Assets assets, Camera sceneLogicCamera)
+        public void Initialize(DemoAssets assets, Camera sceneLogicCamera)
         {
             _assets = assets;
 

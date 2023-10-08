@@ -21,7 +21,7 @@ namespace DeferredEngine.Logic
         private MainSceneLogic _sceneLogic;
         private GUILogic _guiLogic;
         private EditorLogic _editorLogic;
-        private Assets _assets;
+        private DemoAssets _assets;
         private ShaderManager _shaderManager;
         private DebugScreen _debug;
 
@@ -62,7 +62,7 @@ namespace DeferredEngine.Logic
             _sceneLogic = new MainSceneLogic();
             _guiLogic = new GUILogic();
             _editorLogic = new EditorLogic();
-            _assets = new Assets();
+            _assets = new DemoAssets();
             _debug = new DebugScreen();
             _guiRenderer = new GUIRenderer();
 
