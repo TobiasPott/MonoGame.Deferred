@@ -150,7 +150,7 @@ namespace DeferredEngine.Renderer
         {
             _inverseResolution = Vector2.One / RenderingSettings.g_ScreenResolution;
 
-            _pointLightRenderModule = new PointLightRenderModule(shaderManager);
+            _pointLightRenderModule = new PointLightRenderModule(content, "Shaders/Deferred/DeferredPointLight");
             _lightAccumulationModule = new LightAccumulationModule(shaderManager) { PointLightRenderModule = _pointLightRenderModule };
             _shadowMapRenderModule = new ShadowMapRenderModule(content, "Shaders/Shadow/ShadowMap");
             _gBufferRenderModule = new GBufferRenderModule(content, "Shaders/GbufferSetup/ClearGBuffer", "Shaders/GbufferSetup/Gbuffer");
@@ -484,7 +484,7 @@ namespace DeferredEngine.Renderer
 
                 //Pass these values to our shader
                 Shaders.SSAO.Param_InverseViewProjection.SetValue(_inverseView);
-                _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_InverseView.SetValue(_inverseView);
+                _lightAccumulationModule.PointLightRenderModule.Param_InverseView.SetValue(_inverseView);
 
                 //yep we changed
                 _viewProjectionHasChanged = true;
@@ -577,7 +577,7 @@ namespace DeferredEngine.Renderer
                 _g_FarClip = RenderingSettings.g_farplane;
                 _gBufferRenderModule.FarClip = _g_FarClip;
                 _decalRenderModule.FarClip = _g_FarClip;
-                _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_FarClip.SetValue(_g_FarClip);
+                _lightAccumulationModule.PointLightRenderModule.Param_FarClip.SetValue(_g_FarClip);
                 Shaders.Billboard.Param_FarClip.SetValue(_g_FarClip);
                 Shaders.SSR.Param_FarClip.SetValue(_g_FarClip);
                 Shaders.ReconstructDepth.Param_FarClip.SetValue(_g_FarClip);
@@ -698,7 +698,7 @@ namespace DeferredEngine.Renderer
 
                 _viewIT = Matrix.Transpose(_inverseView);
 
-                _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_InverseView.SetValue(_inverseView);
+                _lightAccumulationModule.PointLightRenderModule.Param_InverseView.SetValue(_inverseView);
 
                 _projection = Matrix.CreatePerspectiveFieldOfView(camera.FieldOfView, RenderingSettings.g_ScreenAspect, 1, RenderingSettings.g_farplane);
 
@@ -1324,7 +1324,7 @@ namespace DeferredEngine.Renderer
             _renderTargetDecalOffTarget = new RenderTarget2D(_graphicsDevice, targetWidth,
                 targetHeight, false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
 
-            _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
+            _lightAccumulationModule.PointLightRenderModule.Param_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
 
             _renderTargetComposed = new RenderTarget2D(_graphicsDevice, targetWidth,
                targetHeight, false, SurfaceFormat.HalfVector4, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
@@ -1391,9 +1391,9 @@ namespace DeferredEngine.Renderer
 
             Shaders.ReconstructDepth.Param_DepthMap.SetValue(_gBufferTarget.Depth);
 
-            _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_AlbedoMap.SetValue(_gBufferTarget.Albedo);
-            _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_DepthMap.SetValue(_gBufferTarget.Depth);
-            _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_NormalMap.SetValue(_gBufferTarget.Normal);
+            _lightAccumulationModule.PointLightRenderModule.Param_AlbedoMap.SetValue(_gBufferTarget.Albedo);
+            _lightAccumulationModule.PointLightRenderModule.Param_DepthMap.SetValue(_gBufferTarget.Depth);
+            _lightAccumulationModule.PointLightRenderModule.Param_NormalMap.SetValue(_gBufferTarget.Normal);
 
             Shaders.DeferredDirectionalLight.Param_AlbedoMap.SetValue(_gBufferTarget.Albedo);
             Shaders.DeferredDirectionalLight.Param_DepthMap.SetValue(_gBufferTarget.Depth);

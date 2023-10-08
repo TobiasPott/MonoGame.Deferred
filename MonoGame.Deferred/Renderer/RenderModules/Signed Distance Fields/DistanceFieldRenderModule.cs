@@ -183,10 +183,10 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
             _instanceSDFIndexArrayParam.SetValue(_instanceSDFIndexArray);
             _instancesCountParam.SetValue((float)_instancesCount);
 
-            lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_InstanceInverseMatrix.SetValue(_instanceInverseMatrixArray);
-            lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_InstanceScale.SetValue(_instanceScaleArray);
-            lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_InstanceSDFIndex.SetValue(_instanceSDFIndexArray);
-            lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_InstancesCount.SetValue((float)_instancesCount);
+            lightAccumulationModule.PointLightRenderModule.Param_InstanceInverseMatrix.SetValue(_instanceInverseMatrixArray);
+            lightAccumulationModule.PointLightRenderModule.Param_InstanceScale.SetValue(_instanceScaleArray);
+            lightAccumulationModule.PointLightRenderModule.Param_InstanceSDFIndex.SetValue(_instanceSDFIndexArray);
+            lightAccumulationModule.PointLightRenderModule.Param_InstancesCount.SetValue((float)_instancesCount);
 
             environmentMapRenderModule.ParamInstanceInverseMatrix.SetValue(_instanceInverseMatrixArray);
             environmentMapRenderModule.ParamInstanceScale.SetValue(_instanceScaleArray);
@@ -271,9 +271,9 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
             _volumeTexSizeParam.SetValue(_volumeTexSizeArray);
             _volumeTexResolutionParam.SetValue(_volumeTexResolutionArray);
 
-            lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_VolumeTexParam.SetValue(_atlasRenderTarget2D);
-            lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_VolumeTexSizeParam.SetValue(_volumeTexSizeArray);
-            lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_VolumeTexResolution.SetValue(_volumeTexResolutionArray);
+            lightAccumulationModule.PointLightRenderModule.Param_VolumeTexParam.SetValue(_atlasRenderTarget2D);
+            lightAccumulationModule.PointLightRenderModule.Param_VolumeTexSizeParam.SetValue(_volumeTexSizeArray);
+            lightAccumulationModule.PointLightRenderModule.Param_VolumeTexResolution.SetValue(_volumeTexResolutionArray);
 
             environmentMapRenderModule.ParamVolumeTexParam.SetValue(_atlasRenderTarget2D);
             environmentMapRenderModule.ParamVolumeTexSizeParam.SetValue(_volumeTexSizeArray);

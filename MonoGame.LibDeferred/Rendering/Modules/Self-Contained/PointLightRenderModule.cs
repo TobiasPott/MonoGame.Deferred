@@ -1,6 +1,7 @@
 ﻿using DeferredEngine.Entities;
 using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
@@ -8,54 +9,52 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
     public class PointLightRenderModule : IDisposable
     {
 
-        public Effect deferredPointLight_Effect;
+        public Effect Effect;
 
-        public EffectTechnique deferredPointLight_Unshadowed;
-        public EffectTechnique deferredPointLight_UnshadowedVolumetric;
-        public EffectTechnique deferredPointLight_ShadowedSDF;
-        public EffectTechnique deferredPointLight_Shadowed;
-        public EffectTechnique deferredPointLight_ShadowedVolumetric;
-        public EffectTechnique deferredPointLight_WriteStencil;
+        public EffectTechnique Technique_Unshadowed;
+        public EffectTechnique Technique_UnshadowedVolumetric;
+        public EffectTechnique Technique_ShadowedSDF;
+        public EffectTechnique Technique_Shadowed;
+        public EffectTechnique Technique_ShadowedVolumetric;
+        public EffectTechnique Technique_WriteStencil;
 
-        public EffectParameter deferredPointLightParameter_ShadowMap;
+        public EffectParameter Param_ShadowMap;
 
-        public EffectParameter deferredPointLightParameter_Resolution;
-        public EffectParameter deferredPointLightParameter_WorldView;
-        public EffectParameter deferredPointLightParameter_WorldViewProjection;
-        public EffectParameter deferredPointLightParameter_InverseView;
+        public EffectParameter Param_Resolution;
+        public EffectParameter Param_WorldView;
+        public EffectParameter Param_WorldViewProjection;
+        public EffectParameter Param_InverseView;
 
-        public EffectParameter deferredPointLightParameter_LightPosition;
-        public EffectParameter deferredPointLightParameter_LightColor;
-        public EffectParameter deferredPointLightParameter_LightRadius;
-        public EffectParameter deferredPointLightParameter_LightIntensity;
-        public EffectParameter deferredPointLightParameter_ShadowMapSize;
-        public EffectParameter deferredPointLightParameter_ShadowMapRadius;
-        public EffectParameter deferredPointLightParameter_Inside;
-        public EffectParameter deferredPointLightParameter_Time;
-        public EffectParameter deferredPointLightParameter_FarClip;
-        public EffectParameter deferredPointLightParameter_LightVolumeDensity;
+        public EffectParameter Param_LightPosition;
+        public EffectParameter Param_LightColor;
+        public EffectParameter Param_LightRadius;
+        public EffectParameter Param_LightIntensity;
+        public EffectParameter Param_ShadowMapSize;
+        public EffectParameter Param_ShadowMapRadius;
+        public EffectParameter Param_Inside;
+        public EffectParameter Param_Time;
+        public EffectParameter Param_FarClip;
+        public EffectParameter Param_LightVolumeDensity;
 
-        public EffectParameter deferredPointLightParameter_VolumeTexParam;
-        public EffectParameter deferredPointLightParameter_VolumeTexSizeParam;
-        public EffectParameter deferredPointLightParameter_VolumeTexResolution;
-        public EffectParameter deferredPointLightParameter_InstanceInverseMatrix;
-        public EffectParameter deferredPointLightParameter_InstanceScale;
-        public EffectParameter deferredPointLightParameter_InstanceSDFIndex;
-        public EffectParameter deferredPointLightParameter_InstancesCount;
+        public EffectParameter Param_VolumeTexParam;
+        public EffectParameter Param_VolumeTexSizeParam;
+        public EffectParameter Param_VolumeTexResolution;
+        public EffectParameter Param_InstanceInverseMatrix;
+        public EffectParameter Param_InstanceScale;
+        public EffectParameter Param_InstanceSDFIndex;
+        public EffectParameter Param_InstancesCount;
 
-        public EffectParameter deferredPointLightParameter_NoiseMap;
-        public EffectParameter deferredPointLightParameter_AlbedoMap;
-        public EffectParameter deferredPointLightParameter_NormalMap;
-        public EffectParameter deferredPointLightParameter_DepthMap;
-
-        private int _shaderIndex;
+        public EffectParameter Param_NoiseMap;
+        public EffectParameter Param_AlbedoMap;
+        public EffectParameter Param_NormalMap;
+        public EffectParameter Param_DepthMap;
 
         private DepthStencilState _stencilCullPass1;
         private DepthStencilState _stencilCullPass2;
 
-        public PointLightRenderModule(ShaderManager shaderManager, string shaderPath = "Shaders/Deferred/DeferredPointLight")
+        public PointLightRenderModule(ContentManager content, string shaderPath = "Shaders/Deferred/DeferredPointLight")
         {
-            Load(shaderManager, shaderPath);
+            Effect = content.Load<Effect>(shaderPath);
 
             InitializeShader();
 
@@ -96,53 +95,46 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
 
         }
 
-        private void Load(ShaderManager shaderManager, string shaderPath)
-        {
-            _shaderIndex = shaderManager.AddShader(shaderPath);
-
-            deferredPointLight_Effect = shaderManager.GetShader(_shaderIndex);
-        }
-
 
         private void InitializeShader()
         {
-            deferredPointLight_Unshadowed = deferredPointLight_Effect.Techniques["Unshadowed"];
-            deferredPointLight_UnshadowedVolumetric = deferredPointLight_Effect.Techniques["UnshadowedVolume"];
-            deferredPointLight_Shadowed = deferredPointLight_Effect.Techniques["Shadowed"];
-            deferredPointLight_ShadowedSDF = deferredPointLight_Effect.Techniques["ShadowedSDF"];
-            deferredPointLight_ShadowedVolumetric = deferredPointLight_Effect.Techniques["ShadowedVolume"];
-            deferredPointLight_WriteStencil = deferredPointLight_Effect.Techniques["WriteStencilMask"];
+            Technique_Unshadowed = Effect.Techniques["Unshadowed"];
+            Technique_UnshadowedVolumetric = Effect.Techniques["UnshadowedVolume"];
+            Technique_Shadowed = Effect.Techniques["Shadowed"];
+            Technique_ShadowedSDF = Effect.Techniques["ShadowedSDF"];
+            Technique_ShadowedVolumetric = Effect.Techniques["ShadowedVolume"];
+            Technique_WriteStencil = Effect.Techniques["WriteStencilMask"];
 
-            deferredPointLightParameter_ShadowMap = deferredPointLight_Effect.Parameters["ShadowMap"];
+            Param_ShadowMap = Effect.Parameters["ShadowMap"];
 
-            deferredPointLightParameter_Resolution = deferredPointLight_Effect.Parameters["Resolution"];
-            deferredPointLightParameter_WorldView = deferredPointLight_Effect.Parameters["WorldView"];
-            deferredPointLightParameter_WorldViewProjection = deferredPointLight_Effect.Parameters["WorldViewProj"];
-            deferredPointLightParameter_InverseView = deferredPointLight_Effect.Parameters["InverseView"];
+            Param_Resolution = Effect.Parameters["Resolution"];
+            Param_WorldView = Effect.Parameters["WorldView"];
+            Param_WorldViewProjection = Effect.Parameters["WorldViewProj"];
+            Param_InverseView = Effect.Parameters["InverseView"];
 
-            deferredPointLightParameter_LightPosition = deferredPointLight_Effect.Parameters["lightPosition"];
-            deferredPointLightParameter_LightColor = deferredPointLight_Effect.Parameters["lightColor"];
-            deferredPointLightParameter_LightRadius = deferredPointLight_Effect.Parameters["lightRadius"];
-            deferredPointLightParameter_LightIntensity = deferredPointLight_Effect.Parameters["lightIntensity"];
-            deferredPointLightParameter_ShadowMapSize = deferredPointLight_Effect.Parameters["ShadowMapSize"];
-            deferredPointLightParameter_ShadowMapRadius = deferredPointLight_Effect.Parameters["ShadowMapRadius"];
-            deferredPointLightParameter_Inside = deferredPointLight_Effect.Parameters["inside"];
-            deferredPointLightParameter_Time = deferredPointLight_Effect.Parameters["Time"];
-            deferredPointLightParameter_FarClip = deferredPointLight_Effect.Parameters["FarClip"];
-            deferredPointLightParameter_LightVolumeDensity = deferredPointLight_Effect.Parameters["lightVolumeDensity"];
+            Param_LightPosition = Effect.Parameters["lightPosition"];
+            Param_LightColor = Effect.Parameters["lightColor"];
+            Param_LightRadius = Effect.Parameters["lightRadius"];
+            Param_LightIntensity = Effect.Parameters["lightIntensity"];
+            Param_ShadowMapSize = Effect.Parameters["ShadowMapSize"];
+            Param_ShadowMapRadius = Effect.Parameters["ShadowMapRadius"];
+            Param_Inside = Effect.Parameters["inside"];
+            Param_Time = Effect.Parameters["Time"];
+            Param_FarClip = Effect.Parameters["FarClip"];
+            Param_LightVolumeDensity = Effect.Parameters["lightVolumeDensity"];
 
-            deferredPointLightParameter_VolumeTexParam = deferredPointLight_Effect.Parameters["VolumeTex"];
-            deferredPointLightParameter_VolumeTexSizeParam = deferredPointLight_Effect.Parameters["VolumeTexSize"];
-            deferredPointLightParameter_VolumeTexResolution = deferredPointLight_Effect.Parameters["VolumeTexResolution"];
-            deferredPointLightParameter_InstanceInverseMatrix = deferredPointLight_Effect.Parameters["InstanceInverseMatrix"];
-            deferredPointLightParameter_InstanceScale = deferredPointLight_Effect.Parameters["InstanceScale"];
-            deferredPointLightParameter_InstanceSDFIndex = deferredPointLight_Effect.Parameters["InstanceSDFIndex"];
-            deferredPointLightParameter_InstancesCount = deferredPointLight_Effect.Parameters["InstancesCount"];
+            Param_VolumeTexParam = Effect.Parameters["VolumeTex"];
+            Param_VolumeTexSizeParam = Effect.Parameters["VolumeTexSize"];
+            Param_VolumeTexResolution = Effect.Parameters["VolumeTexResolution"];
+            Param_InstanceInverseMatrix = Effect.Parameters["InstanceInverseMatrix"];
+            Param_InstanceScale = Effect.Parameters["InstanceScale"];
+            Param_InstanceSDFIndex = Effect.Parameters["InstanceSDFIndex"];
+            Param_InstancesCount = Effect.Parameters["InstancesCount"];
 
-            deferredPointLightParameter_NoiseMap = deferredPointLight_Effect.Parameters["NoiseMap"];
-            deferredPointLightParameter_AlbedoMap = deferredPointLight_Effect.Parameters["AlbedoMap"];
-            deferredPointLightParameter_NormalMap = deferredPointLight_Effect.Parameters["NormalMap"];
-            deferredPointLightParameter_DepthMap = deferredPointLight_Effect.Parameters["DepthMap"];
+            Param_NoiseMap = Effect.Parameters["NoiseMap"];
+            Param_AlbedoMap = Effect.Parameters["AlbedoMap"];
+            Param_NormalMap = Effect.Parameters["NormalMap"];
+            Param_DepthMap = Effect.Parameters["DepthMap"];
         }
 
         /// <summary>
@@ -164,7 +156,7 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
             int startIndex = meshpart.StartIndex;
 
             if (RenderingSettings.g_VolumetricLights)
-                deferredPointLightParameter_Time.SetValue((float)gameTime.TotalGameTime.TotalSeconds % 1000);
+                Param_Time.SetValue((float)gameTime.TotalGameTime.TotalSeconds % 1000);
 
             for (int index = 0; index < pointLights.Count; index++)
             {
@@ -197,17 +189,17 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
                 light.LightWorldViewProj = light.WorldMatrix * _viewProjection;
             }
 
-            deferredPointLightParameter_WorldView.SetValue(light.LightViewSpace);
-            deferredPointLightParameter_WorldViewProjection.SetValue(light.LightWorldViewProj);
-            deferredPointLightParameter_LightPosition.SetValue(light.LightViewSpace.Translation);
-            deferredPointLightParameter_LightColor.SetValue(light.ColorV3);
-            deferredPointLightParameter_LightRadius.SetValue(light.Radius);
-            deferredPointLightParameter_LightIntensity.SetValue(light.Intensity);
+            Param_WorldView.SetValue(light.LightViewSpace);
+            Param_WorldViewProjection.SetValue(light.LightWorldViewProj);
+            Param_LightPosition.SetValue(light.LightViewSpace.Translation);
+            Param_LightColor.SetValue(light.ColorV3);
+            Param_LightRadius.SetValue(light.Radius);
+            Param_LightIntensity.SetValue(light.Intensity);
 
             //Compute whether we are inside or outside and use 
             float cameraToCenter = Vector3.Distance(cameraOrigin, light.Position);
             int inside = cameraToCenter < light.Radius * 1.2f ? 1 : -1;
-            deferredPointLightParameter_Inside.SetValue(inside);
+            Param_Inside.SetValue(inside);
 
             if (RenderingSettings.g_UseDepthStencilLightCulling == 2)
             {
@@ -215,7 +207,7 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
                 //draw front faces
                 _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
-                deferredPointLight_WriteStencil.Passes[0].Apply();
+                Technique_WriteStencil.Passes[0].Apply();
 
                 _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, vertexOffset, startIndex, primitiveCount);
 
@@ -249,45 +241,45 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
             // Experimental
             if (light.CastSDFShadows)
             {
-                deferredPointLight_ShadowedSDF.Passes[0].Apply();
+                Technique_ShadowedSDF.Passes[0].Apply();
             }
             else if (light.ShadowMap != null && light.CastShadows)
             {
-                deferredPointLightParameter_ShadowMap.SetValue(light.ShadowMap);
-                deferredPointLightParameter_ShadowMapRadius.SetValue((float)light.ShadowMapRadius);
-                deferredPointLightParameter_ShadowMapSize.SetValue((float)light.ShadowResolution);
+                Param_ShadowMap.SetValue(light.ShadowMap);
+                Param_ShadowMapRadius.SetValue((float)light.ShadowMapRadius);
+                Param_ShadowMapSize.SetValue((float)light.ShadowResolution);
 
                 if (light.IsVolumetric && RenderingSettings.g_VolumetricLights)
                 {
-                    deferredPointLightParameter_LightVolumeDensity.SetValue(light.LightVolumeDensity);
-                    deferredPointLight_ShadowedVolumetric.Passes[0].Apply();
+                    Param_LightVolumeDensity.SetValue(light.LightVolumeDensity);
+                    Technique_ShadowedVolumetric.Passes[0].Apply();
                 }
                 else
                 {
-                    deferredPointLight_Shadowed.Passes[0].Apply();
+                    Technique_Shadowed.Passes[0].Apply();
                 }
             }
             else
             {
                 //todo: remove
 
-                deferredPointLightParameter_ShadowMapRadius.SetValue((float)light.ShadowMapRadius);
+                Param_ShadowMapRadius.SetValue((float)light.ShadowMapRadius);
 
                 if (light.IsVolumetric && RenderingSettings.g_VolumetricLights)
                 {
-                    deferredPointLightParameter_LightVolumeDensity.SetValue(light.LightVolumeDensity);
-                    deferredPointLight_UnshadowedVolumetric.Passes[0].Apply();
+                    Param_LightVolumeDensity.SetValue(light.LightVolumeDensity);
+                    Technique_UnshadowedVolumetric.Passes[0].Apply();
                 }
                 else
                 {
-                    deferredPointLight_Unshadowed.Passes[0].Apply();
+                    Technique_Unshadowed.Passes[0].Apply();
                 }
             }
         }
 
         public void Dispose()
         {
-            deferredPointLight_Effect?.Dispose();
+            Effect?.Dispose();
             _stencilCullPass1?.Dispose();
             _stencilCullPass2?.Dispose();
         }
