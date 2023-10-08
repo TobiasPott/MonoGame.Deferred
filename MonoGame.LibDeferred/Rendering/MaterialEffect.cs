@@ -205,7 +205,7 @@ namespace DeferredEngine.Recources
             return true;
         }
 
-        public MaterialEffect Clone()
+        public override MaterialEffect Clone()
         {
             return new MaterialEffect(this);
 

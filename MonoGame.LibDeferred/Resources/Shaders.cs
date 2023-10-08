@@ -104,29 +104,31 @@ namespace DeferredEngine.Recources
 
         //Screen Space Ambient Occlusion Effect
 
-        public static readonly Effect ScreenSpace_Effect = ShaderGlobals.content.Load<Effect>("Shaders/ScreenSpace/ScreenSpaceAO");
+        public static class SSAO
+        {
+            public static readonly Effect ScreenSpace_Effect = ShaderGlobals.content.Load<Effect>("Shaders/ScreenSpace/ScreenSpaceAO");
 
-        public static readonly EffectParameter ScreenSpaceEffectParam_SSAOMap = ScreenSpace_Effect.Parameters["SSAOMap"];
-        public static readonly EffectParameter ScreenSpaceEffectParam_NormalMap = ScreenSpace_Effect.Parameters["NormalMap"];
-        public static readonly EffectParameter ScreenSpaceEffectParam_DepthMap = ScreenSpace_Effect.Parameters["DepthMap"];
-        public static readonly EffectParameter ScreenSpaceEffectParam_CameraPosition = ScreenSpace_Effect.Parameters["CameraPosition"];
-        public static readonly EffectParameter ScreenSpaceEffectParam_InverseViewProjection = ScreenSpace_Effect.Parameters["InverseViewProjection"];
-        public static readonly EffectParameter ScreenSpaceEffectParam_Projection = ScreenSpace_Effect.Parameters["Projection"];
-        public static readonly EffectParameter ScreenSpaceEffectParam_ViewProjection = ScreenSpace_Effect.Parameters["ViewProjection"];
+            public static readonly EffectParameter ScreenSpaceEffectParam_SSAOMap = ScreenSpace_Effect.Parameters["SSAOMap"];
+            public static readonly EffectParameter ScreenSpaceEffectParam_NormalMap = ScreenSpace_Effect.Parameters["NormalMap"];
+            public static readonly EffectParameter ScreenSpaceEffectParam_DepthMap = ScreenSpace_Effect.Parameters["DepthMap"];
+            public static readonly EffectParameter ScreenSpaceEffectParam_CameraPosition = ScreenSpace_Effect.Parameters["CameraPosition"];
+            public static readonly EffectParameter ScreenSpaceEffectParam_InverseViewProjection = ScreenSpace_Effect.Parameters["InverseViewProjection"];
+            public static readonly EffectParameter ScreenSpaceEffectParam_Projection = ScreenSpace_Effect.Parameters["Projection"];
+            public static readonly EffectParameter ScreenSpaceEffectParam_ViewProjection = ScreenSpace_Effect.Parameters["ViewProjection"];
 
-        public static readonly EffectParameter ScreenSpaceEffectParam_FalloffMin = ScreenSpace_Effect.Parameters["FalloffMin"];
-        public static readonly EffectParameter ScreenSpaceEffectParam_FalloffMax = ScreenSpace_Effect.Parameters["FalloffMax"];
-        public static readonly EffectParameter ScreenSpaceEffectParam_Samples = ScreenSpace_Effect.Parameters["Samples"];
-        public static readonly EffectParameter ScreenSpaceEffectParam_Strength = ScreenSpace_Effect.Parameters["Strength"];
-        public static readonly EffectParameter ScreenSpaceEffectParam_SampleRadius = ScreenSpace_Effect.Parameters["SampleRadius"];
-        public static readonly EffectParameter ScreenSpaceEffectParam_InverseResolution = ScreenSpace_Effect.Parameters["InverseResolution"];
-        public static readonly EffectParameter ScreenSpaceEffectParam_AspectRatio = ScreenSpace_Effect.Parameters["AspectRatio"];
-        public static readonly EffectParameter ScreenSpaceEffectParam_FrustumCorners = ScreenSpace_Effect.Parameters["FrustumCorners"];
+            public static readonly EffectParameter ScreenSpaceEffectParam_FalloffMin = ScreenSpace_Effect.Parameters["FalloffMin"];
+            public static readonly EffectParameter ScreenSpaceEffectParam_FalloffMax = ScreenSpace_Effect.Parameters["FalloffMax"];
+            public static readonly EffectParameter ScreenSpaceEffectParam_Samples = ScreenSpace_Effect.Parameters["Samples"];
+            public static readonly EffectParameter ScreenSpaceEffectParam_Strength = ScreenSpace_Effect.Parameters["Strength"];
+            public static readonly EffectParameter ScreenSpaceEffectParam_SampleRadius = ScreenSpace_Effect.Parameters["SampleRadius"];
+            public static readonly EffectParameter ScreenSpaceEffectParam_InverseResolution = ScreenSpace_Effect.Parameters["InverseResolution"];
+            public static readonly EffectParameter ScreenSpaceEffectParam_AspectRatio = ScreenSpace_Effect.Parameters["AspectRatio"];
+            public static readonly EffectParameter ScreenSpaceEffectParam_FrustumCorners = ScreenSpace_Effect.Parameters["FrustumCorners"];
 
-        public static readonly EffectTechnique ScreenSpaceEffectTechnique_SSAO = ScreenSpace_Effect.Techniques["SSAO"];
-        public static readonly EffectTechnique ScreenSpaceEffectTechnique_BlurHorizontal = ScreenSpace_Effect.Techniques["BilateralHorizontal"];
-        public static readonly EffectTechnique ScreenSpaceEffectTechnique_BlurVertical = ScreenSpace_Effect.Techniques["BilateralVertical"];
-
+            public static readonly EffectTechnique ScreenSpaceEffectTechnique_SSAO = ScreenSpace_Effect.Techniques["SSAO"];
+            public static readonly EffectTechnique ScreenSpaceEffectTechnique_BlurHorizontal = ScreenSpace_Effect.Techniques["BilateralHorizontal"];
+            public static readonly EffectTechnique ScreenSpaceEffectTechnique_BlurVertical = ScreenSpace_Effect.Techniques["BilateralVertical"];
+        }
 
         //Gaussian Blur
         public static class GaussianBlur
