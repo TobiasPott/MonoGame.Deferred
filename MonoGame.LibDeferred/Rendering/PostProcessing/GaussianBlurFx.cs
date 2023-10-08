@@ -21,7 +21,7 @@ namespace DeferredEngine.Renderer.PostProcessing
         public override void Initialize(GraphicsDevice graphicsDevice, FullscreenTriangleBuffer fullScreenTarget)
         {
             base.Initialize(graphicsDevice, fullScreenTarget);
-            _gaussEffect = Shaders.GaussianBlur.GaussianBlur_Effect;
+            _gaussEffect = Shaders.GaussianBlur.Effect;
 
             _horizontalPass = _gaussEffect.Techniques["GaussianBlur"].Passes["Horizontal"];
             _verticalPass = _gaussEffect.Techniques["GaussianBlur"].Passes["Vertical"];
@@ -53,13 +53,13 @@ namespace DeferredEngine.Renderer.PostProcessing
             _graphicsDevice.SetRenderTarget(renderTargetBlur);
 
             Vector2 invRes = new Vector2(1.0f / size, 1.0f / size);
-            Shaders.GaussianBlur.GaussianBlurEffectParam_InverseResolution.SetValue(invRes);
-            Shaders.GaussianBlur.GaussianBlurEffectParam_TargetMap.SetValue(renderTargetOutput);
+            Shaders.GaussianBlur.Param_InverseResolution.SetValue(invRes);
+            Shaders.GaussianBlur.Param_TargetMap.SetValue(renderTargetOutput);
 
             this.Draw(_horizontalPass);
 
             _graphicsDevice.SetRenderTarget(renderTargetOutput);
-            Shaders.GaussianBlur.GaussianBlurEffectParam_TargetMap.SetValue(renderTargetBlur);
+            Shaders.GaussianBlur.Param_TargetMap.SetValue(renderTargetBlur);
             this.Draw(_verticalPass);
 
             return renderTargetOutput;
@@ -78,12 +78,12 @@ namespace DeferredEngine.Renderer.PostProcessing
             _graphicsDevice.SetRenderTarget(renderTargetBlur);
 
             Vector2 invRes = new Vector2(1.0f / size, 1.0f / size);
-            Shaders.GaussianBlur.GaussianBlurEffectParam_InverseResolution.SetValue(invRes);
-            Shaders.GaussianBlur.GaussianBlurEffectParam_TargetMap.SetValue(renderTargetOutput);
+            Shaders.GaussianBlur.Param_InverseResolution.SetValue(invRes);
+            Shaders.GaussianBlur.Param_TargetMap.SetValue(renderTargetOutput);
             this.Draw(_horizontalPass);
 
             _graphicsDevice.SetRenderTarget(renderTargetOutput, cubeFace);
-            Shaders.GaussianBlur.GaussianBlurEffectParam_TargetMap.SetValue(renderTargetBlur);
+            Shaders.GaussianBlur.Param_TargetMap.SetValue(renderTargetBlur);
             this.Draw(_verticalPass);
 
             return renderTargetOutput;

@@ -38,7 +38,7 @@
             set
             {
                 _g_ssao_falloffmin = value;
-                Shaders.SSAO.ScreenSpaceEffectParam_FalloffMin.SetValue(value);
+                Shaders.SSAO.Param_FalloffMin.SetValue(value);
             }
         }
 
@@ -49,7 +49,7 @@
             set
             {
                 _g_ssao_falloffmax = value;
-                Shaders.SSAO.ScreenSpaceEffectParam_FalloffMax.SetValue(value);
+                Shaders.SSAO.Param_FalloffMax.SetValue(value);
             }
         }
 
@@ -60,7 +60,7 @@
             set
             {
                 _g_ssao_samples = value;
-                Shaders.SSAO.ScreenSpaceEffectParam_Samples.SetValue(value);
+                Shaders.SSAO.Param_Samples.SetValue(value);
             }
         }
 
@@ -71,7 +71,7 @@
             set
             {
                 _g_ssao_radius = value;
-                Shaders.SSAO.ScreenSpaceEffectParam_SampleRadius.SetValue(value);
+                Shaders.SSAO.Param_SampleRadius.SetValue(value);
             }
         }
 
@@ -82,7 +82,7 @@
             set
             {
                 _g_ssao_strength = value;
-                Shaders.SSAO.ScreenSpaceEffectParam_Strength.SetValue(value);
+                Shaders.SSAO.Param_Strength.SetValue(value);
             }
         }
 
