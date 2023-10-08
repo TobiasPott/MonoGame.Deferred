@@ -98,10 +98,10 @@ namespace DeferredEngine.Renderer.RenderModules
 
         private void DrawBillboard(Matrix world, Matrix view, Matrix staticViewProjection, int id)
         {
-            Shaders.BillboardEffectParameter_WorldViewProj.SetValue(world * staticViewProjection);
-            Shaders.BillboardEffectParameter_WorldView.SetValue(world * view);
-            Shaders.BillboardEffectParameter_IdColor.SetValue(IdGenerator.GetColorFromId(id).ToVector3());
-            Shaders.BillboardEffect.CurrentTechnique.Passes[0].Apply();
+            Shaders.Billboard.Param_WorldViewProj.SetValue(world * staticViewProjection);
+            Shaders.Billboard.Param_WorldView.SetValue(world * view);
+            Shaders.Billboard.Param_IdColor.SetValue(IdGenerator.GetColorFromId(id).ToVector3());
+            Shaders.Billboard.Effect.CurrentTechnique.Passes[0].Apply();
             _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 2);
         }
 
@@ -115,9 +115,9 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.SetVertexBuffer(_billboardBuffer.VBuffer);
             _graphicsDevice.Indices = (_billboardBuffer.IBuffer);
 
-            Shaders.BillboardEffectParameter_Texture.SetValue(_assets.IconLight);
+            Shaders.Billboard.Param_Texture.SetValue(_assets.IconLight);
 
-            Shaders.BillboardEffect.CurrentTechnique = Shaders.BillboardEffectTechnique_Id;
+            Shaders.Billboard.Effect.CurrentTechnique = Shaders.Billboard.Technique_Id;
 
             for (int index = 0; index < decals.Count; index++)
             {
@@ -140,7 +140,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 DrawBillboard(world, view, staticViewProjection, light.Id);
             }
 
-            Shaders.BillboardEffectParameter_Texture.SetValue(_assets.IconEnvmap);
+            Shaders.Billboard.Param_Texture.SetValue(_assets.IconEnvmap);
             {
                 Matrix world = Matrix.CreateTranslation(envSample.Position);
                 DrawBillboard(world, view, staticViewProjection, envSample.Id);

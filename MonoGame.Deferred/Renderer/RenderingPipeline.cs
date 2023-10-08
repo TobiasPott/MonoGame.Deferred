@@ -575,7 +575,7 @@ namespace DeferredEngine.Renderer
                 _gBufferRenderModule.FarClip = _g_FarClip;
                 _decalRenderModule.FarClip = _g_FarClip;
                 _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_FarClip.SetValue(_g_FarClip);
-                Shaders.BillboardEffectParameter_FarClip.SetValue(_g_FarClip);
+                Shaders.Billboard.Param_FarClip.SetValue(_g_FarClip);
                 Shaders.SSR.Param_FarClip.SetValue(_g_FarClip);
                 Shaders.ReconstructDepthParameter_FarClip.SetValue(_g_FarClip);
             }
@@ -1314,7 +1314,7 @@ namespace DeferredEngine.Renderer
             int targetWidth = (int)(width * ssmultiplier);
             int targetHeight = (int)(height * ssmultiplier);
 
-            Shaders.BillboardEffectParameter_AspectRatio.SetValue((float)targetWidth / targetHeight);
+            Shaders.Billboard.Param_AspectRatio.SetValue((float)targetWidth / targetHeight);
 
             // Update multi render target size
             _gBufferTarget.Resize(targetWidth, targetHeight);
@@ -1386,7 +1386,7 @@ namespace DeferredEngine.Renderer
 
         private void UpdateRenderMapBindings(bool onlyEssentials)
         {
-            Shaders.BillboardEffectParameter_DepthMap.SetValue(_gBufferTarget.Depth);
+            Shaders.Billboard.Param_DepthMap.SetValue(_gBufferTarget.Depth);
 
             Shaders.ReconstructDepthParameter_DepthMap.SetValue(_gBufferTarget.Depth);
 

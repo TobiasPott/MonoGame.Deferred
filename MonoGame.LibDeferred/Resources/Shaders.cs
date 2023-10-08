@@ -34,20 +34,22 @@ namespace DeferredEngine.Recources
         public static readonly EffectPass IdRenderEffectDrawId = IdRenderEffect.Techniques["DrawId"].Passes[0];
         public static readonly EffectPass IdRenderEffectDrawOutline = IdRenderEffect.Techniques["DrawOutline"].Passes[0];
 
-        //Billboard Renderer
-        public static readonly Effect BillboardEffect = Globals.content.Load<Effect>("Shaders/Editor/BillboardEffect");
+        //Billboard Renderert
+        public static class Billboard
+        {
+            public static readonly Effect Effect = Globals.content.Load<Effect>("Shaders/Editor/BillboardEffect");
 
-        public static readonly EffectParameter BillboardEffectParameter_WorldViewProj = BillboardEffect.Parameters["WorldViewProj"];
-        public static readonly EffectParameter BillboardEffectParameter_WorldView = BillboardEffect.Parameters["WorldView"];
-        public static readonly EffectParameter BillboardEffectParameter_AspectRatio = BillboardEffect.Parameters["AspectRatio"];
-        public static readonly EffectParameter BillboardEffectParameter_FarClip = BillboardEffect.Parameters["FarClip"];
-        public static readonly EffectParameter BillboardEffectParameter_Texture = BillboardEffect.Parameters["Texture"];
-        public static readonly EffectParameter BillboardEffectParameter_DepthMap = BillboardEffect.Parameters["DepthMap"];
-        public static readonly EffectParameter BillboardEffectParameter_IdColor = BillboardEffect.Parameters["IdColor"];
+            public static readonly EffectParameter Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
+            public static readonly EffectParameter Param_WorldView = Effect.Parameters["WorldView"];
+            public static readonly EffectParameter Param_AspectRatio = Effect.Parameters["AspectRatio"];
+            public static readonly EffectParameter Param_FarClip = Effect.Parameters["FarClip"];
+            public static readonly EffectParameter Param_Texture = Effect.Parameters["Texture"];
+            public static readonly EffectParameter Param_DepthMap = Effect.Parameters["DepthMap"];
+            public static readonly EffectParameter Param_IdColor = Effect.Parameters["IdColor"];
 
-        public static readonly EffectTechnique BillboardEffectTechnique_Billboard = BillboardEffect.Techniques["Billboard"];
-        public static readonly EffectTechnique BillboardEffectTechnique_Id = BillboardEffect.Techniques["Id"];
-
+            public static readonly EffectTechnique Technique_Billboard = Effect.Techniques["Billboard"];
+            public static readonly EffectTechnique Technique_Id = Effect.Techniques["Id"];
+        }
 
         //Temporal AntiAliasing
 
