@@ -1,13 +1,8 @@
-﻿using DeferredEngine.Renderer;
-
-namespace DeferredEngine.Recources
+﻿namespace DeferredEngine.Recources
 {
-
 
     public static partial class RenderingSettings
     {
-
-   
 
         //Environment mapping
         public static bool g_environmentmapping = true;

@@ -12,6 +12,8 @@
             g_ssao_samples = g_ssao_samples;
             g_ssao_strength = g_ssao_strength;
             g_ssao_draw = _g_ssao_draw;
+            g_ssao_draw = true;
+
         }
 
 

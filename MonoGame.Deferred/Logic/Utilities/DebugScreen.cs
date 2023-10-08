@@ -376,7 +376,7 @@ namespace DeferredEngine.Logic
         /// </summary>
         private void LoadProfilerStrings()
         {
-            if (!RenderingSettings.d_profiler) return;
+            if (!RenderingSettings.d_IsProfileEnabled) return;
 
             FieldInfo[] info2 = typeof(RenderingStats).GetFields();
             int foundIndex = 0;

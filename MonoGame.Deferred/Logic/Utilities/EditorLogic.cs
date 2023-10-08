@@ -52,7 +52,7 @@ namespace DeferredEngine.Logic
             EditorReceivedData data,
             MeshMaterialLibrary meshMaterialLibrary)
         {
-            if (!RenderingSettings.e_enableeditor) return;
+            if (!RenderingSettings.e_IsEditorEnabled) return;
 
             if (!DebugScreen.ConsoleOpen)
             {

@@ -93,7 +93,7 @@ namespace DeferredEngine.Logic
                 gizmoContext: _editorLogic.GetEditorData(),
                 gameTime: gameTime);
 
-            if (RenderingSettings.e_enableeditor && RenderingSettings.ui_enabled)
+            if (RenderingSettings.e_IsEditorEnabled && RenderingSettings.ui_IsUIEnabled)
                 _guiRenderer.Draw(_guiLogic.GuiCanvas);
 
             _debug.Draw(gameTime);

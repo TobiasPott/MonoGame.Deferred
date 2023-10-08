@@ -10,16 +10,16 @@ namespace DeferredEngine.Recources
         public static int u_showdisplayinfo = 3;
 
         //Editor
-        public static bool e_enableeditor = true;
+        public static bool e_IsEditorEnabled = true;
         public static bool e_drawoutlines = true;
         public static bool e_drawboundingbox = true;
         //debug
         public static bool d_drawlines = true;
         //Profiler
-        public static bool d_profiler = false;
+        public static bool d_IsProfileEnabled = false;
 
         //UI
-        public static bool ui_enabled = true;
+        public static bool ui_IsUIEnabled = true;
 
         //Renderer
         //Default Material
@@ -34,9 +34,9 @@ namespace DeferredEngine.Recources
         public static bool g_batchbymaterial = false; //Note this must be activated before the application is started.
 
         //Deferred Decals
-        public static bool g_drawdecals = true;
+        public static bool g_EnableDecals = true;
         //Forward pass
-        public static bool g_forwardenable = true;
+        public static bool g_EnableForward = true;
 
         //Shadow Settings
         public static int g_shadowforcefiltering = 0; //1 = PCF, 2 3 better PCF  4 = Poisson, 5 = VSM;
@@ -72,10 +72,7 @@ namespace DeferredEngine.Recources
         {
             ApplyDefaultsSSAO();
 
-            g_ssao_draw = true;
-
-
-            g_PostProcessing = true;
+            ApplyDefaultsPostProcessing();
 
             ApplyDefaultsTAA();
 

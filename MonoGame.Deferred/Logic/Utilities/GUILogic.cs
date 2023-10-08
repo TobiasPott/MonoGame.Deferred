@@ -476,7 +476,7 @@ namespace DeferredEngine.Logic
         public void Update(GameTime gameTime, bool isActive, TransformableObject selectedObject)
         {
             RenderingStats.UIIsHovered = false;
-            if (!isActive || !RenderingSettings.e_enableeditor || !RenderingSettings.ui_enabled) return;
+            if (!isActive || !RenderingSettings.e_IsEditorEnabled || !RenderingSettings.ui_IsUIEnabled) return;
 
             if (RenderingStats.e_gizmoMode != _gizmoModePrevious)
             {

@@ -195,7 +195,7 @@ namespace DeferredEngine.Logic
             //Starts the "editor mode" where we can manipulate objects
             if (Input.WasKeyPressed(Keys.Space))
             {
-                RenderingSettings.e_enableeditor = !RenderingSettings.e_enableeditor;
+                RenderingSettings.e_IsEditorEnabled = !RenderingSettings.e_IsEditorEnabled;
             }
 
 

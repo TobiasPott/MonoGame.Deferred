@@ -1,13 +1,17 @@
-﻿using DeferredEngine.Renderer;
-
-namespace DeferredEngine.Recources
+﻿namespace DeferredEngine.Recources
 {
-
 
     public static partial class RenderingSettings
     {
-        
+        public static void ApplyDefaultsPostProcessing()
+        {
+            g_PostProcessing = true;
+        }
+
+
         public static bool g_PostProcessing = true;
+
+        public static bool g_ColorGrading = true;
 
         // PostProcessing
         private static float _chromaticAbberationStrength = 0.035f;
@@ -60,8 +64,6 @@ namespace DeferredEngine.Recources
                 Shaders.PostProcessingParameter_PowExposure.SetValue((float)Math.Pow(2, _exposure));
             }
         }
-
-        public static bool g_ColorGrading = true;
 
     }
 }

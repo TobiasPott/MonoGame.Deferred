@@ -19,7 +19,7 @@ using System.Diagnostics;
 
 namespace DeferredEngine.Renderer
 {
-    public class RenderingPipeline : IDisposable
+    public partial class RenderingPipeline : IDisposable
     {
         #region VARIABLES
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -93,9 +93,8 @@ namespace DeferredEngine.Renderer
 
 
         //Render targets
-        private RenderTarget2D _renderTargetAlbedo;
         private readonly RenderTargetBinding[] _renderTargetBinding = new RenderTargetBinding[3];
-
+        private RenderTarget2D _renderTargetAlbedo;
         private RenderTarget2D _renderTargetDepth;
         private RenderTarget2D _renderTargetNormal;
 
@@ -318,7 +317,7 @@ namespace DeferredEngine.Renderer
             _currentOutput = DrawBloom(_currentOutput); // -> output: _renderTargetBloom
 
             //Draw the elements that we are hovering over with outlines
-            if (RenderingSettings.e_enableeditor && RenderingStats.e_EnableSelection)
+            if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
                 _editorRender.DrawIds(meshMaterialLibrary, decals, pointLights, directionalLights, envSample, _staticViewProjection, _view, gizmoContext);
 
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
@@ -339,7 +338,7 @@ namespace DeferredEngine.Renderer
             meshMaterialLibrary.FrustumCullingFinalizeFrame(entities);
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileTotalRender = performanceCurrentTime;
@@ -374,7 +373,7 @@ namespace DeferredEngine.Renderer
             EnvironmentProbe envSample)
         {
 
-            if (RenderingSettings.e_enableeditor && RenderingStats.e_EnableSelection)
+            if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
             {
                 if (RenderingSettings.e_drawoutlines)
                     DrawTextureToScreenToFullScreen(_editorRender.GetOutlines(), BlendState.Additive);
@@ -556,7 +555,7 @@ namespace DeferredEngine.Renderer
             camera.HasChanged = true;
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileDrawCubeMap = performanceCurrentTime - _performancePreviousTime;
@@ -585,7 +584,7 @@ namespace DeferredEngine.Renderer
             RenderingStats.EmissiveMeshDraws = 0;
 
             //Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 _performanceTimer.Restart();
                 _performancePreviousTime = 0;
@@ -657,7 +656,7 @@ namespace DeferredEngine.Renderer
             }
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileRenderChanges = performanceCurrentTime - _performancePreviousTime;
@@ -686,7 +685,7 @@ namespace DeferredEngine.Renderer
             _shadowMapRenderModule.Draw(meshMaterialLibrary, entities, pointLights, dirLights, camera);
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileDrawShadows = performanceCurrentTime - _performancePreviousTime;
@@ -786,7 +785,7 @@ namespace DeferredEngine.Renderer
             _lightAccumulationModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _view, _inverseView, _viewIT, _projection, _viewProjection, _inverseViewProjection);
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileUpdateViewProjection = performanceCurrentTime - _performancePreviousTime;
@@ -886,7 +885,7 @@ namespace DeferredEngine.Renderer
             _gBufferRenderModule.Draw(_renderTargetBinding, meshMaterialLibrary, _viewProjection, _view);
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileDrawGBuffer = performanceCurrentTime - _performancePreviousTime;
@@ -901,7 +900,7 @@ namespace DeferredEngine.Renderer
         /// <param name="decals"></param>
         private void DrawDecals(List<Decal> decals)
         {
-            if (!RenderingSettings.g_drawdecals) return;
+            if (!RenderingSettings.g_EnableDecals) return;
 
             //First copy albedo to decal offtarget
             DrawTextureToScreenToFullScreen(_renderTargetAlbedo, BlendState.Opaque, _renderTargetDecalOffTarget);
@@ -943,7 +942,7 @@ namespace DeferredEngine.Renderer
             Shaders.ScreenSpaceReflectionEffect.CurrentTechnique.Passes[0].Apply();
             FullscreenTarget.Draw(_graphicsDevice);
 
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileDrawSSR = performanceCurrentTime - _performancePreviousTime;
@@ -976,7 +975,7 @@ namespace DeferredEngine.Renderer
             FullscreenTarget.Draw(_graphicsDevice);
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileDrawScreenSpaceEffect = performanceCurrentTime - _performancePreviousTime;
@@ -1032,7 +1031,7 @@ namespace DeferredEngine.Renderer
             }
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileDrawScreenSpaceDirectionalShadow = performanceCurrentTime - _performancePreviousTime;
@@ -1089,7 +1088,7 @@ namespace DeferredEngine.Renderer
             }
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileDrawBilateralBlur = performanceCurrentTime - _performancePreviousTime;
@@ -1108,7 +1107,7 @@ namespace DeferredEngine.Renderer
             _environmentProbeRenderModule.DrawEnvironmentMap(camera, _view, FullscreenTarget, envSample, gameTime, RenderingSettings.g_SSReflection_FireflyReduction, RenderingSettings.g_SSReflection_FireflyThreshold);
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileDrawEnvironmentMap = performanceCurrentTime - _performancePreviousTime;
@@ -1164,7 +1163,7 @@ namespace DeferredEngine.Renderer
             FullscreenTarget.Draw(_graphicsDevice);
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileCompose = performanceCurrentTime - _performancePreviousTime;
@@ -1187,7 +1186,7 @@ namespace DeferredEngine.Renderer
 
         private RenderTarget2D DrawForward(RenderTarget2D input, MeshMaterialLibrary meshMaterialLibrary, Camera camera, List<DeferredPointLight> pointLights)
         {
-            if (!RenderingSettings.g_forwardenable) return input;
+            if (!RenderingSettings.g_EnableForward) return input;
 
             _graphicsDevice.SetRenderTarget(input);
             ReconstructDepth();
@@ -1236,7 +1235,7 @@ namespace DeferredEngine.Renderer
             _taaFx.Draw(currentFrame: input, previousFrames: _temporalAAOffFrame ? _renderTargetTAA_1 : _renderTargetTAA_2, output: output);
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileCombineTemporalAntialiasing = performanceCurrentTime - _performancePreviousTime;
@@ -1292,21 +1291,12 @@ namespace DeferredEngine.Renderer
                 case RenderModes.SSAO:
                     DrawTextureToScreenToFullScreen(_renderTargetSSAOEffect);
                     break;
-                //case RenderModes.Hologram:
-                //    DrawMapToScreenToFullScreen(_renderTargetHologram);
-                //    break;
                 case RenderModes.SSBlur:
                     DrawTextureToScreenToFullScreen(_renderTargetScreenSpaceEffectBlurFinal);
                     break;
-                //case RenderModes.Emissive:
-                //    DrawMapToScreenToFullScreen(_renderTargetEmissive);
-                //    break;
                 case RenderModes.SSR:
                     DrawTextureToScreenToFullScreen(_renderTargetSSR);
                     break;
-                //case RenderModes.SubsurfaceScattering:
-                //    DrawMapToScreenToFullScreen(_renderTargetSSS);
-                //    break;
                 case RenderModes.HDR:
                     DrawTextureToScreenToFullScreen(currentInput);
                     break;
@@ -1317,7 +1307,7 @@ namespace DeferredEngine.Renderer
 
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileDrawFinalRender = performanceCurrentTime - _performancePreviousTime;
@@ -1414,21 +1404,21 @@ namespace DeferredEngine.Renderer
             _renderTargetAlbedo = new RenderTarget2D(_graphicsDevice, targetWidth,
                 targetHeight, false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
 
-            _renderTargetDecalOffTarget = new RenderTarget2D(_graphicsDevice, targetWidth,
-                targetHeight, false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
-
             _renderTargetNormal = new RenderTarget2D(_graphicsDevice, targetWidth,
                 targetHeight, false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
 
             _renderTargetDepth = new RenderTarget2D(_graphicsDevice, targetWidth,
                 targetHeight, false, SurfaceFormat.Single, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
 
-            //_renderTargetSSS = new RenderTarget2D(_graphicsDevice, targetWidth,
-            //    targetHeight, false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
-
             _renderTargetBinding[0] = new RenderTargetBinding(_renderTargetAlbedo);
             _renderTargetBinding[1] = new RenderTargetBinding(_renderTargetNormal);
             _renderTargetBinding[2] = new RenderTargetBinding(_renderTargetDepth);
+
+            _renderTargetDecalOffTarget = new RenderTarget2D(_graphicsDevice, targetWidth,
+                targetHeight, false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
+
+            //_renderTargetSSS = new RenderTarget2D(_graphicsDevice, targetWidth,
+            //    targetHeight, false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
 
             _renderTargetDiffuse = new RenderTarget2D(_graphicsDevice, targetWidth,
                targetHeight, false, SurfaceFormat.HalfVector4, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.PreserveContents);
