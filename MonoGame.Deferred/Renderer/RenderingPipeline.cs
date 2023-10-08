@@ -194,7 +194,7 @@ namespace DeferredEngine.Renderer
             _decalRenderModule.Initialize(graphicsDevice);
             _helperGeometryRenderModule.Initialize(graphicsDevice);
 
-            _bloomFx.Initialize(_graphicsDevice, RenderingSettings.g_ScreenResolution);
+            _bloomFx.Initialize(graphicsDevice, RenderingSettings.g_ScreenResolution);
             _taaFx.Initialize(graphicsDevice, FullscreenTriangleBuffer.Instance);
             _colorGradingFx.Initialize(graphicsDevice, FullscreenTriangleBuffer.Instance);
 
@@ -1136,7 +1136,7 @@ namespace DeferredEngine.Renderer
         {
             if (RenderingSettings.g_BloomEnable)
             {
-                Texture2D bloom = _bloomFx.Draw(input, RenderingSettings.g_ScreenResolution);
+                Texture2D bloom = _bloomFx.Draw(input);
 
                 _graphicsDevice.SetRenderTargets(_renderTargetBloom);
 

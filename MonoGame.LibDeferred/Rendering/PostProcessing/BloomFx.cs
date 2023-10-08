@@ -340,29 +340,14 @@ namespace DeferredEngine.Renderer.PostProcessing
         /// Main draw function
         /// </summary>
         /// <param name="inputTexture">the image from which we want to extract bright parts and blur these</param>
-        /// <param name="resolution">resolution of our target. If different to the input.Texture width our final texture will be smaller/larger.
-        /// For example we can use half resolution. Input: 1280px wide -> width = 640px
-        /// The smaller this value the better performance and the worse our final image quality</param>
         /// <returns></returns>
-        public Texture2D Draw(Texture2D inputTexture, Vector2 resolution)
+        public Texture2D Draw(Texture2D inputTexture)
         {
             //Check if we are initialized
             if (_graphicsDevice == null)
                 throw new Exception("Module not yet Loaded / Initialized. Use Load() first");
 
             ApplyGameSettings();
-
-            //Change renderTarget resolution if different from what we expected. If lower than the inputTexture we gain performance.
-            if (resolution.X != _resolution.X || resolution.Y != _resolution.Y)
-            {
-                UpdateResolution(resolution);
-
-                //Adjust the blur so it looks consistent across diferrent scalings
-                _radiusMultiplier = (float)resolution.X / inputTexture.Width;
-
-                //Update our variables with the multiplier
-                SetBloomPreset(BloomPreset);
-            }
 
             _graphicsDevice.RasterizerState = RasterizerState.CullNone;
             _graphicsDevice.BlendState = BlendState.Opaque;
@@ -372,7 +357,7 @@ namespace DeferredEngine.Renderer.PostProcessing
             _graphicsDevice.SetRenderTarget(_bloomRenderTarget2DMip0);
 
             BloomScreenTexture = inputTexture;
-            BloomInverseResolution = new Vector2(1.0f / _resolution.X, 1.0f / _resolution.Y);
+            BloomInverseResolution = Vector2.One / _resolution;
 
             if (BloomUseLuminance) _bloomPassExtractLuminance.Apply();
             else _bloomPassExtract.Apply();
