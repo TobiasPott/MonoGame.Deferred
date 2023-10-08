@@ -113,7 +113,7 @@ namespace DeferredEngine.Renderer
         private RenderTarget2D _renderTargetTAA_1;
         private RenderTarget2D _renderTargetTAA_2;
 
-        private RenderTarget2D _renderTargetScreenSpaceEffectReflection;
+        private RenderTarget2D _renderTargetSSR;
 
         private RenderTarget2D _renderTargetSSAOEffect;
 
@@ -650,7 +650,7 @@ namespace DeferredEngine.Renderer
 
             if (_ssr != RenderingSettings.g_SSReflection)
             {
-                _graphicsDevice.SetRenderTarget(_renderTargetScreenSpaceEffectReflection);
+                _graphicsDevice.SetRenderTarget(_renderTargetSSR);
                 _graphicsDevice.Clear(new Color(0, 0, 0, 0.0f));
 
                 _ssr = RenderingSettings.g_SSReflection;
@@ -921,7 +921,7 @@ namespace DeferredEngine.Renderer
 
 
             //todo: more samples for more reflective materials!
-            _graphicsDevice.SetRenderTarget(_renderTargetScreenSpaceEffectReflection);
+            _graphicsDevice.SetRenderTarget(_renderTargetSSR);
             _graphicsDevice.BlendState = BlendState.Opaque;
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
@@ -1302,7 +1302,7 @@ namespace DeferredEngine.Renderer
                 //    DrawMapToScreenToFullScreen(_renderTargetEmissive);
                 //    break;
                 case RenderModes.SSR:
-                    DrawTextureToScreenToFullScreen(_renderTargetScreenSpaceEffectReflection);
+                    DrawTextureToScreenToFullScreen(_renderTargetSSR);
                     break;
                 //case RenderModes.SubsurfaceScattering:
                 //    DrawMapToScreenToFullScreen(_renderTargetSSS);
@@ -1397,7 +1397,7 @@ namespace DeferredEngine.Renderer
                     _renderTargetTAA_1.Dispose();
                     _renderTargetTAA_2.Dispose();
                     _renderTargetSSAOEffect.Dispose();
-                    _renderTargetScreenSpaceEffectReflection.Dispose();
+                    _renderTargetSSR.Dispose();
 
                     _renderTargetScreenSpaceEffectUpsampleBlurHorizontal.Dispose();
                     _renderTargetScreenSpaceEffectBlurFinal.Dispose();
@@ -1470,7 +1470,7 @@ namespace DeferredEngine.Renderer
 
                 Shaders.ScreenSpaceReflectionParameter_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
                 _environmentProbeRenderModule.Resolution = new Vector2(targetWidth, targetHeight);
-                _renderTargetScreenSpaceEffectReflection = new RenderTarget2D(_graphicsDevice, targetWidth,
+                _renderTargetSSR = new RenderTarget2D(_graphicsDevice, targetWidth,
                     targetHeight, false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
 
 
@@ -1528,7 +1528,7 @@ namespace DeferredEngine.Renderer
 
             _environmentProbeRenderModule.AlbedoMap = _renderTargetAlbedo;
             _environmentProbeRenderModule.NormalMap = _renderTargetNormal;
-            _environmentProbeRenderModule.SSRMap = _renderTargetScreenSpaceEffectReflection;
+            _environmentProbeRenderModule.SSRMap = _renderTargetSSR;
             _environmentProbeRenderModule.DepthMap = _renderTargetDepth;
 
             _decalRenderModule.DepthMap = _renderTargetDepth;
@@ -1636,7 +1636,7 @@ namespace DeferredEngine.Renderer
             _renderTargetBloom?.Dispose();
             _renderTargetTAA_1?.Dispose();
             _renderTargetTAA_2?.Dispose();
-            _renderTargetScreenSpaceEffectReflection?.Dispose();
+            _renderTargetSSR?.Dispose();
             _renderTargetSSAOEffect?.Dispose();
             _renderTargetScreenSpaceEffectUpsampleBlurVertical?.Dispose();
             _renderTargetScreenSpaceEffectUpsampleBlurHorizontal?.Dispose();

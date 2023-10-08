@@ -22,8 +22,6 @@ namespace DeferredEngine.Recources
         public static bool ui_enabled = true;
 
         //Renderer
-
-
         //Default Material
         public static bool d_defaultmaterial = false;
         public static float m_defaultroughness = 0.5f;
@@ -39,11 +37,6 @@ namespace DeferredEngine.Recources
         public static bool g_drawdecals = true;
         //Forward pass
         public static bool g_forwardenable = true;
-
-        //Environment mapping
-        public static bool g_environmentmapping = true;
-        public static bool g_envmapupdateeveryframe = false;
-        public static int g_envmapresolution = 1024;
 
         //Shadow Settings
         public static int g_shadowforcefiltering = 0; //1 = PCF, 2 3 better PCF  4 = Poisson, 5 = VSM;
@@ -86,7 +79,7 @@ namespace DeferredEngine.Recources
 
             ApplyDefaultsTAA();
 
-            g_environmentmapping = true;
+            ApplyDefaultsEnvironmentMap();
             
             ApplyDefaultsSSR();
             
