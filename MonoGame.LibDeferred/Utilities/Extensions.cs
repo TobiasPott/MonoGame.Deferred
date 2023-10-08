@@ -1,10 +1,8 @@
-﻿using System;
-using System.Security.Cryptography;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Graphics.PackedVector;
 
-namespace DeferredEngine.Recources.Helper
+namespace MonoGame.Ext
 {
     public static class Extensions
     {
@@ -12,8 +10,6 @@ namespace DeferredEngine.Recources.Helper
         {
             for (var i = 0; i < value.Length; i++)
                 param.Elements[i].SetValue(value[i]);
-
-            //param.StateKey = unchecked(param.NextStateKey++);
         }
 
         public static Vector3 Xyz(this Vector4 vec3)
@@ -35,12 +31,6 @@ namespace DeferredEngine.Recources.Helper
         {
             return new Vector3((float)Math.Pow(vec3.X, power), (float)Math.Pow(vec3.Y, power), (float)Math.Pow(vec3.Z, power));
         }
-
-        public static Matrix CreateRotationXYZ(Vector3 angles)
-            => Matrix.CreateRotationX(angles.X) * Matrix.CreateRotationY(angles.Y) * Matrix.CreateRotationZ(angles.Z);
-
-        public static Matrix CreateRotationXYZ(float angleX, float angleY, float angleZ)
-            => Matrix.CreateRotationX(angleX) * Matrix.CreateRotationY(angleY) * Matrix.CreateRotationZ(angleZ);
 
     }
 }

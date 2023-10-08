@@ -1,6 +1,7 @@
 ﻿using DeferredEngine.Recources.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Ext;
 
 namespace DeferredEngine.Entities
 {
@@ -27,7 +28,7 @@ namespace DeferredEngine.Entities
         public Matrix LightViewProjectionPositiveZ;
         public Matrix LightViewProjectionNegativeZ;
 
-        public int[] faceBlurCount = {0, 0, 0, 0, 0, 0};
+        public int[] faceBlurCount = { 0, 0, 0, 0, 0, 0 };
 
         public Matrix LightViewSpace;
         public Matrix LightWorldViewProj;
@@ -80,7 +81,7 @@ namespace DeferredEngine.Entities
             set
             {
                 _color = value;
-                ColorV3 =  (_color.ToVector3().Pow(2.2f));
+                ColorV3 = (_color.ToVector3().Pow(2.2f));
             }
         }
 
@@ -115,9 +116,9 @@ namespace DeferredEngine.Entities
 
         public virtual void ApplyShader(Matrix inverseView)
         {
-            
+
 
         }
     }
-    
+
 }

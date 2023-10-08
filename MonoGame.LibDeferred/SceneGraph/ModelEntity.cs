@@ -1,6 +1,7 @@
 ﻿using DeferredEngine.Recources;
 using DeferredEngine.Recources.Helper;
 using DeferredEngine.Renderer.Helper;
+using MonoGame.Ext;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 
 namespace DeferredEngine.Entities
@@ -22,7 +23,7 @@ namespace DeferredEngine.Entities
             Material = material;
 
             Position = position;
-            RotationMatrix = Extensions.CreateRotationXYZ(rotationAngles);
+            RotationMatrix = MatrixExtensions.CreateRotationXYZ(rotationAngles);
             Scale = scale;
 
             if (library != null)
