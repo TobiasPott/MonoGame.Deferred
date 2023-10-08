@@ -53,34 +53,6 @@ namespace DeferredEngine.Recources
         public static int g_shadowforcefiltering = 0; //1 = PCF, 2 3 better PCF  4 = Poisson, 5 = VSM;
         public static bool g_shadowforcescreenspace = false;
 
-        //Temporal AntiAliasing
-        public static bool g_taa = true;
-        public static int g_taa_jittermode = 2;
-        public static bool g_taa_tonemapped = true;
-
-
-        // Emissive 
-
-        //public static bool g_EmissiveDraw = true;
-        //public static bool g_EmissiveDrawDiffuse = true;
-        //public static bool g_EmissiveDrawSpecular = true;
-        //public static bool g_EmissiveNoise = false;
-        //public static float g_EmissiveDrawFOVFactor = 2;
-
-        ////Whether or not materials' lighting scales with strength
-        //public static bool g_EmissiveMaterialeSizeStrengthScaling = true;
-
-        //private static int _g_EmissiveMaterialSamples = 8;
-        //public static int g_EmissiveMaterialSamples
-        //{
-        //    get { return _g_EmissiveMaterialSamples; }
-        //    set
-        //    {
-        //        _g_EmissiveMaterialSamples = value;
-        //        Shaders.EmissiveEffect.Parameters["Samples"].SetValue(_g_EmissiveMaterialSamples);
-        //    }
-        //}
-
 
 
         private static bool _g_Linear = true;
@@ -100,12 +72,10 @@ namespace DeferredEngine.Recources
         public static bool g_ClearGBuffer = true;
 
 
-        //private static float _g_TemporalAntiAliasingThreshold = 0.9f;
         public static int g_UseDepthStencilLightCulling = 1; //None, Depth, Depth+Stencil
 
 
         public static float ShadowBias = 0.005f;
-        public static bool d_drawnothing = false;
         public static bool e_saveBoundingBoxes = true;
         public static bool d_hotreloadshaders = true;
 
@@ -117,7 +87,9 @@ namespace DeferredEngine.Recources
 
 
             g_PostProcessing = true;
-            g_taa = true;
+
+            ApplyDefaultsTAA();
+
             g_environmentmapping = true;
             
             ApplyDefaultsSSR();

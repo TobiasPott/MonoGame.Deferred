@@ -253,17 +253,6 @@ namespace DeferredEngine.Renderer
             //Reset the stat counter, so we can count stats/information for this frame only
             ResetStats();
 
-            if (RenderingSettings.d_drawnothing)
-            {
-                _graphicsDevice.Clear(Color.Black);
-                return new EditorLogic.EditorReceivedData
-                {
-                    HoveredId = 0,
-                    ViewMatrix = _view,
-                    ProjectionMatrix = _projection
-                };
-            }
-
             //Update the mesh data for changes in physics etc.
             //meshMaterialLibrary.ProcessPhysics(entities);
 
