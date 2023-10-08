@@ -93,7 +93,7 @@ namespace DeferredEngine.Renderer
 
 
         //Render targets
-        private MultiRenderTarget _gBuffer;
+        private GBufferTarget _gBuffer;
 
         private RenderTarget2D _renderTargetDecalOffTarget;
 
@@ -179,7 +179,7 @@ namespace DeferredEngine.Renderer
             _spriteBatch = new SpriteBatch(graphicsDevice);
 
 
-            _gBuffer = new MultiRenderTarget(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
+            _gBuffer = new GBufferTarget(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
             _editorRender = new EditorRender();
             _editorRender.Initialize(graphicsDevice, assets);
 
