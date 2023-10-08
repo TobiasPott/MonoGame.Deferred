@@ -12,16 +12,13 @@
     Call CheckForChanges in Update() or periodically however you like
 */
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
+using DeferredEngine.Recources;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Diagnostics;
+using System.Text;
 
-namespace DeferredEngine.Recources
+namespace MonoGame.LibDeferred.Deprecated
 {
 
 
@@ -29,17 +26,18 @@ namespace DeferredEngine.Recources
     {
 
 #if DEBUG
-        ContentManager TempContent;
-        DateTime LastUpdate;
+        private ContentManager TempContent;
+        private DateTime LastUpdate;
+
         //const string mgcbPathExe = "C:/program Files (x86)/MSBuild/MonoGame/v3.0/Tools/mgcb.exe";
-        const string mgcbPathExe = "%USERPROFILE%/.dotnet/toolsmgcb.exe";
+        private const string mgcbPathExe = "%USERPROFILE%/.dotnet/toolsmgcb.exe";
 #endif
 
-        string contentBuiltPath;
-        string contentExecutablePath;
+        private string contentBuiltPath;
+        private string contentExecutablePath;
         public List<ShaderDefinition> ShaderCollection = new List<ShaderDefinition>();
-        ContentManager Content;
-        GraphicsDevice Device;
+        private ContentManager Content;
+        private GraphicsDevice Device;
 
         public class ShaderDefinition
         {
@@ -55,12 +53,12 @@ namespace DeferredEngine.Recources
                 CompletePath = completePath;
                 HasChanged = false;
             }
-            
+
         }
 
         public ShaderManager(ContentManager content, GraphicsDevice device)
         {
-            contentBuiltPath = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(System.IO.Directory.GetCurrentDirectory())))) + "/Content/";
+            contentBuiltPath = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(Directory.GetCurrentDirectory())))) + "/Content/";
             contentExecutablePath = Directory.GetCurrentDirectory() + "/Content/";
 
             contentBuiltPath = contentBuiltPath.Replace("\\", "/");
@@ -129,7 +127,7 @@ namespace DeferredEngine.Recources
                 File.Delete(builtPath);
 
                 ContentManager newTemp = new ContentManager(TempContent.ServiceProvider, TempContent.RootDirectory);
-               
+
                 shaderDefinition.Effect.Dispose();
                 shaderDefinition.Effect = newTemp.Load<Effect>(shaderDefinition.Path);
 
@@ -176,7 +174,7 @@ namespace DeferredEngine.Recources
         {
             bool match = ShaderCollection.Count(p => p.Path == path) > 0;
 
-            if(!match)
+            if (!match)
             {
                 ShaderCollection.Add(new ShaderDefinition(Content.Load<Effect>(path), path, contentBuiltPath + path.ToLower() + ".fx"));
 
