@@ -25,14 +25,17 @@ namespace DeferredEngine.Recources
         public static readonly EffectParameter ReconstructDepthParameter_FrustumCorners = ReconstructDepth.Parameters["FrustumCorners"];
 
         //Id Generator
-        public static readonly Effect IdRenderEffect = Globals.content.Load<Effect>("Shaders/Editor/IdRender");
-        public static readonly EffectParameter IdRenderEffectParameterWorldViewProj = IdRenderEffect.Parameters["WorldViewProj"];
-        public static readonly EffectParameter IdRenderEffectParameterColorId = IdRenderEffect.Parameters["ColorId"];
-        public static readonly EffectParameter IdRenderEffectParameterOutlineSize = IdRenderEffect.Parameters["OutlineSize"];
-        public static readonly EffectParameter IdRenderEffectParameterWorld = IdRenderEffect.Parameters["World"];
+        public static class IdRender
+        {
+            public static readonly Effect Effect = Globals.content.Load<Effect>("Shaders/Editor/IdRender");
+            public static readonly EffectParameter Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
+            public static readonly EffectParameter Param_ColorId = Effect.Parameters["ColorId"];
+            public static readonly EffectParameter Param_OutlineSize = Effect.Parameters["OutlineSize"];
+            public static readonly EffectParameter Param_World = Effect.Parameters["World"];
 
-        public static readonly EffectPass IdRenderEffectDrawId = IdRenderEffect.Techniques["DrawId"].Passes[0];
-        public static readonly EffectPass IdRenderEffectDrawOutline = IdRenderEffect.Techniques["DrawOutline"].Passes[0];
+            public static readonly EffectPass Technique_Id = Effect.Techniques["DrawId"].Passes[0];
+            public static readonly EffectPass Technique_Outline = Effect.Techniques["DrawOutline"].Passes[0];
+        }
 
         //Billboard Renderert
         public static class Billboard

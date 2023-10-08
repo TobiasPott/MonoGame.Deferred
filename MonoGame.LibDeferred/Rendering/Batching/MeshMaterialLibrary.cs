@@ -506,15 +506,15 @@ namespace DeferredEngine.Renderer.Helper
             }
             else if (renderType == RenderType.IdRender || renderType == RenderType.IdOutline)
             {
-                Shaders.IdRenderEffectParameterWorldViewProj.SetValue(localWorldMatrix * viewProjection);
+                Shaders.IdRender.Param_WorldViewProj.SetValue(localWorldMatrix * viewProjection);
 
                 int id = meshLib.GetTransforms()[index].Id;
 
                 if (renderType == RenderType.IdRender)
                 {
-                    Shaders.IdRenderEffectParameterColorId.SetValue(IdGenerator.GetColorFromId(id).ToVector4());
+                    Shaders.IdRender.Param_ColorId.SetValue(IdGenerator.GetColorFromId(id).ToVector4());
 
-                    Shaders.IdRenderEffectDrawId.Apply();
+                    Shaders.IdRender.Technique_Id.Apply();
                 }
                 if (renderType == RenderType.IdOutline)
                 {
@@ -524,13 +524,13 @@ namespace DeferredEngine.Renderer.Helper
                     {
                         graphicsDevice.RasterizerState = RasterizerState.CullNone;
 
-                        Shaders.IdRenderEffectParameterWorld.SetValue(localWorldMatrix);
+                        Shaders.IdRender.Param_World.SetValue(localWorldMatrix);
 
                         if (outlined)
-                            Shaders.IdRenderEffectDrawOutline.Apply();
+                            Shaders.IdRender.Technique_Outline.Apply();
                         else
                         {
-                            Shaders.IdRenderEffectDrawId.Apply();
+                            Shaders.IdRender.Technique_Id.Apply();
                         }
                     }
                     else

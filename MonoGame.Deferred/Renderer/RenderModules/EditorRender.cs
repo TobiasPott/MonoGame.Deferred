@@ -72,13 +72,13 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.SetVertexBuffer(_billboardBuffer.VBuffer);
             _graphicsDevice.Indices = (_billboardBuffer.IBuffer);
 
-            Shaders.BillboardEffect.CurrentTechnique = Shaders.BillboardEffectTechnique_Billboard;
+            Shaders.Billboard.Effect.CurrentTechnique = Shaders.Billboard.Technique_Billboard;
 
-            Shaders.BillboardEffectParameter_IdColor.SetValue(Color.Gray.ToVector3());
+            Shaders.Billboard.Param_IdColor.SetValue(Color.Gray.ToVector3());
 
             //Decals
 
-            Shaders.BillboardEffectParameter_Texture.SetValue(_assets.IconDecal);
+            Shaders.Billboard.Param_Texture.SetValue(_assets.IconDecal);
             for (int index = 0; index < decals.Count; index++)
             {
                 var decal = decals[index];
@@ -87,7 +87,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
             //Lights
 
-            Shaders.BillboardEffectParameter_Texture.SetValue(_assets.IconLight);
+            Shaders.Billboard.Param_Texture.SetValue(_assets.IconLight);
             for (int index = 0; index < lights.Count; index++)
             {
                 var light = lights[index];
@@ -131,7 +131,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
             //EnvMap
 
-            Shaders.BillboardEffectParameter_Texture.SetValue(_assets.IconEnvmap);
+            Shaders.Billboard.Param_Texture.SetValue(_assets.IconEnvmap);
 
             DrawBillboard(envSample, staticViewProjection, view, gizmoContext);
 
@@ -139,20 +139,20 @@ namespace DeferredEngine.Renderer.RenderModules
         private void DrawBillboard(TransformableObject billboardObject, Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
         {
             Matrix world = Matrix.CreateTranslation(billboardObject.Position);
-            Shaders.BillboardEffectParameter_WorldViewProj.SetValue(world * staticViewProjection);
-            Shaders.BillboardEffectParameter_WorldView.SetValue(world * view);
+            Shaders.Billboard.Param_WorldViewProj.SetValue(world * staticViewProjection);
+            Shaders.Billboard.Param_WorldView.SetValue(world * view);
 
             if (billboardObject.Id == GetHoveredId())
-                Shaders.BillboardEffectParameter_IdColor.SetValue(Color.White.ToVector3());
+                Shaders.Billboard.Param_IdColor.SetValue(Color.White.ToVector3());
             if (billboardObject.Id == gizmoContext.SelectedObjectId)
-                Shaders.BillboardEffectParameter_IdColor.SetValue(Color.Gold.ToVector3());
+                Shaders.Billboard.Param_IdColor.SetValue(Color.Gold.ToVector3());
 
-            Shaders.BillboardEffect.CurrentTechnique.Passes[0].Apply();
+            Shaders.Billboard.Effect.CurrentTechnique.Passes[0].Apply();
 
             _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 2);
 
             if (billboardObject.Id == GetHoveredId() || billboardObject.Id == gizmoContext.SelectedObjectId)
-                Shaders.BillboardEffectParameter_IdColor.SetValue(Color.Gray.ToVector3());
+                Shaders.Billboard.Param_IdColor.SetValue(Color.Gray.ToVector3());
         }
 
         public void DrawIds(MeshMaterialLibrary meshMaterialLibrary, 
@@ -220,8 +220,8 @@ namespace DeferredEngine.Renderer.RenderModules
             Matrix scaleMatrix = Matrix.CreateScale(0.75f, 0.75f, scale * 1.5f);
             Matrix worldViewProj = scaleMatrix * rotation * rotationObject * Matrix.CreateTranslation(position) * staticViewProjection;
 
-            Shaders.IdRenderEffectParameterWorldViewProj.SetValue(worldViewProj);
-            Shaders.IdRenderEffectParameterColorId.SetValue(color.ToVector4());
+            Shaders.IdRender.Param_WorldViewProj.SetValue(worldViewProj);
+            Shaders.IdRender.Param_ColorId.SetValue(color.ToVector4());
 
             Model model = gizmoMode == GizmoModes.Translation
                 ? _assets.EditorArrow
@@ -230,7 +230,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
             ModelMeshPart meshpart = model.Meshes[0].MeshParts[0];
 
-            Shaders.IdRenderEffectDrawId.Apply();
+            Shaders.IdRender.Technique_Id.Apply();
 
             _graphicsDevice.SetVertexBuffer(meshpart.VertexBuffer);
             _graphicsDevice.Indices = (meshpart.IndexBuffer);

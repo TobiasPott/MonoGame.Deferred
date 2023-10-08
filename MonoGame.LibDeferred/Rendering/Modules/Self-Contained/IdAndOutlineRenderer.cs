@@ -177,11 +177,11 @@ namespace DeferredEngine.Renderer.RenderModules
             Matrix scaleMatrix = Matrix.CreateScale(0.75f, 0.75f, scale * 1.5f);
             Matrix worldViewProj = scaleMatrix * rotation * rotationObject * Matrix.CreateTranslation(position) * staticViewProjection;
 
-            Shaders.IdRenderEffectParameterWorldViewProj.SetValue(worldViewProj);
-            Shaders.IdRenderEffectParameterColorId.SetValue(color.ToVector4());
+            Shaders.IdRender.Param_WorldViewProj.SetValue(worldViewProj);
+            Shaders.IdRender.Param_ColorId.SetValue(color.ToVector4());
             ModelMeshPart meshpart = assets.EditorArrow.Meshes[0].MeshParts[0];
 
-            Shaders.IdRenderEffectDrawId.Apply();
+            Shaders.IdRender.Technique_Id.Apply();
 
             _graphicsDevice.SetVertexBuffer(meshpart.VertexBuffer);
             _graphicsDevice.Indices = (meshpart.IndexBuffer);
@@ -219,7 +219,7 @@ namespace DeferredEngine.Renderer.RenderModules
                     meshMat.Draw(MeshMaterialLibrary.RenderType.IdOutline, viewProjection, false, false,
                         false, selectedId);
 
-                Shaders.IdRenderEffectParameterColorId.SetValue(_selectedColor);
+                Shaders.IdRender.Param_ColorId.SetValue(_selectedColor);
                 meshMat.Draw(MeshMaterialLibrary.RenderType.IdOutline, viewProjection, false, false,
                     outlined: true, outlineId: selectedId);
             }
@@ -228,7 +228,7 @@ namespace DeferredEngine.Renderer.RenderModules
             {
                 if (!drawAll) meshMat.Draw(MeshMaterialLibrary.RenderType.IdOutline, viewProjection, false, false, false, hoveredId);
 
-                Shaders.IdRenderEffectParameterColorId.SetValue(_hoveredColor);
+                Shaders.IdRender.Param_ColorId.SetValue(_hoveredColor);
                 meshMat.Draw(MeshMaterialLibrary.RenderType.IdOutline, viewProjection, false, false, outlined: true, outlineId: hoveredId);
             }
         }
