@@ -1,20 +1,22 @@
 ﻿using DeferredEngine.Renderer;
 using Microsoft.Xna.Framework;
 
-// ReSharper disable InconsistentNaming
-
 namespace DeferredEngine.Recources
 {
-    public sealed class ScreenSettings
+
+    public class SubSettings
     {
+        public void Apply()
+        {
+
+        }
     }
+
 
 
     public static partial class RenderingSettings
     {
         //Default & Display settings
-        public static ScreenSettings Screen = new ScreenSettings();
-
         public static int g_ScreenWidth => (int)g_ScreenResolution.X;
         public static int g_ScreenHeight => (int)g_ScreenResolution.Y;
         public static Vector2 g_ScreenResolution = new Vector2(1280, 720);
@@ -34,12 +36,10 @@ namespace DeferredEngine.Recources
         }
 
 
+
         public static int u_showdisplayinfo = 3;
         public static bool p_physics = false;
         public static RenderModes g_rendermode = RenderModes.Deferred;
-
-
-
 
 
         //Editor
@@ -378,11 +378,22 @@ namespace DeferredEngine.Recources
         public static bool e_saveBoundingBoxes = true;
         public static bool d_hotreloadshaders = true;
 
+        public static void ApplySSAO()
+        {
+            g_ssao_falloffmax = _g_ssao_falloffmax;
+            g_ssao_falloffmin = _g_ssao_falloffmin;
+            g_ssao_radius = _g_ssao_radius;
+            g_ssao_samples = g_ssao_samples;
+            g_ssao_strength = g_ssao_strength;
+            g_ssao_draw = _g_ssao_draw;
+        }
         public static void ApplySettings()
         {
             ApplySSAO();
-
+            
             g_ssao_draw = true;
+
+
             g_PostProcessing = true;
             g_taa = true;
             g_environmentmapping = true;
@@ -402,14 +413,5 @@ namespace DeferredEngine.Recources
 
         }
 
-        public static void ApplySSAO()
-        {
-            g_ssao_falloffmax = _g_ssao_falloffmax;
-            g_ssao_falloffmin = _g_ssao_falloffmin;
-            g_ssao_radius = _g_ssao_radius;
-            g_ssao_samples = g_ssao_samples;
-            g_ssao_strength = g_ssao_strength;
-            g_ssao_draw = _g_ssao_draw;
-        }
     }
 }
