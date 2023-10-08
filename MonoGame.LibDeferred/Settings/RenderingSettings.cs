@@ -88,77 +88,7 @@ namespace DeferredEngine.Recources
         public static int g_taa_jittermode = 2;
         public static bool g_taa_tonemapped = true;
 
-        //Screen Space Ambient Occlusion
-
-        public static bool g_ssao_blur = true;
-        private static bool _g_ssao_draw = true;
-        public static bool g_ssao_draw
-        {
-            get { return _g_ssao_draw; }
-            set
-            {
-                _g_ssao_draw = value;
-                Shaders.DeferredCompose.Parameters["useSSAO"].SetValue(_g_ssao_draw);
-            }
-        }
-
-        private static float _g_ssao_falloffmin = 0.001f;
-        public static float g_ssao_falloffmin
-        {
-            get { return _g_ssao_falloffmin; }
-            set
-            {
-                _g_ssao_falloffmin = value;
-                Shaders.ScreenSpaceEffect_FalloffMin.SetValue(value);
-            }
-        }
-
-        private static float _g_ssao_falloffmax = 0.03f;
-        public static float g_ssao_falloffmax
-        {
-            get { return _g_ssao_falloffmax; }
-            set
-            {
-                _g_ssao_falloffmax = value;
-                Shaders.ScreenSpaceEffect_FalloffMax.SetValue(value);
-            }
-        }
-
-        private static int _g_ssao_samples = 8;
-        public static int g_ssao_samples
-        {
-            get { return _g_ssao_samples; }
-            set
-            {
-                _g_ssao_samples = value;
-                Shaders.ScreenSpaceEffect_Samples.SetValue(value);
-            }
-        }
-
-        private static float _g_ssao_radius = 30;
-        public static float g_ssao_radius
-        {
-            get { return _g_ssao_radius; }
-            set
-            {
-                _g_ssao_radius = value;
-                Shaders.ScreenSpaceEffect_SampleRadius.SetValue(value);
-            }
-        }
-
-        private static float _g_ssao_strength = 0.5f;
-        public static float g_ssao_strength
-        {
-            get { return _g_ssao_strength; }
-            set
-            {
-                _g_ssao_strength = value;
-                Shaders.ScreenSpaceEffect_Strength.SetValue(value);
-            }
-        }
-
-
-
+        // Bloom
         public static float g_BloomThreshold = 0.0f;
 
         // Emissive 
@@ -378,18 +308,9 @@ namespace DeferredEngine.Recources
         public static bool e_saveBoundingBoxes = true;
         public static bool d_hotreloadshaders = true;
 
-        public static void ApplySSAO()
-        {
-            g_ssao_falloffmax = _g_ssao_falloffmax;
-            g_ssao_falloffmin = _g_ssao_falloffmin;
-            g_ssao_radius = _g_ssao_radius;
-            g_ssao_samples = g_ssao_samples;
-            g_ssao_strength = g_ssao_strength;
-            g_ssao_draw = _g_ssao_draw;
-        }
         public static void ApplySettings()
         {
-            ApplySSAO();
+            ApplyDefaultsSSAO();
             
             g_ssao_draw = true;
 

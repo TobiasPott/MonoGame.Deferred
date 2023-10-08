@@ -6,7 +6,18 @@ namespace DeferredEngine.Recources
 
     public partial class RenderingSettings
     {
-       
+
+        public static void ApplyDefaultsSSAO()
+        {
+            g_ssao_falloffmax = _g_ssao_falloffmax;
+            g_ssao_falloffmin = _g_ssao_falloffmin;
+            g_ssao_radius = _g_ssao_radius;
+            g_ssao_samples = g_ssao_samples;
+            g_ssao_strength = g_ssao_strength;
+            g_ssao_draw = _g_ssao_draw;
+        }
+
+
         //Screen Space Ambient Occlusion
         public static bool g_ssao_blur = true;
 
