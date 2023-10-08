@@ -32,10 +32,10 @@ namespace DeferredEngine.Renderer.RenderModules
         public EffectParameter Param_VolumeTexSize;
         public EffectParameter Param_VolumeTexResolution;
 
-        public EffectParameter Param_InstanceInverseMatrix;
-        public EffectParameter Param_InstanceScale;
-        public EffectParameter Param_InstanceSDFIndex;
-        public EffectParameter Param_InstancesCount;
+        private EffectParameter Param_InstanceInverseMatrix;
+        private EffectParameter Param_InstanceScale;
+        private EffectParameter Param_InstanceSDFIndex;
+        private EffectParameter Param_InstancesCount;
 
         public EffectParameter Param_UseSDFAO;
 
@@ -170,10 +170,7 @@ namespace DeferredEngine.Renderer.RenderModules
         public void Load(ContentManager content, string shaderPath)
         {
             Effect = content.Load<Effect>(shaderPath);
-        }
-        public void Initialize(GraphicsDevice graphicsDevice)
-        {
-            _graphicsDevice = graphicsDevice;
+
             //Environment
             Param_AlbedoMap = Effect.Parameters["AlbedoMap"];
             Param_NormalMap = Effect.Parameters["NormalMap"];
@@ -204,6 +201,10 @@ namespace DeferredEngine.Renderer.RenderModules
 
             Pass_Sky = Effect.Techniques["Sky"].Passes[0];
             Pass_Basic = Effect.Techniques["Basic"].Passes[0];
+        }
+        public void Initialize(GraphicsDevice graphicsDevice)
+        {
+            _graphicsDevice = graphicsDevice;
         }
 
 
