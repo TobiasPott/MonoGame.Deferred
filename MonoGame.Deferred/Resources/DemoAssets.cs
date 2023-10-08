@@ -217,9 +217,7 @@ namespace DeferredEngine.Recources
                 for (int index = 0; index < mesh.MeshParts.Count; index++)
                 {
                     ModelMeshPart meshPart = mesh.MeshParts[index];
-                    MaterialEffect matEffect = new MaterialEffect(meshPart.Effect);
-
-                    matEffect.DiffuseColor = Color.Gray.ToVector3();
+                    MaterialEffect matEffect = new MaterialEffect(meshPart.Effect) { DiffuseColor = Color.Gray.ToVector3() };
 
                     if (mesh.Name == "Helmet1_Interior")
                     {

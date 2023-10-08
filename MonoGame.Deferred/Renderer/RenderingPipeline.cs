@@ -262,10 +262,9 @@ namespace DeferredEngine.Renderer
             }
             //Render EnvironmentMaps
             //We do this either when pressing C or at the start of the program (_renderTargetCube == null) or when the game settings want us to do it every frame
-            if (envSample.NeedsUpdate || RenderingSettings.g_envmapupdateeveryframe)
+            if (RenderingSettings.g_envmapupdateeveryframe)
             {
-                DrawCubeMap(envSample.Position, meshMaterialLibrary, entities, pointLights, directionalLights, envSample, 300, gameTime, camera);
-                envSample.NeedsUpdate = false;
+                DrawCubeMap(envSample.Position, meshMaterialLibrary, entities, pointLights, directionalLights, 300, gameTime, camera);
             }
 
             //Update our view projection matrices if the camera moved
@@ -418,7 +417,6 @@ namespace DeferredEngine.Renderer
             List<ModelEntity> entities,
             List<DeferredPointLight> pointLights,
             List<DeferredDirectionalLight> dirLights,
-            EnvironmentProbe envSample,
             float farPlane, GameTime gameTime, Camera camera)
         {
             //If our cubemap is not yet initialized, create a new one
@@ -719,21 +717,21 @@ namespace DeferredEngine.Renderer
                         case 0: //2 frames, just basic translation. Worst taa implementation. Not good with the continous integration used
                             {
                                 Vector2 translation = Vector2.One * (_temporalAAOffFrame ? 0.5f : -0.5f);
-                                _viewProjection = _viewProjection * (translation / RenderingSettings.g_ScreenResolution).ToMatrixTranslationXY();
+                                _viewProjection *= (translation / RenderingSettings.g_ScreenResolution).ToMatrixTranslationXY();
                             }
                             break;
                         case 1: // Just random translation
                             {
                                 float randomAngle = FastRand.NextAngle();
                                 Vector2 translation = (new Vector2((float)Math.Sin(randomAngle), (float)Math.Cos(randomAngle)) / RenderingSettings.g_ScreenResolution) * 0.5f; ;
-                                _viewProjection = _viewProjection * translation.ToMatrixTranslationXY();
+                                _viewProjection *= translation.ToMatrixTranslationXY();
 
                             }
                             break;
                         case 2: // Halton sequence, default
                             {
                                 Vector3 translation = GetHaltonSequence();
-                                _viewProjection = _viewProjection * Matrix.CreateTranslation(translation);
+                                _viewProjection *= Matrix.CreateTranslation(translation);
                             }
                             break;
                     }
@@ -786,9 +784,9 @@ namespace DeferredEngine.Renderer
 
                         while (i > 0)
                         {
-                            f = f / baseValue;
-                            result = result + f * (i % baseValue);
-                            i = i / baseValue; //floor / int()
+                            f /= baseValue;
+                            result += f * (i % baseValue);
+                            i /= baseValue; //floor / int()
                         }
 
                         if (baseValue == 2)

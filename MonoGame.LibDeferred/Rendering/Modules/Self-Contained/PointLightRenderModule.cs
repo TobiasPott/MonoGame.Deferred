@@ -210,7 +210,6 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
 
         public void Dispose()
         {
-            Shaders.DeferredPointLight.Effect?.Dispose();
             _stencilCullPass1?.Dispose();
             _stencilCullPass2?.Dispose();
         }

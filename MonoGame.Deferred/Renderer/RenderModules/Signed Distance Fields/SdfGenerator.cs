@@ -1,7 +1,6 @@
 ﻿using DeferredEngine.Entities;
 using DeferredEngine.Recources;
 using DeferredEngine.Recources.Helper;
-using DeferredEngine.Renderer.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -20,9 +19,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
 
         public void GenerateTriangles(Model model, ref SdfTriangle[] triangles)
         {
-            Vector3[] vertexPositions;
-            int[] indices;
-            GeometryDataExtractor.GetVerticesAndIndicesFromModel(model, out vertexPositions, out indices);
+            GeometryDataExtractor.GetVerticesAndIndicesFromModel(model, out Vector3[] vertexPositions, out int[] indices);
             if (triangles.Length != indices.Length / 3)
                 Array.Resize<SdfTriangle>(ref triangles, indices.Length / 3);
             int baseIndex = 0;
@@ -189,7 +186,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
             }
         }
 
-        private int toTexCoords(int x, int y, int z, int xsteps, int zsteps)
+        private int ToTexCoords(int x, int y, int z, int xsteps, int zsteps)
         {
             x += z * xsteps;
             return x + y * xsteps * zsteps;
@@ -271,7 +268,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
 
                         float color = ComputeSDF(position, triangles);
 
-                        data[toTexCoords(xi, yi, zi, xsteps, zsteps)] = color;
+                        data[ToTexCoords(xi, yi, zi, xsteps, zsteps)] = color;
 
                         if (threadindex == 0)
                             RenderingStats.sdf_load = (xi + (yi + zi / (float)zsteps) / (float)ysteps) / (float)xsteps;
@@ -281,17 +278,17 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
             }
         }
 
-        private float dot2(Vector3 v)
+        private static float Dot2(Vector3 v)
         {
             return Vector3.Dot(v, v);
         }
 
-        private float saturate(float x)
+        private static float Saturate(float x)
         {
             return x < 0 ? 0 : x > 1 ? 1 : x;
         }
 
-        private float ComputeSDF(Vector3 p, SdfTriangle[] triangles)
+        private static float ComputeSDF(Vector3 p, SdfTriangle[] triangles)
         {
             //Find nearest distance.
             //http://iquilezles.org/www/articles/distfunctions/distfunctions.htm
@@ -323,11 +320,11 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
                                 Math.Sign(Vector3.Dot(Vector3.Cross(ac, nor), pc)) < 2.0f)
                                 ?
                                 Math.Min(Math.Min(
-                                dot2(ba * saturate(Vector3.Dot(ba, pa) / dot2(ba)) - pa),
-                                dot2(cb * saturate(Vector3.Dot(cb, pb) / dot2(cb)) - pb)),
-                                dot2(ac * saturate(Vector3.Dot(ac, pc) / dot2(ac)) - pc))
+                                Dot2(ba * Saturate(Vector3.Dot(ba, pa) / Dot2(ba)) - pa),
+                                Dot2(cb * Saturate(Vector3.Dot(cb, pb) / Dot2(cb)) - pb)),
+                                Dot2(ac * Saturate(Vector3.Dot(ac, pc) / Dot2(ac)) - pc))
                                 :
-                                Vector3.Dot(nor, pa) * Vector3.Dot(nor, pa) / dot2(nor);
+                                Vector3.Dot(nor, pa) * Vector3.Dot(nor, pa) / Dot2(nor);
 
                 //intersection
                 intersections += RayCast(a, b, c, p, dir);
@@ -348,7 +345,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
             return (float)Math.Sqrt(Math.Abs(min)) * signum; /** Math.Sign(min)*/;
         }
 
-        private int RayCast(Vector3 a, Vector3 b, Vector3 c, Vector3 origin, Vector3 dir)
+        private static int RayCast(Vector3 a, Vector3 b, Vector3 c, Vector3 origin, Vector3 dir)
         {
             Vector3 edge1 = b - a;
             Vector3 edge2 = c - a;
