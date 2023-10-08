@@ -9,7 +9,7 @@ namespace DeferredEngine.Logic
 {
     public class GUILogic
     {
-        private Assets _assets;
+        private DemoAssets _assets;
         public GUICanvas GuiCanvas;
 
         private GuiListToggleScroll _rightSideList;
@@ -41,7 +41,7 @@ namespace DeferredEngine.Logic
         private Vector3 activeObjectPos;
 
 
-        public void Initialize(Assets assets, Camera sceneLogicCamera)
+        public void Initialize(DemoAssets assets, Camera sceneLogicCamera)
         {
             _assets = assets;
 
@@ -55,7 +55,7 @@ namespace DeferredEngine.Logic
         /// <param name="sceneLogicCamera"></param>
         private void CreateGUI(Camera sceneLogicCamera)
         {
-            GuiCanvas = new GUICanvas(Vector2.Zero, new Vector2(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight));
+            GuiCanvas = new GUICanvas(Vector2.Zero, RenderingSettings.g_ScreenResolution);
 
             defaultStyle = new GUIStyle(
                 dimensionsStyle: new Vector2(200, 35),
@@ -476,7 +476,7 @@ namespace DeferredEngine.Logic
         public void Update(GameTime gameTime, bool isActive, TransformableObject selectedObject)
         {
             RenderingStats.UIIsHovered = false;
-            if (!isActive || !RenderingSettings.e_enableeditor || !RenderingSettings.ui_enabled) return;
+            if (!isActive || !RenderingSettings.e_IsEditorEnabled || !RenderingSettings.ui_IsUIEnabled) return;
 
             if (RenderingStats.e_gizmoMode != _gizmoModePrevious)
             {
@@ -639,8 +639,8 @@ namespace DeferredEngine.Logic
 
         public void UpdateResolution()
         {
-            GUIControl.UpdateResolution(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight);
-            GuiCanvas.Resize(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight);
+            GUIControl.UpdateResolution(RenderingSettings.g_ScreenResolution);
+            GuiCanvas.Resize(RenderingSettings.g_ScreenResolution);
         }
     }
 }

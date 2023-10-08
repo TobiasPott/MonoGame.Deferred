@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
 namespace HelperSuite.GUI
 {
@@ -13,7 +11,7 @@ namespace HelperSuite.GUI
 
         private List<GUIElement> _children = new List<GUIElement>();
 
-        public GUICanvas(Vector2 position, Vector2 dimensions,  int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, Vector2 ParentDimensions = default(Vector2))
+        public GUICanvas(Vector2 position, Vector2 dimensions, int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, Vector2 ParentDimensions = default(Vector2))
         {
             Dimensions = dimensions;
             Alignment = alignment;
@@ -38,9 +36,9 @@ namespace HelperSuite.GUI
             }
         }
 
-        public void Resize(float width, float height)
+        public void Resize(Vector2 dimensions)
         {
-            Dimensions = new Vector2(width, height);
+            Dimensions = dimensions;
             ParentResized(Dimensions);
         }
 
@@ -83,7 +81,7 @@ namespace HelperSuite.GUI
                     position = parentDimensions - dimensions;
                     break;
                 case GUIStyle.GUIAlignment.Center:
-                    position = parentDimensions/2 - dimensions/2;
+                    position = parentDimensions / 2 - dimensions / 2;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -123,7 +121,7 @@ namespace HelperSuite.GUI
                 child.Update(gameTime, mousePosition, parentPosition + Position);
             }
         }
-        
+
         public override GUIStyle.GUIAlignment Alignment { get; set; }
     }
 }

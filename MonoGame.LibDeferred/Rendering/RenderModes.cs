@@ -11,11 +11,9 @@ namespace DeferredEngine.Renderer
         Diffuse,
         Specular,
         Volumetric,
-        //Hologram,
         SSAO,
         SSBlur,
-        //Emissive,
         SSR,
-        HDR
+        HDR,
     }
 }

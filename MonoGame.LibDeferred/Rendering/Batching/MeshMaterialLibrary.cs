@@ -499,22 +499,22 @@ namespace DeferredEngine.Renderer.Helper
             }
             else if (renderType == RenderType.Hologram)
             {
-                Shaders.HologramEffectParameter_World.SetValue(localWorldMatrix);
-                Shaders.HologramEffectParameter_WorldViewProj.SetValue(localWorldMatrix * viewProjection);
+                Shaders.Hologram.Param_World.SetValue(localWorldMatrix);
+                Shaders.Hologram.Param_WorldViewProj.SetValue(localWorldMatrix * viewProjection);
 
-                Shaders.HologramEffect.CurrentTechnique.Passes[0].Apply();
+                Shaders.Hologram.Effect.CurrentTechnique.Passes[0].Apply();
             }
             else if (renderType == RenderType.IdRender || renderType == RenderType.IdOutline)
             {
-                Shaders.IdRenderEffectParameterWorldViewProj.SetValue(localWorldMatrix * viewProjection);
+                Shaders.IdRender.Param_WorldViewProj.SetValue(localWorldMatrix * viewProjection);
 
                 int id = meshLib.GetTransforms()[index].Id;
 
                 if (renderType == RenderType.IdRender)
                 {
-                    Shaders.IdRenderEffectParameterColorId.SetValue(IdGenerator.GetColorFromId(id).ToVector4());
+                    Shaders.IdRender.Param_ColorId.SetValue(IdGenerator.GetColorFromId(id).ToVector4());
 
-                    Shaders.IdRenderEffectDrawId.Apply();
+                    Shaders.IdRender.Technique_Id.Apply();
                 }
                 if (renderType == RenderType.IdOutline)
                 {
@@ -524,13 +524,13 @@ namespace DeferredEngine.Renderer.Helper
                     {
                         graphicsDevice.RasterizerState = RasterizerState.CullNone;
 
-                        Shaders.IdRenderEffectParameterWorld.SetValue(localWorldMatrix);
+                        Shaders.IdRender.Param_World.SetValue(localWorldMatrix);
 
                         if (outlined)
-                            Shaders.IdRenderEffectDrawOutline.Apply();
+                            Shaders.IdRender.Technique_Outline.Apply();
                         else
                         {
-                            Shaders.IdRenderEffectDrawId.Apply();
+                            Shaders.IdRender.Technique_Id.Apply();
                         }
                     }
                     else
@@ -552,7 +552,7 @@ namespace DeferredEngine.Renderer.Helper
             }
             else if (renderType == RenderType.ShadowOmnidirectional)
             {
-                ((ShadowMapRenderModule)renderModule).SetMaterialSettings(material, renderType);
+                ((ShadowMapPipelineModule)renderModule).SetMaterialSettings(material, renderType);
             }
             //if (renderType == RenderType.IdRender || renderType == RenderType.IdOutline)
             //{
@@ -561,13 +561,13 @@ namespace DeferredEngine.Renderer.Helper
             //todo: We only need textures for non shadow mapping, right? Not quite actually, for alpha textures we need materials
             else if (renderType == RenderType.Opaque)
             {
-                ((GBufferRenderModule)renderModule).SetMaterialSettings(material);
+                ((GBufferPipelineModule)renderModule).SetMaterialSettings(material);
             }
         }
 
         private void ClearFrame(GraphicsDevice graphicsDevice)
         {
-            Shaders.DeferredClear.CurrentTechnique.Passes[0].Apply();
+            Shaders.DeferredClear.Effect.CurrentTechnique.Passes[0].Apply();
             _fullscreenTarget.Draw(graphicsDevice);
         }
 

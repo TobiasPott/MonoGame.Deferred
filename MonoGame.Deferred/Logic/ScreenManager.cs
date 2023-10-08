@@ -1,5 +1,4 @@
-﻿using BEPUphysics;
-using DeferredEngine.Recources;
+﻿using DeferredEngine.Recources;
 using HelperSuite.GUIRenderer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -22,8 +21,7 @@ namespace DeferredEngine.Logic
         private MainSceneLogic _sceneLogic;
         private GUILogic _guiLogic;
         private EditorLogic _editorLogic;
-        private Assets _assets;
-        private ShaderManager _shaderManager;
+        private DemoAssets _assets;
         private DebugScreen _debug;
 
         private EditorLogic.EditorReceivedData _editorReceivedDataBuffer;
@@ -32,22 +30,19 @@ namespace DeferredEngine.Logic
         //  FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        public void Initialize(GraphicsDevice graphicsDevice, Space space)
+        public void Initialize(GraphicsDevice graphicsDevice)
         {
-            _renderer.Initialize(graphicsDevice, _assets);
-            _sceneLogic.Initialize(_assets, space, graphicsDevice);
+            _renderer.Initialize(graphicsDevice);
+            _sceneLogic.Initialize(_assets, graphicsDevice);
             _guiLogic.Initialize(_assets, _sceneLogic.Camera);
             _editorLogic.Initialize(graphicsDevice);
             _debug.Initialize(graphicsDevice);
-            _guiRenderer.Initialize(graphicsDevice, RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight);
+            _guiRenderer.Initialize(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
         }
 
         //Update per frame
         public void Update(GameTime gameTime, bool isActive)
         {
-#if DEBUG
-            _shaderManager.CheckForChanges();
-#endif
             _guiLogic.Update(gameTime, isActive, _editorLogic.SelectedObject);
             _editorLogic.Update(gameTime, _sceneLogic.BasicEntities, _sceneLogic.Decals, _sceneLogic.PointLights, _sceneLogic.DirectionalLights, _sceneLogic.EnvironmentSample, _editorReceivedDataBuffer, _sceneLogic.MeshMaterialLibrary);
             _sceneLogic.Update(gameTime, isActive);
@@ -63,15 +58,14 @@ namespace DeferredEngine.Logic
             _sceneLogic = new MainSceneLogic();
             _guiLogic = new GUILogic();
             _editorLogic = new EditorLogic();
-            _assets = new Assets();
+            _assets = new DemoAssets();
             _debug = new DebugScreen();
             _guiRenderer = new GUIRenderer();
 
-            Globals.content = content;
-            Shaders.Load(content);
-            _shaderManager = new ShaderManager(content, graphicsDevice);
+            ShaderGlobals.content = content;
+
             _assets.Load(content, graphicsDevice);
-            _renderer.Load(content, _shaderManager);
+            _renderer.Load(content);
             _sceneLogic.Load(content);
             _debug.LoadContent(content);
             _guiRenderer.Load(content);
@@ -94,7 +88,7 @@ namespace DeferredEngine.Logic
                 gizmoContext: _editorLogic.GetEditorData(),
                 gameTime: gameTime);
 
-            if (RenderingSettings.e_enableeditor && RenderingSettings.ui_enabled)
+            if (RenderingSettings.e_IsEditorEnabled && RenderingSettings.ui_IsUIEnabled)
                 _guiRenderer.Draw(_guiLogic.GuiCanvas);
 
             _debug.Draw(gameTime);

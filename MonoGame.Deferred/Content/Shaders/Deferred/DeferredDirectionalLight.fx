@@ -26,7 +26,6 @@ float lightIntensity = 1.0f;
 Texture2D AlbedoMap;
 // normals, and specularPower in the alpha channel
 Texture2D NormalMap;
-      
 //depth
 Texture2D DepthMap;
 

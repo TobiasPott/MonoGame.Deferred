@@ -5,10 +5,12 @@ using DeferredEngine.Renderer.Helper;
 using DeferredEngine.Renderer.Helper.HelperGeometry;
 using DeferredEngine.Renderer.PostProcessing;
 using DeferredEngine.Renderer.RenderModules;
+using DeferredEngine.Renderer.RenderModules.DeferredLighting;
 using DeferredEngine.Renderer.RenderModules.SDF;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Ext;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,7 +20,7 @@ using System.Diagnostics;
 
 namespace DeferredEngine.Renderer
 {
-    public class RenderingPipeline : IDisposable
+    public partial class RenderingPipeline : IDisposable
     {
         #region VARIABLES
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -32,12 +34,14 @@ namespace DeferredEngine.Renderer
 
         private EditorRender _editorRender;
 
+        private GBufferPipelineModule _gBufferModule;
+        private ForwardPipelineModule _forwardModule;
+        private ShadowMapPipelineModule _shadowMapModule;
+
+        private PointLightRenderModule _pointLightRenderModule;
         private LightAccumulationModule _lightAccumulationModule;
-        private ShadowMapRenderModule _shadowMapRenderModule;
-        private GBufferRenderModule _gBufferRenderModule;
         private EnvironmentProbeRenderModule _environmentProbeRenderModule;
         private DecalRenderModule _decalRenderModule;
-        private ForwardRenderModule _forwardRenderModule;
         private HelperGeometryRenderModule _helperGeometryRenderModule;
         private DistanceFieldRenderModule _distanceFieldRenderModule;
 
@@ -46,12 +50,9 @@ namespace DeferredEngine.Renderer
         private BloomFx _bloomFx;
         private ColorGradingFx _colorGradingFx;
 
-        //Assets
-        private Assets _assets;
-
         //View Projection
         private bool _viewProjectionHasChanged;
-        private Vector3 _inverseResolution;
+        private Vector2 _inverseResolution;
 
         //Temporal Anti Aliasing
         private bool _temporalAAOffFrame = true;
@@ -92,18 +93,10 @@ namespace DeferredEngine.Renderer
 
 
         //Render targets
-        private RenderTarget2D _renderTargetAlbedo;
-        private readonly RenderTargetBinding[] _renderTargetBinding = new RenderTargetBinding[3];
-
-        private RenderTarget2D _renderTargetDepth;
-        private RenderTarget2D _renderTargetNormal;
+        private GBufferTarget _gBufferTarget;
+        private LightingBufferTarget _lightingBufferTarget;
 
         private RenderTarget2D _renderTargetDecalOffTarget;
-
-        private RenderTarget2D _renderTargetDiffuse;
-        private RenderTarget2D _renderTargetSpecular;
-        private RenderTarget2D _renderTargetVolume;
-        private readonly RenderTargetBinding[] _renderTargetLightBinding = new RenderTargetBinding[3];
 
         private RenderTarget2D _renderTargetComposed;
         private RenderTarget2D _renderTargetBloom;
@@ -112,16 +105,13 @@ namespace DeferredEngine.Renderer
         private RenderTarget2D _renderTargetTAA_1;
         private RenderTarget2D _renderTargetTAA_2;
 
-        private RenderTarget2D _renderTargetScreenSpaceEffectReflection;
+        private RenderTarget2D _renderTargetSSR;
 
         private RenderTarget2D _renderTargetSSAOEffect;
 
         private RenderTarget2D _renderTargetScreenSpaceEffectUpsampleBlurVertical;
-
         private RenderTarget2D _renderTargetScreenSpaceEffectUpsampleBlurHorizontal;
         private RenderTarget2D _renderTargetScreenSpaceEffectBlurFinal;
-
-        //private RenderTarget2D _renderTargetEmissive;
 
         private RenderTarget2D _renderTargetOutput;
 
@@ -153,60 +143,64 @@ namespace DeferredEngine.Renderer
         /// Initialize variables
         /// </summary>
         /// <param name="content"></param>
-        public void Load(ContentManager content, ShaderManager shaderManager)
+        public void Load(ContentManager content)
         {
-            _inverseResolution = new Vector3(1.0f / RenderingSettings.g_screenwidth, 1.0f / RenderingSettings.g_screenheight, 0);
+            _inverseResolution = Vector2.One / RenderingSettings.g_ScreenResolution;
 
+            _gBufferModule = new GBufferPipelineModule(content, "Shaders/GbufferSetup/GBuffer");
+            _forwardModule = new ForwardPipelineModule(content, "Shaders/forward/forward");
+            _shadowMapModule = new ShadowMapPipelineModule(content, "Shaders/Shadow/ShadowMap");
 
-            _lightAccumulationModule = new LightAccumulationModule(shaderManager, "Shaders/Deferred/DeferredPointLight");
-            _shadowMapRenderModule = new ShadowMapRenderModule(content, "Shaders/Shadow/ShadowMap");
-            _gBufferRenderModule = new GBufferRenderModule(content, "Shaders/GbufferSetup/ClearGBuffer", "Shaders/GbufferSetup/Gbuffer");
-            _forwardRenderModule = new ForwardRenderModule(content, "Shaders/forward/forward");
+            _pointLightRenderModule = new PointLightRenderModule(content, "Shaders/Deferred/DeferredPointLight");
+            _lightAccumulationModule = new LightAccumulationModule() { PointLightRenderModule = _pointLightRenderModule };
             _environmentProbeRenderModule = new EnvironmentProbeRenderModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
 
             _bloomFx = new BloomFx(content);
             _taaFx = new TemporalAntialiasingFx(content);
             _colorGradingFx = new ColorGradingFx(content);
 
-            _decalRenderModule = new DecalRenderModule(shaderManager);
+            _decalRenderModule = new DecalRenderModule(content, "Shaders/Deferred/DeferredDecal");
             _helperGeometryRenderModule = new HelperGeometryRenderModule(content, "Shaders/Editor/LineEffect");
-            _distanceFieldRenderModule = new DistanceFieldRenderModule(shaderManager, "Shaders/SignedDistanceFields/volumeProjection");
+            _distanceFieldRenderModule = new DistanceFieldRenderModule(content, "Shaders/SignedDistanceFields/volumeProjection")
+            { EnvironmentProbeRenderModule = _environmentProbeRenderModule, PointLightRenderModule = _pointLightRenderModule };
+
         }
 
         /// <summary>
         /// Initialize all our rendermodules and helpers. Done after the Load() function
         /// </summary>
         /// <param name="graphicsDevice"></param>
-        /// <param name="assets"></param>
-        public void Initialize(GraphicsDevice graphicsDevice, Assets assets)
+        public void Initialize(GraphicsDevice graphicsDevice)
         {
             _graphicsDevice = graphicsDevice;
             _spriteBatch = new SpriteBatch(graphicsDevice);
 
 
+            _gBufferTarget = new GBufferTarget(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
+            _lightingBufferTarget = new LightingBufferTarget(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
+
             _editorRender = new EditorRender();
-            _editorRender.Initialize(graphicsDevice, assets);
+            _editorRender.Initialize(graphicsDevice);
 
 
-            _lightAccumulationModule.Initialize(graphicsDevice, assets);
-            _gBufferRenderModule.Initialize(graphicsDevice);
-            _forwardRenderModule.Initialize(graphicsDevice);
+            _gBufferModule.Initialize(graphicsDevice, _spriteBatch);
+            _forwardModule.Initialize(graphicsDevice, _spriteBatch);
+            _shadowMapModule.Initialize(graphicsDevice, _spriteBatch);
 
+            _lightAccumulationModule.Initialize(graphicsDevice);
             _environmentProbeRenderModule.Initialize(graphicsDevice);
-            _shadowMapRenderModule.Initialize(graphicsDevice);
             _decalRenderModule.Initialize(graphicsDevice);
             _helperGeometryRenderModule.Initialize(graphicsDevice);
 
-            _bloomFx.Initialize(_graphicsDevice, new Vector2(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight));
+            _bloomFx.Initialize(_graphicsDevice, RenderingSettings.g_ScreenResolution);
             _taaFx.Initialize(graphicsDevice, FullscreenTriangleBuffer.Instance);
             _colorGradingFx.Initialize(graphicsDevice, FullscreenTriangleBuffer.Instance);
 
-            _assets = assets;
             //Apply some base settings to overwrite shader defaults with game settings defaults
             RenderingSettings.ApplySettings();
 
-            Shaders.ScreenSpaceReflectionParameter_NoiseMap.SetValue(_assets.NoiseMap);
-            SetUpRenderTargets(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight, false);
+            Shaders.SSR.Param_NoiseMap.SetValue(StaticAssets.Instance.NoiseMap);
+            SetUpRenderTargets(RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight, false);
 
         }
 
@@ -253,20 +247,6 @@ namespace DeferredEngine.Renderer
             //Reset the stat counter, so we can count stats/information for this frame only
             ResetStats();
 
-            if (RenderingSettings.d_drawnothing)
-            {
-                _graphicsDevice.Clear(Color.Black);
-                return new EditorLogic.EditorReceivedData
-                {
-                    HoveredId = 0,
-                    ViewMatrix = _view,
-                    ProjectionMatrix = _projection
-                };
-            }
-
-            //Update the mesh data for changes in physics etc.
-            //meshMaterialLibrary.ProcessPhysics(entities);
-
             //Check if we changed some drastic stuff for which we need to reload some elements
             CheckRenderChanges(directionalLights);
 
@@ -276,7 +256,7 @@ namespace DeferredEngine.Renderer
             //Update SDFs
             if (IsSDFUsed(pointLights))
             {
-                _distanceFieldRenderModule.UpdateDistanceFieldTransformations(entities, _sdfDefinitions, _environmentProbeRenderModule, _graphicsDevice, _spriteBatch, _lightAccumulationModule);
+                _distanceFieldRenderModule.UpdateDistanceFieldTransformations(entities, _sdfDefinitions);
             }
             //Render EnvironmentMaps
             //We do this either when pressing C or at the start of the program (_renderTargetCube == null) or when the game settings want us to do it every frame
@@ -308,13 +288,10 @@ namespace DeferredEngine.Renderer
             DrawBilateralBlur();
 
             //Light the scene
-            _lightAccumulationModule.DrawLights(pointLights, directionalLights, camera.Position, gameTime, _renderTargetLightBinding, _renderTargetDiffuse);
+            _lightAccumulationModule.DrawLights(pointLights, directionalLights, camera.Position, gameTime, _lightingBufferTarget.Bindings, _lightingBufferTarget.Diffuse);
 
             //Draw the environment cube map as a fullscreen effect on all meshes
             DrawEnvironmentMap(envSample, camera, gameTime);
-
-            //Draw emissive materials on an offscreen render target
-            //DrawEmissiveEffect(camera, meshMaterialLibrary, gameTime);
 
             //Compose the scene by combining our lighting data with the gbuffer data
             _currentOutput = Compose(); //-> output _renderTargetComposed
@@ -329,7 +306,7 @@ namespace DeferredEngine.Renderer
             _currentOutput = DrawBloom(_currentOutput); // -> output: _renderTargetBloom
 
             //Draw the elements that we are hovering over with outlines
-            if (RenderingSettings.e_enableeditor && RenderingStats.e_EnableSelection)
+            if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
                 _editorRender.DrawIds(meshMaterialLibrary, decals, pointLights, directionalLights, envSample, _staticViewProjection, _view, gizmoContext);
 
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
@@ -343,14 +320,13 @@ namespace DeferredEngine.Renderer
             RenderEditorOverlays(gizmoContext, meshMaterialLibrary, decals, pointLights, directionalLights, envSample);
 
             //Draw debug geometry
-            _helperGeometryRenderModule.ViewProjection = _staticViewProjection;
-            _helperGeometryRenderModule.Draw();
+            RenderHelperGeometry();
 
             //Set up the frustum culling for the next frame
             meshMaterialLibrary.FrustumCullingFinalizeFrame(entities);
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileTotalRender = performanceCurrentTime;
@@ -363,6 +339,7 @@ namespace DeferredEngine.Renderer
                 ViewMatrix = _view,
                 ProjectionMatrix = _projection
             };
+
         }
 
         private bool IsSDFUsed(List<DeferredPointLight> pointLights)
@@ -385,7 +362,7 @@ namespace DeferredEngine.Renderer
             EnvironmentProbe envSample)
         {
 
-            if (RenderingSettings.e_enableeditor && RenderingStats.e_EnableSelection)
+            if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
             {
                 if (RenderingSettings.e_drawoutlines)
                     DrawTextureToScreenToFullScreen(_editorRender.GetOutlines(), BlendState.Additive);
@@ -412,30 +389,17 @@ namespace DeferredEngine.Renderer
             if (RenderingSettings.sdf_debug && _distanceFieldRenderModule.GetAtlas() != null)
             {
                 _spriteBatch.Begin(0, BlendState.Opaque, SamplerState.PointClamp);
-                _spriteBatch.Draw(_distanceFieldRenderModule.GetAtlas(), new Rectangle(0, RenderingSettings.g_screenheight - 200, RenderingSettings.g_screenwidth, 200), Color.White);
+                _spriteBatch.Draw(_distanceFieldRenderModule.GetAtlas(), new Rectangle(0, RenderingSettings.g_ScreenHeight - 200, RenderingSettings.g_ScreenWidth, 200), Color.White);
                 _spriteBatch.End();
             }
 
-            // //Show shadow maps
-            //if (editorData.SelectedObject != null)
-            //{
-            //    if (editorData.SelectedObject is PointLight)
-            //    {
-            //        int size = 128;
-            //        PointLight light = pointLights[2]; /*(PointLightSource)editorData.SelectedObject*/
-            //        ;
-            //        if (light.CastShadows)
-            //        {
-            //            _spriteBatch.Begin(0, BlendState.Opaque, SamplerState.PointClamp);
-            //            _spriteBatch.Draw(light.ShadowMap,
-            //                new Rectangle(0, GameSettings.g_screenheight - size*6, size, size*6), Color.White);
-            //            _spriteBatch.End();
-            //        }
-            //    }
-
-            //}
         }
 
+        private void RenderHelperGeometry()
+        {
+            _helperGeometryRenderModule.ViewProjection = _staticViewProjection;
+            _helperGeometryRenderModule.Draw();
+        }
         /// <summary>
         /// Another draw function, but this time for cubemaps. Doesn't need all the stuff we have in the main draw function
         /// </summary>
@@ -470,7 +434,7 @@ namespace DeferredEngine.Renderer
             SetUpRenderTargets(RenderingSettings.g_envmapresolution, RenderingSettings.g_envmapresolution, true);
 
             //We don't want to use SSAO in this cubemap
-            Shaders.DeferredComposeEffectParameter_UseSSAO.SetValue(false);
+            Shaders.DeferredCompose.Param_UseSSAO.SetValue(false);
 
             //Create our projection, which is a basic pyramid
             _projection = Matrix.CreatePerspectiveFieldOfView((float)(Math.PI / 2), 1, 1, farPlane);
@@ -521,8 +485,8 @@ namespace DeferredEngine.Renderer
                 _viewIT = Matrix.Transpose(_inverseView);
 
                 //Pass these values to our shader
-                Shaders.ScreenSpaceEffectParameter_InverseViewProjection.SetValue(_inverseView);
-                _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_InverseView.SetValue(_inverseView);
+                Shaders.SSAO.Param_InverseViewProjection.SetValue(_inverseView);
+                _lightAccumulationModule.PointLightRenderModule.Param_InverseView.SetValue(_inverseView);
 
                 //yep we changed
                 _viewProjectionHasChanged = true;
@@ -540,7 +504,7 @@ namespace DeferredEngine.Renderer
 
                 bool volumeEnabled = RenderingSettings.g_VolumetricLights;
                 RenderingSettings.g_VolumetricLights = false;
-                _lightAccumulationModule.DrawLights(pointLights, dirLights, origin, gameTime, _renderTargetLightBinding, _renderTargetDiffuse);
+                _lightAccumulationModule.DrawLights(pointLights, dirLights, origin, gameTime, _lightingBufferTarget.Bindings, _lightingBufferTarget.Diffuse);
 
                 _environmentProbeRenderModule.DrawSky(_graphicsDevice, FullscreenTarget);
 
@@ -550,24 +514,21 @@ namespace DeferredEngine.Renderer
                 bool tempAa = RenderingSettings.g_taa;
                 RenderingSettings.g_taa = false;
 
-                //Shaders.DeferredCompose.CurrentTechnique = Shaders.DeferredComposeTechnique_NonLinear;
                 Compose();
-                //Shaders.DeferredCompose.CurrentTechnique = GameSettings.g_SSReflection
-                //    ? Shaders.DeferredComposeTechnique_Linear
-                //    : Shaders.DeferredComposeTechnique_NonLinear;
+
                 RenderingSettings.g_taa = tempAa;
                 DrawTextureToScreenToCube(_renderTargetComposed, _renderTargetCubeMap, cubeMapFace);
             }
-            Shaders.DeferredComposeEffectParameter_UseSSAO.SetValue(RenderingSettings.g_ssao_draw);
+            Shaders.DeferredCompose.Param_UseSSAO.SetValue(RenderingSettings.g_ssao_draw);
 
             //Change RTs back to normal
-            SetUpRenderTargets(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight, true);
+            SetUpRenderTargets(RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight, true);
 
             //Our camera has changed we need to reinitialize stuff because we used a different camera in the cubemap render
             camera.HasChanged = true;
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileDrawCubeMap = performanceCurrentTime - _performancePreviousTime;
@@ -596,7 +557,7 @@ namespace DeferredEngine.Renderer
             RenderingStats.EmissiveMeshDraws = 0;
 
             //Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 _performanceTimer.Restart();
                 _performancePreviousTime = 0;
@@ -616,30 +577,19 @@ namespace DeferredEngine.Renderer
             if (Math.Abs(_g_FarClip - RenderingSettings.g_farplane) > 0.0001f)
             {
                 _g_FarClip = RenderingSettings.g_farplane;
-                _gBufferRenderModule.FarClip = _g_FarClip;
+                _gBufferModule.FarClip = _g_FarClip;
                 _decalRenderModule.FarClip = _g_FarClip;
-                _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_FarClip.SetValue(_g_FarClip);
-                Shaders.BillboardEffectParameter_FarClip.SetValue(_g_FarClip);
-                Shaders.ScreenSpaceReflectionParameter_FarClip.SetValue(_g_FarClip);
-                Shaders.ReconstructDepthParameter_FarClip.SetValue(_g_FarClip);
+                _lightAccumulationModule.PointLightRenderModule.Param_FarClip.SetValue(_g_FarClip);
+                Shaders.Billboard.Param_FarClip.SetValue(_g_FarClip);
+                Shaders.SSR.Param_FarClip.SetValue(_g_FarClip);
+                Shaders.ReconstructDepth.Param_FarClip.SetValue(_g_FarClip);
             }
 
             if (_g_SSReflectionNoise != RenderingSettings.g_SSReflectionNoise)
             {
                 _g_SSReflectionNoise = RenderingSettings.g_SSReflectionNoise;
-                if (!_g_SSReflectionNoise) Shaders.ScreenSpaceReflectionParameter_Time.SetValue(0.0f);
+                if (!_g_SSReflectionNoise) Shaders.SSR.Param_Time.SetValue(0.0f);
             }
-
-            //if (_hologramDraw != GameSettings.g_HologramDraw)
-            //{
-            //    _hologramDraw = GameSettings.g_HologramDraw;
-
-            //    if (!_hologramDraw)
-            //    {
-            //        _graphicsDevice.SetRenderTarget(_renderTargetHologram);
-            //        _graphicsDevice.Clear(Color.Black);
-            //    }
-            //}
 
             if (_forceShadowFiltering != RenderingSettings.g_shadowforcefiltering)
             {
@@ -672,14 +622,14 @@ namespace DeferredEngine.Renderer
 
             if (_ssr != RenderingSettings.g_SSReflection)
             {
-                _graphicsDevice.SetRenderTarget(_renderTargetScreenSpaceEffectReflection);
+                _graphicsDevice.SetRenderTarget(_renderTargetSSR);
                 _graphicsDevice.Clear(new Color(0, 0, 0, 0.0f));
 
                 _ssr = RenderingSettings.g_SSReflection;
             }
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileRenderChanges = performanceCurrentTime - _performancePreviousTime;
@@ -705,10 +655,10 @@ namespace DeferredEngine.Renderer
             //Don't render for the first frame, we need a guideline first
             if (_boundingFrustum == null) UpdateViewProjection(meshMaterialLibrary, entities, camera);
 
-            _shadowMapRenderModule.Draw(meshMaterialLibrary, entities, pointLights, dirLights, camera);
+            _shadowMapModule.Draw(meshMaterialLibrary, entities, pointLights, dirLights, camera);
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileDrawShadows = performanceCurrentTime - _performancePreviousTime;
@@ -750,12 +700,11 @@ namespace DeferredEngine.Renderer
 
                 _viewIT = Matrix.Transpose(_inverseView);
 
-                _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_InverseView.SetValue(_inverseView);
+                _lightAccumulationModule.PointLightRenderModule.Param_InverseView.SetValue(_inverseView);
 
-                _projection = Matrix.CreatePerspectiveFieldOfView(camera.FieldOfView,
-                    RenderingSettings.g_screenwidth / (float)RenderingSettings.g_screenheight, 1, RenderingSettings.g_farplane);
+                _projection = Matrix.CreatePerspectiveFieldOfView(camera.FieldOfView, RenderingSettings.g_ScreenAspect, 1, RenderingSettings.g_farplane);
 
-                _gBufferRenderModule.Camera = camera.Position;
+                _gBufferModule.Camera = camera.Position;
 
                 _viewProjection = _view * _projection;
 
@@ -772,26 +721,22 @@ namespace DeferredEngine.Renderer
                     {
                         case 0: //2 frames, just basic translation. Worst taa implementation. Not good with the continous integration used
                             {
-                                float translation = _temporalAAOffFrame ? 0.5f : -0.5f;
-                                _viewProjection = _viewProjection *
-                                                  Matrix.CreateTranslation(new Vector3(translation / RenderingSettings.g_screenwidth,
-                                                      translation / RenderingSettings.g_screenheight, 0));
+                                Vector2 translation = Vector2.One * (_temporalAAOffFrame ? 0.5f : -0.5f);
+                                _viewProjection = _viewProjection * (translation / RenderingSettings.g_ScreenResolution).ToMatrixTranslationXY();
                             }
                             break;
                         case 1: // Just random translation
                             {
                                 float randomAngle = FastRand.NextAngle();
-                                Vector3 translation = new Vector3((float)Math.Sin(randomAngle) / RenderingSettings.g_screenwidth, (float)Math.Cos(randomAngle) / RenderingSettings.g_screenheight, 0) * 0.5f;
-                                _viewProjection = _viewProjection *
-                                                  Matrix.CreateTranslation(translation);
+                                Vector2 translation = (new Vector2((float)Math.Sin(randomAngle), (float)Math.Cos(randomAngle)) / RenderingSettings.g_ScreenResolution) * 0.5f; ;
+                                _viewProjection = _viewProjection * translation.ToMatrixTranslationXY();
 
                             }
                             break;
                         case 2: // Halton sequence, default
                             {
                                 Vector3 translation = GetHaltonSequence();
-                                _viewProjection = _viewProjection *
-                                                  Matrix.CreateTranslation(translation);
+                                _viewProjection = _viewProjection * Matrix.CreateTranslation(translation);
                             }
                             break;
                     }
@@ -813,7 +758,7 @@ namespace DeferredEngine.Renderer
             _lightAccumulationModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _view, _inverseView, _viewIT, _projection, _viewProjection, _inverseViewProjection);
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileUpdateViewProjection = performanceCurrentTime - _performancePreviousTime;
@@ -897,11 +842,11 @@ namespace DeferredEngine.Renderer
             _currentFrustumCorners[3] = _currentFrustumCorners[2];
             _currentFrustumCorners[2] = temp;
 
-            Shaders.ScreenSpaceReflectionParameter_FrustumCorners.SetValue(_currentFrustumCorners);
-            Shaders.ScreenSpaceEffectParameter_FrustumCorners.SetValue(_currentFrustumCorners);
+            Shaders.SSR.Param_FrustumCorners.SetValue(_currentFrustumCorners);
+            Shaders.SSAO.Param_FrustumCorners.SetValue(_currentFrustumCorners);
             _taaFx.FrustumCorners = _currentFrustumCorners;
-            Shaders.ReconstructDepthParameter_FrustumCorners.SetValue(_currentFrustumCorners);
-            Shaders.deferredDirectionalLightParameterFrustumCorners.SetValue(_currentFrustumCorners);
+            Shaders.ReconstructDepth.Param_FrustumCorners.SetValue(_currentFrustumCorners);
+            Shaders.DeferredDirectionalLight.Param_FrustumCorners.SetValue(_currentFrustumCorners);
         }
 
         /// <summary>
@@ -910,10 +855,10 @@ namespace DeferredEngine.Renderer
         /// <param name="meshMaterialLibrary"></param>
         private void DrawGBuffer(MeshMaterialLibrary meshMaterialLibrary)
         {
-            _gBufferRenderModule.Draw(_renderTargetBinding, meshMaterialLibrary, _viewProjection, _view);
+            _gBufferModule.Draw(_gBufferTarget.Bindings, meshMaterialLibrary, _viewProjection, _view);
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileDrawGBuffer = performanceCurrentTime - _performancePreviousTime;
@@ -928,12 +873,12 @@ namespace DeferredEngine.Renderer
         /// <param name="decals"></param>
         private void DrawDecals(List<Decal> decals)
         {
-            if (!RenderingSettings.g_drawdecals) return;
+            if (!RenderingSettings.g_EnableDecals) return;
 
             //First copy albedo to decal offtarget
-            DrawTextureToScreenToFullScreen(_renderTargetAlbedo, BlendState.Opaque, _renderTargetDecalOffTarget);
+            DrawTextureToScreenToFullScreen(_gBufferTarget.Albedo, BlendState.Opaque, _renderTargetDecalOffTarget);
 
-            DrawTextureToScreenToFullScreen(_renderTargetDecalOffTarget, BlendState.Opaque, _renderTargetAlbedo);
+            DrawTextureToScreenToFullScreen(_renderTargetDecalOffTarget, BlendState.Opaque, _gBufferTarget.Albedo);
 
             _decalRenderModule.Draw(decals, _view, _viewProjection, _inverseView);
         }
@@ -948,29 +893,29 @@ namespace DeferredEngine.Renderer
 
 
             //todo: more samples for more reflective materials!
-            _graphicsDevice.SetRenderTarget(_renderTargetScreenSpaceEffectReflection);
+            _graphicsDevice.SetRenderTarget(_renderTargetSSR);
             _graphicsDevice.BlendState = BlendState.Opaque;
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
             if (RenderingSettings.g_taa)
             {
-                Shaders.ScreenSpaceReflectionParameter_TargetMap.SetValue(_temporalAAOffFrame ? _renderTargetTAA_1 : _renderTargetTAA_2);
+                Shaders.SSR.Param_TargetMap.SetValue(_temporalAAOffFrame ? _renderTargetTAA_1 : _renderTargetTAA_2);
             }
             else
             {
-                Shaders.ScreenSpaceReflectionParameter_TargetMap.SetValue(_renderTargetComposed);
+                Shaders.SSR.Param_TargetMap.SetValue(_renderTargetComposed);
             }
 
             if (RenderingSettings.g_SSReflectionNoise)
-                Shaders.ScreenSpaceReflectionParameter_Time.SetValue((float)gameTime.TotalGameTime.TotalSeconds % 1000);
+                Shaders.SSR.Param_Time.SetValue((float)gameTime.TotalGameTime.TotalSeconds % 1000);
 
-            Shaders.ScreenSpaceReflectionParameter_Projection.SetValue(_projection);
+            Shaders.SSR.Param_Projection.SetValue(_projection);
 
-            Shaders.ScreenSpaceReflectionEffect.CurrentTechnique.Passes[0].Apply();
+            Shaders.SSR.Effect.CurrentTechnique.Passes[0].Apply();
             FullscreenTarget.Draw(_graphicsDevice);
 
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileDrawSSR = performanceCurrentTime - _performancePreviousTime;
@@ -993,17 +938,17 @@ namespace DeferredEngine.Renderer
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
-            Shaders.ScreenSpaceEffectParameter_InverseViewProjection.SetValue(_inverseViewProjection);
-            Shaders.ScreenSpaceEffectParameter_Projection.SetValue(_projection);
-            Shaders.ScreenSpaceEffectParameter_ViewProjection.SetValue(_viewProjection);
-            Shaders.ScreenSpaceEffectParameter_CameraPosition.SetValue(camera.Position);
+            Shaders.SSAO.Param_InverseViewProjection.SetValue(_inverseViewProjection);
+            Shaders.SSAO.Param_Projection.SetValue(_projection);
+            Shaders.SSAO.Param_ViewProjection.SetValue(_viewProjection);
+            Shaders.SSAO.Param_CameraPosition.SetValue(camera.Position);
 
-            Shaders.ScreenSpaceEffect.CurrentTechnique = Shaders.ScreenSpaceEffectTechnique_SSAO;
-            Shaders.ScreenSpaceEffect.CurrentTechnique.Passes[0].Apply();
+            Shaders.SSAO.Effect.CurrentTechnique = Shaders.SSAO.Technique_SSAO;
+            Shaders.SSAO.Effect.CurrentTechnique.Passes[0].Apply();
             FullscreenTarget.Draw(_graphicsDevice);
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileDrawScreenSpaceEffect = performanceCurrentTime - _performancePreviousTime;
@@ -1020,8 +965,8 @@ namespace DeferredEngine.Renderer
         {
             if (_viewProjectionHasChanged)
             {
-                Shaders.deferredDirectionalLightParameterViewProjection.SetValue(_viewProjection);
-                Shaders.deferredDirectionalLightParameterInverseViewProjection.SetValue(_inverseViewProjection);
+                Shaders.DeferredDirectionalLight.Param_ViewProjection.SetValue(_viewProjection);
+                Shaders.DeferredDirectionalLight.Param_InverseViewProjection.SetValue(_inverseViewProjection);
 
             }
             for (var index = 0; index < dirLights.Count; index++)
@@ -1059,7 +1004,7 @@ namespace DeferredEngine.Renderer
             }
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileDrawScreenSpaceDirectionalShadow = performanceCurrentTime - _performancePreviousTime;
@@ -1077,7 +1022,7 @@ namespace DeferredEngine.Renderer
 
             _spriteBatch.Begin(0, BlendState.Additive);
 
-            _spriteBatch.Draw(_renderTargetSSAOEffect, new Rectangle(0, 0, RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight), Color.Red);
+            _spriteBatch.Draw(_renderTargetSSAOEffect, RenderingSettings.g_ScreenRect, Color.Red);
 
             _spriteBatch.End();
 
@@ -1087,19 +1032,17 @@ namespace DeferredEngine.Renderer
 
                 _graphicsDevice.SetRenderTarget(_renderTargetScreenSpaceEffectUpsampleBlurHorizontal);
 
-                Shaders.ScreenSpaceEffectParameter_InverseResolution.SetValue(new Vector2(1.0f / _renderTargetScreenSpaceEffectUpsampleBlurVertical.Width,
-                    1.0f / _renderTargetScreenSpaceEffectUpsampleBlurVertical.Height) * 2);
-                Shaders.ScreenSpaceEffectParameter_SSAOMap.SetValue(_renderTargetScreenSpaceEffectUpsampleBlurVertical);
-                Shaders.ScreenSpaceEffectTechnique_BlurVertical.Passes[0].Apply();
+                Shaders.SSAO.Param_InverseResolution.SetValue(new Vector2(1.0f / _renderTargetScreenSpaceEffectUpsampleBlurVertical.Width, 1.0f / _renderTargetScreenSpaceEffectUpsampleBlurVertical.Height) * 2);
+                Shaders.SSAO.Param_SSAOMap.SetValue(_renderTargetScreenSpaceEffectUpsampleBlurVertical);
+                Shaders.SSAO.Technique_BlurVertical.Passes[0].Apply();
 
                 FullscreenTarget.Draw(_graphicsDevice);
 
                 _graphicsDevice.SetRenderTarget(_renderTargetScreenSpaceEffectBlurFinal);
 
-                Shaders.ScreenSpaceEffectParameter_InverseResolution.SetValue(new Vector2(1.0f / _renderTargetScreenSpaceEffectUpsampleBlurHorizontal.Width,
-                    1.0f / _renderTargetScreenSpaceEffectUpsampleBlurHorizontal.Height) * 0.5f);
-                Shaders.ScreenSpaceEffectParameter_SSAOMap.SetValue(_renderTargetScreenSpaceEffectUpsampleBlurHorizontal);
-                Shaders.ScreenSpaceEffectTechnique_BlurHorizontal.Passes[0].Apply();
+                Shaders.SSAO.Param_InverseResolution.SetValue(new Vector2(1.0f / _renderTargetScreenSpaceEffectUpsampleBlurHorizontal.Width, 1.0f / _renderTargetScreenSpaceEffectUpsampleBlurHorizontal.Height) * 0.5f);
+                Shaders.SSAO.Param_SSAOMap.SetValue(_renderTargetScreenSpaceEffectUpsampleBlurHorizontal);
+                Shaders.SSAO.Technique_BlurHorizontal.Passes[0].Apply();
 
                 FullscreenTarget.Draw(_graphicsDevice);
 
@@ -1116,7 +1059,7 @@ namespace DeferredEngine.Renderer
             }
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileDrawBilateralBlur = performanceCurrentTime - _performancePreviousTime;
@@ -1135,45 +1078,13 @@ namespace DeferredEngine.Renderer
             _environmentProbeRenderModule.DrawEnvironmentMap(camera, _view, FullscreenTarget, envSample, gameTime, RenderingSettings.g_SSReflection_FireflyReduction, RenderingSettings.g_SSReflection_FireflyThreshold);
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileDrawEnvironmentMap = performanceCurrentTime - _performancePreviousTime;
 
                 _performancePreviousTime = performanceCurrentTime;
             }
-        }
-
-        /// <summary>
-        /// Emissive materials have some screen space lighting properties
-        /// </summary>
-        /// <param name="camera"></param>
-        /// <param name="meshMatLib"></param>
-        /// <param name="gameTime"></param>
-        private void DrawEmissiveEffect(Camera camera, MeshMaterialLibrary meshMatLib, GameTime gameTime)
-        {
-            //if (!GameSettings.g_EmissiveDraw) return;
-
-            throw new NotImplementedException("Check an older build, emissives are currently not implemented because I switched from World Space to View Space but did not update all the effects yet");
-
-            //Make a new _viewProjection
-            //This should actually scale dynamically with the position of the object
-            //Note: It would be better if the screen extended the same distance in each direction, right now it would probably be wider than tall
-
-            //Matrix newProjection = Matrix.CreatePerspectiveFieldOfView(Math.Min((float)Math.PI, camera.FieldOfView * GameSettings.g_EmissiveDrawFOVFactor),
-            //        GameSettings.g_screenwidth / (float)GameSettings.g_screenheight, 1, GameSettings.g_farplane);
-
-            //Matrix transformedViewProjection = _view * newProjection;
-
-            ////meshMatLib.DrawEmissive(_graphicsDevice, camera, _viewProjection, transformedViewProjection, _inverseViewProjection, _renderTargetEmissive, _renderTargetDiffuse, _renderTargetSpecular, _lightBlendState, _assets.Sphere.Meshes, gameTime);
-            ////Performance Profiler
-            //if (GameSettings.d_profiler)
-            //{
-            //    long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-            //    GameStats.d_profileDrawEmissive = performanceCurrentTime - _performancePreviousTime;
-
-            //    _performancePreviousTime = performanceCurrentTime;
-            //}
         }
 
         /// <summary>
@@ -1187,11 +1098,11 @@ namespace DeferredEngine.Renderer
             _graphicsDevice.BlendState = BlendState.Opaque;
 
             //combine!
-            Shaders.DeferredCompose.CurrentTechnique.Passes[0].Apply();
+            Shaders.DeferredCompose.Effect.CurrentTechnique.Passes[0].Apply();
             FullscreenTarget.Draw(_graphicsDevice);
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileCompose = performanceCurrentTime - _performancePreviousTime;
@@ -1205,37 +1116,35 @@ namespace DeferredEngine.Renderer
         private void ReconstructDepth()
         {
             if (_viewProjectionHasChanged)
-                Shaders.ReconstructDepthParameter_Projection.SetValue(_projection);
+                Shaders.ReconstructDepth.Param_Projection.SetValue(_projection);
 
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
-            Shaders.ReconstructDepth.CurrentTechnique.Passes[0].Apply();
+            Shaders.ReconstructDepth.Effect.CurrentTechnique.Passes[0].Apply();
             FullscreenTarget.Draw(_graphicsDevice);
         }
 
         private RenderTarget2D DrawForward(RenderTarget2D input, MeshMaterialLibrary meshMaterialLibrary, Camera camera, List<DeferredPointLight> pointLights)
         {
-            if (!RenderingSettings.g_forwardenable) return input;
+            if (!RenderingSettings.g_EnableForward) return input;
 
             _graphicsDevice.SetRenderTarget(input);
             ReconstructDepth();
 
-            return _forwardRenderModule.Draw(input, meshMaterialLibrary, _viewProjection, camera, pointLights, _boundingFrustum);
+            return _forwardModule.Draw(input, meshMaterialLibrary, _viewProjection, camera, pointLights, _boundingFrustum);
         }
 
         private RenderTarget2D DrawBloom(RenderTarget2D input)
         {
             if (RenderingSettings.g_BloomEnable)
             {
-                Texture2D bloom = _bloomFx.Draw(input, RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight);
+                Texture2D bloom = _bloomFx.Draw(input, RenderingSettings.g_ScreenResolution);
 
                 _graphicsDevice.SetRenderTargets(_renderTargetBloom);
 
                 _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
 
-                _spriteBatch.Draw(input,
-                    new Rectangle(0, 0, RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight), Color.White);
-                _spriteBatch.Draw(bloom, new Rectangle(0, 0, RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight),
-                    Color.White);
+                _spriteBatch.Draw(input, RenderingSettings.g_ScreenRect, Color.White);
+                _spriteBatch.Draw(bloom, RenderingSettings.g_ScreenRect, Color.White);
 
                 _spriteBatch.End();
 
@@ -1243,11 +1152,6 @@ namespace DeferredEngine.Renderer
             }
             else
             {
-
-                //_graphicsDevice.SetRenderTarget(_renderTargetBloom);
-                //_spriteBatch.Begin(0, BlendState.Opaque, _supersampling > 1 ? SamplerState.LinearWrap : SamplerState.PointClamp);
-                //_spriteBatch.Draw(_renderTargetComposed, new Rectangle(0, 0, GameSettings.g_screenwidth, GameSettings.g_screenheight), Color.White);
-                //_spriteBatch.End();
                 return input;
             }
         }
@@ -1265,7 +1169,7 @@ namespace DeferredEngine.Renderer
             _taaFx.Draw(currentFrame: input, previousFrames: _temporalAAOffFrame ? _renderTargetTAA_1 : _renderTargetTAA_2, output: output);
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileCombineTemporalAntialiasing = performanceCurrentTime - _performancePreviousTime;
@@ -1280,15 +1184,7 @@ namespace DeferredEngine.Renderer
         {
             if (!RenderingSettings.sdf_drawdistance) return;
 
-            _distanceFieldRenderModule.Draw(_graphicsDevice, camera);
-
-            //_spriteBatch.Begin(0, BlendState.Opaque, SamplerState.PointClamp);
-
-            //int height = Math.Max(volumeTexture.Texture.Height / volumeTexture.Texture.Width * GameSettings.g_screenheight, 40);
-            //_spriteBatch.Draw(volumeTexture.Texture,
-            //    new Rectangle(0, GameSettings.g_screenheight - height, GameSettings.g_screenwidth, height), Color.White);
-            //_spriteBatch.End();
-
+            _distanceFieldRenderModule.Draw(camera);
         }
 
         /// <summary>
@@ -1301,41 +1197,32 @@ namespace DeferredEngine.Renderer
             switch (RenderingSettings.g_rendermode)
             {
                 case RenderModes.Albedo:
-                    DrawTextureToScreenToFullScreen(_renderTargetAlbedo);
+                    DrawTextureToScreenToFullScreen(_gBufferTarget.Albedo);
                     break;
                 case RenderModes.Normal:
-                    DrawTextureToScreenToFullScreen(_renderTargetNormal);
+                    DrawTextureToScreenToFullScreen(_gBufferTarget.Normal);
                     break;
                 case RenderModes.Depth:
-                    DrawTextureToScreenToFullScreen(_renderTargetDepth);
+                    DrawTextureToScreenToFullScreen(_gBufferTarget.Depth);
                     break;
                 case RenderModes.Diffuse:
-                    DrawTextureToScreenToFullScreen(_renderTargetDiffuse);
+                    DrawTextureToScreenToFullScreen(_lightingBufferTarget.Diffuse);
                     break;
                 case RenderModes.Specular:
-                    DrawTextureToScreenToFullScreen(_renderTargetSpecular);
+                    DrawTextureToScreenToFullScreen(_lightingBufferTarget.Specular);
                     break;
                 case RenderModes.Volumetric:
-                    DrawTextureToScreenToFullScreen(_renderTargetVolume);
+                    DrawTextureToScreenToFullScreen(_lightingBufferTarget.Volume);
                     break;
                 case RenderModes.SSAO:
                     DrawTextureToScreenToFullScreen(_renderTargetSSAOEffect);
                     break;
-                //case RenderModes.Hologram:
-                //    DrawMapToScreenToFullScreen(_renderTargetHologram);
-                //    break;
                 case RenderModes.SSBlur:
                     DrawTextureToScreenToFullScreen(_renderTargetScreenSpaceEffectBlurFinal);
                     break;
-                //case RenderModes.Emissive:
-                //    DrawMapToScreenToFullScreen(_renderTargetEmissive);
-                //    break;
                 case RenderModes.SSR:
-                    DrawTextureToScreenToFullScreen(_renderTargetScreenSpaceEffectReflection);
+                    DrawTextureToScreenToFullScreen(_renderTargetSSR);
                     break;
-                //case RenderModes.SubsurfaceScattering:
-                //    DrawMapToScreenToFullScreen(_renderTargetSSS);
-                //    break;
                 case RenderModes.HDR:
                     DrawTextureToScreenToFullScreen(currentInput);
                     break;
@@ -1346,7 +1233,7 @@ namespace DeferredEngine.Renderer
 
 
             //Performance Profiler
-            if (RenderingSettings.d_profiler)
+            if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileDrawFinalRender = performanceCurrentTime - _performancePreviousTime;
@@ -1367,13 +1254,13 @@ namespace DeferredEngine.Renderer
 
             destinationRenderTarget = _renderTargetOutput;
 
-            Shaders.PostProcessingParameter_ScreenTexture.SetValue(currentInput);
+            Shaders.PostProcssing.Param_ScreenTexture.SetValue(currentInput);
             _graphicsDevice.SetRenderTarget(destinationRenderTarget);
 
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
-            Shaders.PostProcessing.CurrentTechnique.Passes[0].Apply();
+            Shaders.PostProcssing.Effect.CurrentTechnique.Passes[0].Apply();
             FullscreenTarget.Draw(_graphicsDevice);
 
             if (RenderingSettings.g_ColorGrading)
@@ -1395,38 +1282,30 @@ namespace DeferredEngine.Renderer
         /// </summary>
         public void UpdateResolution()
         {
-            _inverseResolution = new Vector3(1.0f / RenderingSettings.g_screenwidth, 1.0f / RenderingSettings.g_screenheight, 0);
+            _inverseResolution = Vector2.One / RenderingSettings.g_ScreenResolution;
             _haltonSequence = null;
 
-            SetUpRenderTargets(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight, false);
+            SetUpRenderTargets(RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight, false);
         }
 
         private void SetUpRenderTargets(int width, int height, bool onlyEssentials)
         {
             //Discard first
-            if (_renderTargetAlbedo != null)
+            if (_renderTargetComposed != null)
             {
-                _renderTargetAlbedo.Dispose();
                 _renderTargetDecalOffTarget.Dispose();
-                _renderTargetDepth.Dispose();
-                _renderTargetNormal.Dispose();
                 _renderTargetComposed.Dispose();
                 _renderTargetBloom.Dispose();
-                _renderTargetDiffuse.Dispose();
-                _renderTargetSpecular.Dispose();
-                _renderTargetVolume.Dispose();
                 _renderTargetOutput.Dispose();
-                //_renderTargetSSS.Dispose();
 
                 _renderTargetScreenSpaceEffectUpsampleBlurVertical.Dispose();
 
                 if (!onlyEssentials)
                 {
-                    //_renderTargetHologram.Dispose();
                     _renderTargetTAA_1.Dispose();
                     _renderTargetTAA_2.Dispose();
                     _renderTargetSSAOEffect.Dispose();
-                    _renderTargetScreenSpaceEffectReflection.Dispose();
+                    _renderTargetSSR.Dispose();
 
                     _renderTargetScreenSpaceEffectUpsampleBlurHorizontal.Dispose();
                     _renderTargetScreenSpaceEffectBlurFinal.Dispose();
@@ -1438,41 +1317,16 @@ namespace DeferredEngine.Renderer
             int targetWidth = (int)(width * ssmultiplier);
             int targetHeight = (int)(height * ssmultiplier);
 
-            Shaders.BillboardEffectParameter_AspectRatio.SetValue((float)targetWidth / targetHeight);
+            Shaders.Billboard.Param_AspectRatio.SetValue((float)targetWidth / targetHeight);
 
-            _renderTargetAlbedo = new RenderTarget2D(_graphicsDevice, targetWidth,
-                targetHeight, false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
+            // Update multi render target size
+            _gBufferTarget.Resize(targetWidth, targetHeight);
+            _lightingBufferTarget.Resize(targetWidth, targetHeight);
 
             _renderTargetDecalOffTarget = new RenderTarget2D(_graphicsDevice, targetWidth,
                 targetHeight, false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
 
-            _renderTargetNormal = new RenderTarget2D(_graphicsDevice, targetWidth,
-                targetHeight, false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-
-            _renderTargetDepth = new RenderTarget2D(_graphicsDevice, targetWidth,
-                targetHeight, false, SurfaceFormat.Single, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-
-            //_renderTargetSSS = new RenderTarget2D(_graphicsDevice, targetWidth,
-            //    targetHeight, false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
-
-            _renderTargetBinding[0] = new RenderTargetBinding(_renderTargetAlbedo);
-            _renderTargetBinding[1] = new RenderTargetBinding(_renderTargetNormal);
-            _renderTargetBinding[2] = new RenderTargetBinding(_renderTargetDepth);
-
-            _renderTargetDiffuse = new RenderTarget2D(_graphicsDevice, targetWidth,
-               targetHeight, false, SurfaceFormat.HalfVector4, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.PreserveContents);
-
-            _renderTargetSpecular = new RenderTarget2D(_graphicsDevice, targetWidth,
-               targetHeight, false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-
-            _renderTargetVolume = new RenderTarget2D(_graphicsDevice, targetWidth,
-               targetHeight, false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-
-            _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameterResolution.SetValue(new Vector2(targetWidth, targetHeight));
-
-            _renderTargetLightBinding[0] = new RenderTargetBinding(_renderTargetDiffuse);
-            _renderTargetLightBinding[1] = new RenderTargetBinding(_renderTargetSpecular);
-            _renderTargetLightBinding[2] = new RenderTargetBinding(_renderTargetVolume);
+            _lightAccumulationModule.PointLightRenderModule.Param_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
 
             _renderTargetComposed = new RenderTarget2D(_graphicsDevice, targetWidth,
                targetHeight, false, SurfaceFormat.HalfVector4, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
@@ -1494,12 +1348,10 @@ namespace DeferredEngine.Renderer
                 _renderTargetTAA_2 = new RenderTarget2D(_graphicsDevice, targetWidth, targetHeight, false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
 
                 _taaFx.Resolution = new Vector2(targetWidth, targetHeight);
-                // Shaders.SSReflectionEffectParameter_Resolution.SetValue(new Vector2(target_width, target_height));
-                Shaders.EmissiveEffectParameter_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
 
-                Shaders.ScreenSpaceReflectionParameter_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
+                Shaders.SSR.Param_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
                 _environmentProbeRenderModule.Resolution = new Vector2(targetWidth, targetHeight);
-                _renderTargetScreenSpaceEffectReflection = new RenderTarget2D(_graphicsDevice, targetWidth,
+                _renderTargetSSR = new RenderTarget2D(_graphicsDevice, targetWidth,
                     targetHeight, false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
 
 
@@ -1522,18 +1374,14 @@ namespace DeferredEngine.Renderer
 
 
 
-                Shaders.ScreenSpaceEffectParameter_InverseResolution.SetValue(new Vector2(1.0f / targetWidth,
+                Shaders.SSAO.Param_InverseResolution.SetValue(new Vector2(1.0f / targetWidth,
                     1.0f / targetHeight));
 
 
                 Vector2 aspectRatio = new Vector2(Math.Min(1.0f, targetWidth / (float)targetHeight), Math.Min(1.0f, targetHeight / (float)targetWidth));
 
-                Shaders.ScreenSpaceEffectParameter_AspectRatio.SetValue(aspectRatio);
+                Shaders.SSAO.Param_AspectRatio.SetValue(aspectRatio);
 
-
-                //_renderTargetHologram = new RenderTarget2D(_graphicsDevice, targetWidth,
-                //    targetHeight, false, SurfaceFormat.Single, DepthFormat.Depth24, 0,
-                //    RenderTargetUsage.PreserveContents);
             }
 
             UpdateRenderMapBindings(onlyEssentials);
@@ -1541,54 +1389,39 @@ namespace DeferredEngine.Renderer
 
         private void UpdateRenderMapBindings(bool onlyEssentials)
         {
-            Shaders.BillboardEffectParameter_DepthMap.SetValue(_renderTargetDepth);
+            Shaders.Billboard.Param_DepthMap.SetValue(_gBufferTarget.Depth);
 
-            Shaders.ReconstructDepthParameter_DepthMap.SetValue(_renderTargetDepth);
+            Shaders.ReconstructDepth.Param_DepthMap.SetValue(_gBufferTarget.Depth);
 
-            _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_AlbedoMap.SetValue(_renderTargetAlbedo);
-            _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_DepthMap.SetValue(_renderTargetDepth);
-            _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_NormalMap.SetValue(_renderTargetNormal);
+            _lightAccumulationModule.PointLightRenderModule.SetGBufferParams(_gBufferTarget);
 
-            Shaders.deferredDirectionalLightParameter_AlbedoMap.SetValue(_renderTargetAlbedo);
-            Shaders.deferredDirectionalLightParameter_DepthMap.SetValue(_renderTargetDepth);
-            Shaders.deferredDirectionalLightParameter_NormalMap.SetValue(_renderTargetNormal);
+            Shaders.DeferredDirectionalLight.SetGBufferParams(_gBufferTarget);
 
-            Shaders.deferredDirectionalLightParameter_SSShadowMap.SetValue(onlyEssentials ? _renderTargetScreenSpaceEffectUpsampleBlurVertical : _renderTargetScreenSpaceEffectBlurFinal);
+            Shaders.DeferredDirectionalLight.Param_SSShadowMap.SetValue(onlyEssentials ? _renderTargetScreenSpaceEffectUpsampleBlurVertical : _renderTargetScreenSpaceEffectBlurFinal);
 
-            _environmentProbeRenderModule.AlbedoMap = _renderTargetAlbedo;
-            _environmentProbeRenderModule.NormalMap = _renderTargetNormal;
-            _environmentProbeRenderModule.SSRMap = _renderTargetScreenSpaceEffectReflection;
-            _environmentProbeRenderModule.DepthMap = _renderTargetDepth;
+            _environmentProbeRenderModule.SetGBufferParams(_gBufferTarget);
+            _environmentProbeRenderModule.SSRMap = _renderTargetSSR;
 
-            _decalRenderModule.DepthMap = _renderTargetDepth;
+            _decalRenderModule.DepthMap = _gBufferTarget.Depth;
 
-            _distanceFieldRenderModule.DepthMap = _renderTargetDepth;
+            _distanceFieldRenderModule.DepthMap = _gBufferTarget.Depth;
 
-            //_subsurfaceScatterRenderModule.NormalMap = _renderTargetNormal;
-            //_subsurfaceScatterRenderModule.AlbedoMap = _renderTargetAlbedo;
 
-            Shaders.DeferredComposeEffectParameter_ColorMap.SetValue(_renderTargetAlbedo);
-            Shaders.DeferredComposeEffectParameter_NormalMap.SetValue(_renderTargetNormal);
-            Shaders.DeferredComposeEffectParameter_diffuseLightMap.SetValue(_renderTargetDiffuse);
-            Shaders.DeferredComposeEffectParameter_specularLightMap.SetValue(_renderTargetSpecular);
-            Shaders.DeferredComposeEffectParameter_volumeLightMap.SetValue(_renderTargetVolume);
-            Shaders.DeferredComposeEffectParameter_SSAOMap.SetValue(_renderTargetScreenSpaceEffectBlurFinal);
-            //Shaders.DeferredComposeEffectParameter_HologramMap.SetValue(_renderTargetHologram);
-            // Shaders.DeferredComposeEffectParameter_SSRMap.SetValue(_renderTargetScreenSpaceEffectReflection);
+            Shaders.DeferredCompose.Param_ColorMap.SetValue(_gBufferTarget.Albedo);
+            Shaders.DeferredCompose.Param_NormalMap.SetValue(_gBufferTarget.Normal);
+            Shaders.DeferredCompose.Param_diffuseLightMap.SetValue(_lightingBufferTarget.Diffuse);
+            Shaders.DeferredCompose.Param_specularLightMap.SetValue(_lightingBufferTarget.Specular);
+            Shaders.DeferredCompose.Param_volumeLightMap.SetValue(_lightingBufferTarget.Volume);
+            Shaders.DeferredCompose.Param_SSAOMap.SetValue(_renderTargetScreenSpaceEffectBlurFinal);
 
-            Shaders.ScreenSpaceEffectParameter_NormalMap.SetValue(_renderTargetNormal);
+            Shaders.SSAO.Param_NormalMap.SetValue(_gBufferTarget.Normal);
+            Shaders.SSAO.Param_DepthMap.SetValue(_gBufferTarget.Depth);
+            Shaders.SSAO.Param_SSAOMap.SetValue(_renderTargetSSAOEffect);
 
-            Shaders.ScreenSpaceEffectParameter_DepthMap.SetValue(_renderTargetDepth);
-            Shaders.ScreenSpaceEffectParameter_SSAOMap.SetValue(_renderTargetSSAOEffect);
+            Shaders.SSR.Param_NormalMap.SetValue(_gBufferTarget.Normal);
+            Shaders.SSR.Param_DepthMap.SetValue(_gBufferTarget.Depth);
 
-            Shaders.ScreenSpaceReflectionParameter_DepthMap.SetValue(_renderTargetDepth);
-            Shaders.ScreenSpaceReflectionParameter_NormalMap.SetValue(_renderTargetNormal);
-            //Shaders.ScreenSpaceReflectionParameter_TargetMap.SetValue(_renderTargetFinal);
-
-            Shaders.EmissiveEffectParameter_DepthMap.SetValue(_renderTargetDepth);
-            Shaders.EmissiveEffectParameter_NormalMap.SetValue(_renderTargetNormal);
-
-            _taaFx.DepthMap = _renderTargetDepth;
+            _taaFx.DepthMap = _gBufferTarget.Depth;
         }
 
         #endregion
@@ -1613,24 +1446,24 @@ namespace DeferredEngine.Renderer
 
             int height;
             int width;
-            if (Math.Abs(texture.Width / (float)texture.Height - RenderingSettings.g_screenwidth / (float)RenderingSettings.g_screenheight) < 0.001)
+            if (Math.Abs(texture.Width / (float)texture.Height - RenderingSettings.g_ScreenWidth / (float)RenderingSettings.g_ScreenHeight) < 0.001)
             //If same aspectratio
             {
-                height = RenderingSettings.g_screenheight;
-                width = RenderingSettings.g_screenwidth;
+                height = RenderingSettings.g_ScreenHeight;
+                width = RenderingSettings.g_ScreenWidth;
             }
             else
             {
-                if (RenderingSettings.g_screenheight < RenderingSettings.g_screenwidth)
+                if (RenderingSettings.g_ScreenHeight < RenderingSettings.g_ScreenWidth)
                 {
                     //Should be squared!
-                    height = RenderingSettings.g_screenheight;
-                    width = RenderingSettings.g_screenheight;
+                    height = RenderingSettings.g_ScreenHeight;
+                    width = RenderingSettings.g_ScreenHeight;
                 }
                 else
                 {
-                    height = RenderingSettings.g_screenwidth;
-                    width = RenderingSettings.g_screenwidth;
+                    height = RenderingSettings.g_ScreenWidth;
+                    width = RenderingSettings.g_ScreenWidth;
                 }
             }
             _graphicsDevice.SetRenderTarget(output);
@@ -1649,23 +1482,18 @@ namespace DeferredEngine.Renderer
             _spriteBatch?.Dispose();
             _bloomFx?.Dispose();
             _lightAccumulationModule?.Dispose();
-            _gBufferRenderModule?.Dispose();
+            _gBufferModule?.Dispose();
             _taaFx?.Dispose();
             _environmentProbeRenderModule?.Dispose();
             _decalRenderModule?.Dispose();
-            _assets?.Dispose();
-            _renderTargetAlbedo?.Dispose();
-            _renderTargetDepth?.Dispose();
-            _renderTargetNormal?.Dispose();
+            _gBufferTarget?.Dispose();
+            _lightingBufferTarget?.Dispose();
             _renderTargetDecalOffTarget?.Dispose();
-            _renderTargetDiffuse?.Dispose();
-            _renderTargetSpecular?.Dispose();
-            _renderTargetVolume?.Dispose();
             _renderTargetComposed?.Dispose();
             _renderTargetBloom?.Dispose();
             _renderTargetTAA_1?.Dispose();
             _renderTargetTAA_2?.Dispose();
-            _renderTargetScreenSpaceEffectReflection?.Dispose();
+            _renderTargetSSR?.Dispose();
             _renderTargetSSAOEffect?.Dispose();
             _renderTargetScreenSpaceEffectUpsampleBlurVertical?.Dispose();
             _renderTargetScreenSpaceEffectUpsampleBlurHorizontal?.Dispose();

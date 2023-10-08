@@ -1,64 +1,55 @@
 ﻿using DeferredEngine.Entities;
-using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
     public class DecalRenderModule : IDisposable
     {
+        private Effect Effect;
+
+        private EffectParameter Param_DecalMap;
+        private EffectParameter Param_WorldView;
+        private EffectParameter Param_WorldViewProj;
+        private EffectParameter Param_InverseWorldView;
+        private EffectParameter Param_DepthMap;
+        private EffectParameter Param_FarClip;
+
+        private EffectPass Pass_Decal;
+        private EffectPass Pass_Outline;
+
+
+        private BlendState _decalBlend;
+
         private VertexBuffer _vertexBuffer;
         private IndexBuffer _indexBufferCage;
         private IndexBuffer _indexBufferCube;
 
-        private Effect _decalShader;
-
-        private EffectParameter _paramDecalMap;
-        private EffectParameter _paramWorldView;
-        private EffectParameter _paramWorldViewProj;
-        private EffectParameter _paramInverseWorldView;
-        private EffectParameter _paramDepthMap;
-        private EffectParameter _paramFarClip;
-
-        private EffectPass _decalPass;
-        private EffectPass _outlinePass;
-
-        private BlendState _decalBlend;
-        private int _shaderIndex;
-        private ShaderManager _shaderManagerReference;
         private GraphicsDevice _graphicsDevice;
 
-        public float FarClip { set { _paramFarClip.SetValue(value); } }
-        public Texture2D DepthMap { set { _paramDepthMap.SetValue(value); } }
+        public float FarClip { set { Param_FarClip.SetValue(value); } }
+        public Texture2D DepthMap { set { Param_DepthMap.SetValue(value); } }
 
 
-        public DecalRenderModule(ShaderManager shaderManager, string shaderPath = "Shaders/Deferred/DeferredDecal")
+        public DecalRenderModule(ContentManager content, string shaderPath = "Shaders/Deferred/DeferredDecal")
         {
-            Load(shaderManager, shaderPath);
-            InitializeShader();
+            Load(content, shaderPath);
         }
 
-        public void Load(ShaderManager shaderManager, string shaderPath)
+        public void Load(ContentManager content, string shaderPath = "Shaders/Deferred/DeferredDecal")
         {
-            _shaderIndex = shaderManager.AddShader(shaderPath);
+            Effect = content.Load<Effect>(shaderPath);
 
-            _decalShader = shaderManager.GetShader(_shaderIndex);
+            Pass_Decal = Effect.Techniques["Decal"].Passes[0];
+            Pass_Outline = Effect.Techniques["Outline"].Passes[0];
 
-            _shaderManagerReference = shaderManager;
-
-        }
-
-        private void InitializeShader()
-        {
-            _paramDecalMap = _decalShader.Parameters["DecalMap"];
-            _paramWorldView = _decalShader.Parameters["WorldView"];
-            _paramWorldViewProj = _decalShader.Parameters["WorldViewProj"];
-            _paramInverseWorldView = _decalShader.Parameters["InverseWorldView"];
-            _paramDepthMap = _decalShader.Parameters["DepthMap"];
-            _paramFarClip = _decalShader.Parameters["FarClip"];
-
-            _decalPass = _decalShader.Techniques["Decal"].Passes[0];
-            _outlinePass = _decalShader.Techniques["Outline"].Passes[0];
+            Param_DecalMap = Effect.Parameters["DecalMap"];
+            Param_WorldView = Effect.Parameters["WorldView"];
+            Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
+            Param_InverseWorldView = Effect.Parameters["InverseWorldView"];
+            Param_DepthMap = Effect.Parameters["DepthMap"];
+            Param_FarClip = Effect.Parameters["FarClip"];
         }
 
         public void Initialize(GraphicsDevice graphicsDevice)
@@ -141,8 +132,6 @@ namespace DeferredEngine.Renderer.RenderModules
 
         public void Draw(List<Decal> decals, Matrix view, Matrix viewProjection, Matrix inverseView)
         {
-            CheckForShaderChanges();
-
             _graphicsDevice.SetVertexBuffer(_vertexBuffer);
             _graphicsDevice.Indices = _indexBufferCube;
             _graphicsDevice.RasterizerState = RasterizerState.CullClockwise;
@@ -154,12 +143,12 @@ namespace DeferredEngine.Renderer.RenderModules
 
                 Matrix localMatrix = decal.World;
 
-                _paramDecalMap.SetValue(decal.Texture);
-                _paramWorldView.SetValue(localMatrix * view);
-                _paramWorldViewProj.SetValue(localMatrix * viewProjection);
-                _paramInverseWorldView.SetValue(inverseView * decal.InverseWorld);
+                Param_DecalMap.SetValue(decal.Texture);
+                Param_WorldView.SetValue(localMatrix * view);
+                Param_WorldViewProj.SetValue(localMatrix * viewProjection);
+                Param_InverseWorldView.SetValue(inverseView * decal.InverseWorld);
 
-                _decalPass.Apply();
+                Pass_Decal.Apply();
 
                 _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 12);
             }
@@ -172,23 +161,13 @@ namespace DeferredEngine.Renderer.RenderModules
 
             Matrix localMatrix = decal.World;
 
-            _paramWorldView.SetValue(localMatrix * view);
-            _paramWorldViewProj.SetValue(localMatrix * viewProjection);
+            Param_WorldView.SetValue(localMatrix * view);
+            Param_WorldViewProj.SetValue(localMatrix * viewProjection);
 
-            _outlinePass.Apply();
+            Pass_Outline.Apply();
 
             _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.LineList, 0, 0, 12);
 
-        }
-
-
-        private void CheckForShaderChanges()
-        {
-            if (_shaderManagerReference.GetShaderHasChanged(_shaderIndex))
-            {
-                _decalShader = _shaderManagerReference.GetShader(_shaderIndex);
-                InitializeShader();
-            }
         }
 
         public void Dispose()
@@ -196,7 +175,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _vertexBuffer?.Dispose();
             _indexBufferCage?.Dispose();
             _indexBufferCube?.Dispose();
-            _decalShader?.Dispose();
+            Effect?.Dispose();
             _decalBlend?.Dispose();
         }
     }

@@ -1,26 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
 
 namespace DeferredEngine.Recources
 {
-    public class Assets : IDisposable
+
+    public class DemoAssets : IDisposable
     {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  VARIABLES
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         //Default Meshes + Editor
-
-        public Model EditorArrow;
-        public Model EditorArrowRound;
-
-        public Model Sphere;
-        public ModelMeshPart SphereMeshPart;
-        public ModelDefinition IsoSphere;
-
         public ModelDefinition Plane;
 
         public ModelDefinition Cube;
@@ -29,10 +22,6 @@ namespace DeferredEngine.Recources
         public ModelDefinition Tiger;
 
         public ModelDefinition HumanModel;
-
-        public Texture2D IconLight;
-        public Texture2D IconEnvmap;
-        public Texture2D IconDecal;
 
         //Default Materials
 
@@ -54,8 +43,6 @@ namespace DeferredEngine.Recources
 
         //Shader stuff
 
-        public Texture2D NoiseMap;
-
         public static Texture2D BaseTex;
 
         //Meshes and Materials
@@ -64,7 +51,7 @@ namespace DeferredEngine.Recources
         //public MaterialEffect TrabantBigParts;
 
         public ModelDefinition SponzaModel;
-        readonly List<Texture2D> _sponzaTextures = new List<Texture2D>();
+        private readonly List<Texture2D> _sponzaTextures = new List<Texture2D>();
         private Texture2D sponza_fabric_metallic;
         private Texture2D sponza_fabric_spec;
         private Texture2D sponza_curtain_metallic;
@@ -81,7 +68,7 @@ namespace DeferredEngine.Recources
 
         public SpriteFont DefaultFont;
         public SpriteFont MonospaceFont;
-        
+
         public MaterialEffect DragonLowPolyMaterial;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -91,14 +78,6 @@ namespace DeferredEngine.Recources
         public void Load(ContentManager content, GraphicsDevice graphicsDevice)
         {
             //Default Meshes + Editor
-            EditorArrow = content.Load<Model>("Art/Editor/Arrow");
-            EditorArrowRound = content.Load<Model>("Art/Editor/ArrowRound");
-
-            IsoSphere = new SdfModelDefinition(content, "Art/default/isosphere", graphicsDevice, true);
-            
-            Sphere = content.Load<Model>("Art/default/sphere");
-            SphereMeshPart = Sphere.Meshes[0].MeshParts[0];
-
             Plane = new SdfModelDefinition(content, "Art/Plane", graphicsDevice);
 
             Cube = new SdfModelDefinition(content, "Art/test/cube", graphicsDevice, true);
@@ -106,9 +85,6 @@ namespace DeferredEngine.Recources
             Tiger = new SdfModelDefinition(content, "Art/Tiger/Tiger", graphicsDevice, true);
             HumanModel = new SdfModelDefinition(content, "Art/Human/human", graphicsDevice, true);
 
-            IconDecal = content.Load<Texture2D>("Art/Editor/icon_decal");
-            IconLight = content.Load<Texture2D>("Art/Editor/icon_light");
-            IconEnvmap = content.Load<Texture2D>("Art/Editor/icon_envmap");
             //Default Materials
 
             BaseMaterial = CreateMaterial(Color.Red, 0.5f, 0, type: MaterialEffect.MaterialTypes.Basic);
@@ -140,30 +116,8 @@ namespace DeferredEngine.Recources
             BaseTex = new Texture2D(graphicsDevice, 1, 1);
             BaseTex.SetData(new Color[] { Color.White });
 
-            NoiseMap = content.Load<Texture2D>("Shaders/noise_blur");
             //Meshes and Materials
-
-            //Trabant = content.Load<Model>("Art/test/source/trabant_realtime_v3");
-
-            //TrabantBigParts = CreateMaterial(Color.White, roughness: 1, metallic: 0,
-            //    albedoMap: content.Load<Texture2D>("Art/test/textures/big_parts_col"),
-            //    normalMap: content.Load<Texture2D>("Art/test/textures/big_parts_nor"),
-            //    roughnessMap: content.Load<Texture2D>("Art/test/textures/big_parts_rough"));
-
-            //MaterialEffect TrabantWindow = CreateMaterial(Color.White, roughness: 0.04f, metallic: 0.5f);
-
-            //MaterialEffect TrabantSmallParts = CreateMaterial(Color.White, roughness: 1, metallic: 0,
-            //    albedoMap: content.Load<Texture2D>("Art/test/textures/small_parts_col"),
-            //    normalMap: null,
-            //    roughnessMap: content.Load<Texture2D>("Art/test/textures/small_parts_rough"));
-
-            //Trabant.Meshes[0].MeshParts[0].Effect = TrabantWindow;
-            //Trabant.Meshes[1].MeshParts[0].Effect = TrabantBigParts;
-            //Trabant.Meshes[3].MeshParts[0].Effect = TrabantSmallParts;
-
-            //
-
-            StanfordDragon = new SdfModelDefinition(content, "Art/default/dragon_uv_smooth", graphicsDevice, false, SdfModelDefinition.DefaultSdfResolution * 1.4f); 
+            StanfordDragon = new SdfModelDefinition(content, "Art/default/dragon_uv_smooth", graphicsDevice, false, SdfModelDefinition.DefaultSdfResolution * 1.4f);
             StanfordDragonLowpoly = new SdfModelDefinition(content, "Art/default/dragon_lowpoly", graphicsDevice, true, SdfModelDefinition.DefaultSdfResolution * 1.2f);
 
             DragonLowPolyMaterial = CreateMaterial(Color.Red, 0.5f, 0, type: MaterialEffect.MaterialTypes.Basic, normalMap: content.Load<Texture2D>("Art/default/dragon_normal"));
@@ -175,44 +129,44 @@ namespace DeferredEngine.Recources
 
             SponzaModel = new SdfModelDefinition(content, "Sponza/Sponza", graphicsDevice, false);
             _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/background_ddn"));
-            _sponzaTextures.Add( content.Load<Texture2D>("Sponza/textures/chain_texture_ddn"));
-            _sponzaTextures.Add( content.Load<Texture2D>("Sponza/textures/chain_texture_mask"));
-            _sponzaTextures.Add( content.Load<Texture2D>("Sponza/textures/lion_ddn"));
-            _sponzaTextures.Add( content.Load<Texture2D>("Sponza/textures/lion2_ddn"));
-            _sponzaTextures.Add( content.Load<Texture2D>("Sponza/textures/spnza_bricks_a_ddn"));
-            _sponzaTextures.Add( content.Load<Texture2D>("Sponza/textures/spnza_bricks_a_spec"));
-            _sponzaTextures.Add( content.Load<Texture2D>("Sponza/textures/sponza_arch_ddn"));
-            _sponzaTextures.Add( content.Load<Texture2D>("Sponza/textures/sponza_arch_spec"));
-            _sponzaTextures.Add( content.Load<Texture2D>("Sponza/textures/sponza_ceiling_a_spec"));
-            _sponzaTextures.Add( content.Load<Texture2D>("Sponza/textures/sponza_column_a_ddn"));
-            _sponzaTextures.Add( content.Load<Texture2D>("Sponza/textures/sponza_column_a_spec"));
-            _sponzaTextures.Add( content.Load<Texture2D>("Sponza/textures/sponza_column_b_spec"));
-            _sponzaTextures.Add( content.Load<Texture2D>("Sponza/textures/sponza_column_b_ddn"));
-            _sponzaTextures.Add( content.Load<Texture2D>("Sponza/textures/sponza_column_c_spec"));
-            _sponzaTextures.Add( content.Load<Texture2D>("Sponza/textures/sponza_column_c_ddn"));
+            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/chain_texture_ddn"));
+            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/chain_texture_mask"));
+            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/lion_ddn"));
+            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/lion2_ddn"));
+            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/spnza_bricks_a_ddn"));
+            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/spnza_bricks_a_spec"));
+            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/sponza_arch_ddn"));
+            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/sponza_arch_spec"));
+            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/sponza_ceiling_a_spec"));
+            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/sponza_column_a_ddn"));
+            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/sponza_column_a_spec"));
+            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/sponza_column_b_spec"));
+            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/sponza_column_b_ddn"));
+            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/sponza_column_c_spec"));
+            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/sponza_column_c_ddn"));
             _sponzaTextures.Add(sponza_fabric_spec = content.Load<Texture2D>("Sponza/textures/sponza_fabric_spec"));
             _sponzaTextures.Add(sponza_fabric_metallic = content.Load<Texture2D>("Sponza/textures/sponza_fabric_metallic"));
             _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/sponza_curtain_green_spec"));
             _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/sponza_curtain_blue_spec"));
             _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/sponza_curtain_spec"));
-            _sponzaTextures.Add( content.Load<Texture2D>("Sponza/textures/sponza_details_spec"));
-            _sponzaTextures.Add( content.Load<Texture2D>("Sponza/textures/sponza_flagpole_spec"));
-            _sponzaTextures.Add( content.Load<Texture2D>("Sponza/textures/sponza_thorn_ddn"));
-            _sponzaTextures.Add( content.Load<Texture2D>("Sponza/textures/sponza_thorn_mask"));
-            _sponzaTextures.Add( content.Load<Texture2D>("Sponza/textures/sponza_thorn_spec"));
-            _sponzaTextures.Add( content.Load<Texture2D>("Sponza/textures/vase_ddn"));
-            _sponzaTextures.Add( content.Load<Texture2D>("Sponza/textures/vase_plant_mask"));
-            _sponzaTextures.Add( content.Load<Texture2D>("Sponza/textures/vase_plant_spec"));
-            _sponzaTextures.Add( content.Load<Texture2D>("Sponza/textures/vase_round_ddn"));
-            _sponzaTextures.Add( content.Load<Texture2D>("Sponza/textures/vase_round_spec"));
+            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/sponza_details_spec"));
+            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/sponza_flagpole_spec"));
+            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/sponza_thorn_ddn"));
+            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/sponza_thorn_mask"));
+            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/sponza_thorn_spec"));
+            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/vase_ddn"));
+            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/vase_plant_mask"));
+            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/vase_plant_spec"));
+            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/vase_round_ddn"));
+            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/vase_round_spec"));
 
             _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/sponza_floor_a_spec"));
             _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/sponza_floor_a_ddn"));
-            
+
             sponza_curtain_metallic = content.Load<Texture2D>("Sponza/textures/sponza_curtain_metallic");
 
             ProcessSponza();
-            
+
             ProcessHelmets();
 
             RockMaterial = CreateMaterial(Color.White, roughness: 1, metallic: 0,
@@ -247,7 +201,7 @@ namespace DeferredEngine.Recources
         /// <returns></returns>
         private MaterialEffect CreateMaterial(Color color, float roughness, float metallic, Texture2D albedoMap = null, Texture2D normalMap = null, Texture2D roughnessMap = null, Texture2D metallicMap = null, Texture2D mask = null, Texture2D displacementMap = null, MaterialEffect.MaterialTypes type = 0, float emissiveStrength = 0)
         {
-            MaterialEffect mat = new MaterialEffect(Shaders.DeferredClear);
+            MaterialEffect mat = new MaterialEffect(Shaders.DeferredClear.Effect);
             mat.Initialize(color, roughness, metallic, albedoMap, normalMap, roughnessMap, metallicMap, mask, displacementMap, type, emissiveStrength);
             return mat;
         }
@@ -316,7 +270,7 @@ namespace DeferredEngine.Recources
                 }
             }
         }
-        
+
         private Model ProcessModel(Model model)
         {
             foreach (ModelMesh mesh in model.Meshes)
@@ -473,9 +427,6 @@ namespace DeferredEngine.Recources
 
         public void Dispose()
         {
-            IconLight?.Dispose();
-            IconEnvmap?.Dispose();
-            IconDecal?.Dispose();
             BaseMaterial?.Dispose();
             GoldMaterial?.Dispose();
             EmissiveMaterial?.Dispose();
@@ -487,7 +438,6 @@ namespace DeferredEngine.Recources
             MetalRough03Material?.Dispose();
             AlphaBlendRim?.Dispose();
             MirrorMaterial?.Dispose();
-            NoiseMap?.Dispose();
             sponza_fabric_metallic?.Dispose();
             sponza_fabric_spec?.Dispose();
             sponza_curtain_metallic?.Dispose();

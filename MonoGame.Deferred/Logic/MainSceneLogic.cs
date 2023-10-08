@@ -1,5 +1,4 @@
-﻿using BEPUphysics;
-using DeferredEngine.Entities;
+﻿using DeferredEngine.Entities;
 using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper;
 using DeferredEngine.Renderer.RenderModules.SDF;
@@ -9,7 +8,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
-using DeferredDirectionalLight = DeferredEngine.Entities.DeferredDirectionalLight;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 
 namespace DeferredEngine.Logic
@@ -22,7 +20,7 @@ namespace DeferredEngine.Logic
         //  VARIABLES
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        private Assets _assets;
+        private DemoAssets _assets;
 
         public Camera Camera;
 
@@ -38,7 +36,6 @@ namespace DeferredEngine.Logic
 
         //Which render target are we currently displaying?
         private int _renderModeCycle;
-        private Space _physicsSpace;
 
         //SDF
         public SdfGenerator _sdfGenerator;
@@ -54,10 +51,9 @@ namespace DeferredEngine.Logic
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         //Done after Load
-        public void Initialize(Assets assets, Space space, GraphicsDevice graphicsDevice)
+        public void Initialize(DemoAssets assets, GraphicsDevice graphicsDevice)
         {
             _assets = assets;
-            _physicsSpace = space;
 
             MeshMaterialLibrary = new MeshMaterialLibrary(graphicsDevice);
 
@@ -115,7 +111,7 @@ namespace DeferredEngine.Logic
             // NOTE: Our physics entity's position will be overwritten, so it doesn't matter
             // NOTE: If a physics object has mass it will move, otherwise it is static
 
-            AddEntity(model: _assets.IsoSphere,
+            AddEntity(model: StaticAssets.Instance.IsoSphere,
                 materialEffect: _assets.AlphaBlendRim,
                 position: new Vector3(20, 0, 10), angleX: Math.PI / 2, angleY: 0, angleZ: 0, scale: 5);
 
@@ -125,7 +121,7 @@ namespace DeferredEngine.Logic
                 MaterialEffect test = _assets.SilverMaterial.Clone();
                 test.Roughness = i / 9.0f + 0.1f;
                 test.Metallic = 1;
-                AddEntity(model: _assets.IsoSphere,
+                AddEntity(model: StaticAssets.Instance.IsoSphere,
                     materialEffect: test,
                     position: new Vector3(30 + i * 10, 0, 10), angleX: Math.PI / 2, angleY: 0, angleZ: 0, scale: 5);
             }
@@ -133,7 +129,7 @@ namespace DeferredEngine.Logic
             ////////////////////////////////////////////////////////////////////////
             // Decals
 
-            Decals.Add(new Decal(_assets.IconDecal, new Vector3(-6, 22, 15), new Vector3((float)(-Math.PI / 2), 0, 0), Vector3.One * 10));
+            Decals.Add(new Decal(StaticAssets.Instance.IconDecal, new Vector3(-6, 22, 15), new Vector3((float)(-Math.PI / 2), 0, 0), Vector3.One * 10));
 
             ////////////////////////////////////////////////////////////////////////
             // Dynamic lights
@@ -199,7 +195,7 @@ namespace DeferredEngine.Logic
             //Starts the "editor mode" where we can manipulate objects
             if (Input.WasKeyPressed(Keys.Space))
             {
-                RenderingSettings.e_enableeditor = !RenderingSettings.e_enableeditor;
+                RenderingSettings.e_IsEditorEnabled = !RenderingSettings.e_IsEditorEnabled;
             }
 
 

@@ -8,10 +8,10 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
 {
     public class LineHelperManager
     {
-        private  readonly List<LineHelper> Lines = new List<LineHelper>();
+        private readonly List<LineHelper> Lines = new List<LineHelper>();
         //private  VertexBuffer _vbuffer;
         //private  IndexBuffer _ibuffer;
-        
+
         private int _tempVertsPoolLength = 100;
         public VertexPositionColor[] TempVertsPool;
         private int _tempVertsPoolIndex;
@@ -22,7 +22,7 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
             TempVertsPool = new VertexPositionColor[_tempVertsPoolLength];
         }
 
-        public  VertexPositionColor GetVertexPositionColor(Vector3 point, Color color)
+        public VertexPositionColor GetVertexPositionColor(Vector3 point, Color color)
         {
             if (_tempVertsPoolIndex < _tempVertsPoolLength - 3) //Buffer
             {
@@ -35,7 +35,7 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
             return new VertexPositionColor(point, color);
         }
 
-        private  void AdjustTempVertsPoolSize()
+        private void AdjustTempVertsPoolSize()
         {
             if (_tempVertsPoolOverCount > 0)
             {
@@ -47,31 +47,31 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
             _tempVertsPoolIndex = 0;
         }
 
-        public  void AddLineStartEnd(Vector3 start, Vector3 end, short timer)
+        public void AddLineStartEnd(Vector3 start, Vector3 end, short timer)
         {
-            LineHelper lineHelper = new LineHelper(start, end,timer, this);
+            LineHelper lineHelper = new LineHelper(start, end, timer, this);
             Lines.Add(lineHelper);
         }
 
-        public  void AddLineStartDir(Vector3 start, Vector3 dir, short timer)
+        public void AddLineStartDir(Vector3 start, Vector3 dir, short timer)
         {
-            LineHelper lineHelper = new LineHelper(start, start+dir,timer, this);   
+            LineHelper lineHelper = new LineHelper(start, start + dir, timer, this);
             Lines.Add(lineHelper);
         }
 
-        public  void AddLineStartEnd(Vector3 start, Vector3 end, short timer, Color startColor, Color endColor)
+        public void AddLineStartEnd(Vector3 start, Vector3 end, short timer, Color startColor, Color endColor)
         {
             LineHelper lineHelper = new LineHelper(start, end, timer, startColor, endColor, this);
             Lines.Add(lineHelper);
         }
 
-        public  void AddLineStartDir(Vector3 start, Vector3 dir, short timer, Color startColor, Color endColor)
+        public void AddLineStartDir(Vector3 start, Vector3 dir, short timer, Color startColor, Color endColor)
         {
             LineHelper lineHelper = new LineHelper(start, start + dir, timer, startColor, endColor, this);
             Lines.Add(lineHelper);
         }
 
-        public  void AddFrustum(BoundingFrustumEx frustum, short timer, Color color)
+        public void AddFrustum(BoundingFrustumEx frustum, short timer, Color color)
         {
             Vector3[] corners = frustum.GetCornersNoCopy();
             //Front
@@ -91,10 +91,10 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
             Lines.Add(new LineHelper(corners[7], corners[3], 1, color, color, this));
         }
 
-        public  void Draw(GraphicsDevice graphicsDevice, Matrix viewProjection, EffectParameter worldViewProjection, EffectPass vertexColorPass)
+        public void Draw(GraphicsDevice graphicsDevice, Matrix viewProjection, EffectParameter worldViewProjection, EffectPass vertexColorPass)
         {
             if (!RenderingSettings.d_drawlines) return;
-            
+
             worldViewProjection.SetValue(viewProjection);
 
             for (int i = 0; i < Lines.Count; i++)
@@ -102,13 +102,13 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
                 LineHelper line = Lines[i];
                 if (line != null)
                 {
-                        vertexColorPass.Apply();
+                    vertexColorPass.Apply();
 
-                        //Gather
-                        graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineList, line.Verts, 0, 2, LineHelper.Indices,
-                            0,
-                            1);
-                    
+                    //Gather
+                    graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineList, line.Verts, 0, 2, LineHelper.Indices,
+                        0,
+                        1);
+
                     line.Timer--;
                     if (line.Timer <= 0)
                     {
@@ -125,7 +125,7 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
             AdjustTempVertsPoolSize();
         }
 
-        public  void CreateBoundingBoxLines(BoundingFrustum boundingFrustumExShadow)
+        public void CreateBoundingBoxLines(BoundingFrustum boundingFrustumExShadow)
         {
             Vector3[] vertices = boundingFrustumExShadow.GetCorners();
             AddLineStartEnd(vertices[0], vertices[1], 1);

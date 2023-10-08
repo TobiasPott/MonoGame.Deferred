@@ -3,6 +3,7 @@ using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper;
 using DeferredEngine.Renderer.RenderModules.DeferredLighting;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.RenderModules
@@ -11,7 +12,7 @@ namespace DeferredEngine.Renderer.RenderModules
     {
         private GraphicsDevice _graphicsDevice;
         private FullscreenTriangleBuffer _fullscreenTarget;
-        private Assets _assets;
+
         private bool _g_UseDepthStencilLightCulling;
         private BlendState _lightBlendState;
         private BoundingFrustum _boundingFrustum;
@@ -28,15 +29,15 @@ namespace DeferredEngine.Renderer.RenderModules
         public PointLightRenderModule PointLightRenderModule;
 
 
-        public LightAccumulationModule(ShaderManager shaderManager, string shaderPath)
+        public LightAccumulationModule()
+        { }
+        public void Load(ContentManager content, string shaderPath = "")
         {
-            PointLightRenderModule = new PointLightRenderModule(shaderManager, shaderPath);
-        }
 
-        public void Initialize(GraphicsDevice graphicsDevice, Assets assets)
+        }
+        public void Initialize(GraphicsDevice graphicsDevice)
         {
             _graphicsDevice = graphicsDevice;
-            _assets = assets;
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
 
             _lightBlendState = new BlendState
@@ -49,15 +50,6 @@ namespace DeferredEngine.Renderer.RenderModules
 
         }
 
-
-        private void Load(ShaderManager shaderManager, string shaderPath)
-        {
-            //"Shaders/Deferred/DeferredPointLight"
-        }
-        private void InitializeShader()
-        {
-
-        }
 
         /// <summary>
         /// Needs to be called before draw
@@ -134,7 +126,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.Clear(ClearOptions.Target, new Color(0, 0, 0, 0.0f), 1, 0);
             _graphicsDevice.BlendState = _lightBlendState;
 
-            PointLightRenderModule.Draw(pointLights, cameraOrigin, gameTime, _assets, _boundingFrustum, _viewProjectionHasChanged, _view, _viewProjection, _inverseView, _graphicsDevice);
+            PointLightRenderModule.Draw(pointLights, cameraOrigin, gameTime, _boundingFrustum, _viewProjectionHasChanged, _view, _viewProjection, _inverseView, _graphicsDevice);
             DrawDirectionalLights(dirLights, cameraOrigin);
 
             ////Performance Profiler
@@ -150,10 +142,10 @@ namespace DeferredEngine.Renderer.RenderModules
         private void ReconstructDepth()
         {
             if (_viewProjectionHasChanged)
-                Shaders.ReconstructDepthParameter_Projection.SetValue(_projection);
+                Shaders.ReconstructDepth.Param_Projection.SetValue(_projection);
 
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
-            Shaders.ReconstructDepth.CurrentTechnique.Passes[0].Apply();
+            Shaders.ReconstructDepth.Effect.CurrentTechnique.Passes[0].Apply();
             _fullscreenTarget.Draw(_graphicsDevice);
         }
 
@@ -173,9 +165,9 @@ namespace DeferredEngine.Renderer.RenderModules
             //If nothing has changed we don't need to update
             if (_viewProjectionHasChanged)
             {
-                Shaders.deferredDirectionalLightParameterViewProjection.SetValue(_viewProjection);
-                Shaders.deferredDirectionalLightParameterCameraPosition.SetValue(cameraOrigin);
-                Shaders.deferredDirectionalLightParameterInverseViewProjection.SetValue(_inverseViewProjection);
+                Shaders.DeferredDirectionalLight.Param_ViewProjection.SetValue(_viewProjection);
+                Shaders.DeferredDirectionalLight.Param_CameraPosition.SetValue(cameraOrigin);
+                Shaders.DeferredDirectionalLight.Param_InverseViewProjection.SetValue(_inverseViewProjection);
             }
 
             _graphicsDevice.DepthStencilState = DepthStencilState.None;
@@ -202,9 +194,9 @@ namespace DeferredEngine.Renderer.RenderModules
                 light.LightView_ViewSpace = _inverseView * light.LightView;
             }
 
-            Shaders.deferredDirectionalLightParameter_LightColor.SetValue(light.ColorV3);
-            Shaders.deferredDirectionalLightParameter_LightDirection.SetValue(light.DirectionViewSpace);
-            Shaders.deferredDirectionalLightParameter_LightIntensity.SetValue(light.Intensity);
+            Shaders.DeferredDirectionalLight.Param_LightColor.SetValue(light.ColorV3);
+            Shaders.DeferredDirectionalLight.Param_LightDirection.SetValue(light.DirectionViewSpace);
+            Shaders.DeferredDirectionalLight.Param_LightIntensity.SetValue(light.Intensity);
             light.ApplyShader();
             _fullscreenTarget.Draw(_graphicsDevice);
         }
@@ -212,7 +204,6 @@ namespace DeferredEngine.Renderer.RenderModules
         public void Dispose()
         {
             _graphicsDevice?.Dispose();
-            _assets?.Dispose();
             _lightBlendState?.Dispose();
 
             PointLightRenderModule.Dispose();

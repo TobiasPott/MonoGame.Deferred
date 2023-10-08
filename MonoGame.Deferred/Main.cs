@@ -1,14 +1,12 @@
-﻿using System;
-using System.Threading;
-using BEPUphysics;
-using DeferredEngine.Logic;
+﻿using DeferredEngine.Logic;
 using DeferredEngine.Recources;
+using DeferredEngine.Renderer.Helper;
 using HelperSuite.GUIHelper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using BEPUutilities;
+using System;
+using System.Threading;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
-using DeferredEngine.Renderer.Helper;
 
 namespace DeferredEngine
 {
@@ -22,13 +20,11 @@ namespace DeferredEngine
 
         private readonly ScreenManager _screenManager;
 
-        private readonly Space _physicsSpace;
-
         //Do not change, these are overwritten (Check GameSettings.cs in Resources
         private bool _vsync = true;
         private int _fixFPS = 0;
         private bool _isActive = true;
-        
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -42,15 +38,9 @@ namespace DeferredEngine
             //Initialize screen manager, which controls draw / logic for our screens
             _screenManager = new ScreenManager();
 
-            //Initialize our physics and give it gravity
-            _physicsSpace = new Space
-            {
-                ForceUpdater = { Gravity = new BEPUutilities.Vector3(0, 0, -9.81f) }
-            };
-            
             //Size of our application / starting back buffer
-            _graphics.PreferredBackBufferWidth = RenderingSettings.g_screenwidth;
-            _graphics.PreferredBackBufferHeight = RenderingSettings.g_screenheight;
+            _graphics.PreferredBackBufferWidth = (int)RenderingSettings.g_ScreenResolution.X;
+            _graphics.PreferredBackBufferHeight = (int)RenderingSettings.g_ScreenResolution.Y;
 
             //HiDef enables usable shaders
             _graphics.GraphicsProfile = GraphicsProfile.HiDef;
@@ -66,7 +56,7 @@ namespace DeferredEngine
 
             //Update all our rendertargets when we resize
             Window.ClientSizeChanged += ClientChangedWindowSize;
-            
+
             //Update framerate etc. when not the active window
             Activated += IsActivated;
             Deactivated += IsDeactivated;
@@ -75,18 +65,18 @@ namespace DeferredEngine
 
         private void CheckFPSLimitChange()
         {
-            if(_vsync != RenderingSettings.g_vsync || _fixFPS != RenderingSettings.g_fixedfps)
+            if (_vsync != RenderingSettings.g_ScreenVSync || _fixFPS != RenderingSettings.g_ScreenFixedFPS)
             {
-                
+
                 SetFPSLimit();
-                _vsync = RenderingSettings.g_vsync;
-                _fixFPS = RenderingSettings.g_fixedfps;
+                _vsync = RenderingSettings.g_ScreenVSync;
+                _fixFPS = RenderingSettings.g_ScreenFixedFPS;
             }
         }
 
         private void SetFPSLimit()
         {
-            if (!RenderingSettings.g_vsync && RenderingSettings.g_fixedfps <= 0)
+            if (!RenderingSettings.g_ScreenVSync && RenderingSettings.g_ScreenFixedFPS <= 0)
             {
                 _graphics.SynchronizeWithVerticalRetrace = false;
                 IsFixedTimeStep = false;
@@ -94,11 +84,11 @@ namespace DeferredEngine
             }
             else
             {
-                if(RenderingSettings.g_fixedfps > 0)
+                if (RenderingSettings.g_ScreenFixedFPS > 0)
                 {
                     _graphics.SynchronizeWithVerticalRetrace = false;
                     IsFixedTimeStep = true;
-                    TargetElapsedTime = TimeSpan.FromMilliseconds(1000.0f/RenderingSettings.g_fixedfps);
+                    TargetElapsedTime = TimeSpan.FromMilliseconds(1000.0f / RenderingSettings.g_ScreenFixedFPS);
                 }
                 else //Vsync
                 {
@@ -132,8 +122,7 @@ namespace DeferredEngine
                 _graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
                 _graphics.ApplyChanges();
 
-                RenderingSettings.g_screenwidth = Window.ClientBounds.Width;
-                RenderingSettings.g_screenheight = Window.ClientBounds.Height;
+                RenderingSettings.SetResolution(Window.ClientBounds.Width, Window.ClientBounds.Height);
 
                 _screenManager.UpdateResolution();
             }
@@ -147,14 +136,23 @@ namespace DeferredEngine
         /// </summary>
         protected override void Initialize()
         {
-            GUIControl.Initialize(RenderingSettings.g_screenwidth, RenderingSettings.g_screenheight);
+            GUIControl.Initialize(RenderingSettings.g_ScreenResolution);
 
             FullscreenTriangleBuffer.InitClass(GraphicsDevice);
+            StaticAssets.InitClass(Content, GraphicsDevice);
+
             _screenManager.Load(Content, GraphicsDevice);
             // TODO: Add your initialization logic here
-            _screenManager.Initialize(GraphicsDevice, _physicsSpace);
+            _screenManager.Initialize(GraphicsDevice);
 
             base.Initialize();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            FullscreenTriangleBuffer.UnloadClass();
+            StaticAssets.UnloadClass();
+            base.Dispose(disposing);
         }
 
         /// <summary>
@@ -186,12 +184,8 @@ namespace DeferredEngine
             //Exit the game when pressing escape
             if (Input.WasKeyPressed(Keys.Escape))
                 Exit();
-            
-            _screenManager.Update(gameTime, _isActive);
 
-            //BEPU Physics
-            if(!RenderingSettings.e_enableeditor && RenderingSettings.p_physics)
-                _physicsSpace.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
+            _screenManager.Update(gameTime, _isActive);
 
             //base.Update(gameTime);
         }

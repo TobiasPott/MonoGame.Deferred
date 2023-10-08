@@ -8,36 +8,46 @@ namespace DeferredEngine.Renderer.RenderModules
     public class HelperGeometryRenderModule
     {
         //Lines
-        private Effect _shader; //= Globals.content.Load<Effect>("Shaders/Editor/LineEffect");
-        private EffectParameter _worldViewProjParam;
-        private EffectParameter _globalColorParam;
-        private EffectPass _vertexColorPass;
-        private EffectPass _globalColorPass;
+        private Effect Effect;
 
-        public Matrix ViewProjection;
+        private EffectPass Pass_VertexColor;
+        private EffectPass Pass_GlobalColor;
+
+        private EffectParameter Param_WorldViewProj;
+        private EffectParameter Param_GlobalColor;
+
+        private Matrix _viewProjection;
+        public Matrix ViewProjection { set { _viewProjection = value; } }
+
+
         private GraphicsDevice _graphicsDevice;
 
+        public HelperGeometryRenderModule(ContentManager content, string shaderPath = "Shaders/Editor/LineEffect")
+        {
+            Load(content, shaderPath);
+        }
+
+        public void Load(ContentManager content, string shaderPath = "Shaders/Editor/LineEffect")
+        {
+            Effect = content.Load<Effect>(shaderPath);
+            //Passes
+            Pass_VertexColor = Effect.Techniques["VertexColor"].Passes[0];
+            Pass_GlobalColor = Effect.Techniques["GlobalColor"].Passes[0];
+
+            Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
+            Param_GlobalColor = Effect.Parameters["GlobalColor"];
+
+
+        }
         public void Initialize(GraphicsDevice graphicsDevice)
         {
             _graphicsDevice = graphicsDevice;
-            _worldViewProjParam = _shader.Parameters["WorldViewProj"];
-            _globalColorParam = _shader.Parameters["GlobalColor"];
-
-            //Passes
-            _vertexColorPass = _shader.Techniques["VertexColor"].Passes[0];
-            _globalColorPass = _shader.Techniques["GlobalColor"].Passes[0];
-
-        }
-
-        public HelperGeometryRenderModule(ContentManager content, string shaderPath)
-        {
-            _shader = content.Load<Effect>(shaderPath);
         }
 
         public void Draw()
         {
             HelperGeometryManager.GetInstance()
-                .Draw(_graphicsDevice, ViewProjection, _worldViewProjParam, _globalColorParam, _vertexColorPass, _globalColorPass);
+                .Draw(_graphicsDevice, _viewProjection, Param_WorldViewProj, Param_GlobalColor, Pass_VertexColor, Pass_GlobalColor);
         }
     }
 }
