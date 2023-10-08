@@ -9,7 +9,6 @@ namespace DeferredEngine.Recources
 
         public static int u_showdisplayinfo = 3;
         public static bool p_physics = false;
-        public static RenderModes g_rendermode = RenderModes.Deferred;
 
 
         //Editor
@@ -30,10 +29,17 @@ namespace DeferredEngine.Recources
         public static float m_defaultroughness = 0.5f;
 
         //Settings
+        public static RenderModes g_rendermode = RenderModes.Deferred;
         public static float g_farplane = 500;
         public static bool g_cpusort = true;
         public static bool g_cpuculling = true;
         public static bool g_batchbymaterial = false; //Note this must be activated before the application is started.
+
+        //Deferred Decals
+        public static bool g_drawdecals = true;
+
+        //Forward pass
+        public static bool g_forwardenable = true;
 
         //Profiler
         public static bool d_profiler = false;
@@ -47,33 +53,10 @@ namespace DeferredEngine.Recources
         public static int g_shadowforcefiltering = 0; //1 = PCF, 2 3 better PCF  4 = Poisson, 5 = VSM;
         public static bool g_shadowforcescreenspace = false;
 
-        //Deferred Decals
-        public static bool g_drawdecals = true;
-
-        //Forward pass
-        public static bool g_forwardenable = true;
-
         //Temporal AntiAliasing
         public static bool g_taa = true;
         public static int g_taa_jittermode = 2;
         public static bool g_taa_tonemapped = true;
-
-        // Bloom
-        public static float g_BloomThreshold = 0.0f;
-
-        public static bool g_BloomEnable = true;
-
-        public static float g_BloomRadius1 = 1.0f;
-        public static float g_BloomRadius2 = 1.0f;
-        public static float g_BloomRadius3 = 2.0f;
-        public static float g_BloomRadius4 = 3.0f;
-        public static float g_BloomRadius5 = 4.0f;
-
-        public static float g_BloomStrength1 = 0.5f;
-        public static float g_BloomStrength2 = 1;
-        public static float g_BloomStrength3 = 1;
-        public static float g_BloomStrength4 = 1.0f;
-        public static float g_BloomStrength5 = 1.0f;
 
 
         // Emissive 
@@ -99,62 +82,6 @@ namespace DeferredEngine.Recources
         //}
 
 
-
-
-        // PostProcessing
-
-        private static float _chromaticAbberationStrength = 0.035f;
-        public static float ChromaticAbberationStrength
-        {
-            get { return _chromaticAbberationStrength; }
-            set
-            {
-                _chromaticAbberationStrength = value;
-                Shaders.PostProcessingParameter_ChromaticAbberationStrength.SetValue(_chromaticAbberationStrength);
-
-                if (_chromaticAbberationStrength <= 0)
-                    Shaders.PostProcessing.CurrentTechnique = Shaders.PostProcessingTechnique_Base;
-                else
-                {
-                    Shaders.PostProcessing.CurrentTechnique = Shaders.PostProcessingTechnique_VignetteChroma;
-                }
-            }
-        }
-
-        private static float _sCurveStrength = 0.05f;
-        public static float SCurveStrength
-        {
-            get { return _sCurveStrength; }
-            set
-            {
-                _sCurveStrength = value;
-                Shaders.PostProcessingParameter_SCurveStrength.SetValue(_sCurveStrength);
-            }
-        }
-
-        private static float _whitePoint = 1.1f;
-        public static float WhitePoint
-        {
-            get { return _whitePoint; }
-            set
-            {
-                _whitePoint = value;
-                Shaders.PostProcessingParameter_WhitePoint.SetValue(_whitePoint);
-            }
-        }
-
-        private static float _exposure = 0.75f;
-        public static float Exposure
-        {
-            get { return _exposure; }
-            set
-            {
-                _exposure = value;
-                Shaders.PostProcessingParameter_PowExposure.SetValue((float)Math.Pow(2, _exposure));
-            }
-        }
-
-        public static bool g_ColorGrading = true;
 
         // SSR
 
@@ -205,13 +132,12 @@ namespace DeferredEngine.Recources
             }
         }
 
-        private static bool _g_SSReflection_Taa = true;
         public static bool g_SSReflectionNoise = true;
         public static bool g_VolumetricLights = true;
-        public static bool e_CPURayMarch = false;
         public static bool g_ClearGBuffer = true;
-        public static bool g_PostProcessing = true;
 
+
+        private static bool _g_SSReflection_Taa = true;
         public static bool g_SSReflectionTaa
         {
             get { return _g_SSReflection_Taa; }
@@ -249,17 +175,6 @@ namespace DeferredEngine.Recources
             {
                 ssamples = value;
                 Shaders.ScreenSpaceReflectionEffect.Parameters["SecondarySamples"].SetValue(ssamples);
-            }
-        }
-
-        private static float minThickness = 70;
-        public static float g_SSReflections_MinThickness
-        {
-            get { return minThickness; }
-            set
-            {
-                minThickness = value;
-                Shaders.ScreenSpaceReflectionEffect.Parameters["MinimumThickness"].SetValue(minThickness);
             }
         }
 
