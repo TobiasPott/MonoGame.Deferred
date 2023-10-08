@@ -6,6 +6,36 @@ using System;
 
 namespace DeferredEngine.Renderer
 {
+    public abstract class MRTBase : IDisposable
+    {
+        protected GraphicsDevice _graphicsDevice;
+        protected int _width;
+        protected int _height;
+        protected readonly RenderTargetBinding[] _bindings;
+        protected readonly RenderTarget2D[] _renderTargets;
+
+        public RenderTargetBinding[] Bindings => _bindings;
+        public RenderTarget2D[] RenderTargets => _renderTargets;
+
+        public MRTBase(GraphicsDevice graphicsDevice, int width, int height, int numberOfTargets)
+        {
+            _graphicsDevice = graphicsDevice;
+            _width = width;
+            _height = height;
+            _bindings = new RenderTargetBinding[numberOfTargets];
+            _renderTargets = new RenderTarget2D[numberOfTargets];
+        }
+
+        public abstract void Resize(int width, int height);
+
+        public virtual void Dispose()
+        {
+            foreach (RenderTarget2D rt in _renderTargets)
+            {
+                rt?.Dispose();
+            }
+        }
+    }
     public class MultiRenderTarget : IDisposable
     {
         private GraphicsDevice _graphicsDevice;
@@ -29,10 +59,10 @@ namespace DeferredEngine.Renderer
             _width = targetWidth;
             _height = targetHeight;
 
-            SetSize(targetWidth, targetHeight);
+            Resize(targetWidth, targetHeight);
         }
 
-        public void SetSize(int width, int height)
+        public void Resize(int width, int height)
         {
             if (_width != width || _height != height)
             {

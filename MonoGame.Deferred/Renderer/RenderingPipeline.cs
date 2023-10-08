@@ -93,7 +93,7 @@ namespace DeferredEngine.Renderer
 
 
         //Render targets
-        MultiRenderTarget _mrt;
+        MultiRenderTarget _gBuffer;
 
         private RenderTarget2D _renderTargetDecalOffTarget;
 
@@ -179,7 +179,7 @@ namespace DeferredEngine.Renderer
             _spriteBatch = new SpriteBatch(graphicsDevice);
 
 
-            _mrt = new MultiRenderTarget(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
+            _gBuffer = new MultiRenderTarget(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
             _editorRender = new EditorRender();
             _editorRender.Initialize(graphicsDevice, assets);
 
@@ -852,7 +852,7 @@ namespace DeferredEngine.Renderer
         /// <param name="meshMaterialLibrary"></param>
         private void DrawGBuffer(MeshMaterialLibrary meshMaterialLibrary)
         {
-            _gBufferRenderModule.Draw(_mrt.Bindings, meshMaterialLibrary, _viewProjection, _view);
+            _gBufferRenderModule.Draw(_gBuffer.Bindings, meshMaterialLibrary, _viewProjection, _view);
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)
@@ -873,9 +873,9 @@ namespace DeferredEngine.Renderer
             if (!RenderingSettings.g_EnableDecals) return;
 
             //First copy albedo to decal offtarget
-            DrawTextureToScreenToFullScreen(_mrt.Albedo, BlendState.Opaque, _renderTargetDecalOffTarget);
+            DrawTextureToScreenToFullScreen(_gBuffer.Albedo, BlendState.Opaque, _renderTargetDecalOffTarget);
 
-            DrawTextureToScreenToFullScreen(_renderTargetDecalOffTarget, BlendState.Opaque, _mrt.Albedo);
+            DrawTextureToScreenToFullScreen(_renderTargetDecalOffTarget, BlendState.Opaque, _gBuffer.Albedo);
 
             _decalRenderModule.Draw(decals, _view, _viewProjection, _inverseView);
         }
@@ -1196,13 +1196,13 @@ namespace DeferredEngine.Renderer
             switch (RenderingSettings.g_rendermode)
             {
                 case RenderModes.Albedo:
-                    DrawTextureToScreenToFullScreen(_mrt.Albedo);
+                    DrawTextureToScreenToFullScreen(_gBuffer.Albedo);
                     break;
                 case RenderModes.Normal:
-                    DrawTextureToScreenToFullScreen(_mrt.Normal);
+                    DrawTextureToScreenToFullScreen(_gBuffer.Normal);
                     break;
                 case RenderModes.Depth:
-                    DrawTextureToScreenToFullScreen(_mrt.Depth);
+                    DrawTextureToScreenToFullScreen(_gBuffer.Depth);
                     break;
                 case RenderModes.Diffuse:
                     DrawTextureToScreenToFullScreen(_renderTargetDiffuse);
@@ -1322,7 +1322,7 @@ namespace DeferredEngine.Renderer
             Shaders.BillboardEffectParameter_AspectRatio.SetValue((float)targetWidth / targetHeight);
 
             // Update multi render target size
-            _mrt.SetSize(targetWidth, targetHeight);
+            _gBuffer.Resize(targetWidth, targetHeight);
 
             _renderTargetDecalOffTarget = new RenderTarget2D(_graphicsDevice, targetWidth,
                 targetHeight, false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
@@ -1405,49 +1405,49 @@ namespace DeferredEngine.Renderer
 
         private void UpdateRenderMapBindings(bool onlyEssentials)
         {
-            Shaders.BillboardEffectParameter_DepthMap.SetValue(_mrt.Depth);
+            Shaders.BillboardEffectParameter_DepthMap.SetValue(_gBuffer.Depth);
 
-            Shaders.ReconstructDepthParameter_DepthMap.SetValue(_mrt.Depth);
+            Shaders.ReconstructDepthParameter_DepthMap.SetValue(_gBuffer.Depth);
 
-            _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_AlbedoMap.SetValue(_mrt.Albedo);
-            _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_DepthMap.SetValue(_mrt.Depth);
-            _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_NormalMap.SetValue(_mrt.Normal);
+            _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_AlbedoMap.SetValue(_gBuffer.Albedo);
+            _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_DepthMap.SetValue(_gBuffer.Depth);
+            _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_NormalMap.SetValue(_gBuffer.Normal);
 
-            Shaders.deferredDirectionalLightParameter_AlbedoMap.SetValue(_mrt.Albedo);
-            Shaders.deferredDirectionalLightParameter_DepthMap.SetValue(_mrt.Depth);
-            Shaders.deferredDirectionalLightParameter_NormalMap.SetValue(_mrt.Normal);
+            Shaders.deferredDirectionalLightParameter_AlbedoMap.SetValue(_gBuffer.Albedo);
+            Shaders.deferredDirectionalLightParameter_DepthMap.SetValue(_gBuffer.Depth);
+            Shaders.deferredDirectionalLightParameter_NormalMap.SetValue(_gBuffer.Normal);
 
             Shaders.deferredDirectionalLightParameter_SSShadowMap.SetValue(onlyEssentials ? _renderTargetScreenSpaceEffectUpsampleBlurVertical : _renderTargetScreenSpaceEffectBlurFinal);
 
-            _environmentProbeRenderModule.AlbedoMap = _mrt.Albedo;
-            _environmentProbeRenderModule.NormalMap = _mrt.Normal;
+            _environmentProbeRenderModule.AlbedoMap = _gBuffer.Albedo;
+            _environmentProbeRenderModule.NormalMap = _gBuffer.Normal;
             _environmentProbeRenderModule.SSRMap = _renderTargetSSR;
-            _environmentProbeRenderModule.DepthMap = _mrt.Depth;
+            _environmentProbeRenderModule.DepthMap = _gBuffer.Depth;
 
-            _decalRenderModule.DepthMap = _mrt.Depth;
+            _decalRenderModule.DepthMap = _gBuffer.Depth;
 
-            _distanceFieldRenderModule.DepthMap = _mrt.Depth;
+            _distanceFieldRenderModule.DepthMap = _gBuffer.Depth;
 
 
-            Shaders.DeferredComposeEffectParameter_ColorMap.SetValue(_mrt.Albedo);
-            Shaders.DeferredComposeEffectParameter_NormalMap.SetValue(_mrt.Normal);
+            Shaders.DeferredComposeEffectParameter_ColorMap.SetValue(_gBuffer.Albedo);
+            Shaders.DeferredComposeEffectParameter_NormalMap.SetValue(_gBuffer.Normal);
             Shaders.DeferredComposeEffectParameter_diffuseLightMap.SetValue(_renderTargetDiffuse);
             Shaders.DeferredComposeEffectParameter_specularLightMap.SetValue(_renderTargetSpecular);
             Shaders.DeferredComposeEffectParameter_volumeLightMap.SetValue(_renderTargetVolume);
             Shaders.DeferredComposeEffectParameter_SSAOMap.SetValue(_renderTargetScreenSpaceEffectBlurFinal);
 
-            Shaders.ScreenSpaceEffectParameter_NormalMap.SetValue(_mrt.Normal);
+            Shaders.ScreenSpaceEffectParameter_NormalMap.SetValue(_gBuffer.Normal);
 
-            Shaders.ScreenSpaceEffectParameter_DepthMap.SetValue(_mrt.Depth);
+            Shaders.ScreenSpaceEffectParameter_DepthMap.SetValue(_gBuffer.Depth);
             Shaders.ScreenSpaceEffectParameter_SSAOMap.SetValue(_renderTargetSSAOEffect);
 
-            Shaders.ScreenSpaceReflectionParameter_DepthMap.SetValue(_mrt.Depth);
-            Shaders.ScreenSpaceReflectionParameter_NormalMap.SetValue(_mrt.Normal);
+            Shaders.ScreenSpaceReflectionParameter_DepthMap.SetValue(_gBuffer.Depth);
+            Shaders.ScreenSpaceReflectionParameter_NormalMap.SetValue(_gBuffer.Normal);
 
-            Shaders.EmissiveEffectParameter_DepthMap.SetValue(_mrt.Depth);
-            Shaders.EmissiveEffectParameter_NormalMap.SetValue(_mrt.Normal);
+            Shaders.EmissiveEffectParameter_DepthMap.SetValue(_gBuffer.Depth);
+            Shaders.EmissiveEffectParameter_NormalMap.SetValue(_gBuffer.Normal);
 
-            _taaFx.DepthMap = _mrt.Depth;
+            _taaFx.DepthMap = _gBuffer.Depth;
         }
 
         #endregion
@@ -1513,7 +1513,7 @@ namespace DeferredEngine.Renderer
             _environmentProbeRenderModule?.Dispose();
             _decalRenderModule?.Dispose();
             _assets?.Dispose();
-            _mrt?.Dispose();
+            _gBuffer?.Dispose();
             _renderTargetDecalOffTarget?.Dispose();
             _renderTargetDiffuse?.Dispose();
             _renderTargetSpecular?.Dispose();
