@@ -488,7 +488,7 @@ namespace DeferredEngine.Renderer
 
                 //Pass these values to our shader
                 Shaders.SSAO.Param_InverseViewProjection.SetValue(_inverseView);
-                PointLightRenderModule.Param_InverseView.SetValue(_inverseView);
+                Shaders.DeferredPointLight.Param_InverseView.SetValue(_inverseView);
 
                 //yep we changed
                 _viewProjectionHasChanged = true;
@@ -581,7 +581,7 @@ namespace DeferredEngine.Renderer
                 _g_FarClip = RenderingSettings.g_farplane;
                 _gBufferModule.FarClip = _g_FarClip;
                 _decalRenderModule.FarClip = _g_FarClip;
-                PointLightRenderModule.Param_FarClip.SetValue(_g_FarClip);
+                Shaders.DeferredPointLight.Param_FarClip.SetValue(_g_FarClip);
                 Shaders.Billboard.Param_FarClip.SetValue(_g_FarClip);
                 Shaders.SSR.Param_FarClip.SetValue(_g_FarClip);
                 Shaders.ReconstructDepth.Param_FarClip.SetValue(_g_FarClip);
@@ -697,7 +697,7 @@ namespace DeferredEngine.Renderer
                 _inverseView = Matrix.Invert(_view);
 
                 _viewIT = Matrix.Transpose(_inverseView);
-                PointLightRenderModule.Param_InverseView.SetValue(_inverseView);
+                Shaders.DeferredPointLight.Param_InverseView.SetValue(_inverseView);
 
                 _projection = Matrix.CreatePerspectiveFieldOfView(camera.FieldOfView, RenderingSettings.g_ScreenAspect, 1, RenderingSettings.g_farplane);
 
@@ -1323,7 +1323,7 @@ namespace DeferredEngine.Renderer
 
             _renderTargetDecalOffTarget = new RenderTarget2D(_graphicsDevice, targetWidth,
                 targetHeight, false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
-            PointLightRenderModule.Param_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
+            Shaders.DeferredPointLight.Param_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
 
             _renderTargetComposed = new RenderTarget2D(_graphicsDevice, targetWidth,
                targetHeight, false, SurfaceFormat.HalfVector4, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
