@@ -1249,7 +1249,7 @@ namespace DeferredEngine.Renderer
 
             destinationRenderTarget = _renderTargetOutput;
 
-            Shaders.PostProcessingParameter_ScreenTexture.SetValue(currentInput);
+            Shaders.PostProcessingParam_ScreenTexture.SetValue(currentInput);
             _graphicsDevice.SetRenderTarget(destinationRenderTarget);
 
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;

@@ -21,7 +21,7 @@
             set
             {
                 _chromaticAbberationStrength = value;
-                Shaders.PostProcessingParameter_ChromaticAbberationStrength.SetValue(_chromaticAbberationStrength);
+                Shaders.PostProcessingParam_ChromaticAbberationStrength.SetValue(_chromaticAbberationStrength);
 
                 if (_chromaticAbberationStrength <= 0)
                     Shaders.PostProcessing_Effect.CurrentTechnique = Shaders.PostProcessingTechnique_Base;
@@ -39,7 +39,7 @@
             set
             {
                 _sCurveStrength = value;
-                Shaders.PostProcessingParameter_SCurveStrength.SetValue(_sCurveStrength);
+                Shaders.PostProcessingParam_SCurveStrength.SetValue(_sCurveStrength);
             }
         }
 
@@ -50,7 +50,7 @@
             set
             {
                 _whitePoint = value;
-                Shaders.PostProcessingParameter_WhitePoint.SetValue(_whitePoint);
+                Shaders.PostProcessingParam_WhitePoint.SetValue(_whitePoint);
             }
         }
 
@@ -61,7 +61,7 @@
             set
             {
                 _exposure = value;
-                Shaders.PostProcessingParameter_PowExposure.SetValue((float)Math.Pow(2, _exposure));
+                Shaders.PostProcessingParam_PowExposure.SetValue((float)Math.Pow(2, _exposure));
             }
         }
 
