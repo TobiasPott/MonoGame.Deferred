@@ -630,17 +630,6 @@ namespace DeferredEngine.Renderer
                 if (!_g_SSReflectionNoise) Shaders.ScreenSpaceReflectionParameter_Time.SetValue(0.0f);
             }
 
-            //if (_hologramDraw != GameSettings.g_HologramDraw)
-            //{
-            //    _hologramDraw = GameSettings.g_HologramDraw;
-
-            //    if (!_hologramDraw)
-            //    {
-            //        _graphicsDevice.SetRenderTarget(_renderTargetHologram);
-            //        _graphicsDevice.Clear(Color.Black);
-            //    }
-            //}
-
             if (_forceShadowFiltering != RenderingSettings.g_shadowforcefiltering)
             {
                 _forceShadowFiltering = RenderingSettings.g_shadowforcefiltering;
