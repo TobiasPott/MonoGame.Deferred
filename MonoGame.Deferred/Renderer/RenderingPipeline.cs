@@ -199,7 +199,7 @@ namespace DeferredEngine.Renderer
             //Apply some base settings to overwrite shader defaults with game settings defaults
             RenderingSettings.ApplySettings();
 
-            Shaders.ScreenSpaceReflectionParameter_NoiseMap.SetValue(_assets.NoiseMap);
+            Shaders.SSR.Param_NoiseMap.SetValue(_assets.NoiseMap);
             SetUpRenderTargets(RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight, false);
 
         }
@@ -576,14 +576,14 @@ namespace DeferredEngine.Renderer
                 _decalRenderModule.FarClip = _g_FarClip;
                 _lightAccumulationModule.PointLightRenderModule.deferredPointLightParameter_FarClip.SetValue(_g_FarClip);
                 Shaders.BillboardEffectParameter_FarClip.SetValue(_g_FarClip);
-                Shaders.ScreenSpaceReflectionParameter_FarClip.SetValue(_g_FarClip);
+                Shaders.SSR.Param_FarClip.SetValue(_g_FarClip);
                 Shaders.ReconstructDepthParameter_FarClip.SetValue(_g_FarClip);
             }
 
             if (_g_SSReflectionNoise != RenderingSettings.g_SSReflectionNoise)
             {
                 _g_SSReflectionNoise = RenderingSettings.g_SSReflectionNoise;
-                if (!_g_SSReflectionNoise) Shaders.ScreenSpaceReflectionParameter_Time.SetValue(0.0f);
+                if (!_g_SSReflectionNoise) Shaders.SSR.Param_Time.SetValue(0.0f);
             }
 
             if (_forceShadowFiltering != RenderingSettings.g_shadowforcefiltering)
@@ -837,7 +837,7 @@ namespace DeferredEngine.Renderer
             _currentFrustumCorners[3] = _currentFrustumCorners[2];
             _currentFrustumCorners[2] = temp;
 
-            Shaders.ScreenSpaceReflectionParameter_FrustumCorners.SetValue(_currentFrustumCorners);
+            Shaders.SSR.Param_FrustumCorners.SetValue(_currentFrustumCorners);
             Shaders.ScreenSpaceEffectParameter_FrustumCorners.SetValue(_currentFrustumCorners);
             _taaFx.FrustumCorners = _currentFrustumCorners;
             Shaders.ReconstructDepthParameter_FrustumCorners.SetValue(_currentFrustumCorners);
@@ -895,19 +895,19 @@ namespace DeferredEngine.Renderer
 
             if (RenderingSettings.g_taa)
             {
-                Shaders.ScreenSpaceReflectionParameter_TargetMap.SetValue(_temporalAAOffFrame ? _renderTargetTAA_1 : _renderTargetTAA_2);
+                Shaders.SSR.Param_TargetMap.SetValue(_temporalAAOffFrame ? _renderTargetTAA_1 : _renderTargetTAA_2);
             }
             else
             {
-                Shaders.ScreenSpaceReflectionParameter_TargetMap.SetValue(_renderTargetComposed);
+                Shaders.SSR.Param_TargetMap.SetValue(_renderTargetComposed);
             }
 
             if (RenderingSettings.g_SSReflectionNoise)
-                Shaders.ScreenSpaceReflectionParameter_Time.SetValue((float)gameTime.TotalGameTime.TotalSeconds % 1000);
+                Shaders.SSR.Param_Time.SetValue((float)gameTime.TotalGameTime.TotalSeconds % 1000);
 
-            Shaders.ScreenSpaceReflectionParameter_Projection.SetValue(_projection);
+            Shaders.SSR.Param_Projection.SetValue(_projection);
 
-            Shaders.ScreenSpaceReflectionEffect.CurrentTechnique.Passes[0].Apply();
+            Shaders.SSR.Effect.CurrentTechnique.Passes[0].Apply();
             FullscreenTarget.Draw(_graphicsDevice);
 
             if (RenderingSettings.d_IsProfileEnabled)
@@ -1348,7 +1348,7 @@ namespace DeferredEngine.Renderer
                 // Shaders.SSReflectionEffectParameter_Resolution.SetValue(new Vector2(target_width, target_height));
                 Shaders.EmissiveEffectParameter_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
 
-                Shaders.ScreenSpaceReflectionParameter_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
+                Shaders.SSR.Param_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
                 _environmentProbeRenderModule.Resolution = new Vector2(targetWidth, targetHeight);
                 _renderTargetSSR = new RenderTarget2D(_graphicsDevice, targetWidth,
                     targetHeight, false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
@@ -1424,8 +1424,8 @@ namespace DeferredEngine.Renderer
             Shaders.ScreenSpaceEffectParameter_DepthMap.SetValue(_gBufferTarget.Depth);
             Shaders.ScreenSpaceEffectParameter_SSAOMap.SetValue(_renderTargetSSAOEffect);
 
-            Shaders.ScreenSpaceReflectionParameter_DepthMap.SetValue(_gBufferTarget.Depth);
-            Shaders.ScreenSpaceReflectionParameter_NormalMap.SetValue(_gBufferTarget.Normal);
+            Shaders.SSR.Param_DepthMap.SetValue(_gBufferTarget.Depth);
+            Shaders.SSR.Param_NormalMap.SetValue(_gBufferTarget.Normal);
 
             Shaders.EmissiveEffectParameter_DepthMap.SetValue(_gBufferTarget.Depth);
             Shaders.EmissiveEffectParameter_NormalMap.SetValue(_gBufferTarget.Normal);

@@ -56,9 +56,9 @@
             set
             {
                 _g_SSReflection_Taa = value;
-                Shaders.ScreenSpaceReflectionEffect.CurrentTechnique = value
-                    ? Shaders.ScreenSpaceReflectionTechnique_Taa
-                    : Shaders.ScreenSpaceReflectionTechnique_Default;
+                Shaders.SSR.Effect.CurrentTechnique = value
+                    ? Shaders.SSR.Technique_Taa
+                    : Shaders.SSR.Technique_Default;
 
                 if (value) g_SSReflectionNoise = true;
             }
@@ -75,7 +75,7 @@
             set
             {
                 msamples = value;
-                Shaders.ScreenSpaceReflectionEffect.Parameters["Samples"].SetValue(msamples);
+                Shaders.SSR.Effect.Parameters["Samples"].SetValue(msamples);
             }
         }
 
@@ -86,7 +86,7 @@
             set
             {
                 ssamples = value;
-                Shaders.ScreenSpaceReflectionEffect.Parameters["SecondarySamples"].SetValue(ssamples);
+                Shaders.SSR.Effect.Parameters["SecondarySamples"].SetValue(ssamples);
             }
         }
 
