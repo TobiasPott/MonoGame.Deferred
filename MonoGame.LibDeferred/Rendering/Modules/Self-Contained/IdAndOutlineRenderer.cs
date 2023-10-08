@@ -173,7 +173,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
         private void DrawArrow(Vector3 position, Matrix rotationObject, Vector3 angles, float scale, Color color, Matrix staticViewProjection, Assets assets)
         {
-            Matrix rotation = MatrixExtensions.CreateRotationXYZ(angles);
+            Matrix rotation = angles.ToMatrixRotationXYZ();
             Matrix scaleMatrix = Matrix.CreateScale(0.75f, 0.75f, scale * 1.5f);
             Matrix worldViewProj = scaleMatrix * rotation * rotationObject * Matrix.CreateTranslation(position) * staticViewProjection;
 
