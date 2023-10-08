@@ -68,28 +68,6 @@ namespace DeferredEngine.Recources
         public static readonly EffectParameter HologramEffectParameter_World = HologramEffect.Parameters["World"];
         public static readonly EffectParameter HologramEffectParameter_WorldViewProj = HologramEffect.Parameters["WorldViewProj"];
 
-        //Emissive Effect
-        public static readonly Effect EmissiveEffect = Globals.content.Load<Effect>("Shaders/Emissive/EmissiveDraw");
-        public static readonly EffectParameter EmissiveEffectParameter_World = EmissiveEffect.Parameters["World"];
-        public static readonly EffectParameter EmissiveEffectParameter_ViewProj = EmissiveEffect.Parameters["ViewProjection"];
-        public static readonly EffectParameter EmissiveEffectParameter_WorldViewProj = EmissiveEffect.Parameters["WorldViewProj"];
-        public static readonly EffectParameter EmissiveEffectParameter_InvertViewProj = EmissiveEffect.Parameters["InvertViewProjection"];
-        public static readonly EffectParameter EmissiveEffectParameter_Origin = EmissiveEffect.Parameters["Origin"];
-        public static readonly EffectParameter EmissiveEffectParameter_CameraPosition = EmissiveEffect.Parameters["CameraPosition"];
-        public static readonly EffectParameter EmissiveEffectParameter_Size = EmissiveEffect.Parameters["Size"];
-        public static readonly EffectParameter EmissiveEffectParameter_NormalMap = EmissiveEffect.Parameters["NormalMap"];
-        public static readonly EffectParameter EmissiveEffectParameter_DepthMap = EmissiveEffect.Parameters["DepthMap"];
-        public static readonly EffectParameter EmissiveEffectParameter_EmissiveMap = EmissiveEffect.Parameters["EmissiveMap"];
-        public static readonly EffectParameter EmissiveEffectParameter_Resolution = EmissiveEffect.Parameters["Resolution"];
-        public static readonly EffectParameter EmissiveEffectParameter_EmissiveColor = EmissiveEffect.Parameters["EmissiveColor"];
-        public static readonly EffectParameter EmissiveEffectParameter_EmissiveStrength = EmissiveEffect.Parameters["EmissiveStrength"];
-        public static readonly EffectParameter EmissiveEffectParameter_Time = EmissiveEffect.Parameters["Time"];
-
-        public static readonly EffectTechnique EmissiveEffectTechnique_DrawEmissiveBuffer = EmissiveEffect.Techniques["DrawEmissiveBuffer"];
-        public static readonly EffectTechnique EmissiveEffectTechnique_DrawEmissiveSpecularEffect = EmissiveEffect.Techniques["DrawEmissiveSpecularEffect"];
-        public static readonly EffectTechnique EmissiveEffectTechnique_DrawEmissiveDiffuseEffect = EmissiveEffect.Techniques["DrawEmissiveDiffuseEffect"];
-
-
         //ScreenSpaceReflection Effect
         public static class SSR
         {

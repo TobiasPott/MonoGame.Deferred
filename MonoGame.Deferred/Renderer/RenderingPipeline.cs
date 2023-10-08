@@ -1345,8 +1345,6 @@ namespace DeferredEngine.Renderer
                 _renderTargetTAA_2 = new RenderTarget2D(_graphicsDevice, targetWidth, targetHeight, false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
 
                 _taaFx.Resolution = new Vector2(targetWidth, targetHeight);
-                // Shaders.SSReflectionEffectParameter_Resolution.SetValue(new Vector2(target_width, target_height));
-                Shaders.EmissiveEffectParameter_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
 
                 Shaders.SSR.Param_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
                 _environmentProbeRenderModule.Resolution = new Vector2(targetWidth, targetHeight);
@@ -1426,9 +1424,6 @@ namespace DeferredEngine.Renderer
 
             Shaders.SSR.Param_DepthMap.SetValue(_gBufferTarget.Depth);
             Shaders.SSR.Param_NormalMap.SetValue(_gBufferTarget.Normal);
-
-            Shaders.EmissiveEffectParameter_DepthMap.SetValue(_gBufferTarget.Depth);
-            Shaders.EmissiveEffectParameter_NormalMap.SetValue(_gBufferTarget.Normal);
 
             _taaFx.DepthMap = _gBufferTarget.Depth;
         }
