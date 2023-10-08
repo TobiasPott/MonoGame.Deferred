@@ -3,59 +3,105 @@ using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Ext;
 
 namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
 {
     public class PointLightRenderModule : IDisposable
     {
+        public static bool EffectLoaded = false;
+        public static Effect Effect;
 
-        private Effect Effect;
+        public static EffectTechnique Technique_Unshadowed;
+        public static EffectTechnique Technique_UnshadowedVolumetric;
+        public static EffectTechnique Technique_ShadowedSDF;
+        public static EffectTechnique Technique_Shadowed;
+        public static EffectTechnique Technique_ShadowedVolumetric;
+        public static EffectTechnique Technique_WriteStencil;
 
-        private EffectTechnique Technique_Unshadowed;
-        private EffectTechnique Technique_UnshadowedVolumetric;
-        private EffectTechnique Technique_ShadowedSDF;
-        private EffectTechnique Technique_Shadowed;
-        private EffectTechnique Technique_ShadowedVolumetric;
-        private EffectTechnique Technique_WriteStencil;
+        public static EffectParameter Param_ShadowMap;
 
-        private EffectParameter Param_ShadowMap;
+        public static EffectParameter Param_Resolution;
+        public static EffectParameter Param_WorldView;
+        public static EffectParameter Param_WorldViewProjection;
+        public static EffectParameter Param_InverseView;
 
-        public EffectParameter Param_Resolution;
-        private EffectParameter Param_WorldView;
-        private EffectParameter Param_WorldViewProjection;
-        public EffectParameter Param_InverseView;
+        public static EffectParameter Param_LightPosition;
+        public static EffectParameter Param_LightColor;
+        public static EffectParameter Param_LightRadius;
+        public static EffectParameter Param_LightIntensity;
+        public static EffectParameter Param_ShadowMapSize;
+        public static EffectParameter Param_ShadowMapRadius;
+        public static EffectParameter Param_Inside;
+        public static EffectParameter Param_Time;
+        public static EffectParameter Param_FarClip;
+        public static EffectParameter Param_LightVolumeDensity;
 
-        private EffectParameter Param_LightPosition;
-        private EffectParameter Param_LightColor;
-        private EffectParameter Param_LightRadius;
-        private EffectParameter Param_LightIntensity;
-        private EffectParameter Param_ShadowMapSize;
-        private EffectParameter Param_ShadowMapRadius;
-        private EffectParameter Param_Inside;
-        private EffectParameter Param_Time;
-        public EffectParameter Param_FarClip;
-        private EffectParameter Param_LightVolumeDensity;
+        public static EffectParameter Param_VolumeTex;
+        public static EffectParameter Param_VolumeTexSize;
+        public static EffectParameter Param_VolumeTexResolution;
 
-        private EffectParameter Param_VolumeTex;
-        private EffectParameter Param_VolumeTexSize;
-        private EffectParameter Param_VolumeTexResolution;
+        public static EffectParameter Param_InstanceInverseMatrix;
+        public static EffectParameter Param_InstanceScale;
+        public static EffectParameter Param_InstanceSDFIndex;
+        public static EffectParameter Param_InstancesCount;
 
-        private EffectParameter Param_InstanceInverseMatrix;
-        private EffectParameter Param_InstanceScale;
-        private EffectParameter Param_InstanceSDFIndex;
-        private EffectParameter Param_InstancesCount;
+        public static EffectParameter Param_AlbedoMap;
+        public static EffectParameter Param_NormalMap;
+        public static EffectParameter Param_DepthMap;
 
-        private EffectParameter Param_AlbedoMap;
-        private EffectParameter Param_NormalMap;
-        private EffectParameter Param_DepthMap;
+        public static void LoadShader(ContentManager content, string shaderPath = "Shaders/Deferred/DeferredPointLight")
+        {
+            if (!EffectLoaded)
+            {
+                Effect = content.Load<Effect>(shaderPath);
+
+                Technique_Unshadowed = Effect.Techniques["Unshadowed"];
+                Technique_UnshadowedVolumetric = Effect.Techniques["UnshadowedVolume"];
+                Technique_Shadowed = Effect.Techniques["Shadowed"];
+                Technique_ShadowedSDF = Effect.Techniques["ShadowedSDF"];
+                Technique_ShadowedVolumetric = Effect.Techniques["ShadowedVolume"];
+                Technique_WriteStencil = Effect.Techniques["WriteStencilMask"];
+
+                Param_ShadowMap = Effect.Parameters["ShadowMap"];
+
+                Param_Resolution = Effect.Parameters["Resolution"];
+                Param_WorldView = Effect.Parameters["WorldView"];
+                Param_WorldViewProjection = Effect.Parameters["WorldViewProj"];
+                Param_InverseView = Effect.Parameters["InverseView"];
+
+                Param_LightPosition = Effect.Parameters["lightPosition"];
+                Param_LightColor = Effect.Parameters["lightColor"];
+                Param_LightRadius = Effect.Parameters["lightRadius"];
+                Param_LightIntensity = Effect.Parameters["lightIntensity"];
+                Param_ShadowMapSize = Effect.Parameters["ShadowMapSize"];
+                Param_ShadowMapRadius = Effect.Parameters["ShadowMapRadius"];
+                Param_Inside = Effect.Parameters["inside"];
+                Param_Time = Effect.Parameters["Time"];
+                Param_FarClip = Effect.Parameters["FarClip"];
+                Param_LightVolumeDensity = Effect.Parameters["lightVolumeDensity"];
+
+                Param_VolumeTex = Effect.Parameters["VolumeTex"];
+                Param_VolumeTexSize = Effect.Parameters["VolumeTexSize"];
+                Param_VolumeTexResolution = Effect.Parameters["VolumeTexResolution"];
+                Param_InstanceInverseMatrix = Effect.Parameters["InstanceInverseMatrix"];
+                Param_InstanceScale = Effect.Parameters["InstanceScale"];
+                Param_InstanceSDFIndex = Effect.Parameters["InstanceSDFIndex"];
+                Param_InstancesCount = Effect.Parameters["InstancesCount"];
+
+                Param_AlbedoMap = Effect.Parameters["AlbedoMap"];
+                Param_NormalMap = Effect.Parameters["NormalMap"];
+                Param_DepthMap = Effect.Parameters["DepthMap"];
+            }
+        }
+
+
 
         private DepthStencilState _stencilCullPass1;
         private DepthStencilState _stencilCullPass2;
 
-        public PointLightRenderModule(ContentManager content, string shaderPath = "Shaders/Deferred/DeferredPointLight")
+        public PointLightRenderModule(ContentManager content)
         {
-            Load(content, shaderPath);
+            Load(content);
 
             _stencilCullPass1 = new DepthStencilState()
             {
@@ -102,59 +148,22 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
         }
         public void SetInstanceData(Matrix[] inverseMatrices, Vector3[] scales, float[] sdfIndices, int count)
         {
-            this.Param_InstanceInverseMatrix.SetValue(inverseMatrices);
-            this.Param_InstanceScale.SetValue(scales);
-            this.Param_InstanceSDFIndex.SetValue(sdfIndices);
-            this.Param_InstancesCount.SetValue((float)count);
+            Param_InstanceInverseMatrix.SetValue(inverseMatrices);
+            Param_InstanceScale.SetValue(scales);
+            Param_InstanceSDFIndex.SetValue(sdfIndices);
+            Param_InstancesCount.SetValue((float)count);
         }
         public void SetVolumeTexParams(Texture atlas, Vector3[] texSizes, Vector4[] texResolutions)
         {
-            this.Param_VolumeTex.SetValue(atlas);
-            this.Param_VolumeTexSize.SetValue(texSizes);
-            this.Param_VolumeTexResolution.SetValue(texResolutions);
+            Param_VolumeTex.SetValue(atlas);
+            Param_VolumeTexSize.SetValue(texSizes);
+            Param_VolumeTexResolution.SetValue(texResolutions);
         }
 
 
-        private void Load(ContentManager content, string shaderPath = "Shaders/Deferred/DeferredPointLight")
+        private void Load(ContentManager content)
         {
-            Effect = content.Load<Effect>(shaderPath);
-
-            Technique_Unshadowed = Effect.Techniques["Unshadowed"];
-            Technique_UnshadowedVolumetric = Effect.Techniques["UnshadowedVolume"];
-            Technique_Shadowed = Effect.Techniques["Shadowed"];
-            Technique_ShadowedSDF = Effect.Techniques["ShadowedSDF"];
-            Technique_ShadowedVolumetric = Effect.Techniques["ShadowedVolume"];
-            Technique_WriteStencil = Effect.Techniques["WriteStencilMask"];
-
-            Param_ShadowMap = Effect.Parameters["ShadowMap"];
-            
-            Param_Resolution = Effect.Parameters["Resolution"];
-            Param_WorldView = Effect.Parameters["WorldView"];
-            Param_WorldViewProjection = Effect.Parameters["WorldViewProj"];
-            Param_InverseView = Effect.Parameters["InverseView"];
-
-            Param_LightPosition = Effect.Parameters["lightPosition"];
-            Param_LightColor = Effect.Parameters["lightColor"];
-            Param_LightRadius = Effect.Parameters["lightRadius"];
-            Param_LightIntensity = Effect.Parameters["lightIntensity"];
-            Param_ShadowMapSize = Effect.Parameters["ShadowMapSize"];
-            Param_ShadowMapRadius = Effect.Parameters["ShadowMapRadius"];
-            Param_Inside = Effect.Parameters["inside"];
-            Param_Time = Effect.Parameters["Time"];
-            Param_FarClip = Effect.Parameters["FarClip"];
-            Param_LightVolumeDensity = Effect.Parameters["lightVolumeDensity"];
-
-            Param_VolumeTex = Effect.Parameters["VolumeTex"];
-            Param_VolumeTexSize = Effect.Parameters["VolumeTexSize"];
-            Param_VolumeTexResolution = Effect.Parameters["VolumeTexResolution"];
-            Param_InstanceInverseMatrix = Effect.Parameters["InstanceInverseMatrix"];
-            Param_InstanceScale = Effect.Parameters["InstanceScale"];
-            Param_InstanceSDFIndex = Effect.Parameters["InstanceSDFIndex"];
-            Param_InstancesCount = Effect.Parameters["InstancesCount"];
-
-            Param_AlbedoMap = Effect.Parameters["AlbedoMap"];
-            Param_NormalMap = Effect.Parameters["NormalMap"];
-            Param_DepthMap = Effect.Parameters["DepthMap"];
+            LoadShader(content, "Shaders/Deferred/DeferredPointLight");
         }
 
         /// <summary>
