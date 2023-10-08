@@ -11,10 +11,11 @@ namespace DeferredEngine.Renderer.RenderModules
     {
         private GraphicsDevice _graphicsDevice;
         private FullscreenTriangleBuffer _fullscreenTarget;
-        private Assets _assets;
+
         private bool _g_UseDepthStencilLightCulling;
         private BlendState _lightBlendState;
         private BoundingFrustum _boundingFrustum;
+        private Assets _assets;
 
         private bool _viewProjectionHasChanged;
 

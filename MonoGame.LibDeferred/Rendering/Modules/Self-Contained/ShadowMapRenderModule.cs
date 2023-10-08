@@ -10,22 +10,21 @@ namespace DeferredEngine.Renderer.RenderModules
 {
     public class ShadowMapRenderModule : IRenderModule
     {
-        private Effect _shader;
+        private Effect Effect;
 
-        private EffectParameter _WorldViewProj;
-        private EffectParameter _WorldView;
-        private EffectParameter _World;
-        private EffectParameter _LightPositionWS;
-        private EffectParameter _FarClip;
-        private EffectParameter _SizeBias;
-        private EffectParameter _MaskTexture;
+        private EffectParameter Param_WorldViewProj;
+        private EffectParameter Param_WorldView;
+        private EffectParameter Param_World;
+        private EffectParameter Param_LightPositionWS;
+        private EffectParameter Param_FarClip;
+        private EffectParameter Param_SizeBias;
+        private EffectParameter Param_MaskTexture;
 
         //Linear = VS Depth -> used for directional lights
-        private EffectPass _linearPass;
-
+        private EffectPass Pass_linearPass;
         //Distance = distance(pixel, light) -> used for omnidirectional lights
-        private EffectPass _distancePass;
-        private EffectPass _distanceAlphaPass;
+        private EffectPass Pass_distancePass;
+        private EffectPass Pass_distanceAlphaPass;
 
         private Passes _pass;
 
@@ -49,28 +48,28 @@ namespace DeferredEngine.Renderer.RenderModules
         {
             _graphicsDevice = graphicsDevice;
 
-            _WorldViewProj = _shader.Parameters["WorldViewProj"];
-            _WorldView = _shader.Parameters["WorldView"];
-            _World = _shader.Parameters["World"];
-            _LightPositionWS = _shader.Parameters["LightPositionWS"];
-            _FarClip = _shader.Parameters["FarClip"];
-            _SizeBias = _shader.Parameters["SizeBias"];
-            _MaskTexture = _shader.Parameters["MaskTexture"];
+            Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
+            Param_WorldView = Effect.Parameters["WorldView"];
+            Param_World = Effect.Parameters["World"];
+            Param_LightPositionWS = Effect.Parameters["LightPositionWS"];
+            Param_FarClip = Effect.Parameters["FarClip"];
+            Param_SizeBias = Effect.Parameters["SizeBias"];
+            Param_MaskTexture = Effect.Parameters["MaskTexture"];
 
-            _linearPass = _shader.Techniques["DrawLinearDepth"].Passes[0];
-            _distancePass = _shader.Techniques["DrawDistanceDepth"].Passes[0];
-            _distanceAlphaPass = _shader.Techniques["DrawDistanceDepthAlpha"].Passes[0];
+            Pass_linearPass = Effect.Techniques["DrawLinearDepth"].Passes[0];
+            Pass_distancePass = Effect.Techniques["DrawDistanceDepth"].Passes[0];
+            Pass_distanceAlphaPass = Effect.Techniques["DrawDistanceDepthAlpha"].Passes[0];
         }
 
         public void Load(ContentManager content, string shaderPath = "Shaders/Shadow/ShadowMap")
         {
-            _shader = content.Load<Effect>(shaderPath);
+            Effect = content.Load<Effect>(shaderPath);
         }
 
-        public void Draw(MeshMaterialLibrary meshMaterialLibrary, 
-            List<ModelEntity> entities, 
-            List<DeferredPointLight> pointLights, 
-            List<DeferredDirectionalLight> dirLights, 
+        public void Draw(MeshMaterialLibrary meshMaterialLibrary,
+            List<ModelEntity> entities,
+            List<DeferredPointLight> pointLights,
+            List<DeferredDirectionalLight> dirLights,
             Camera camera)
         {
             _pass = Passes.Omnidirectional;
@@ -223,8 +222,8 @@ namespace DeferredEngine.Renderer.RenderModules
                     _graphicsDevice.Viewport = new Viewport(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
                     //_graphicsDevice.ScissorRectangle = new Rectangle(0, light.ShadowResolution* (int) cubeMapFace,  light.ShadowResolution, light.ShadowResolution);
 
-                    _FarClip.SetValue(light.Radius);
-                    _LightPositionWS.SetValue(light.Position);
+                    Param_FarClip.SetValue(light.Radius);
+                    Param_LightPositionWS.SetValue(light.Position);
 
                     _graphicsDevice.ScissorRectangle = new Rectangle(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
 
@@ -337,8 +336,8 @@ namespace DeferredEngine.Renderer.RenderModules
                 meshMaterialLibrary.FrustumCulling(entities, _boundingFrustumShadow, true, light.Position);
 
                 // Rendering!
-                _FarClip.SetValue(light.ShadowDepth);
-                _SizeBias.SetValue(RenderingSettings.ShadowBias * 2048 / light.ShadowResolution);
+                Param_FarClip.SetValue(light.ShadowDepth);
+                Param_SizeBias.SetValue(RenderingSettings.ShadowBias * 2048 / light.ShadowResolution);
 
                 meshMaterialLibrary.Draw(MeshMaterialLibrary.RenderType.ShadowLinear,
                     light.LightViewProjection, light.HasChanged, false, false, 0, light.LightView, renderModule: this);
@@ -356,8 +355,8 @@ namespace DeferredEngine.Renderer.RenderModules
                 _graphicsDevice.SetRenderTarget(light.ShadowMap);
                 _graphicsDevice.Clear(ClearOptions.DepthBuffer, Color.White, 1, 0);
 
-                _FarClip.SetValue(light.ShadowDepth);
-                _SizeBias.SetValue(RenderingSettings.ShadowBias * 2048 / light.ShadowResolution);
+                Param_FarClip.SetValue(light.ShadowDepth);
+                Param_SizeBias.SetValue(RenderingSettings.ShadowBias * 2048 / light.ShadowResolution);
 
                 meshMaterialLibrary.Draw(MeshMaterialLibrary.RenderType.ShadowLinear,
                     light.LightViewProjection, false, true, false, 0, light.LightView, renderModule: this);
@@ -375,21 +374,21 @@ namespace DeferredEngine.Renderer.RenderModules
 
         public void Apply(Matrix localWorldMatrix, Matrix? view, Matrix viewProjection)
         {
-            _WorldViewProj.SetValue(localWorldMatrix * viewProjection);
+            Param_WorldViewProj.SetValue(localWorldMatrix * viewProjection);
 
             switch (_pass)
             {
                 case Passes.Directional:
-                    _WorldView.SetValue(localWorldMatrix * (Matrix)view);
-                    _linearPass.Apply();
+                    Param_WorldView.SetValue(localWorldMatrix * (Matrix)view);
+                    Pass_linearPass.Apply();
                     break;
                 case Passes.Omnidirectional:
-                    _World.SetValue(localWorldMatrix);
-                    _distancePass.Apply();
+                    Param_World.SetValue(localWorldMatrix);
+                    Pass_distancePass.Apply();
                     break;
                 case Passes.OmnidirectionalAlpha:
-                    _World.SetValue(localWorldMatrix);
-                    _distanceAlphaPass.Apply();
+                    Param_World.SetValue(localWorldMatrix);
+                    Pass_distanceAlphaPass.Apply();
                     break;
             }
         }
@@ -402,7 +401,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 if (material.HasMask)
                 {
                     _pass = Passes.OmnidirectionalAlpha;
-                    _MaskTexture.SetValue(material.Mask);
+                    Param_MaskTexture.SetValue(material.Mask);
 
                 }
                 else
