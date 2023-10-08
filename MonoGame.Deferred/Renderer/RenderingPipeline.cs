@@ -34,13 +34,14 @@ namespace DeferredEngine.Renderer
 
         private EditorRender _editorRender;
 
+        private GBufferPipelineModule _gBufferModule;
+        private ForwardPipelineModule _forwardModule;
+        private ShadowMapPipelineModule _shadowMapModule;
+
         private PointLightRenderModule _pointLightRenderModule;
         private LightAccumulationModule _lightAccumulationModule;
-        private ShadowMapRenderModule _shadowMapRenderModule;
-        private GBufferPipelineModule _gBufferRenderModule;
         private EnvironmentProbeRenderModule _environmentProbeRenderModule;
         private DecalRenderModule _decalRenderModule;
-        private ForwardPipelineModule _forwardRenderModule;
         private HelperGeometryRenderModule _helperGeometryRenderModule;
         private DistanceFieldRenderModule _distanceFieldRenderModule;
 
@@ -146,10 +147,10 @@ namespace DeferredEngine.Renderer
         {
             _inverseResolution = Vector2.One / RenderingSettings.g_ScreenResolution;
 
-            _gBufferRenderModule = new GBufferPipelineModule(content, "Shaders/GbufferSetup/GBuffer");
-            _forwardRenderModule = new ForwardPipelineModule(content, "Shaders/forward/forward");
-            _shadowMapRenderModule = new ShadowMapRenderModule(content, "Shaders/Shadow/ShadowMap");
-            
+            _gBufferModule = new GBufferPipelineModule(content, "Shaders/GbufferSetup/GBuffer");
+            _forwardModule = new ForwardPipelineModule(content, "Shaders/forward/forward");
+            _shadowMapModule = new ShadowMapPipelineModule(content, "Shaders/Shadow/ShadowMap");
+
             _pointLightRenderModule = new PointLightRenderModule(content, "Shaders/Deferred/DeferredPointLight");
             _lightAccumulationModule = new LightAccumulationModule() { PointLightRenderModule = _pointLightRenderModule };
             _environmentProbeRenderModule = new EnvironmentProbeRenderModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
@@ -182,9 +183,9 @@ namespace DeferredEngine.Renderer
             _editorRender.Initialize(graphicsDevice);
 
 
-            _gBufferRenderModule.Initialize(graphicsDevice, _spriteBatch);
-            _forwardRenderModule.Initialize(graphicsDevice, _spriteBatch);
-            _shadowMapRenderModule.Initialize(graphicsDevice);
+            _gBufferModule.Initialize(graphicsDevice, _spriteBatch);
+            _forwardModule.Initialize(graphicsDevice, _spriteBatch);
+            _shadowMapModule.Initialize(graphicsDevice, _spriteBatch);
 
             _lightAccumulationModule.Initialize(graphicsDevice);
             _environmentProbeRenderModule.Initialize(graphicsDevice);
@@ -576,7 +577,7 @@ namespace DeferredEngine.Renderer
             if (Math.Abs(_g_FarClip - RenderingSettings.g_farplane) > 0.0001f)
             {
                 _g_FarClip = RenderingSettings.g_farplane;
-                _gBufferRenderModule.FarClip = _g_FarClip;
+                _gBufferModule.FarClip = _g_FarClip;
                 _decalRenderModule.FarClip = _g_FarClip;
                 _lightAccumulationModule.PointLightRenderModule.Param_FarClip.SetValue(_g_FarClip);
                 Shaders.Billboard.Param_FarClip.SetValue(_g_FarClip);
@@ -654,7 +655,7 @@ namespace DeferredEngine.Renderer
             //Don't render for the first frame, we need a guideline first
             if (_boundingFrustum == null) UpdateViewProjection(meshMaterialLibrary, entities, camera);
 
-            _shadowMapRenderModule.Draw(meshMaterialLibrary, entities, pointLights, dirLights, camera);
+            _shadowMapModule.Draw(meshMaterialLibrary, entities, pointLights, dirLights, camera);
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)
@@ -703,7 +704,7 @@ namespace DeferredEngine.Renderer
 
                 _projection = Matrix.CreatePerspectiveFieldOfView(camera.FieldOfView, RenderingSettings.g_ScreenAspect, 1, RenderingSettings.g_farplane);
 
-                _gBufferRenderModule.Camera = camera.Position;
+                _gBufferModule.Camera = camera.Position;
 
                 _viewProjection = _view * _projection;
 
@@ -854,7 +855,7 @@ namespace DeferredEngine.Renderer
         /// <param name="meshMaterialLibrary"></param>
         private void DrawGBuffer(MeshMaterialLibrary meshMaterialLibrary)
         {
-            _gBufferRenderModule.Draw(_gBufferTarget.Bindings, meshMaterialLibrary, _viewProjection, _view);
+            _gBufferModule.Draw(_gBufferTarget.Bindings, meshMaterialLibrary, _viewProjection, _view);
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)
@@ -1129,7 +1130,7 @@ namespace DeferredEngine.Renderer
             _graphicsDevice.SetRenderTarget(input);
             ReconstructDepth();
 
-            return _forwardRenderModule.Draw(input, meshMaterialLibrary, _viewProjection, camera, pointLights, _boundingFrustum);
+            return _forwardModule.Draw(input, meshMaterialLibrary, _viewProjection, camera, pointLights, _boundingFrustum);
         }
 
         private RenderTarget2D DrawBloom(RenderTarget2D input)
@@ -1481,7 +1482,7 @@ namespace DeferredEngine.Renderer
             _spriteBatch?.Dispose();
             _bloomFx?.Dispose();
             _lightAccumulationModule?.Dispose();
-            _gBufferRenderModule?.Dispose();
+            _gBufferModule?.Dispose();
             _taaFx?.Dispose();
             _environmentProbeRenderModule?.Dispose();
             _decalRenderModule?.Dispose();

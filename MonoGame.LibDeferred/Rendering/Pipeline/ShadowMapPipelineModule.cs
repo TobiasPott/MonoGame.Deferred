@@ -8,9 +8,15 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
-    public class ShadowMapRenderModule : IRenderModule
+    public class ShadowMapPipelineModule : RenderingPipelineModule, IRenderModule
     {
         private Effect Effect;
+
+        //Linear = VS Depth -> used for directional lights
+        private EffectPass Pass_LinearPass;
+        //Distance = distance(pixel, light) -> used for omnidirectional lights
+        private EffectPass Pass_DistancePass;
+        private EffectPass Pass_DistanceAlphaPass;
 
         private EffectParameter Param_WorldViewProj;
         private EffectParameter Param_WorldView;
@@ -20,16 +26,10 @@ namespace DeferredEngine.Renderer.RenderModules
         private EffectParameter Param_SizeBias;
         private EffectParameter Param_MaskTexture;
 
-        //Linear = VS Depth -> used for directional lights
-        private EffectPass Pass_linearPass;
-        //Distance = distance(pixel, light) -> used for omnidirectional lights
-        private EffectPass Pass_distancePass;
-        private EffectPass Pass_distanceAlphaPass;
 
         private Passes _pass;
 
         private BoundingFrustum _boundingFrustumShadow;
-        private GraphicsDevice _graphicsDevice;
 
 
         private enum Passes
@@ -39,14 +39,17 @@ namespace DeferredEngine.Renderer.RenderModules
             OmnidirectionalAlpha
         };
 
-        public ShadowMapRenderModule(ContentManager content, string shaderPath = "Shaders/Shadow/ShadowMap")
-        {
-            Load(content, shaderPath);
-        }
+        public ShadowMapPipelineModule(ContentManager content, string shaderPath = "Shaders/Shadow/ShadowMap")
+            :base(content, shaderPath) { }
 
-        public void Initialize(GraphicsDevice graphicsDevice)
+        //public override void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
+        //{
+        //    base.Initialize(graphicsDevice, spriteBatch);
+        //}
+
+        protected override void Load(ContentManager content, string shaderPath = "Shaders/Shadow/ShadowMap")
         {
-            _graphicsDevice = graphicsDevice;
+            Effect = content.Load<Effect>(shaderPath);
 
             Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
             Param_WorldView = Effect.Parameters["WorldView"];
@@ -56,14 +59,9 @@ namespace DeferredEngine.Renderer.RenderModules
             Param_SizeBias = Effect.Parameters["SizeBias"];
             Param_MaskTexture = Effect.Parameters["MaskTexture"];
 
-            Pass_linearPass = Effect.Techniques["DrawLinearDepth"].Passes[0];
-            Pass_distancePass = Effect.Techniques["DrawDistanceDepth"].Passes[0];
-            Pass_distanceAlphaPass = Effect.Techniques["DrawDistanceDepthAlpha"].Passes[0];
-        }
-
-        public void Load(ContentManager content, string shaderPath = "Shaders/Shadow/ShadowMap")
-        {
-            Effect = content.Load<Effect>(shaderPath);
+            Pass_LinearPass = Effect.Techniques["DrawLinearDepth"].Passes[0];
+            Pass_DistancePass = Effect.Techniques["DrawDistanceDepth"].Passes[0];
+            Pass_DistanceAlphaPass = Effect.Techniques["DrawDistanceDepthAlpha"].Passes[0];
         }
 
         public void Draw(MeshMaterialLibrary meshMaterialLibrary,
@@ -380,15 +378,15 @@ namespace DeferredEngine.Renderer.RenderModules
             {
                 case Passes.Directional:
                     Param_WorldView.SetValue(localWorldMatrix * (Matrix)view);
-                    Pass_linearPass.Apply();
+                    Pass_LinearPass.Apply();
                     break;
                 case Passes.Omnidirectional:
                     Param_World.SetValue(localWorldMatrix);
-                    Pass_distancePass.Apply();
+                    Pass_DistancePass.Apply();
                     break;
                 case Passes.OmnidirectionalAlpha:
                     Param_World.SetValue(localWorldMatrix);
-                    Pass_distanceAlphaPass.Apply();
+                    Pass_DistanceAlphaPass.Apply();
                     break;
             }
         }
@@ -411,5 +409,9 @@ namespace DeferredEngine.Renderer.RenderModules
 
             }
         }
+
+        public override void Dispose()
+        { }
+
     }
 }

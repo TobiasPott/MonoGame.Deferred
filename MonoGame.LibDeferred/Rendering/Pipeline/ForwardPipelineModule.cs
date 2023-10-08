@@ -46,6 +46,10 @@ namespace DeferredEngine.Renderer.RenderModules
             : base(content, shaderPath)
         { }
 
+        //public override void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
+        //{
+        //    base.Initialize(graphicsDevice, spriteBatch);
+        //}
         protected override void Load(ContentManager content, string shaderPath = "Shaders/forward/forward")
         {
             Effect = content.Load<Effect>(shaderPath);

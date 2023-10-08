@@ -552,7 +552,7 @@ namespace DeferredEngine.Renderer.Helper
             }
             else if (renderType == RenderType.ShadowOmnidirectional)
             {
-                ((ShadowMapRenderModule)renderModule).SetMaterialSettings(material, renderType);
+                ((ShadowMapPipelineModule)renderModule).SetMaterialSettings(material, renderType);
             }
             //if (renderType == RenderType.IdRender || renderType == RenderType.IdOutline)
             //{

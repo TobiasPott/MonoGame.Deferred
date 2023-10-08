@@ -48,10 +48,6 @@ namespace DeferredEngine.Renderer.RenderModules
 
         private FullscreenTriangleBuffer _fullscreenTarget;
 
-        public GBufferPipelineModule(ContentManager content, string shaderPathGbuffer = "Shaders/GbufferSetup/Gbuffer")
-            : base(content, shaderPathGbuffer)
-        { }
-
         private float _farClip;
         public float FarClip
         {
@@ -74,16 +70,22 @@ namespace DeferredEngine.Renderer.RenderModules
             }
         }
 
-        protected override void Load(ContentManager content, string shaderPath = "Shaders/GbufferSetup/GBuffer") => Load(content, shaderPath, "Shaders/GbufferSetup/ClearGBuffer");
-        public void Load(ContentManager content, string shaderPathGBuffer, string shaderPathGBufferClear)
-        {
-            Effect_GBuffer = content.Load<Effect>(shaderPathGBuffer);
-            Effect_Clear = content.Load<Effect>(shaderPathGBufferClear);
-        }
+
+        public GBufferPipelineModule(ContentManager content, string shaderPathGbuffer = "Shaders/GbufferSetup/Gbuffer")
+            : base(content, shaderPathGbuffer)
+        { }
+
         public override void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         {
             base.Initialize(graphicsDevice, spriteBatch);
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
+        }
+        protected override void Load(ContentManager content, string shaderPath = "Shaders/GbufferSetup/GBuffer") => Load(content, shaderPath, "Shaders/GbufferSetup/ClearGBuffer");
+        protected void Load(ContentManager content, string shaderPathGBuffer, string shaderPathGBufferClear)
+        {
+            Effect_GBuffer = content.Load<Effect>(shaderPathGBuffer);
+            Effect_Clear = content.Load<Effect>(shaderPathGBufferClear);
+
 
             Pass_ClearGBuffer = Effect_Clear.Techniques["Clear"].Passes[0];
 
@@ -108,7 +110,6 @@ namespace DeferredEngine.Renderer.RenderModules
             Param_Material_MaterialType = Effect_GBuffer.Parameters["MaterialType"];
 
             //Techniques
-
             Technique_DrawTextureDisplacement = Effect_GBuffer.Techniques["DrawTextureDisplacement"];
             Technique_DrawTextureSpecularNormalMask = Effect_GBuffer.Techniques["DrawTextureSpecularNormalMask"];
             Technique_DrawTextureNormalMask = Effect_GBuffer.Techniques["DrawTextureNormalMask"];
@@ -123,6 +124,7 @@ namespace DeferredEngine.Renderer.RenderModules
             Technique_DrawNormal = Effect_GBuffer.Techniques["DrawNormal"];
             Technique_DrawBasic = Effect_GBuffer.Techniques["DrawBasic"];
         }
+
 
 
         public void Draw(RenderTargetBinding[] _renderTargetBinding, MeshMaterialLibrary meshMaterialLibrary, Matrix _viewProjection, Matrix _view)
