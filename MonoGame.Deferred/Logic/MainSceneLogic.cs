@@ -1,5 +1,4 @@
-﻿using BEPUphysics;
-using DeferredEngine.Entities;
+﻿using DeferredEngine.Entities;
 using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper;
 using DeferredEngine.Renderer.RenderModules.SDF;
@@ -9,7 +8,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
-using DeferredDirectionalLight = DeferredEngine.Entities.DeferredDirectionalLight;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 
 namespace DeferredEngine.Logic
@@ -38,7 +36,6 @@ namespace DeferredEngine.Logic
 
         //Which render target are we currently displaying?
         private int _renderModeCycle;
-        private Space _physicsSpace;
 
         //SDF
         public SdfGenerator _sdfGenerator;
@@ -54,10 +51,9 @@ namespace DeferredEngine.Logic
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         //Done after Load
-        public void Initialize(Assets assets, Space space, GraphicsDevice graphicsDevice)
+        public void Initialize(Assets assets, GraphicsDevice graphicsDevice)
         {
             _assets = assets;
-            _physicsSpace = space;
 
             MeshMaterialLibrary = new MeshMaterialLibrary(graphicsDevice);
 

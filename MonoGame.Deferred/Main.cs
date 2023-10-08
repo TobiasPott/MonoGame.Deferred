@@ -1,14 +1,12 @@
-﻿using System;
-using System.Threading;
-using BEPUphysics;
-using DeferredEngine.Logic;
+﻿using DeferredEngine.Logic;
 using DeferredEngine.Recources;
+using DeferredEngine.Renderer.Helper;
 using HelperSuite.GUIHelper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using BEPUutilities;
+using System;
+using System.Threading;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
-using DeferredEngine.Renderer.Helper;
 
 namespace DeferredEngine
 {
@@ -21,8 +19,6 @@ namespace DeferredEngine
         private readonly GraphicsDeviceManager _graphics;
 
         private readonly ScreenManager _screenManager;
-
-        private readonly Space _physicsSpace;
 
         //Do not change, these are overwritten (Check GameSettings.cs in Resources
         private bool _vsync = true;
@@ -41,12 +37,6 @@ namespace DeferredEngine
 
             //Initialize screen manager, which controls draw / logic for our screens
             _screenManager = new ScreenManager();
-
-            //Initialize our physics and give it gravity
-            _physicsSpace = new Space
-            {
-                ForceUpdater = { Gravity = new BEPUutilities.Vector3(0, 0, -9.81f) }
-            };
 
             //Size of our application / starting back buffer
             _graphics.PreferredBackBufferWidth = (int)RenderingSettings.g_ScreenResolution.X;
@@ -133,7 +123,7 @@ namespace DeferredEngine
                 _graphics.ApplyChanges();
 
                 RenderingSettings.SetResolution(Window.ClientBounds.Width, Window.ClientBounds.Height);
-                
+
                 _screenManager.UpdateResolution();
             }
         }
@@ -151,7 +141,7 @@ namespace DeferredEngine
             FullscreenTriangleBuffer.InitClass(GraphicsDevice);
             _screenManager.Load(Content, GraphicsDevice);
             // TODO: Add your initialization logic here
-            _screenManager.Initialize(GraphicsDevice, _physicsSpace);
+            _screenManager.Initialize(GraphicsDevice);
 
             base.Initialize();
         }
@@ -187,10 +177,6 @@ namespace DeferredEngine
                 Exit();
 
             _screenManager.Update(gameTime, _isActive);
-
-            //BEPU Physics
-            if (!RenderingSettings.e_enableeditor && RenderingSettings.p_physics)
-                _physicsSpace.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
 
             //base.Update(gameTime);
         }

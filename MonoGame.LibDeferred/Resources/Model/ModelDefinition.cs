@@ -12,7 +12,7 @@ namespace DeferredEngine.Recources
         public Vector3 BoundingBoxOffset;
         public Model Model;
 
-        public ModelDefinition(ContentManager content, string assetpath, GraphicsDevice graphics)
+        public ModelDefinition(ContentManager content, string assetpath)
         {
             
             Model = content.Load<Model>(assetpath);

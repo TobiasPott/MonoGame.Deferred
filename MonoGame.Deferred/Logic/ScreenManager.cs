@@ -1,5 +1,4 @@
-﻿using BEPUphysics;
-using DeferredEngine.Recources;
+﻿using DeferredEngine.Recources;
 using HelperSuite.GUIRenderer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -32,10 +31,10 @@ namespace DeferredEngine.Logic
         //  FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        public void Initialize(GraphicsDevice graphicsDevice, Space space)
+        public void Initialize(GraphicsDevice graphicsDevice)
         {
             _renderer.Initialize(graphicsDevice, _assets);
-            _sceneLogic.Initialize(_assets, space, graphicsDevice);
+            _sceneLogic.Initialize(_assets, graphicsDevice);
             _guiLogic.Initialize(_assets, _sceneLogic.Camera);
             _editorLogic.Initialize(graphicsDevice);
             _debug.Initialize(graphicsDevice);

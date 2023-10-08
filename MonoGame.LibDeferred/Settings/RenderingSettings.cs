@@ -8,21 +8,21 @@ namespace DeferredEngine.Recources
     {
 
         public static int u_showdisplayinfo = 3;
-        public static bool p_physics = false;
-
 
         //Editor
         public static bool e_enableeditor = true;
         public static bool e_drawoutlines = true;
         public static bool e_drawboundingbox = true;
+        //debug
+        public static bool d_drawlines = true;
+        //Profiler
+        public static bool d_profiler = false;
 
         //UI
         public static bool ui_enabled = true;
 
         //Renderer
 
-        //debug
-        public static bool d_drawlines = true;
 
         //Default Material
         public static bool d_defaultmaterial = false;
@@ -37,12 +37,8 @@ namespace DeferredEngine.Recources
 
         //Deferred Decals
         public static bool g_drawdecals = true;
-
         //Forward pass
         public static bool g_forwardenable = true;
-
-        //Profiler
-        public static bool d_profiler = false;
 
         //Environment mapping
         public static bool g_environmentmapping = true;
