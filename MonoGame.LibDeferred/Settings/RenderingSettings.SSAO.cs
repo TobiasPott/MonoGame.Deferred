@@ -1,7 +1,4 @@
-﻿using DeferredEngine.Renderer;
-using Microsoft.Xna.Framework;
-
-namespace DeferredEngine.Recources
+﻿namespace DeferredEngine.Recources
 {
 
     public partial class RenderingSettings

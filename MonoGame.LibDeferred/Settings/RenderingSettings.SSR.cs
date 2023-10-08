@@ -3,6 +3,15 @@
 
     public static partial class RenderingSettings
     {
+        public static void ApplyDefaultsSSR()
+        {
+            g_SSReflection = true;
+            g_SSReflections_Samples = msamples;
+            g_SSReflections_RefinementSamples = ssamples;
+            g_SSReflection_FireflyReduction = _g_SSReflection_FireflyReduction;
+            g_SSReflection_FireflyThreshold = _g_SSReflection_FireflyThreshold;
+
+        }
 
         // SSR
         private static bool _g_SSReflection = true;

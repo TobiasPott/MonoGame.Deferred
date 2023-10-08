@@ -103,15 +103,8 @@ namespace DeferredEngine.Recources
         //private static float _g_TemporalAntiAliasingThreshold = 0.9f;
         public static int g_UseDepthStencilLightCulling = 1; //None, Depth, Depth+Stencil
 
+
         public static float ShadowBias = 0.005f;
-        public static int sdf_threads = 4;
-        public static bool sdf_cpu = false;
-        public static bool sdf_draw = true;
-        public static bool sdf_drawdistance = false;
-        public static bool sdf_debug = false;
-        public static bool sdf_subsurface = true;
-        public static bool sdf_drawvolume = false;
-        public static bool sdf_regenerate;
         public static bool d_drawnothing = false;
         public static bool e_saveBoundingBoxes = true;
         public static bool d_hotreloadshaders = true;
@@ -126,13 +119,9 @@ namespace DeferredEngine.Recources
             g_PostProcessing = true;
             g_taa = true;
             g_environmentmapping = true;
-
-            g_SSReflection = true;
-            g_SSReflections_Samples = msamples;
-            g_SSReflections_RefinementSamples = ssamples;
-            g_SSReflection_FireflyReduction = _g_SSReflection_FireflyReduction;
-            g_SSReflection_FireflyThreshold = _g_SSReflection_FireflyThreshold;
-
+            
+            ApplyDefaultsSSR();
+            
             g_Linear = _g_Linear;
 
             d_defaultmaterial = false;
