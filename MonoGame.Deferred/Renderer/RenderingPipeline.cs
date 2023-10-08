@@ -93,7 +93,7 @@ namespace DeferredEngine.Renderer
 
 
         //Render targets
-        MultiRenderTarget _gBuffer;
+        private MultiRenderTarget _gBuffer;
 
         private RenderTarget2D _renderTargetDecalOffTarget;
 
