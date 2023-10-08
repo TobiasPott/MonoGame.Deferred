@@ -26,6 +26,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
         private EffectParameter Param_CameraPositon;
         private EffectParameter Param_DepthMap;
         private EffectParameter Param_MeshOffset;
+
         private EffectParameter Param_VolumeTex;
         private EffectParameter Param_VolumeTexSize;
         private EffectParameter Param_VolumeTexResolution;

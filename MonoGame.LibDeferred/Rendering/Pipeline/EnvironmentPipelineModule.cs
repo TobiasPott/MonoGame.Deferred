@@ -32,16 +32,16 @@ namespace DeferredEngine.Renderer.RenderModules
         private EffectParameter Param_DiffuseStrength;
         private EffectParameter Param_Time;
 
-        public EffectParameter Param_VolumeTex;
-        public EffectParameter Param_VolumeTexSize;
-        public EffectParameter Param_VolumeTexResolution;
+        private EffectParameter Param_VolumeTex;
+        private EffectParameter Param_VolumeTexSize;
+        private EffectParameter Param_VolumeTexResolution;
 
         private EffectParameter Param_InstanceInverseMatrix;
         private EffectParameter Param_InstanceScale;
         private EffectParameter Param_InstanceSDFIndex;
         private EffectParameter Param_InstancesCount;
 
-        public EffectParameter Param_UseSDFAO;
+        private EffectParameter Param_UseSDFAO;
 
 
         private bool _fireflyReduction;
@@ -152,9 +152,9 @@ namespace DeferredEngine.Renderer.RenderModules
 
         public void SetGBufferParams(GBufferTarget gBufferTarget)
         {
-            Param_AlbedoMap.SetValue(gBufferTarget.Albedo);
-            Param_NormalMap.SetValue(gBufferTarget.Normal);
-            Param_DepthMap.SetValue(gBufferTarget.Depth);
+            this.Param_AlbedoMap.SetValue(gBufferTarget.Albedo);
+            this.Param_NormalMap.SetValue(gBufferTarget.Normal);
+            this.Param_DepthMap.SetValue(gBufferTarget.Depth);
         }
         public void SetInstanceData(Matrix[] inverseMatrices, Vector3[] scales, float[] sdfIndices, int count)
         {

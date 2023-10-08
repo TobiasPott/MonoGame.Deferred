@@ -37,14 +37,14 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
         public EffectParameter Param_FarClip;
         private EffectParameter Param_LightVolumeDensity;
 
-        public EffectParameter Param_VolumeTex;
-        public EffectParameter Param_VolumeTexSize;
-        public EffectParameter Param_VolumeTexResolution;
+        private EffectParameter Param_VolumeTex;
+        private EffectParameter Param_VolumeTexSize;
+        private EffectParameter Param_VolumeTexResolution;
 
-        public EffectParameter Param_InstanceInverseMatrix;
-        public EffectParameter Param_InstanceScale;
-        public EffectParameter Param_InstanceSDFIndex;
-        public EffectParameter Param_InstancesCount;
+        private EffectParameter Param_InstanceInverseMatrix;
+        private EffectParameter Param_InstanceScale;
+        private EffectParameter Param_InstanceSDFIndex;
+        private EffectParameter Param_InstancesCount;
 
         private EffectParameter Param_AlbedoMap;
         private EffectParameter Param_NormalMap;
