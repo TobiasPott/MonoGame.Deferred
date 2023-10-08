@@ -173,9 +173,9 @@ namespace DeferredEngine.Renderer.RenderModules
             //If nothing has changed we don't need to update
             if (_viewProjectionHasChanged)
             {
-                Shaders.DeferredDirectionalLightParameterViewProjection.SetValue(_viewProjection);
-                Shaders.DeferredDirectionalLightParameterCameraPosition.SetValue(cameraOrigin);
-                Shaders.DeferredDirectionalLightParameterInverseViewProjection.SetValue(_inverseViewProjection);
+                Shaders.DeferredDirectionalLightParameter_ViewProjection.SetValue(_viewProjection);
+                Shaders.DeferredDirectionalLightParameter_CameraPosition.SetValue(cameraOrigin);
+                Shaders.DeferredDirectionalLightParameter_InverseViewProjection.SetValue(_inverseViewProjection);
             }
 
             _graphicsDevice.DepthStencilState = DepthStencilState.None;

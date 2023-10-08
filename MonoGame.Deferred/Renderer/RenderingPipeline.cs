@@ -429,7 +429,7 @@ namespace DeferredEngine.Renderer
             SetUpRenderTargets(RenderingSettings.g_envmapresolution, RenderingSettings.g_envmapresolution, true);
 
             //We don't want to use SSAO in this cubemap
-            Shaders.DeferredComposeEffectParameter_UseSSAO.SetValue(false);
+            Shaders.DeferredCompose.Param_UseSSAO.SetValue(false);
 
             //Create our projection, which is a basic pyramid
             _projection = Matrix.CreatePerspectiveFieldOfView((float)(Math.PI / 2), 1, 1, farPlane);
@@ -514,7 +514,7 @@ namespace DeferredEngine.Renderer
                 RenderingSettings.g_taa = tempAa;
                 DrawTextureToScreenToCube(_renderTargetComposed, _renderTargetCubeMap, cubeMapFace);
             }
-            Shaders.DeferredComposeEffectParameter_UseSSAO.SetValue(RenderingSettings.g_ssao_draw);
+            Shaders.DeferredCompose.Param_UseSSAO.SetValue(RenderingSettings.g_ssao_draw);
 
             //Change RTs back to normal
             SetUpRenderTargets(RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight, true);
@@ -841,7 +841,7 @@ namespace DeferredEngine.Renderer
             Shaders.ScreenSpaceEffectParameter_FrustumCorners.SetValue(_currentFrustumCorners);
             _taaFx.FrustumCorners = _currentFrustumCorners;
             Shaders.ReconstructDepth.Param_FrustumCorners.SetValue(_currentFrustumCorners);
-            Shaders.DeferredDirectionalLightParameterFrustumCorners.SetValue(_currentFrustumCorners);
+            Shaders.DeferredDirectionalLightParameter_FrustumCorners.SetValue(_currentFrustumCorners);
         }
 
         /// <summary>
@@ -960,8 +960,8 @@ namespace DeferredEngine.Renderer
         {
             if (_viewProjectionHasChanged)
             {
-                Shaders.DeferredDirectionalLightParameterViewProjection.SetValue(_viewProjection);
-                Shaders.DeferredDirectionalLightParameterInverseViewProjection.SetValue(_inverseViewProjection);
+                Shaders.DeferredDirectionalLightParameter_ViewProjection.SetValue(_viewProjection);
+                Shaders.DeferredDirectionalLightParameter_InverseViewProjection.SetValue(_inverseViewProjection);
 
             }
             for (var index = 0; index < dirLights.Count; index++)
@@ -1095,7 +1095,7 @@ namespace DeferredEngine.Renderer
             _graphicsDevice.BlendState = BlendState.Opaque;
 
             //combine!
-            Shaders.DeferredCompose_Effect.CurrentTechnique.Passes[0].Apply();
+            Shaders.DeferredCompose.Effect.CurrentTechnique.Passes[0].Apply();
             FullscreenTarget.Draw(_graphicsDevice);
 
             //Performance Profiler
@@ -1410,12 +1410,12 @@ namespace DeferredEngine.Renderer
             _distanceFieldRenderModule.DepthMap = _gBufferTarget.Depth;
 
 
-            Shaders.DeferredComposeEffectParameter_ColorMap.SetValue(_gBufferTarget.Albedo);
-            Shaders.DeferredComposeEffectParameter_NormalMap.SetValue(_gBufferTarget.Normal);
-            Shaders.DeferredComposeEffectParameter_diffuseLightMap.SetValue(_lightingBufferTarget.Diffuse);
-            Shaders.DeferredComposeEffectParameter_specularLightMap.SetValue(_lightingBufferTarget.Specular);
-            Shaders.DeferredComposeEffectParameter_volumeLightMap.SetValue(_lightingBufferTarget.Volume);
-            Shaders.DeferredComposeEffectParameter_SSAOMap.SetValue(_renderTargetScreenSpaceEffectBlurFinal);
+            Shaders.DeferredCompose.Param_ColorMap.SetValue(_gBufferTarget.Albedo);
+            Shaders.DeferredCompose.Param_NormalMap.SetValue(_gBufferTarget.Normal);
+            Shaders.DeferredCompose.Param_diffuseLightMap.SetValue(_lightingBufferTarget.Diffuse);
+            Shaders.DeferredCompose.Param_specularLightMap.SetValue(_lightingBufferTarget.Specular);
+            Shaders.DeferredCompose.Param_volumeLightMap.SetValue(_lightingBufferTarget.Volume);
+            Shaders.DeferredCompose.Param_SSAOMap.SetValue(_renderTargetScreenSpaceEffectBlurFinal);
 
             Shaders.ScreenSpaceEffectParameter_NormalMap.SetValue(_gBufferTarget.Normal);
 
