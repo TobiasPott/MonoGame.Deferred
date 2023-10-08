@@ -152,6 +152,7 @@ namespace DeferredEngine
         /// </summary>
         protected override void LoadContent()
         {
+            StaticAssets.Load(Content, GraphicsDevice);
         }
 
         /// <summary>
@@ -160,6 +161,7 @@ namespace DeferredEngine
         /// </summary>
         protected override void UnloadContent()
         {
+            StaticAssets.Unload();
             _screenManager.Unload(Content);
         }
 

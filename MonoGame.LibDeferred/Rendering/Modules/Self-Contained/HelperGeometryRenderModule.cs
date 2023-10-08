@@ -24,18 +24,19 @@ namespace DeferredEngine.Renderer.RenderModules
 
         public HelperGeometryRenderModule(ContentManager content, string shaderPath = "Shaders/Editor/LineEffect")
         {
-            Effect = content.Load<Effect>(shaderPath);
+            Load(content, shaderPath);
         }
 
         public void Load(ContentManager content, string shaderPath = "Shaders/Editor/LineEffect")
         {
             Effect = content.Load<Effect>(shaderPath);
-            Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
-            Param_GlobalColor = Effect.Parameters["GlobalColor"];
-
             //Passes
             Pass_VertexColor = Effect.Techniques["VertexColor"].Passes[0];
             Pass_GlobalColor = Effect.Techniques["GlobalColor"].Passes[0];
+
+            Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
+            Param_GlobalColor = Effect.Parameters["GlobalColor"];
+
 
         }
         public void Initialize(GraphicsDevice graphicsDevice)
