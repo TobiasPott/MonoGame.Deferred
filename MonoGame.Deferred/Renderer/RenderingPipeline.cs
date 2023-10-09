@@ -358,11 +358,6 @@ namespace DeferredEngine.Renderer
 
         private void RenderEditorOverlays(GizmoDrawContext gizmoContext, MeshMaterialLibrary meshMaterialLibrary, EntitySceneGroup scene, EnvironmentProbe envSample)
         {
-
-            List<Decal> decals = scene.Decals;
-            List<DeferredPointLight> pointLights = scene.PointLights;
-            List<DeferredDirectionalLight> directionalLights = scene.DirectionalLights;
-
             if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
             {
                 if (RenderingSettings.e_drawoutlines)
