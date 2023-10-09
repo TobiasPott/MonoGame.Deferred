@@ -10,42 +10,47 @@ namespace DeferredEngine.Renderer.RenderModules
     //Just a template
     public class GBufferPipelineModule : PipelineModule, IRenderModule
     {
-        private Effect Effect_Clear;
-        private Effect Effect_GBuffer;
+        private static Effect Effect_GBuffer = ShaderGlobals.content.Load<Effect>("Shaders/GbufferSetup/GBuffer");
+        private static Effect Effect_Clear = ShaderGlobals.content.Load<Effect>("Shaders/GbufferSetup/ClearGBuffer");
 
-        private EffectPass Pass_ClearGBuffer;
+        private static EffectPass Pass_ClearGBuffer = Effect_Clear.Techniques["Clear"].Passes[0];
 
-        private EffectParameter Param_WorldView;
-        private EffectParameter Param_WorldViewProj;
-        private EffectParameter Param_WorldViewIT;
-        private EffectParameter Param_Camera;
-        private EffectParameter Param_FarClip;
+        //Techniques
+        private static EffectTechnique Technique_DrawDisplacement = Effect_GBuffer.Techniques["DrawTextureDisplacement"];
+        private static EffectTechnique Technique_DrawTextureSpecularNormalMask = Effect_GBuffer.Techniques["DrawTextureSpecularNormalMask"];
+        private static EffectTechnique Technique_DrawTextureNormalMask = Effect_GBuffer.Techniques["DrawTextureNormalMask"];
+        private static EffectTechnique Technique_DrawTextureSpecularMask = Effect_GBuffer.Techniques["DrawTextureSpecularMask"];
+        private static EffectTechnique Technique_DrawTextureMask = Effect_GBuffer.Techniques["DrawTextureMask"];
+        private static EffectTechnique Technique_DrawTextureSpecularNormalMetallic = Effect_GBuffer.Techniques["DrawTextureSpecularNormalMetallic"];
+        private static EffectTechnique Technique_DrawTextureSpecularNormal = Effect_GBuffer.Techniques["DrawTextureSpecularNormal"];
+        private static EffectTechnique Technique_DrawTextureNormal = Effect_GBuffer.Techniques["DrawTextureNormal"];
+        private static EffectTechnique Technique_DrawTextureSpecular = Effect_GBuffer.Techniques["DrawTextureSpecular"];
+        private static EffectTechnique Technique_DrawTextureSpecularMetallic = Effect_GBuffer.Techniques["DrawTextureSpecularMetallic"];
+        private static EffectTechnique Technique_DrawTexture = Effect_GBuffer.Techniques["DrawTexture"];
+        private static EffectTechnique Technique_DrawNormal = Effect_GBuffer.Techniques["DrawNormal"];
+        private static EffectTechnique Technique_DrawBasic = Effect_GBuffer.Techniques["DrawBasic"];
 
-        private EffectParameter Param_Material_Metallic;
-        private EffectParameter Param_Material_MetallicMap;
-        private EffectParameter Param_Material_DiffuseColor;
-        private EffectParameter Param_Material_Roughness;
-        private EffectParameter Param_Material_MaskMap;
-        private EffectParameter Param_Material_Texture;
-        private EffectParameter Param_Material_NormalMap;
-        private EffectParameter Param_Material_DisplacementMap;
-        private EffectParameter Param_Material_RoughnessMap;
-        private EffectParameter Param_Material_MaterialType;
+        // Parameters
+        private static EffectParameter Param_WorldView = Effect_GBuffer.Parameters["WorldView"];
+        private static EffectParameter Param_WorldViewProj = Effect_GBuffer.Parameters["WorldViewProj"];
+        private static EffectParameter Param_WorldViewIT = Effect_GBuffer.Parameters["WorldViewIT"];
+        private static EffectParameter Param_Camera = Effect_GBuffer.Parameters["Camera"];
+        private static EffectParameter Param_FarClip = Effect_GBuffer.Parameters["FarClip"];
 
-        private EffectTechnique Technique_DrawTextureDisplacement;
-        private EffectTechnique Technique_DrawTextureSpecularNormalMask;
-        private EffectTechnique Technique_DrawTextureNormalMask;
-        private EffectTechnique Technique_DrawTextureSpecularMask;
-        private EffectTechnique Technique_DrawTextureMask;
-        private EffectTechnique Technique_DrawTextureSpecularNormalMetallic;
-        private EffectTechnique Technique_DrawTextureSpecularNormal;
-        private EffectTechnique Technique_DrawTextureNormal;
-        private EffectTechnique Technique_DrawTextureSpecular;
-        private EffectTechnique Technique_DrawTextureSpecularMetallic;
+        private static EffectParameter Param_Material_Metallic = Effect_GBuffer.Parameters["Metallic"];
+        private static EffectParameter Param_Material_MetallicMap = Effect_GBuffer.Parameters["MetallicMap"];
+        private static EffectParameter Param_Material_DiffuseColor = Effect_GBuffer.Parameters["DiffuseColor"];
+        private static EffectParameter Param_Material_Roughness = Effect_GBuffer.Parameters["Roughness"];
 
-        private EffectTechnique Technique_DrawTexture;
-        private EffectTechnique Technique_DrawNormal;
-        private EffectTechnique Technique_DrawBasic;
+        private static EffectParameter Param_Material_MaskMap = Effect_GBuffer.Parameters["Mask"];
+        private static EffectParameter Param_Material_Texture = Effect_GBuffer.Parameters["Texture"];
+        private static EffectParameter Param_Material_NormalMap = Effect_GBuffer.Parameters["NormalMap"];
+        private static EffectParameter Param_Material_RoughnessMap = Effect_GBuffer.Parameters["RoughnessMap"];
+        private static EffectParameter Param_Material_DisplacementMap = Effect_GBuffer.Parameters["DisplacementMap"];
+
+        private static EffectParameter Param_Material_MaterialType = Effect_GBuffer.Parameters["MaterialType"];
+
+
 
         private FullscreenTriangleBuffer _fullscreenTarget;
 
@@ -84,46 +89,7 @@ namespace DeferredEngine.Renderer.RenderModules
         protected override void Load(ContentManager content, string shaderPath = "Shaders/GbufferSetup/GBuffer") => Load(content, shaderPath, "Shaders/GbufferSetup/ClearGBuffer");
         protected void Load(ContentManager content, string shaderPathGBuffer, string shaderPathGBufferClear)
         {
-            Effect_GBuffer = content.Load<Effect>(shaderPathGBuffer);
-            Effect_Clear = content.Load<Effect>(shaderPathGBufferClear);
 
-
-            Pass_ClearGBuffer = Effect_Clear.Techniques["Clear"].Passes[0];
-
-
-            Param_WorldView = Effect_GBuffer.Parameters["WorldView"];
-            Param_WorldViewProj = Effect_GBuffer.Parameters["WorldViewProj"];
-            Param_WorldViewIT = Effect_GBuffer.Parameters["WorldViewIT"];
-            Param_Camera = Effect_GBuffer.Parameters["Camera"];
-            Param_FarClip = Effect_GBuffer.Parameters["FarClip"];
-
-            Param_Material_Metallic = Effect_GBuffer.Parameters["Metallic"];
-            Param_Material_MetallicMap = Effect_GBuffer.Parameters["MetallicMap"];
-            Param_Material_DiffuseColor = Effect_GBuffer.Parameters["DiffuseColor"];
-            Param_Material_Roughness = Effect_GBuffer.Parameters["Roughness"];
-
-            Param_Material_MaskMap = Effect_GBuffer.Parameters["Mask"];
-            Param_Material_Texture = Effect_GBuffer.Parameters["Texture"];
-            Param_Material_NormalMap = Effect_GBuffer.Parameters["NormalMap"];
-            Param_Material_RoughnessMap = Effect_GBuffer.Parameters["RoughnessMap"];
-            Param_Material_DisplacementMap = Effect_GBuffer.Parameters["DisplacementMap"];
-
-            Param_Material_MaterialType = Effect_GBuffer.Parameters["MaterialType"];
-
-            //Techniques
-            Technique_DrawTextureDisplacement = Effect_GBuffer.Techniques["DrawTextureDisplacement"];
-            Technique_DrawTextureSpecularNormalMask = Effect_GBuffer.Techniques["DrawTextureSpecularNormalMask"];
-            Technique_DrawTextureNormalMask = Effect_GBuffer.Techniques["DrawTextureNormalMask"];
-            Technique_DrawTextureSpecularMask = Effect_GBuffer.Techniques["DrawTextureSpecularMask"];
-            Technique_DrawTextureMask = Effect_GBuffer.Techniques["DrawTextureMask"];
-            Technique_DrawTextureSpecularNormalMetallic = Effect_GBuffer.Techniques["DrawTextureSpecularNormalMetallic"];
-            Technique_DrawTextureSpecularNormal = Effect_GBuffer.Techniques["DrawTextureSpecularNormal"];
-            Technique_DrawTextureNormal = Effect_GBuffer.Techniques["DrawTextureNormal"];
-            Technique_DrawTextureSpecular = Effect_GBuffer.Techniques["DrawTextureSpecular"];
-            Technique_DrawTextureSpecularMetallic = Effect_GBuffer.Techniques["DrawTextureSpecularMetallic"];
-            Technique_DrawTexture = Effect_GBuffer.Techniques["DrawTexture"];
-            Technique_DrawNormal = Effect_GBuffer.Techniques["DrawNormal"];
-            Technique_DrawBasic = Effect_GBuffer.Techniques["DrawBasic"];
         }
 
 
@@ -180,7 +146,7 @@ namespace DeferredEngine.Renderer.RenderModules
                     Param_Material_NormalMap.SetValue(material.NormalMap);
                     Param_Material_DisplacementMap.SetValue(material.DisplacementMap);
                     Effect_GBuffer.CurrentTechnique =
-                        Technique_DrawTextureDisplacement;
+                        Technique_DrawDisplacement;
                 }
                 else if (material.HasMask) //Has diffuse for sure then
                 {
