@@ -12,6 +12,7 @@ namespace DeferredEngine.Renderer.RenderModules
     {
         private Effect Effect_Clear;
         private Effect Effect_GBuffer;
+
         private EffectPass Pass_ClearGBuffer;
 
         private EffectParameter Param_WorldView;

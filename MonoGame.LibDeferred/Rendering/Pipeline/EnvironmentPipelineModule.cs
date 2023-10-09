@@ -18,11 +18,6 @@ namespace DeferredEngine.Renderer.RenderModules
         private bool _useSDFAO;
 
 
-        public RenderTargetCube Cubemap
-        {
-            set { Shaders.Environment.Param_ReflectionCubeMap.SetValue(value); }
-        }
-
         public Texture2D SSRMap
         {
             set { Shaders.Environment.Param_SSRMap.SetValue(value); }

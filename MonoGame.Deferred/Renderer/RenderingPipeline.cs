@@ -426,7 +426,7 @@ namespace DeferredEngine.Renderer
                     DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
 
                 //Set this cubemap in the shader of the environment map
-                _environmentModule.Cubemap = _renderTargetCubeMap;
+                Shaders.Environment.Param_ReflectionCubeMap.SetValue(_renderTargetCubeMap);
             }
 
             //Set up all the base rendertargets with the resolution of our cubemap
