@@ -505,7 +505,7 @@ namespace DeferredEngine.Renderer
                 RenderingSettings.g_VolumetricLights = false;
                 _lightAccumulationModule.DrawLights(pointLights, dirLights, origin, gameTime, _lightingBufferTarget.Bindings, _lightingBufferTarget.Diffuse);
 
-                _environmentModule.DrawSky(FullscreenTarget);
+                _environmentModule.DrawSky();
 
                 RenderingSettings.g_VolumetricLights = volumeEnabled;
 
@@ -1070,7 +1070,7 @@ namespace DeferredEngine.Renderer
             if (!RenderingSettings.g_environmentmapping) return;
 
             _environmentModule.SetEnvironmentProbe(envProbe);
-            _environmentModule.DrawEnvironmentMap(camera, _view, FullscreenTarget, gameTime);
+            _environmentModule.DrawEnvironmentMap(camera, _view, gameTime);
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)

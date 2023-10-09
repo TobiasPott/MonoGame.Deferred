@@ -10,7 +10,9 @@ namespace DeferredEngine.Renderer.RenderModules
     //Just a template
     public partial class EnvironmentPipelineModule : PipelineModule
     {
-        
+
+        private FullscreenTriangleBuffer _fullscreenTarget;
+
         public Texture2D SSRMap
         { set { Shaders.Environment.Param_SSRMap.SetValue(value); } }
         public Vector3[] FrustumCornersWS
@@ -85,13 +87,17 @@ namespace DeferredEngine.Renderer.RenderModules
                 UseSDFAO = false;
             }
         }
-
+        public override void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
+        {
+            base.Initialize(graphicsDevice, spriteBatch);
+            _fullscreenTarget = FullscreenTriangleBuffer.Instance;
+        }
 
         protected override void Load(ContentManager content, string shaderPath)
         { }
 
 
-        public void DrawEnvironmentMap(Camera camera, Matrix view, FullscreenTriangleBuffer fullscreenTarget, GameTime gameTime)
+        public void DrawEnvironmentMap(Camera camera, Matrix view, GameTime gameTime)
         {
             CameraPositionWS = camera.Position;
 
@@ -102,16 +108,16 @@ namespace DeferredEngine.Renderer.RenderModules
 
             _graphicsDevice.DepthStencilState = DepthStencilState.None;
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-            fullscreenTarget.Draw(_graphicsDevice);
+            _fullscreenTarget.Draw(_graphicsDevice);
         }
 
-        public void DrawSky(FullscreenTriangleBuffer fullscreenTarget)
+        public void DrawSky()
         {
             _graphicsDevice.DepthStencilState = DepthStencilState.None;
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
             Shaders.Environment.Pass_Sky.Apply();
-            fullscreenTarget.Draw(_graphicsDevice);
+            _fullscreenTarget.Draw(_graphicsDevice);
         }
 
         public override void Dispose()

@@ -21,30 +21,17 @@ namespace DeferredEngine.Renderer.Helper
 
         private bool _previousMode = RenderingSettings.g_cpuculling;
         private readonly BoundingSphere _defaultBoundingSphere;
-        private RasterizerState _shadowGenerationRasterizerState;
-        private DepthStencilState _depthWrite;
+        private RasterizerState _shadowGenerationRasterizerState = new RasterizerState() { CullMode = CullMode.CullCounterClockwiseFace, ScissorTestEnable = true };
+        private DepthStencilState _depthWrite = new DepthStencilState() { DepthBufferEnable = true, DepthBufferWriteEnable = true, DepthBufferFunction = CompareFunction.Always };
+        
         private FullscreenTriangleBuffer _fullscreenTarget;
-
-        private GraphicsDevice graphicsDevice;
+        private GraphicsDevice _graphicsDevice;
 
         public MeshMaterialLibrary(GraphicsDevice graphics)
         {
-            graphicsDevice = graphics;
+            _graphicsDevice = graphics;
 
             _defaultBoundingSphere = new BoundingSphere(Vector3.Zero, 0);
-
-            _shadowGenerationRasterizerState = new RasterizerState()
-            {
-                CullMode = CullMode.CullCounterClockwiseFace,
-                ScissorTestEnable = true
-            };
-
-            _depthWrite = new DepthStencilState()
-            {
-                DepthBufferEnable = true,
-                DepthBufferWriteEnable = true,
-                DepthBufferFunction = CompareFunction.Always
-            };
 
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
         }
@@ -145,18 +132,18 @@ namespace DeferredEngine.Renderer.Helper
             }
         }
 
-        public void DeleteFromRegistry(ModelEntity basicEntity)
+        public void DeleteFromRegistry(ModelEntity entity)
         {
-            if (basicEntity.ModelDefinition.Model == null) return; //nothing to delete
+            if (entity.ModelDefinition.Model == null) return; //nothing to delete
 
             //delete the individual meshes!
-            for (int index = 0; index < basicEntity.ModelDefinition.Model.Meshes.Count; index++)
+            for (int index = 0; index < entity.ModelDefinition.Model.Meshes.Count; index++)
             {
-                var mesh = basicEntity.ModelDefinition.Model.Meshes[index];
+                var mesh = entity.ModelDefinition.Model.Meshes[index];
                 for (int i = 0; i < mesh.MeshParts.Count; i++)
                 {
                     ModelMeshPart meshPart = mesh.MeshParts[i];
-                    DeleteFromRegistry(basicEntity.Material, meshPart, basicEntity);
+                    DeleteFromRegistry(entity.Material, meshPart, entity);
                 }
             }
         }
@@ -374,8 +361,8 @@ namespace DeferredEngine.Renderer.Helper
                     MeshBatch meshLib = matLib.GetMeshLibrary()[i];
 
                     //Initialize the mesh VB and IB
-                    graphicsDevice.SetVertexBuffer(meshLib.GetMesh().VertexBuffer);
-                    graphicsDevice.Indices = (meshLib.GetMesh().IndexBuffer);
+                    _graphicsDevice.SetVertexBuffer(meshLib.GetMesh().VertexBuffer);
+                    _graphicsDevice.Indices = (meshLib.GetMesh().IndexBuffer);
                     int primitiveCount = meshLib.GetMesh().PrimitiveCount;
                     int vertexOffset = meshLib.GetMesh().VertexOffset;
                     //int vCount = meshLib.GetMesh().NumVertices;
@@ -395,14 +382,14 @@ namespace DeferredEngine.Renderer.Helper
                                 outlineId, outlined)) continue;
                         RenderingStats.MeshDraws++;
 
-                        graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, vertexOffset, startIndex,
+                        _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, vertexOffset, startIndex,
                                 primitiveCount);
                     }
                 }
 
                 //Reset to 
                 if (material.RenderCClockwise)
-                    graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+                    _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             }
         }
 
@@ -451,9 +438,9 @@ namespace DeferredEngine.Renderer.Helper
 
                 if (discardFrame) return false;
 
-                graphicsDevice.DepthStencilState = _depthWrite;
-                ClearFrame(graphicsDevice);
-                graphicsDevice.DepthStencilState = DepthStencilState.Default;
+                _graphicsDevice.DepthStencilState = _depthWrite;
+                ClearFrame(_graphicsDevice);
+                _graphicsDevice.DepthStencilState = DepthStencilState.Default;
 
             }
 
@@ -469,21 +456,21 @@ namespace DeferredEngine.Renderer.Helper
             {
                 if (renderType != RenderType.ShadowOmnidirectional)
                 {
-                    graphicsDevice.BlendState = BlendState.Opaque;
-                    graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+                    _graphicsDevice.BlendState = BlendState.Opaque;
+                    _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
                 }
                 else //Need special rasterization
                 {
-                    graphicsDevice.DepthStencilState = DepthStencilState.Default;
-                    graphicsDevice.BlendState = BlendState.Opaque;
-                    graphicsDevice.RasterizerState = _shadowGenerationRasterizerState;
+                    _graphicsDevice.DepthStencilState = DepthStencilState.Default;
+                    _graphicsDevice.BlendState = BlendState.Opaque;
+                    _graphicsDevice.RasterizerState = _shadowGenerationRasterizerState;
                 }
             }
             else //if (renderType == RenderType.alpha)
             {
-                graphicsDevice.BlendState = BlendState.NonPremultiplied;
-                graphicsDevice.DepthStencilState = DepthStencilState.Default;
-                graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+                _graphicsDevice.BlendState = BlendState.NonPremultiplied;
+                _graphicsDevice.DepthStencilState = DepthStencilState.Default;
+                _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             }
         }
 
@@ -522,7 +509,7 @@ namespace DeferredEngine.Renderer.Helper
                     //Is this the Id we want to outline?
                     if (id == outlineId)
                     {
-                        graphicsDevice.RasterizerState = RasterizerState.CullNone;
+                        _graphicsDevice.RasterizerState = RasterizerState.CullNone;
 
                         Shaders.IdRender.Param_World.SetValue(localWorldMatrix);
 
@@ -548,7 +535,7 @@ namespace DeferredEngine.Renderer.Helper
         {
             if (material.RenderCClockwise)
             {
-                graphicsDevice.RasterizerState = RasterizerState.CullClockwise;
+                _graphicsDevice.RasterizerState = RasterizerState.CullClockwise;
             }
             else if (renderType == RenderType.ShadowOmnidirectional)
             {
