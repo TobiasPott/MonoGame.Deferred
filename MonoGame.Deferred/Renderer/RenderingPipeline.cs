@@ -244,7 +244,7 @@ namespace DeferredEngine.Renderer
         /// <param name="gizmoContext">The data passed from our editor logic</param>
         /// <param name="gameTime"></param>
         /// <returns></returns>
-        public EditorLogic.EditorReceivedData Draw(Camera camera, MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<Decal> decals, List<DeferredPointLight> pointLights, List<DeferredDirectionalLight> directionalLights, EnvironmentProbe envSample, GizmoDrawContext gizmoContext, GameTime gameTime)
+        public EditorLogic.EditorReceivedData Draw(Camera camera, MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<Decal> decals, List<DeferredPointLight> pointLights, List<DeferredDirectionalLight> directionalLights, EnvironmentProbe envProbe, GizmoDrawContext gizmoContext, GameTime gameTime)
         {
             //Reset the stat counter, so we can count stats/information for this frame only
             ResetStats();
@@ -264,7 +264,7 @@ namespace DeferredEngine.Renderer
             //We do this either when pressing C or at the start of the program (_renderTargetCube == null) or when the game settings want us to do it every frame
             if (RenderingSettings.g_envmapupdateeveryframe)
             {
-                DrawCubeMap(envSample.Position, meshMaterialLibrary, entities, pointLights, directionalLights, 300, gameTime, camera);
+                DrawCubeMap(envProbe.Position, meshMaterialLibrary, entities, pointLights, directionalLights, 300, gameTime, camera);
             }
 
             //Update our view projection matrices if the camera moved
@@ -292,7 +292,7 @@ namespace DeferredEngine.Renderer
             _lightAccumulationModule.DrawLights(pointLights, directionalLights, camera.Position, gameTime, _lightingBufferTarget.Bindings, _lightingBufferTarget.Diffuse);
 
             //Draw the environment cube map as a fullscreen effect on all meshes
-            DrawEnvironmentMap(envSample, camera, gameTime);
+            DrawEnvironmentMap(envProbe, camera, gameTime);
 
             //Compose the scene by combining our lighting data with the gbuffer data
             _currentOutput = Compose(); //-> output _renderTargetComposed
@@ -308,7 +308,7 @@ namespace DeferredEngine.Renderer
 
             //Draw the elements that we are hovering over with outlines
             if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
-                _editorRender.DrawIds(meshMaterialLibrary, decals, pointLights, directionalLights, envSample, _staticViewProjection, _view, gizmoContext);
+                _editorRender.DrawIds(meshMaterialLibrary, decals, pointLights, directionalLights, envProbe, _staticViewProjection, _view, gizmoContext);
 
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
             RenderMode(_currentOutput);
@@ -318,7 +318,7 @@ namespace DeferredEngine.Renderer
 
             //Additional editor elements that overlay our screen
 
-            RenderEditorOverlays(gizmoContext, meshMaterialLibrary, decals, pointLights, directionalLights, envSample);
+            RenderEditorOverlays(gizmoContext, meshMaterialLibrary, decals, pointLights, directionalLights, envProbe);
 
             //Draw debug geometry
             RenderHelperGeometry();
@@ -505,7 +505,7 @@ namespace DeferredEngine.Renderer
                 RenderingSettings.g_VolumetricLights = false;
                 _lightAccumulationModule.DrawLights(pointLights, dirLights, origin, gameTime, _lightingBufferTarget.Bindings, _lightingBufferTarget.Diffuse);
 
-                _environmentModule.DrawSky(_graphicsDevice, FullscreenTarget);
+                _environmentModule.DrawSky(FullscreenTarget);
 
                 RenderingSettings.g_VolumetricLights = volumeEnabled;
 
@@ -1065,11 +1065,12 @@ namespace DeferredEngine.Renderer
         /// <summary>
         /// Apply our environment cubemap to the renderer
         /// </summary>
-        private void DrawEnvironmentMap(EnvironmentProbe envSample, Camera camera, GameTime gameTime)
+        private void DrawEnvironmentMap(EnvironmentProbe envProbe, Camera camera, GameTime gameTime)
         {
             if (!RenderingSettings.g_environmentmapping) return;
 
-            _environmentModule.DrawEnvironmentMap(camera, _view, FullscreenTarget, envSample, gameTime, RenderingSettings.g_SSReflection_FireflyReduction, RenderingSettings.g_SSReflection_FireflyThreshold);
+            _environmentModule.SetEnvironmentProbe(envProbe);
+            _environmentModule.DrawEnvironmentMap(camera, _view, FullscreenTarget, gameTime);
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)

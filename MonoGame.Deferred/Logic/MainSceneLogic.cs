@@ -32,7 +32,7 @@ namespace DeferredEngine.Logic
         public readonly List<Decal> Decals = new List<Decal>();
         public readonly List<DeferredPointLight> PointLights = new List<DeferredPointLight>();
         public readonly List<DeferredDirectionalLight> DirectionalLights = new List<DeferredDirectionalLight>();
-        public EnvironmentProbe EnvironmentSample;
+        public EnvironmentProbe EnvProbe;
 
         //Which render target are we currently displaying?
         private int _renderModeCycle;
@@ -74,7 +74,7 @@ namespace DeferredEngine.Logic
 
             Camera = new Camera(position: new Vector3(-88, -11f, 4), lookat: new Vector3(38, 8, 32));
 
-            EnvironmentSample = new EnvironmentProbe(new Vector3(-45, -5, 5));
+            EnvProbe = new EnvironmentProbe(new Vector3(-45, -5, 5));
 
             _sdfGenerator = new DistanceFieldRenderModule.Generator();
 

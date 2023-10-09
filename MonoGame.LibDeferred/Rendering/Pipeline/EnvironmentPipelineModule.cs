@@ -10,108 +10,46 @@ namespace DeferredEngine.Renderer.RenderModules
     //Just a template
     public partial class EnvironmentPipelineModule : PipelineModule
     {
-
-        private bool _fireflyReduction;
-        private float _fireflyThreshold;
-        private float _specularStrength;
-        private float _diffuseStrength;
-        private bool _useSDFAO;
-
-
+        
         public Texture2D SSRMap
-        {
-            set { Shaders.Environment.Param_SSRMap.SetValue(value); }
-        }
-
+        { set { Shaders.Environment.Param_SSRMap.SetValue(value); } }
         public Vector3[] FrustumCornersWS
-        {
-            set { Shaders.Environment.Param_FrustumCorners.SetValue(value); }
-        }
-
+        { set { Shaders.Environment.Param_FrustumCorners.SetValue(value); } }
         public Vector3 CameraPositionWS
-        {
-            set { Shaders.Environment.Param_CameraPositionWS.SetValue(value); }
-        }
-
+        { set { Shaders.Environment.Param_CameraPositionWS.SetValue(value); } }
         public Vector2 Resolution
-        {
-            set { Shaders.Environment.Param_Resolution.SetValue(value); }
-        }
-
+        { set { Shaders.Environment.Param_Resolution.SetValue(value); } }
         public float Time
-        {
-            set { Shaders.Environment.Param_Time.SetValue(value); }
-        }
+        { set { Shaders.Environment.Param_Time.SetValue(value); } }
+
 
         public bool FireflyReduction
-        {
-            get { return _fireflyReduction; }
-            set
-            {
-                if (value != _fireflyReduction)
-                {
-                    _fireflyReduction = value;
-                    Shaders.Environment.Param_FireflyReduction.SetValue(value);
-                }
-            }
-        }
-
+        { set { Shaders.Environment.Param_FireflyReduction.SetValue(value); } }
         public float FireflyThreshold
-        {
-            get { return _fireflyThreshold; }
-            set
-            {
-                if (Math.Abs(value - _fireflyThreshold) > 0.0001f)
-                {
-                    _fireflyThreshold = value;
-                    Shaders.Environment.Param_FireflyThreshold.SetValue(value);
-                }
-            }
-        }
+        { set { Shaders.Environment.Param_FireflyThreshold.SetValue(value); } }
 
         public float SpecularStrength
         {
-            get { return _specularStrength; }
             set
             {
-                if (Math.Abs(value - _specularStrength) > 0.0001f)
-                {
-                    _specularStrength = value;
-                    Shaders.Environment.Param_SpecularStrength.SetValue(value);
-                    Shaders.Environment.Param_SpecularStrengthRcp.SetValue(1.0f / value);
-                }
+                Shaders.Environment.Param_SpecularStrength.SetValue(value);
+                Shaders.Environment.Param_SpecularStrengthRcp.SetValue(1.0f / value);
             }
         }
-
         public float DiffuseStrength
-        {
-            get { return _diffuseStrength; }
-            set
-            {
-                if (Math.Abs(value - _diffuseStrength) > 0.0001f)
-                {
-                    _diffuseStrength = value;
-                    Shaders.Environment.Param_DiffuseStrength.SetValue(value);
-                }
-            }
-        }
+        { set { Shaders.Environment.Param_DiffuseStrength.SetValue(value); } }
+
 
         public bool UseSDFAO
-        {
-            get { return _useSDFAO; }
-            set
-            {
-                if (_useSDFAO != value)
-                {
-                    _useSDFAO = value;
-                    Shaders.Environment.Param_UseSDFAO.SetValue(value);
-                }
-            }
-        }
+        { set { Shaders.Environment.Param_UseSDFAO.SetValue(value); } }
+
 
         public EnvironmentPipelineModule(ContentManager content, string shaderPath)
             : base(content, shaderPath)
-        { }
+        {
+            this.FireflyReduction = RenderingSettings.g_SSReflection_FireflyReduction;
+            this.FireflyThreshold = RenderingSettings.g_SSReflection_FireflyThreshold;
+        }
 
         public void SetGBufferParams(GBufferTarget gBufferTarget)
         {
@@ -132,37 +70,48 @@ namespace DeferredEngine.Renderer.RenderModules
             Shaders.Environment.Param_VolumeTexSize.SetValue(texSizes);
             Shaders.Environment.Param_VolumeTexResolution.SetValue(texResolutions);
         }
+        public void SetEnvironmentProbe(EnvironmentProbe probe)
+        {
+            if (probe != null)
+            {
+                SpecularStrength = probe.SpecularStrength;
+                DiffuseStrength = probe.DiffuseStrength;
+                UseSDFAO = probe.UseSDFAO;
+            }
+            else
+            {
+                SpecularStrength = 0.0f;
+                DiffuseStrength = 0.0f;
+                UseSDFAO = false;
+            }
+        }
+
 
         protected override void Load(ContentManager content, string shaderPath)
         { }
 
 
-        public void DrawEnvironmentMap(Camera camera, Matrix view, FullscreenTriangleBuffer fullscreenTarget, EnvironmentProbe envSample, GameTime gameTime, bool fireflyReduction, float ffThreshold)
+        public void DrawEnvironmentMap(Camera camera, Matrix view, FullscreenTriangleBuffer fullscreenTarget, GameTime gameTime)
         {
-            FireflyReduction = fireflyReduction;
-            FireflyThreshold = ffThreshold;
-
-            SpecularStrength = envSample.SpecularStrength;
-            DiffuseStrength = envSample.DiffuseStrength;
             CameraPositionWS = camera.Position;
 
             Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
 
-            _graphicsDevice.DepthStencilState = DepthStencilState.None;
-            _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-            UseSDFAO = envSample.UseSDFAO;
             Shaders.Environment.Param_TransposeView.SetValue(Matrix.Transpose(view));
             Shaders.Environment.Pass_Basic.Apply();
+
+            _graphicsDevice.DepthStencilState = DepthStencilState.None;
+            _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             fullscreenTarget.Draw(_graphicsDevice);
         }
 
-        public void DrawSky(GraphicsDevice graphicsDevice, FullscreenTriangleBuffer fullscreenTarget)
+        public void DrawSky(FullscreenTriangleBuffer fullscreenTarget)
         {
-            graphicsDevice.DepthStencilState = DepthStencilState.None;
-            graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+            _graphicsDevice.DepthStencilState = DepthStencilState.None;
+            _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
             Shaders.Environment.Pass_Sky.Apply();
-            fullscreenTarget.Draw(graphicsDevice);
+            fullscreenTarget.Draw(_graphicsDevice);
         }
 
         public override void Dispose()
