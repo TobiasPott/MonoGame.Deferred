@@ -139,6 +139,43 @@ namespace DeferredEngine.Recources
             public static readonly EffectParameter Param_InverseResolution = Effect.Parameters["InverseResolution"];
             public static readonly EffectParameter Param_TargetMap = Effect.Parameters["TargetMap"];
         }
+        // Deferred Environment
+        public static class Environment
+        {
+            public static Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/Deferred/DeferredEnvironmentMap");
+
+            public static EffectPass Pass_Sky = Effect.Techniques["Sky"].Passes[0];
+            public static EffectPass Pass_Basic = Effect.Techniques["Basic"].Passes[0];
+
+            //Environment
+            public static EffectParameter Param_AlbedoMap = Effect.Parameters["AlbedoMap"];
+            public static EffectParameter Param_NormalMap = Effect.Parameters["NormalMap"];
+            public static EffectParameter Param_DepthMap = Effect.Parameters["DepthMap"];
+
+            public static EffectParameter Param_FrustumCorners = Effect.Parameters["FrustumCorners"];
+            public static EffectParameter Param_SSRMap = Effect.Parameters["ReflectionMap"];
+            public static EffectParameter Param_ReflectionCubeMap = Effect.Parameters["ReflectionCubeMap"];
+            public static EffectParameter Param_Resolution = Effect.Parameters["Resolution"];
+            public static EffectParameter Param_FireflyReduction = Effect.Parameters["FireflyReduction"];
+            public static EffectParameter Param_FireflyThreshold = Effect.Parameters["FireflyThreshold"];
+            public static EffectParameter Param_TransposeView = Effect.Parameters["TransposeView"];
+            public static EffectParameter Param_SpecularStrength = Effect.Parameters["EnvironmentMapSpecularStrength"];
+            public static EffectParameter Param_SpecularStrengthRcp = Effect.Parameters["EnvironmentMapSpecularStrengthRcp"];
+            public static EffectParameter Param_DiffuseStrength = Effect.Parameters["EnvironmentMapDiffuseStrength"];
+            public static EffectParameter Param_CameraPositionWS = Effect.Parameters["CameraPositionWS"];
+            public static EffectParameter Param_Time = Effect.Parameters["Time"];
+
+            //SDF
+            public static EffectParameter Param_VolumeTex = Effect.Parameters["VolumeTex"];
+            public static EffectParameter Param_VolumeTexSize = Effect.Parameters["VolumeTexSize"];
+            public static EffectParameter Param_VolumeTexResolution = Effect.Parameters["VolumeTexResolution"];
+            public static EffectParameter Param_InstanceInverseMatrix = Effect.Parameters["InstanceInverseMatrix"];
+            public static EffectParameter Param_InstanceScale = Effect.Parameters["InstanceScale"];
+            public static EffectParameter Param_InstanceSDFIndex = Effect.Parameters["InstanceSDFIndex"];
+            public static EffectParameter Param_InstancesCount = Effect.Parameters["InstancesCount"];
+
+            public static EffectParameter Param_UseSDFAO = Effect.Parameters["UseSDFAO"];
+        }
 
         //DeferredCompose
         public static class DeferredCompose
