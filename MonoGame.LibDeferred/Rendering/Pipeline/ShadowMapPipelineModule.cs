@@ -10,29 +10,29 @@ namespace DeferredEngine.Renderer.RenderModules
 {
     public class ShadowMapPipelineModule : PipelineModule, IRenderModule
     {
-        private Effect Effect;
+        private static Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/Shadow/ShadowMap");
 
         //Linear = VS Depth -> used for directional lights
-        private EffectPass Pass_LinearPass;
+        private static EffectPass Pass_LinearPass = Effect.Techniques["DrawLinearDepth"].Passes[0];
         //Distance = distance(pixel, light) -> used for omnidirectional lights
-        private EffectPass Pass_DistancePass;
-        private EffectPass Pass_DistanceAlphaPass;
+        private static EffectPass Pass_DistancePass = Effect.Techniques["DrawDistanceDepth"].Passes[0];
+        private static EffectPass Pass_DistanceAlphaPass = Effect.Techniques["DrawDistanceDepthAlpha"].Passes[0];
 
-        private EffectParameter Param_WorldViewProj;
-        private EffectParameter Param_WorldView;
-        private EffectParameter Param_World;
-        private EffectParameter Param_LightPositionWS;
-        private EffectParameter Param_FarClip;
-        private EffectParameter Param_SizeBias;
-        private EffectParameter Param_MaskTexture;
+        private static EffectParameter Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
+        private static EffectParameter Param_WorldView = Effect.Parameters["WorldView"];
+        private static EffectParameter Param_World = Effect.Parameters["World"];
+        private static EffectParameter Param_LightPositionWS = Effect.Parameters["LightPositionWS"];
+        private static EffectParameter Param_FarClip = Effect.Parameters["FarClip"];
+        private static EffectParameter Param_SizeBias = Effect.Parameters["SizeBias"];
+        private static EffectParameter Param_MaskTexture = Effect.Parameters["MaskTexture"];
 
 
-        private Passes _pass;
+        private ShadowPasses _pass;
 
         private BoundingFrustum _boundingFrustumShadow;
 
 
-        private enum Passes
+        private enum ShadowPasses
         {
             Directional,
             Omnidirectional,
@@ -40,7 +40,7 @@ namespace DeferredEngine.Renderer.RenderModules
         };
 
         public ShadowMapPipelineModule(ContentManager content, string shaderPath = "Shaders/Shadow/ShadowMap")
-            :base(content, shaderPath) { }
+            : base(content, shaderPath) { }
 
         //public override void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         //{
@@ -48,25 +48,11 @@ namespace DeferredEngine.Renderer.RenderModules
         //}
 
         protected override void Load(ContentManager content, string shaderPath = "Shaders/Shadow/ShadowMap")
-        {
-            Effect = content.Load<Effect>(shaderPath);
-
-            Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
-            Param_WorldView = Effect.Parameters["WorldView"];
-            Param_World = Effect.Parameters["World"];
-            Param_LightPositionWS = Effect.Parameters["LightPositionWS"];
-            Param_FarClip = Effect.Parameters["FarClip"];
-            Param_SizeBias = Effect.Parameters["SizeBias"];
-            Param_MaskTexture = Effect.Parameters["MaskTexture"];
-
-            Pass_LinearPass = Effect.Techniques["DrawLinearDepth"].Passes[0];
-            Pass_DistancePass = Effect.Techniques["DrawDistanceDepth"].Passes[0];
-            Pass_DistanceAlphaPass = Effect.Techniques["DrawDistanceDepthAlpha"].Passes[0];
-        }
+        { }
 
         public void Draw(MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<DeferredPointLight> pointLights, List<DeferredDirectionalLight> dirLights)
         {
-            _pass = Passes.Omnidirectional;
+            _pass = ShadowPasses.Omnidirectional;
 
             //Go through all our point lights
             for (int index = 0; index < pointLights.Count; index++)
@@ -97,7 +83,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 }
             }
 
-            _pass = Passes.Directional;
+            _pass = ShadowPasses.Directional;
 
             int dirLightShadowedWithSSBlur = 0;
             for (int index = 0; index < dirLights.Count; index++)
@@ -370,15 +356,15 @@ namespace DeferredEngine.Renderer.RenderModules
 
             switch (_pass)
             {
-                case Passes.Directional:
+                case ShadowPasses.Directional:
                     Param_WorldView.SetValue(localWorldMatrix * (Matrix)view);
                     Pass_LinearPass.Apply();
                     break;
-                case Passes.Omnidirectional:
+                case ShadowPasses.Omnidirectional:
                     Param_World.SetValue(localWorldMatrix);
                     Pass_DistancePass.Apply();
                     break;
-                case Passes.OmnidirectionalAlpha:
+                case ShadowPasses.OmnidirectionalAlpha:
                     Param_World.SetValue(localWorldMatrix);
                     Pass_DistanceAlphaPass.Apply();
                     break;
@@ -392,13 +378,13 @@ namespace DeferredEngine.Renderer.RenderModules
                 //Check if we have a mask texture
                 if (material.HasMask)
                 {
-                    _pass = Passes.OmnidirectionalAlpha;
+                    _pass = ShadowPasses.OmnidirectionalAlpha;
                     Param_MaskTexture.SetValue(material.Mask);
 
                 }
                 else
                 {
-                    _pass = Passes.Omnidirectional;
+                    _pass = ShadowPasses.Omnidirectional;
                 }
 
             }
