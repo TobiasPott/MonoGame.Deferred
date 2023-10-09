@@ -14,7 +14,6 @@ namespace DeferredEngine.Recources
 
         public ModelDefinition(ContentManager content, string assetpath)
         {
-            
             Model = content.Load<Model>(assetpath);
 
             string bbxpath = content.RootDirectory + "/" + assetpath + ".bbox";

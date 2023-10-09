@@ -49,7 +49,7 @@ namespace DeferredEngine.Renderer.Helper
                 if (cameraHasChanged)
                 {
                     sphere.Center = _worldBoundingCenters[i];
-                    sphere.Radius = _meshBoundingSphere.Radius * transform.Scale.X;
+                    sphere.Radius = _meshBoundingSphere.Radius * transform.World.M11; // previously .Scale.X;
                     if (viewFrustumEx.Contains(sphere) == ContainmentType.Disjoint)
                     {
                         _rendered[i] = false;

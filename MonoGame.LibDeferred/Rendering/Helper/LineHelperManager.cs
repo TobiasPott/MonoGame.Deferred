@@ -144,31 +144,32 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
             AddLineStartEnd(vertices[7], vertices[4], 1);
         }
 
-        public void AddBoundingBox(EntityBase entity)
+        public void AddBoundingBox(ModelEntity entity)
         {
-            Vector3[] vertices = new Vector3[8];
-            vertices = entity.BoundingBox.GetCorners();
-
-            //Transform
-            for (var index = 0; index < vertices.Length; index++)
+            if (entity != null)
             {
-                vertices[index] = Vector3.Transform(vertices[index], entity.World);
+                Vector3[] vertices = entity.BoundingBox.GetCorners();
+                //Transform
+                for (var index = 0; index < vertices.Length; index++)
+                {
+                    vertices[index] = Vector3.Transform(vertices[index], entity.World);
+                }
+
+                AddLineStartEnd(vertices[0], vertices[1], 1);
+                AddLineStartEnd(vertices[1], vertices[2], 1);
+                AddLineStartEnd(vertices[2], vertices[3], 1);
+                AddLineStartEnd(vertices[3], vertices[0], 1);
+
+                AddLineStartEnd(vertices[0], vertices[4], 1);
+                AddLineStartEnd(vertices[1], vertices[5], 1);
+                AddLineStartEnd(vertices[2], vertices[6], 1);
+                AddLineStartEnd(vertices[3], vertices[7], 1);
+
+                AddLineStartEnd(vertices[4], vertices[5], 1);
+                AddLineStartEnd(vertices[5], vertices[6], 1);
+                AddLineStartEnd(vertices[6], vertices[7], 1);
+                AddLineStartEnd(vertices[7], vertices[4], 1);
             }
-
-            AddLineStartEnd(vertices[0], vertices[1], 1);
-            AddLineStartEnd(vertices[1], vertices[2], 1);
-            AddLineStartEnd(vertices[2], vertices[3], 1);
-            AddLineStartEnd(vertices[3], vertices[0], 1);
-
-            AddLineStartEnd(vertices[0], vertices[4], 1);
-            AddLineStartEnd(vertices[1], vertices[5], 1);
-            AddLineStartEnd(vertices[2], vertices[6], 1);
-            AddLineStartEnd(vertices[3], vertices[7], 1);
-
-            AddLineStartEnd(vertices[4], vertices[5], 1);
-            AddLineStartEnd(vertices[5], vertices[6], 1);
-            AddLineStartEnd(vertices[6], vertices[7], 1);
-            AddLineStartEnd(vertices[7], vertices[4], 1);
         }
     }
 }

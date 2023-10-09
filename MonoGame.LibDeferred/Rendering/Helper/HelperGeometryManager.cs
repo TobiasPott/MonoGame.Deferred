@@ -56,7 +56,7 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
             _octahedronHelperManager.AddOctahedron(position, color);
         }
 
-        public void AddBoundingBox(EntityBase entity)
+        public void AddBoundingBox(ModelEntity entity)
         {
             _lineHelperManager.AddBoundingBox(entity);
         }

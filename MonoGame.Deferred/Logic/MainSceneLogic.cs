@@ -161,7 +161,7 @@ namespace DeferredEngine.Logic
                 shadowResolution: 1024,
                 softShadowBlurAmount: 0,
                 staticShadow: false,
-                isVolumetric: false);
+                isVolumetric: false).CastSDFShadows = true;
 
             AddDirectionalLight(direction: new Vector3(0.2f, 0.2f, -1),
                 intensity: 100,
@@ -303,7 +303,7 @@ namespace DeferredEngine.Logic
             ModelEntity entity = new ModelEntity(model,
                 null,
                 position: position,
-                rotationAngles: new Vector3((float)angleX, (float)angleY, (float)angleZ),
+                eulerAngles: new Vector3((float)angleX, (float)angleY, (float)angleZ),
                 scale: Vector3.One * scale,
                 library: MeshMaterialLibrary);
             BasicEntities.Add(entity);
@@ -327,7 +327,7 @@ namespace DeferredEngine.Logic
             ModelEntity entity = new ModelEntity(model,
                 materialEffect,
                 position: position,
-                rotationAngles: new Vector3((float)angleX, (float)angleY, (float)angleZ),
+                eulerAngles: new Vector3((float)angleX, (float)angleY, (float)angleZ),
                 scale: Vector3.One * scale,
                 library: MeshMaterialLibrary);
             BasicEntities.Add(entity);

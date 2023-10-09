@@ -381,8 +381,7 @@ namespace DeferredEngine.Renderer
                     if (RenderingSettings.e_drawboundingbox)
                         if (gizmoContext.SelectedObject is ModelEntity)
                         {
-                            HelperGeometryManager.GetInstance()
-                                .AddBoundingBox(gizmoContext.SelectedObject as ModelEntity);
+                            HelperGeometryManager.GetInstance().AddBoundingBox(gizmoContext.SelectedObject as ModelEntity);
                         }
                 }
             }
