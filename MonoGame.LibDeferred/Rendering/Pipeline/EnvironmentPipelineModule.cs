@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DeferredEngine.Renderer.RenderModules
 {
     //Just a template
-    public class EnvironmentPipelineModule : RenderingPipelineModule
+    public class EnvironmentPipelineModule : PipelineModule
     {
         private Effect Effect;
 

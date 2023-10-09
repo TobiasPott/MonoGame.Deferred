@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
-    public class ForwardPipelineModule : RenderingPipelineModule, IRenderModule
+    public class ForwardPipelineModule : PipelineModule, IRenderModule
     {
         private const int MAXLIGHTS = 40;
         private const int MAXLIGHTSPERTILE = 40;

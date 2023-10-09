@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DeferredEngine.Renderer.RenderModules
 {
     //Just a template
-    public class GBufferPipelineModule : RenderingPipelineModule, IRenderModule
+    public class GBufferPipelineModule : PipelineModule, IRenderModule
     {
         private Effect Effect_Clear;
         private Effect Effect_GBuffer;

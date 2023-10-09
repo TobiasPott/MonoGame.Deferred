@@ -1,17 +1,16 @@
-﻿using DeferredEngine.Entities;
-using DeferredEngine.Renderer.Helper;
+﻿using DeferredEngine.Renderer.Helper;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
 
-    public abstract class RenderingPipelineModule :IDisposable
+    public abstract class PipelineModule : IDisposable
     {
         protected GraphicsDevice _graphicsDevice;
         protected SpriteBatch _spriteBatch;
 
-        public RenderingPipelineModule(ContentManager content, string shaderPath)
+        public PipelineModule(ContentManager content, string shaderPath)
         {
             Load(content, shaderPath);
         }

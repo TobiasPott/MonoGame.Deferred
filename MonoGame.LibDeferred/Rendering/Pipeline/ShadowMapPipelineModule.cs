@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
-    public class ShadowMapPipelineModule : RenderingPipelineModule, IRenderModule
+    public class ShadowMapPipelineModule : PipelineModule, IRenderModule
     {
         private Effect Effect;
 
