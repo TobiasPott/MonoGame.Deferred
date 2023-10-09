@@ -364,6 +364,26 @@ namespace DeferredEngine.Recources
     public static partial class Shaders
     {
 
+        // Shadow Map
+        public static class ShadowMap
+        {
+            public static Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/Shadow/ShadowMap");
+
+            //Linear = VS Depth -> used for directional lights
+            public static EffectPass Pass_LinearPass = Effect.Techniques["DrawLinearDepth"].Passes[0];
+            //Distance = distance(pixel, light) -> used for omnidirectional lights
+            public static EffectPass Pass_DistancePass = Effect.Techniques["DrawDistanceDepth"].Passes[0];
+            public static EffectPass Pass_DistanceAlphaPass = Effect.Techniques["DrawDistanceDepthAlpha"].Passes[0];
+
+            public static EffectParameter Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
+            public static EffectParameter Param_WorldView = Effect.Parameters["WorldView"];
+            public static EffectParameter Param_World = Effect.Parameters["World"];
+            public static EffectParameter Param_LightPositionWS = Effect.Parameters["LightPositionWS"];
+            public static EffectParameter Param_FarClip = Effect.Parameters["FarClip"];
+            public static EffectParameter Param_SizeBias = Effect.Parameters["SizeBias"];
+            public static EffectParameter Param_MaskTexture = Effect.Parameters["MaskTexture"];
+        }
+
 
     }
 }
