@@ -188,7 +188,7 @@ namespace DeferredEngine.Renderer
             _shadowMapModule.Initialize(graphicsDevice, _spriteBatch);
 
             _environmentModule.Initialize(graphicsDevice, _spriteBatch);
-
+            _distanceFieldRenderModule.Initialize(graphicsDevice, _spriteBatch);
 
             _lightAccumulationModule.Initialize(graphicsDevice);
             _decalRenderModule.Initialize(graphicsDevice);
