@@ -10,23 +10,6 @@ namespace DeferredEngine.Renderer.RenderModules
 {
     public class ShadowMapPipelineModule : PipelineModule, IRenderModule
     {
-        private static Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/Shadow/ShadowMap");
-
-        //Linear = VS Depth -> used for directional lights
-        private static EffectPass Pass_LinearPass = Effect.Techniques["DrawLinearDepth"].Passes[0];
-        //Distance = distance(pixel, light) -> used for omnidirectional lights
-        private static EffectPass Pass_DistancePass = Effect.Techniques["DrawDistanceDepth"].Passes[0];
-        private static EffectPass Pass_DistanceAlphaPass = Effect.Techniques["DrawDistanceDepthAlpha"].Passes[0];
-
-        private static EffectParameter Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
-        private static EffectParameter Param_WorldView = Effect.Parameters["WorldView"];
-        private static EffectParameter Param_World = Effect.Parameters["World"];
-        private static EffectParameter Param_LightPositionWS = Effect.Parameters["LightPositionWS"];
-        private static EffectParameter Param_FarClip = Effect.Parameters["FarClip"];
-        private static EffectParameter Param_SizeBias = Effect.Parameters["SizeBias"];
-        private static EffectParameter Param_MaskTexture = Effect.Parameters["MaskTexture"];
-
-
         private ShadowPasses _pass;
 
         private BoundingFrustum _boundingFrustumShadow;
@@ -198,10 +181,10 @@ namespace DeferredEngine.Renderer.RenderModules
                     // Rendering!
 
                     _graphicsDevice.Viewport = new Viewport(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
-                    //_graphicsDevice.ScissorRectangle = new Rectangle(0, light.ShadowResolution* (int) cubeMapFace,  light.ShadowResolution, light.ShadowResolution);
 
-                    Param_FarClip.SetValue(light.Radius);
-                    Param_LightPositionWS.SetValue(light.Position);
+                    //_graphicsDevice.ScissorRectangle = new Rectangle(0, light.ShadowResolution* (int) cubeMapFace,  light.ShadowResolution, light.ShadowResolution);
+                    Shaders.ShadowMap.Param_FarClip.SetValue(light.Radius);
+                    Shaders.ShadowMap.Param_LightPositionWS.SetValue(light.Position);
 
                     _graphicsDevice.ScissorRectangle = new Rectangle(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
 
@@ -314,8 +297,8 @@ namespace DeferredEngine.Renderer.RenderModules
                 meshMaterialLibrary.FrustumCulling(entities, _boundingFrustumShadow, true, light.Position);
 
                 // Rendering!
-                Param_FarClip.SetValue(light.ShadowDepth);
-                Param_SizeBias.SetValue(RenderingSettings.ShadowBias * 2048 / light.ShadowResolution);
+                Shaders.ShadowMap.Param_FarClip.SetValue(light.ShadowDepth);
+                Shaders.ShadowMap.Param_SizeBias.SetValue(RenderingSettings.ShadowBias * 2048 / light.ShadowResolution);
 
                 meshMaterialLibrary.Draw(MeshMaterialLibrary.RenderType.ShadowLinear,
                     light.LightViewProjection, light.HasChanged, false, false, 0, light.LightView, renderModule: this);
@@ -332,9 +315,8 @@ namespace DeferredEngine.Renderer.RenderModules
 
                 _graphicsDevice.SetRenderTarget(light.ShadowMap);
                 _graphicsDevice.Clear(ClearOptions.DepthBuffer, Color.White, 1, 0);
-
-                Param_FarClip.SetValue(light.ShadowDepth);
-                Param_SizeBias.SetValue(RenderingSettings.ShadowBias * 2048 / light.ShadowResolution);
+                Shaders.ShadowMap.Param_FarClip.SetValue(light.ShadowDepth);
+                Shaders.ShadowMap.Param_SizeBias.SetValue(RenderingSettings.ShadowBias * 2048 / light.ShadowResolution);
 
                 meshMaterialLibrary.Draw(MeshMaterialLibrary.RenderType.ShadowLinear,
                     light.LightViewProjection, false, true, false, 0, light.LightView, renderModule: this);
@@ -352,21 +334,21 @@ namespace DeferredEngine.Renderer.RenderModules
 
         public void Apply(Matrix localWorldMatrix, Matrix? view, Matrix viewProjection)
         {
-            Param_WorldViewProj.SetValue(localWorldMatrix * viewProjection);
+            Shaders.ShadowMap.Param_WorldViewProj.SetValue(localWorldMatrix * viewProjection);
 
             switch (_pass)
             {
                 case ShadowPasses.Directional:
-                    Param_WorldView.SetValue(localWorldMatrix * (Matrix)view);
-                    Pass_LinearPass.Apply();
+                    Shaders.ShadowMap.Param_WorldView.SetValue(localWorldMatrix * (Matrix)view);
+                    Shaders.ShadowMap.Pass_LinearPass.Apply();
                     break;
                 case ShadowPasses.Omnidirectional:
-                    Param_World.SetValue(localWorldMatrix);
-                    Pass_DistancePass.Apply();
+                    Shaders.ShadowMap.Param_World.SetValue(localWorldMatrix);
+                    Shaders.ShadowMap.Pass_DistancePass.Apply();
                     break;
                 case ShadowPasses.OmnidirectionalAlpha:
-                    Param_World.SetValue(localWorldMatrix);
-                    Pass_DistanceAlphaPass.Apply();
+                    Shaders.ShadowMap.Param_World.SetValue(localWorldMatrix);
+                    Shaders.ShadowMap.Pass_DistanceAlphaPass.Apply();
                     break;
             }
         }
@@ -379,7 +361,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 if (material.HasMask)
                 {
                     _pass = ShadowPasses.OmnidirectionalAlpha;
-                    Param_MaskTexture.SetValue(material.Mask);
+                    Shaders.ShadowMap.Param_MaskTexture.SetValue(material.Mask);
 
                 }
                 else
