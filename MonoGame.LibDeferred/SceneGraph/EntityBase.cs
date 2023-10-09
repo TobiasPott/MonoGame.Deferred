@@ -1,6 +1,5 @@
 ﻿using DeferredEngine.Recources.Helper;
 using MonoGame.Ext;
-using BoundingBox = Microsoft.Xna.Framework.BoundingBox;
 using Matrix = Microsoft.Xna.Framework.Matrix;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 

@@ -5,6 +5,7 @@ using DeferredEngine.Renderer.RenderModules.Default;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Windows.UI.Composition;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
@@ -33,8 +34,12 @@ namespace DeferredEngine.Renderer.RenderModules
         protected override void Load(ContentManager content, string shaderPath = "Shaders/Shadow/ShadowMap")
         { }
 
-        public void Draw(MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<DeferredPointLight> pointLights, List<DeferredDirectionalLight> dirLights)
+        public void Draw(MeshMaterialLibrary meshMaterialLibrary, EntitySceneGroup scene)
         {
+            List<ModelEntity> entities = scene.Entities;
+            List<DeferredPointLight> pointLights = scene.PointLights;
+            List<DeferredDirectionalLight> dirLights = scene.DirectionalLights;
+
             _pass = ShadowPasses.Omnidirectional;
 
             //Go through all our point lights

@@ -64,8 +64,12 @@ namespace DeferredEngine.Renderer.RenderModules
         }
 
 
-        public void DrawBillboards(List<Decal> decals, List<DeferredPointLight> lights, List<DeferredDirectionalLight> dirLights, EnvironmentProbe envSample, Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
+        public void DrawBillboards(EntitySceneGroup scene, EnvironmentProbe envSample, Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
         {
+            List<Decal> decals = scene.Decals;
+            List<DeferredPointLight> pointLights = scene.PointLights;
+            List<DeferredDirectionalLight> dirLights = scene.DirectionalLights;
+
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             _graphicsDevice.SetVertexBuffer(_billboardBuffer.VBuffer);
             _graphicsDevice.Indices = (_billboardBuffer.IBuffer);
@@ -86,9 +90,9 @@ namespace DeferredEngine.Renderer.RenderModules
             //Lights
 
             Shaders.Billboard.Param_Texture.SetValue(StaticAssets.Instance.IconLight);
-            for (int index = 0; index < lights.Count; index++)
+            for (int index = 0; index < pointLights.Count; index++)
             {
-                var light = lights[index];
+                var light = pointLights[index];
                 DrawBillboard(light, staticViewProjection, view, gizmoContext);
             }
 
@@ -153,21 +157,13 @@ namespace DeferredEngine.Renderer.RenderModules
                 Shaders.Billboard.Param_IdColor.SetValue(Color.Gray.ToVector3());
         }
 
-        public void DrawIds(MeshMaterialLibrary meshMaterialLibrary, 
-            List<Decal> decals, 
-            List<DeferredPointLight> lights,
-            List<DeferredDirectionalLight> dirLights, 
-            EnvironmentProbe envSample,
+        public void DrawIds(MeshMaterialLibrary meshMaterialLibrary, EntitySceneGroup scene, EnvironmentProbe envSample,
             Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
         {
-            _idAndOutlineRenderer.Draw(meshMaterialLibrary, decals, lights, dirLights, envSample, staticViewProjection, view, gizmoContext, _mouseMovement);
+            _idAndOutlineRenderer.Draw(meshMaterialLibrary, scene, envSample, staticViewProjection, view, gizmoContext, _mouseMovement);
         }
 
-        public void DrawEditorElements(MeshMaterialLibrary meshMaterialLibrary,
-            List<Decal> decals,
-            List<DeferredPointLight> lights,
-            List<DeferredDirectionalLight> dirLights,
-            EnvironmentProbe envSample,
+        public void DrawEditorElements(MeshMaterialLibrary meshMaterialLibrary, EntitySceneGroup scene, EnvironmentProbe envSample,
             Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
         {
             _graphicsDevice.SetRenderTarget(null);
@@ -176,7 +172,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.BlendState = BlendState.Opaque;
 
             DrawGizmo(staticViewProjection, gizmoContext);
-            DrawBillboards(decals, lights, dirLights, envSample, staticViewProjection, view, gizmoContext);
+            DrawBillboards(scene, envSample, staticViewProjection, view, gizmoContext);
         }
 
         public void DrawGizmo(Matrix staticViewProjection, GizmoDrawContext gizmoContext)

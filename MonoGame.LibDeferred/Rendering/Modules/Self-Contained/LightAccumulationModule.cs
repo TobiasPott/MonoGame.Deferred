@@ -85,15 +85,11 @@ namespace DeferredEngine.Renderer.RenderModules
         /// <summary>
         /// Draw our lights to the diffuse/specular/volume buffer
         /// </summary>
-        /// <param name="pointLights"></param>
-        /// <param name="dirLights"></param>
-        /// <param name="cameraOrigin"></param>
-        /// <param name="gameTime"></param>
-        /// <param name="renderTargetLightBinding"></param>
-        /// <param name="renderTargetDiffuse"></param>
-        public void DrawLights(List<DeferredPointLight> pointLights, List<DeferredDirectionalLight> dirLights,
-            Vector3 cameraOrigin, GameTime gameTime, RenderTargetBinding[] renderTargetLightBinding, RenderTarget2D renderTargetDiffuse)
+        public void DrawLights(EntitySceneGroup scene, Vector3 cameraOrigin, GameTime gameTime, RenderTargetBinding[] renderTargetLightBinding, RenderTarget2D renderTargetDiffuse)
         {
+            List<DeferredPointLight> pointLights = scene.PointLights;
+            List<DeferredDirectionalLight> dirLights = scene.DirectionalLights;
+
             //Reconstruct Depth
             if (RenderingSettings.g_UseDepthStencilLightCulling > 0)
             {

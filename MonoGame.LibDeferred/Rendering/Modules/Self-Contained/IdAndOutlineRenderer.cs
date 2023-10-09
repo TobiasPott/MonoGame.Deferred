@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Ext;
+using Windows.UI.Composition;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
@@ -31,13 +32,13 @@ namespace DeferredEngine.Renderer.RenderModules
             _billboardBuffer = billboardBuffer;
         }
 
-        public void Draw(MeshMaterialLibrary meshMat,
-            List<Decal> decals,
-            List<DeferredPointLight> pointLights,
-            List<DeferredDirectionalLight> dirLights,
-            EnvironmentProbe envSample,
+        public void Draw(MeshMaterialLibrary meshMat, EntitySceneGroup scene, EnvironmentProbe envSample,
             Matrix viewProjection, Matrix view, GizmoDrawContext drawContext, bool mouseMoved)
         {
+            List<Decal> decals = scene.Decals;
+            List<DeferredPointLight> pointLights = scene.PointLights;
+            List<DeferredDirectionalLight> dirLights = scene.DirectionalLights;
+
             if (drawContext.GizmoTransformationMode)
             {
                 _graphicsDevice.SetRenderTarget(_idRenderTarget2D);

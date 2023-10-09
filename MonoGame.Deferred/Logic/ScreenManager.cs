@@ -1,4 +1,5 @@
-﻿using DeferredEngine.Recources;
+﻿using DeferredEngine.Entities;
+using DeferredEngine.Recources;
 using HelperSuite.GUIRenderer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -52,6 +53,7 @@ namespace DeferredEngine.Logic
         }
 
         //Load content
+
         public void Load(ContentManager content, GraphicsDevice graphicsDevice)
         {
             _renderer = new Renderer.RenderingPipeline();
@@ -75,15 +77,13 @@ namespace DeferredEngine.Logic
         {
             content.Dispose();
         }
-
+        
         public void Draw(GameTime gameTime)
         {
             //Our renderer gives us information on what id is currently hovered over so we can update / manipulate objects in the logic functions
             _editorReceivedDataBuffer = _renderer.Draw(_sceneLogic.Camera,
                 _sceneLogic.MeshMaterialLibrary,
-                _sceneLogic.BasicEntities, _sceneLogic.Decals,
-                pointLights: _sceneLogic.PointLights,
-                directionalLights: _sceneLogic.DirectionalLights,
+                new EntitySceneGroup(_sceneLogic.BasicEntities, _sceneLogic.DirectionalLights, _sceneLogic.PointLights, _sceneLogic.Decals),
                 envProbe: _sceneLogic.EnvProbe,
                 gizmoContext: _editorLogic.GetEditorData(),
                 gameTime: gameTime);
