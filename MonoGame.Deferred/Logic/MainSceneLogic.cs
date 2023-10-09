@@ -38,7 +38,8 @@ namespace DeferredEngine.Logic
         private int _renderModeCycle;
 
         //SDF
-        public SdfGenerator _sdfGenerator;
+        // ToDo: @tpott: Internalize to DistanceFieldRenderModule
+        public DistanceFieldRenderModule.Generator _sdfGenerator;
 
         #endregion
 
@@ -75,7 +76,7 @@ namespace DeferredEngine.Logic
 
             EnvironmentSample = new EnvironmentProbe(new Vector3(-45, -5, 5));
 
-            _sdfGenerator = new SdfGenerator();
+            _sdfGenerator = new DistanceFieldRenderModule.Generator();
 
             ////////////////////////////////////////////////////////////////////////
             // Static geometry

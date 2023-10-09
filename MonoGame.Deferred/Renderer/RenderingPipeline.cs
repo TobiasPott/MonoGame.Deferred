@@ -211,7 +211,7 @@ namespace DeferredEngine.Renderer
         /// </summary>
         /// <param name="gameTime"></param>
         /// <param name="isActive"></param>
-        public void Update(GameTime gameTime, bool isActive, SdfGenerator sdfGenerator, List<ModelEntity> entities)
+        public void Update(GameTime gameTime, bool isActive, DistanceFieldRenderModule.Generator sdfGenerator, List<ModelEntity> entities)
         {
             if (!isActive) return;
             _editorRender.Update(gameTime);
