@@ -207,3 +207,31 @@ namespace DeferredEngine.Renderer.RenderModules
         }
     }
 }
+
+namespace DeferredEngine.Recources
+{
+    public static partial class Shaders
+    {
+
+        // Forward
+        public static class Forward
+        {
+            public static Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/forward/forward");
+
+            public static EffectPass Pass_Default = Effect.Techniques["Default"].Passes[0];
+
+            public static EffectParameter Param_World = Effect.Parameters["World"];
+            public static EffectParameter Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
+            public static EffectParameter Param_WorldViewIT = Effect.Parameters["WorldViewIT"];
+            public static EffectParameter Param_LightAmount = Effect.Parameters["LightAmount"];
+            public static EffectParameter Param_LightPositionWS = Effect.Parameters["LightPositionWS"];
+            public static EffectParameter Param_LightRadius = Effect.Parameters["LightRadius"];
+            public static EffectParameter Param_LightIntensity = Effect.Parameters["LightIntensity"];
+            public static EffectParameter Param_LightColor = Effect.Parameters["LightColor"];
+            public static EffectParameter Param_TiledListLength = Effect.Parameters["TiledListLength"];
+            public static EffectParameter Param_CameraPositionWS = Effect.Parameters["CameraPositionWS"];
+
+        }
+
+    }
+}

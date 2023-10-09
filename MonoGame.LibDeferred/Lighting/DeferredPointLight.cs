@@ -114,6 +114,19 @@ namespace DeferredEngine.Entities
 
         }
 
+        public Matrix GetViewProjection(CubeMapFace face)
+        {
+            return face switch
+            {
+                CubeMapFace.NegativeX => this.LightViewProjectionNegativeX,
+                CubeMapFace.NegativeY => this.LightViewProjectionNegativeY,
+                CubeMapFace.NegativeZ => this.LightViewProjectionNegativeZ,
+                CubeMapFace.PositiveX => this.LightViewProjectionPositiveX,
+                CubeMapFace.PositiveY => this.LightViewProjectionPositiveY,
+                CubeMapFace.PositiveZ => this.LightViewProjectionPositiveZ,
+                _ => Matrix.Identity,
+            };
+        }
         public virtual void ApplyShader(Matrix inverseView)
         {
 

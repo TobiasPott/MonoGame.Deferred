@@ -16,7 +16,7 @@ namespace DeferredEngine.Recources
         //debug
         public static bool d_drawlines = true;
         //Profiler
-        public static bool d_IsProfileEnabled = true;
+        public static bool d_IsProfileEnabled = false;
 
         //UI
         public static bool ui_IsUIEnabled = true;
@@ -31,7 +31,7 @@ namespace DeferredEngine.Recources
         public static float g_farplane = 500;
         public static bool g_cpusort = true;
         public static bool g_cpuculling = true;
-        public static bool g_batchbymaterial = true; //Note this must be activated before the application is started.
+        public static bool g_batchbymaterial = false; //Note this must be activated before the application is started.
 
         //Deferred Decals
         public static bool g_EnableDecals = true;

@@ -204,28 +204,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 {
                     // render the scene to all cubemap faces
                     cubeMapFace = (CubeMapFace)i;
-
-                    switch (cubeMapFace)
-                    {
-                        case CubeMapFace.NegativeX:
-                            lightViewProjection = light.LightViewProjectionNegativeX;
-                            break;
-                        case CubeMapFace.NegativeY:
-                            lightViewProjection = light.LightViewProjectionNegativeY;
-                            break;
-                        case CubeMapFace.NegativeZ:
-                            lightViewProjection = light.LightViewProjectionNegativeZ;
-                            break;
-                        case CubeMapFace.PositiveX:
-                            lightViewProjection = light.LightViewProjectionPositiveX;
-                            break;
-                        case CubeMapFace.PositiveY:
-                            lightViewProjection = light.LightViewProjectionPositiveY;
-                            break;
-                        case CubeMapFace.PositiveZ:
-                            lightViewProjection = light.LightViewProjectionPositiveZ;
-                            break;
-                    }
+                    lightViewProjection = light.GetViewProjection(cubeMapFace);
 
                     if (_boundingFrustumShadow != null) _boundingFrustumShadow.Matrix = lightViewProjection;
                     else _boundingFrustumShadow = new BoundingFrustum(lightViewProjection);
@@ -373,7 +352,18 @@ namespace DeferredEngine.Renderer.RenderModules
         }
 
         public override void Dispose()
-        { }
+        {
+
+        }
+    }
+}
+
+
+namespace DeferredEngine.Recources
+{
+    public static partial class Shaders
+    {
+
 
     }
 }
