@@ -1,4 +1,5 @@
-﻿using DeferredEngine.Renderer.Helper.HelperGeometry;
+﻿using DeferredEngine.Recources;
+using DeferredEngine.Renderer.Helper.HelperGeometry;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,6 +9,8 @@ namespace DeferredEngine.Renderer.RenderModules
 {
     public class HelperGeometryRenderModule
     {
+        private HelperGeometryEffectSetup _effectSetup = new HelperGeometryEffectSetup();
+
         private Matrix _viewProjection;
         public Matrix ViewProjection { set { _viewProjection = value; } }
 
@@ -29,29 +32,39 @@ namespace DeferredEngine.Renderer.RenderModules
 
         public void Draw()
         {
-            HelperGeometryManager.GetInstance().Draw(_graphicsDevice, _viewProjection);
+            HelperGeometryManager.GetInstance().Draw(_graphicsDevice, _viewProjection, _effectSetup);
         }
     }
-}
 
 
-namespace DeferredEngine.Recources
-{
-    public static partial class Shaders
+    public class HelperGeometryEffectSetup : EffectSetupBase
     {
 
         //Lines
-        public static class HelperGeometry
+        public Effect Effect { get; protected set; } //= ShaderGlobals.content.Load<Effect>("Shaders/Editor/LineEffect");
+
+        public EffectPass Pass_VertexColor { get; protected set; }// = Effect.Techniques["VertexColor"].Passes[0];
+        public EffectPass Pass_GlobalColor { get; protected set; }// = Effect.Techniques["GlobalColor"].Passes[0];
+
+        public EffectParameter Param_WorldViewProj { get; protected set; }// = Effect.Parameters["WorldViewProj"];
+        public EffectParameter Param_GlobalColor { get; protected set; } //= Effect.Parameters["GlobalColor"];
+
+
+        public HelperGeometryEffectSetup(string shaderPath = "Shaders/Editor/LineEffect")
+              : base(shaderPath)
         {
-            public static Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/Editor/LineEffect");
+            Effect = ShaderGlobals.content.Load<Effect>(shaderPath);
 
-            public static EffectPass Pass_VertexColor = Effect.Techniques["VertexColor"].Passes[0];
-            public static EffectPass Pass_GlobalColor = Effect.Techniques["GlobalColor"].Passes[0];
+            Pass_VertexColor = Effect.Techniques["VertexColor"].Passes[0];
+            Pass_GlobalColor = Effect.Techniques["GlobalColor"].Passes[0];
 
-            public static EffectParameter Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
-            public static EffectParameter Param_GlobalColor = Effect.Parameters["GlobalColor"];
+            Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
+            Param_GlobalColor = Effect.Parameters["GlobalColor"];
         }
 
+        public override void Dispose()
+        {
+            Effect?.Dispose();
+        }
     }
-
 }
