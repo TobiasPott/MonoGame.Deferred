@@ -113,7 +113,6 @@ namespace DeferredEngine.Recources
             Emissive = 3,
             Hologram = 1,
             ProjectHologram = 2,
-            SubsurfaceScattering = 4,
             ForwardShaded = 5,
         }
 

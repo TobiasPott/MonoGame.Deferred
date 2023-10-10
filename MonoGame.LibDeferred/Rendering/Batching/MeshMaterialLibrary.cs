@@ -281,7 +281,6 @@ namespace DeferredEngine.Renderer.Helper
             Hologram,
             IdRender,
             IdOutline,
-            SubsurfaceScattering,
             Forward,
         }
 
@@ -337,9 +336,6 @@ namespace DeferredEngine.Renderer.Helper
                     continue;
                 if (renderType != RenderType.Hologram && material.Type == MaterialEffect.MaterialTypes.Hologram)
                     continue;
-
-                if (renderType == RenderType.SubsurfaceScattering &&
-                    material.Type != MaterialEffect.MaterialTypes.SubsurfaceScattering) continue;
 
                 if (renderType == RenderType.Forward &&
                     material.Type != MaterialEffect.MaterialTypes.ForwardShaded) continue;
@@ -479,7 +475,6 @@ namespace DeferredEngine.Renderer.Helper
             if (renderType == RenderType.Opaque
                 || renderType == RenderType.ShadowLinear
                 || renderType == RenderType.ShadowOmnidirectional
-                || renderType == RenderType.SubsurfaceScattering
                 || renderType == RenderType.Forward)
             {
                 renderModule.Apply(localWorldMatrix, view, viewProjection);

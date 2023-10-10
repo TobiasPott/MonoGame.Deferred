@@ -108,16 +108,7 @@ namespace DeferredEngine.Renderer.RenderModules
                                                                                             ? RenderingSettings.m_defaultroughness
                                                                                             : material.Roughness);
                 Shaders.GBuffer.Param_Material_Metallic.SetValue(material.Metallic);
-
-                if (material.Type == MaterialEffect.MaterialTypes.SubsurfaceScattering)
-                {
-                    if (RenderingSettings.sdf_subsurface)
-                        Shaders.GBuffer.Param_Material_MaterialType.SetValue(material.MaterialTypeNumber);
-                    else
-                        Shaders.GBuffer.Param_Material_MaterialType.SetValue(0);
-                }
-                else
-                    Shaders.GBuffer.Param_Material_MaterialType.SetValue(material.MaterialTypeNumber);
+                Shaders.GBuffer.Param_Material_MaterialType.SetValue(material.MaterialTypeNumber);
             }
         }
 
