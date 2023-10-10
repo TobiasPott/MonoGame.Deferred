@@ -8,8 +8,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace DeferredEngine.Renderer.RenderModules.SDF
@@ -17,30 +15,29 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
     //Just a template
     public class DistanceFieldRenderModule : IDisposable
     {
-        private RenderTarget2D _atlasRenderTarget2D;
+        private static Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/SignedDistanceFields/volumeProjection");
 
-        private Effect Effect;
+        private static EffectPass Pass_Distance = Effect.Techniques["Distance"].Passes[0];
+        private static EffectPass Pass_Volume = Effect.Techniques["Volume"].Passes[0];
+        private static EffectPass Pass_GenerateSDF = Effect.Techniques["GenerateSDF"].Passes[0];
 
-        private EffectPass Pass_GenerateSDF;
-        private EffectPass Pass_Volume;
-        private EffectPass Pass_Distance;
+        private static EffectParameter Param_FrustumCorners = Effect.Parameters["FrustumCorners"];
+        private static EffectParameter Param_CameraPositon = Effect.Parameters["CameraPosition"];
+        private static EffectParameter Param_DepthMap = Effect.Parameters["DepthMap"];
 
-        private EffectParameter Param_FrustumCorners;
-        private EffectParameter Param_CameraPositon;
-        private EffectParameter Param_DepthMap;
-        private EffectParameter Param_MeshOffset;
+        private static EffectParameter Param_VolumeTex = Effect.Parameters["VolumeTex"];
+        private static EffectParameter Param_VolumeTexSize = Effect.Parameters["VolumeTexSize"];
+        private static EffectParameter Param_VolumeTexResolution = Effect.Parameters["VolumeTexResolution"];
 
-        private EffectParameter Param_VolumeTex;
-        private EffectParameter Param_VolumeTexSize;
-        private EffectParameter Param_VolumeTexResolution;
+        private static EffectParameter Param_InstanceInverseMatrix = Effect.Parameters["InstanceInverseMatrix"];
+        private static EffectParameter Param_InstanceScale = Effect.Parameters["InstanceScale"];
+        private static EffectParameter Param_InstanceSDFIndex = Effect.Parameters["InstanceSDFIndex"];
+        private static EffectParameter Param_InstancesCount = Effect.Parameters["InstancesCount"];
 
-        private EffectParameter Param_InstanceInverseMatrix;
-        private EffectParameter Param_InstanceScale;
-        private EffectParameter Param_InstanceSDFIndex;
-        private EffectParameter Param_InstancesCount;
+        private static EffectParameter Param_MeshOffset = Effect.Parameters["MeshOffset"];
+        private static EffectParameter Param_TriangleTexResolution = Effect.Parameters["TriangleTexResolution"];
+        private static EffectParameter Param_TriangleAmount = Effect.Parameters["TriangleAmount"];
 
-        private EffectParameter Param_TriangleTexResolution;
-        private EffectParameter Param_TriangleAmount;
 
 
         public PointLightRenderModule PointLightRenderModule;
@@ -61,6 +58,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
 
         private GraphicsDevice _graphicsDevice;
         private SpriteBatch _spriteBatch;
+        private RenderTarget2D _atlasRenderTarget2D;
 
         public Vector3[] FrustumCornersWorldSpace { set { Param_FrustumCorners.SetValue(value); } }
         public Vector3 CameraPosition { set { Param_CameraPositon.SetValue(value); } }
@@ -79,16 +77,16 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
 
         public void SetInstanceData(Matrix[] inverseMatrices, Vector3[] scales, float[] sdfIndices, int count)
         {
-            this.Param_InstanceInverseMatrix.SetValue(inverseMatrices);
-            this.Param_InstanceScale.SetValue(scales);
-            this.Param_InstanceSDFIndex.SetValue(sdfIndices);
-            this.Param_InstancesCount.SetValue((float)count);
+            Param_InstanceInverseMatrix.SetValue(inverseMatrices);
+            Param_InstanceScale.SetValue(scales);
+            Param_InstanceSDFIndex.SetValue(sdfIndices);
+            Param_InstancesCount.SetValue((float)count);
         }
         public void SetVolumeTexParams(Texture atlas, Vector3[] texSizes, Vector4[] texResolutions)
         {
-            this.Param_VolumeTex.SetValue(atlas);
-            this.Param_VolumeTexSize.SetValue(texSizes);
-            this.Param_VolumeTexResolution.SetValue(texResolutions);
+            Param_VolumeTex.SetValue(atlas);
+            Param_VolumeTexSize.SetValue(texSizes);
+            Param_VolumeTexResolution.SetValue(texResolutions);
         }
 
 
@@ -641,7 +639,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
             }
 
         }
-    
+
     }
 
 }
