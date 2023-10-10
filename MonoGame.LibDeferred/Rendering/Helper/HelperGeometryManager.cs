@@ -1,4 +1,5 @@
 ﻿using DeferredEngine.Entities;
+using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -25,10 +26,10 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
             return _instance;
         }
 
-        public void Draw(GraphicsDevice graphics, Matrix viewProjection, EffectParameter worldViewProjParam, EffectParameter globalColorParam, EffectPass vertexColorPass, EffectPass globalColorPass)
+        public void Draw(GraphicsDevice graphics, Matrix viewProjection)
         {
-            _lineHelperManager.Draw(graphics, viewProjection, worldViewProjParam, vertexColorPass);
-            _octahedronHelperManager.Draw(graphics, viewProjection, worldViewProjParam, globalColorParam, globalColorPass);
+            _lineHelperManager.Draw(graphics, viewProjection, Shaders.HelperGeometry.Param_WorldViewProj, Shaders.HelperGeometry.Pass_VertexColor);
+            _octahedronHelperManager.Draw(graphics, viewProjection, Shaders.HelperGeometry.Param_WorldViewProj, Shaders.HelperGeometry.Param_GlobalColor, Shaders.HelperGeometry.Pass_GlobalColor);
         }
 
         public void AddLineStartDir(Vector3 start, Vector3 dir, short timer, Color startColor, Color endColor)
