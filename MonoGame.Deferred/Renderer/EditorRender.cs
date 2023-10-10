@@ -157,13 +157,13 @@ namespace DeferredEngine.Renderer.RenderModules
                 Shaders.Billboard.Param_IdColor.SetValue(Color.Gray.ToVector3());
         }
 
-        public void DrawIds(MeshMaterialLibrary meshMaterialLibrary, EntitySceneGroup scene, EnvironmentProbe envSample,
+        public void DrawIds(DynamicMeshBatcher meshMaterialLibrary, EntitySceneGroup scene, EnvironmentProbe envSample,
             Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
         {
             _idAndOutlineRenderer.Draw(meshMaterialLibrary, scene, envSample, staticViewProjection, view, gizmoContext, _mouseMovement);
         }
 
-        public void DrawEditorElements(MeshMaterialLibrary meshMaterialLibrary, EntitySceneGroup scene, EnvironmentProbe envSample,
+        public void DrawEditorElements(DynamicMeshBatcher meshMaterialLibrary, EntitySceneGroup scene, EnvironmentProbe envSample,
             Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
         {
             _graphicsDevice.SetRenderTarget(null);

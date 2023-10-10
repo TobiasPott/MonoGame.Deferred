@@ -34,9 +34,8 @@ namespace DeferredEngine.Renderer.RenderModules
         protected override void Load(ContentManager content, string shaderPath = "Shaders/Shadow/ShadowMap")
         { }
 
-        public void Draw(MeshMaterialLibrary meshMaterialLibrary, EntitySceneGroup scene)
+        public void Draw(DynamicMeshBatcher meshMaterialLibrary, EntitySceneGroup scene)
         {
-            List<ModelEntity> entities = scene.Entities;
             List<DeferredPointLight> pointLights = scene.PointLights;
             List<DeferredDirectionalLight> dirLights = scene.DirectionalLights;
 
@@ -64,7 +63,7 @@ namespace DeferredEngine.Renderer.RenderModules
                     //Update if we didn't initialize yet or if we are dynamic
                     if (!light.StaticShadows || light.ShadowMap == null)
                     {
-                        CreateShadowCubeMap(light, light.ShadowResolution, meshMaterialLibrary, entities);
+                        CreateShadowCubeMap(light, light.ShadowResolution, meshMaterialLibrary);
 
                         light.HasChanged = false;
                     }
@@ -83,7 +82,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 {
                     RenderingStats.shadowMaps += 1;
 
-                    CreateShadowMapDirectionalLight(light, light.ShadowResolution, meshMaterialLibrary, entities);
+                    CreateShadowMapDirectionalLight(light, light.ShadowResolution, meshMaterialLibrary);
 
                     light.HasChanged = false;
 
@@ -101,11 +100,7 @@ namespace DeferredEngine.Renderer.RenderModules
         /// <summary>
         /// Create the shadow map for each cubemapside, then combine into one cubemap
         /// </summary>
-        /// <param name="light"></param>
-        /// <param name="size"></param>
-        /// <param name="meshMaterialLibrary"></param>
-        /// <param name="entities"></param>
-        private void CreateShadowCubeMap(DeferredPointLight light, int size, MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities)
+        private void CreateShadowCubeMap(DeferredPointLight light, int size, DynamicMeshBatcher meshMaterialLibrary)
         {
             //For VSM we need 2 channels, -> Vector2
             //todo: check if we need preserve contents
@@ -181,7 +176,7 @@ namespace DeferredEngine.Renderer.RenderModules
                     if (_boundingFrustumShadow != null) _boundingFrustumShadow.Matrix = lightViewProjection;
                     else _boundingFrustumShadow = new BoundingFrustum(lightViewProjection);
 
-                    meshMaterialLibrary.FrustumCulling(entities, _boundingFrustumShadow, true, light.Position);
+                    meshMaterialLibrary.FrustumCulling(_boundingFrustumShadow, true, light.Position);
 
                     // Rendering!
 
@@ -193,7 +188,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
                     _graphicsDevice.ScissorRectangle = new Rectangle(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
 
-                    meshMaterialLibrary.Draw(renderType: MeshMaterialLibrary.RenderType.ShadowOmnidirectional,
+                    meshMaterialLibrary.Draw(renderType: DynamicMeshBatcher.RenderType.ShadowOmnidirectional,
                         viewProjection: lightViewProjection,
                         lightViewPointChanged: true,
                         hasAnyObjectMoved: light.HasChanged,
@@ -214,7 +209,7 @@ namespace DeferredEngine.Renderer.RenderModules
                     if (_boundingFrustumShadow != null) _boundingFrustumShadow.Matrix = lightViewProjection;
                     else _boundingFrustumShadow = new BoundingFrustum(lightViewProjection);
 
-                    bool hasAnyObjectMoved = meshMaterialLibrary.FrustumCulling(entities, _boundingFrustumShadow, false, light.Position);
+                    bool hasAnyObjectMoved = meshMaterialLibrary.FrustumCulling(_boundingFrustumShadow, false, light.Position);
 
                     if (!hasAnyObjectMoved) continue;
 
@@ -231,7 +226,7 @@ namespace DeferredEngine.Renderer.RenderModules
                     //_graphicsDevice.Clear(ClearOptions.DepthBuffer, Color.White, 0, 0);
                     _graphicsDevice.ScissorRectangle = new Rectangle(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
 
-                    meshMaterialLibrary.Draw(renderType: MeshMaterialLibrary.RenderType.ShadowOmnidirectional,
+                    meshMaterialLibrary.Draw(renderType: DynamicMeshBatcher.RenderType.ShadowOmnidirectional,
                         viewProjection: lightViewProjection,
                         lightViewPointChanged: light.HasChanged,
                         hasAnyObjectMoved: true,
@@ -243,11 +238,7 @@ namespace DeferredEngine.Renderer.RenderModules
         /// <summary>
         /// Only one shadow map needed for a directional light
         /// </summary>
-        /// <param name="light"></param>
-        /// <param name="shadowResolution"></param>
-        /// <param name="meshMaterialLibrary"></param>
-        /// <param name="entities"></param>
-        private void CreateShadowMapDirectionalLight(DeferredDirectionalLight light, int shadowResolution, MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities)
+        private void CreateShadowMapDirectionalLight(DeferredDirectionalLight light, int shadowResolution, DynamicMeshBatcher meshMaterialLibrary)
         {
             //Create a renderTarget if we don't have one yet
             if (light.ShadowMap == null)
@@ -278,31 +269,31 @@ namespace DeferredEngine.Renderer.RenderModules
                 _graphicsDevice.SetRenderTarget(light.ShadowMap);
                 _graphicsDevice.Clear(ClearOptions.DepthBuffer, Color.White, 1, 0);
 
-                meshMaterialLibrary.FrustumCulling(entities, _boundingFrustumShadow, true, light.Position);
+                meshMaterialLibrary.FrustumCulling(_boundingFrustumShadow, true, light.Position);
 
                 // Rendering!
                 Shaders.ShadowMap.Param_FarClip.SetValue(light.ShadowDepth);
                 Shaders.ShadowMap.Param_SizeBias.SetValue(RenderingSettings.ShadowBias * 2048 / light.ShadowResolution);
 
-                meshMaterialLibrary.Draw(MeshMaterialLibrary.RenderType.ShadowLinear,
+                meshMaterialLibrary.Draw(DynamicMeshBatcher.RenderType.ShadowLinear,
                     light.LightViewProjection, light.HasChanged, false, false, 0, light.LightView, renderModule: this);
             }
             else
             {
                 _boundingFrustumShadow = new BoundingFrustum(light.LightViewProjection);
 
-                bool hasAnyObjectMoved = meshMaterialLibrary.FrustumCulling(entities: entities, boundingFrustrum: _boundingFrustumShadow, hasCameraChanged: false, cameraPosition: light.Position);
+                bool hasAnyObjectMoved = meshMaterialLibrary.FrustumCulling(boundingFrustrum: _boundingFrustumShadow, hasCameraChanged: false, cameraPosition: light.Position);
 
                 if (!hasAnyObjectMoved) return;
 
-                meshMaterialLibrary.FrustumCulling(entities: entities, boundingFrustrum: _boundingFrustumShadow, hasCameraChanged: true, cameraPosition: light.Position);
+                meshMaterialLibrary.FrustumCulling(boundingFrustrum: _boundingFrustumShadow, hasCameraChanged: true, cameraPosition: light.Position);
 
                 _graphicsDevice.SetRenderTarget(light.ShadowMap);
                 _graphicsDevice.Clear(ClearOptions.DepthBuffer, Color.White, 1, 0);
                 Shaders.ShadowMap.Param_FarClip.SetValue(light.ShadowDepth);
                 Shaders.ShadowMap.Param_SizeBias.SetValue(RenderingSettings.ShadowBias * 2048 / light.ShadowResolution);
 
-                meshMaterialLibrary.Draw(MeshMaterialLibrary.RenderType.ShadowLinear,
+                meshMaterialLibrary.Draw(DynamicMeshBatcher.RenderType.ShadowLinear,
                     light.LightViewProjection, false, true, false, 0, light.LightView, renderModule: this);
             }
 
@@ -337,9 +328,9 @@ namespace DeferredEngine.Renderer.RenderModules
             }
         }
 
-        public void SetMaterialSettings(MaterialEffect material, MeshMaterialLibrary.RenderType renderType)
+        public void SetMaterialSettings(MaterialEffect material, DynamicMeshBatcher.RenderType renderType)
         {
-            if (renderType == MeshMaterialLibrary.RenderType.ShadowOmnidirectional)
+            if (renderType == DynamicMeshBatcher.RenderType.ShadowOmnidirectional)
             {
                 //Check if we have a mask texture
                 if (material.HasMask)

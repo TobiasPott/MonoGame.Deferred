@@ -49,9 +49,8 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
             set { _effectSetup.Param_MeshOffset.SetValue(value); }
         }
 
-        public DistanceFieldRenderModule(ContentManager content, string shaderPath)
+        public DistanceFieldRenderModule()
         {
-            Load(content, shaderPath);
         }
 
         public void SetInstanceData(Matrix[] inverseMatrices, Vector3[] scales, float[] sdfIndices, int count)
@@ -69,10 +68,6 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
         }
 
 
-        public void Load(ContentManager content, string shaderPath)
-        {
-
-        }
         public void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         {
             _graphicsDevice = graphicsDevice;

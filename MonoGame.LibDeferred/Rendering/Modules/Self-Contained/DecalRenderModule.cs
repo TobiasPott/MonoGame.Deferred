@@ -1,16 +1,13 @@
 ﻿using DeferredEngine.Entities;
 using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
     public class DecalRenderModule : IDisposable
     {
-        private DecalEffectSetup _effectSetup = new DecalEffectSetup();
-
-
+        private readonly DecalEffectSetup _effectSetup = new DecalEffectSetup();
 
         private BlendState _decalBlend;
 
@@ -24,14 +21,9 @@ namespace DeferredEngine.Renderer.RenderModules
         public Texture2D DepthMap { set { _effectSetup.Param_DepthMap.SetValue(value); } }
 
 
-        public DecalRenderModule(ContentManager content, string shaderPath)
-        {
-            Load(content, shaderPath);
-        }
+        public DecalRenderModule()
+        { }
 
-        public void Load(ContentManager content, string shaderPath)
-        {
-        }
 
         public void Initialize(GraphicsDevice graphicsDevice)
         {

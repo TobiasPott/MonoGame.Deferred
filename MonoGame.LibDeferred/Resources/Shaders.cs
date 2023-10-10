@@ -140,7 +140,6 @@ namespace DeferredEngine.Recources
             public static readonly EffectParameter Param_TargetMap = Effect.Parameters["TargetMap"];
         }
 
-
         //DeferredCompose
         public static class DeferredCompose
         {

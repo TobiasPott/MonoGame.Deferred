@@ -1,6 +1,5 @@
 ﻿using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.PostProcessing
@@ -11,23 +10,17 @@ namespace DeferredEngine.Renderer.PostProcessing
 
         public Matrix CurrentViewToPreviousViewProjection;
 
-
-        public TemporalAAFx(ContentManager content, string shaderPath = "Shaders/TemporalAntiAliasing/TemporalAntiAliasing")
-        {
-            Load(content, shaderPath);
-        }
-
         public Vector3[] FrustumCorners { set { Shaders.TAA.Param_FrustumCorners.SetValue(value); } }
         public Vector2 Resolution { set { Shaders.TAA.Param_Resolution.SetValue(value); } }
         public RenderTarget2D DepthMap { set { Shaders.TAA.Param_DepthMap.SetValue(value); } }
 
-        public bool UseTonemap { get { return Shaders.TAA.Param_UseTonemap.GetValueBoolean(); } set { Shaders.TAA.  Param_UseTonemap.SetValue(value); } }
+        public bool UseTonemap { get { return Shaders.TAA.Param_UseTonemap.GetValueBoolean(); } set { Shaders.TAA.Param_UseTonemap.SetValue(value); } }
 
 
-        public void Load(ContentManager content, string shaderPath)
-        {
-        }
 
+
+        public TemporalAAFx()
+        { }
 
         public void Draw(RenderTarget2D currentFrame, RenderTarget2D previousFrames, RenderTarget2D output)
         {

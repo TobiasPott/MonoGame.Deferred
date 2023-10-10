@@ -50,7 +50,7 @@ namespace DeferredEngine.Logic
             List<DeferredDirectionalLight> dirLights,
             EnvironmentProbe envSample,
             EditorReceivedData data,
-            MeshMaterialLibrary meshMaterialLibrary)
+            DynamicMeshBatcher meshMaterialLibrary)
         {
             if (!RenderingSettings.e_IsEditorEnabled) return;
 

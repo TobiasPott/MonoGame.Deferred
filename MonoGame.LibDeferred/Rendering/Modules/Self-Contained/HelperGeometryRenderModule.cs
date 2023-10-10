@@ -9,7 +9,7 @@ namespace DeferredEngine.Renderer.RenderModules
 {
     public class HelperGeometryRenderModule
     {
-        private HelperGeometryEffectSetup _effectSetup = new HelperGeometryEffectSetup();
+        private readonly HelperGeometryEffectSetup _effectSetup = new HelperGeometryEffectSetup();
 
         private Matrix _viewProjection;
         public Matrix ViewProjection { set { _viewProjection = value; } }
@@ -17,14 +17,9 @@ namespace DeferredEngine.Renderer.RenderModules
 
         private GraphicsDevice _graphicsDevice;
 
-        public HelperGeometryRenderModule(ContentManager content, string shaderPath = "Shaders/Editor/LineEffect")
-        {
-            Load(content, shaderPath);
-        }
+        public HelperGeometryRenderModule()
+        { }
 
-        public void Load(ContentManager content, string shaderPath = "Shaders/Editor/LineEffect")
-        {
-        }
         public void Initialize(GraphicsDevice graphicsDevice)
         {
             _graphicsDevice = graphicsDevice;
@@ -41,13 +36,13 @@ namespace DeferredEngine.Renderer.RenderModules
     {
 
         //Lines
-        public Effect Effect { get; protected set; } //= ShaderGlobals.content.Load<Effect>("Shaders/Editor/LineEffect");
+        public Effect Effect { get; protected set; }
 
-        public EffectPass Pass_VertexColor { get; protected set; }// = Effect.Techniques["VertexColor"].Passes[0];
-        public EffectPass Pass_GlobalColor { get; protected set; }// = Effect.Techniques["GlobalColor"].Passes[0];
+        public EffectPass Pass_VertexColor { get; protected set; }
+        public EffectPass Pass_GlobalColor { get; protected set; }
 
-        public EffectParameter Param_WorldViewProj { get; protected set; }// = Effect.Parameters["WorldViewProj"];
-        public EffectParameter Param_GlobalColor { get; protected set; } //= Effect.Parameters["GlobalColor"];
+        public EffectParameter Param_WorldViewProj { get; protected set; }
+        public EffectParameter Param_GlobalColor { get; protected set; }
 
 
         public HelperGeometryEffectSetup(string shaderPath = "Shaders/Editor/LineEffect")

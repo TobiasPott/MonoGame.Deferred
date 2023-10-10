@@ -15,7 +15,7 @@ namespace DeferredEngine.Entities
         public readonly Vector3 BoundingBoxOffset;
 
 
-        public ModelEntity(ModelDefinition modelbb, MaterialEffect material, Vector3 position, Vector3 eulerAngles, Vector3 scale, MeshMaterialLibrary library = null)
+        public ModelEntity(ModelDefinition modelbb, MaterialEffect material, Vector3 position, Vector3 eulerAngles, Vector3 scale, DynamicMeshBatcher library = null)
             : base(position, eulerAngles, scale)
         {
             BoundingBox = modelbb.BoundingBox;
@@ -31,7 +31,7 @@ namespace DeferredEngine.Entities
             this.UpdateMatrices();
         }
 
-        public void RegisterInLibrary(MeshMaterialLibrary library)
+        public void RegisterInLibrary(DynamicMeshBatcher library)
         {
             library.Register(Material, ModelDefinition.Model, this);
         }
@@ -42,7 +42,7 @@ namespace DeferredEngine.Entities
             _inverseWorld = Matrix.Invert(Matrix.CreateTranslation(BoundingBoxOffset * Scale) * RotationMatrix * Matrix.CreateTranslation(Position));
             _worldHasChanged = false;
         }
-        public void Dispose(MeshMaterialLibrary library)
+        public void Dispose(DynamicMeshBatcher library)
         {
             library.DeleteFromRegistry(this);
         }

@@ -32,7 +32,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _billboardBuffer = billboardBuffer;
         }
 
-        public void Draw(MeshMaterialLibrary meshMat, EntitySceneGroup scene, EnvironmentProbe envSample,
+        public void Draw(DynamicMeshBatcher meshMat, EntitySceneGroup scene, EnvironmentProbe envSample,
             Matrix viewProjection, Matrix view, GizmoDrawContext drawContext, bool mouseMoved)
         {
             List<Decal> decals = scene.Decals;
@@ -55,7 +55,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 DrawOutlines(meshMat, viewProjection, mouseMoved, HoveredId, drawContext, mouseMoved);
         }
 
-        public void DrawIds(MeshMaterialLibrary meshMat,
+        public void DrawIds(DynamicMeshBatcher meshMat,
             List<Decal> decals,
             List<DeferredPointLight> pointLights,
             List<DeferredDirectionalLight> dirLights,
@@ -69,7 +69,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-            meshMat.Draw(MeshMaterialLibrary.RenderType.IdRender, viewProjection);
+            meshMat.Draw(DynamicMeshBatcher.RenderType.IdRender, viewProjection);
 
             //Now onto the billboards
             DrawBillboards(decals, pointLights, dirLights, envSample, viewProjection, view);
@@ -193,7 +193,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
         }
 
-        public void DrawOutlines(MeshMaterialLibrary meshMat, Matrix viewProjection, bool drawAll, int hoveredId, GizmoDrawContext gizmoContext, bool mouseMoved)
+        public void DrawOutlines(DynamicMeshBatcher meshMat, Matrix viewProjection, bool drawAll, int hoveredId, GizmoDrawContext gizmoContext, bool mouseMoved)
         {
             _graphicsDevice.SetRenderTarget(_idRenderTarget2D);
 
@@ -215,20 +215,20 @@ namespace DeferredEngine.Renderer.RenderModules
                 //UPdate the size of our outlines!
 
                 if (!drawAll)
-                    meshMat.Draw(MeshMaterialLibrary.RenderType.IdOutline, viewProjection, false, false,
+                    meshMat.Draw(DynamicMeshBatcher.RenderType.IdOutline, viewProjection, false, false,
                         false, selectedId);
 
                 Shaders.IdRender.Param_ColorId.SetValue(_selectedColor);
-                meshMat.Draw(MeshMaterialLibrary.RenderType.IdOutline, viewProjection, false, false,
+                meshMat.Draw(DynamicMeshBatcher.RenderType.IdOutline, viewProjection, false, false,
                     outlined: true, outlineId: selectedId);
             }
 
             if (selectedId != hoveredId && hoveredId != 0 && mouseMoved)
             {
-                if (!drawAll) meshMat.Draw(MeshMaterialLibrary.RenderType.IdOutline, viewProjection, false, false, false, hoveredId);
+                if (!drawAll) meshMat.Draw(DynamicMeshBatcher.RenderType.IdOutline, viewProjection, false, false, false, hoveredId);
 
                 Shaders.IdRender.Param_ColorId.SetValue(_hoveredColor);
-                meshMat.Draw(MeshMaterialLibrary.RenderType.IdOutline, viewProjection, false, false, outlined: true, outlineId: hoveredId);
+                meshMat.Draw(DynamicMeshBatcher.RenderType.IdOutline, viewProjection, false, false, outlined: true, outlineId: hoveredId);
             }
         }
 

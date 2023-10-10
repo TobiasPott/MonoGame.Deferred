@@ -26,7 +26,7 @@ namespace DeferredEngine.Logic
 
 
         //mesh library, holds all the meshes and their materials
-        public MeshMaterialLibrary MeshMaterialLibrary;
+        public DynamicMeshBatcher MeshMaterialLibrary;
 
         public readonly List<ModelEntity> BasicEntities = new List<ModelEntity>();
         public readonly List<Decal> Decals = new List<Decal>();
@@ -56,7 +56,7 @@ namespace DeferredEngine.Logic
         {
             _assets = assets;
 
-            MeshMaterialLibrary = new MeshMaterialLibrary(graphicsDevice);
+            MeshMaterialLibrary = new DynamicMeshBatcher(graphicsDevice);
 
             SetUpEditorScene(graphicsDevice);
         }

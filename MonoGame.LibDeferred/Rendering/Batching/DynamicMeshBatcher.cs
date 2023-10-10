@@ -5,14 +5,14 @@ using DeferredEngine.Renderer.RenderModules;
 using DeferredEngine.Renderer.RenderModules.Default;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Diagnostics;
 
 namespace DeferredEngine.Renderer.Helper
 {
     // Controls all Materials and Meshes, so they are ordered at render time.
-
-    public class MeshMaterialLibrary
+    public class DynamicMeshBatcher
     {
-        const int InitialLibrarySize = 10;
+        private const int InitialLibrarySize = 10;
         public MaterialBatch[] MaterialBatch = new MaterialBatch[InitialLibrarySize];
 
         public int[] MaterialLibPointer = new int[InitialLibrarySize];
@@ -21,13 +21,13 @@ namespace DeferredEngine.Renderer.Helper
 
         private bool _previousMode = RenderingSettings.g_cpuculling;
         private readonly BoundingSphere _defaultBoundingSphere;
-        private RasterizerState _shadowGenerationRasterizerState = new RasterizerState() { CullMode = CullMode.CullCounterClockwiseFace, ScissorTestEnable = true };
-        private DepthStencilState _depthWrite = new DepthStencilState() { DepthBufferEnable = true, DepthBufferWriteEnable = true, DepthBufferFunction = CompareFunction.Always };
-        
-        private FullscreenTriangleBuffer _fullscreenTarget;
-        private GraphicsDevice _graphicsDevice;
+        private readonly RasterizerState _shadowGenerationRasterizerState = new RasterizerState() { CullMode = CullMode.CullCounterClockwiseFace, ScissorTestEnable = true };
+        private readonly DepthStencilState _depthWrite = new DepthStencilState() { DepthBufferEnable = true, DepthBufferWriteEnable = true, DepthBufferFunction = CompareFunction.Always };
 
-        public MeshMaterialLibrary(GraphicsDevice graphics)
+        private readonly FullscreenTriangleBuffer _fullscreenTarget;
+        private readonly GraphicsDevice _graphicsDevice;
+
+        public DynamicMeshBatcher(GraphicsDevice graphics)
         {
             _graphicsDevice = graphics;
 
@@ -150,6 +150,8 @@ namespace DeferredEngine.Renderer.Helper
 
         private void DeleteFromRegistry(MaterialEffect mat, ModelMeshPart mesh, TransformableObject transform)
         {
+            // ToDo: @tpott: add index lookup of the mat argument to only delete from library of the correct material
+            Debug.WriteLine($"DeleteFromRegistry: Unused {mat} argument.");
             for (var i = 0; i < Index; i++)
             {
                 MaterialBatch matLib = MaterialBatch[i];
@@ -174,10 +176,7 @@ namespace DeferredEngine.Renderer.Helper
         /// <summary>
         /// Update whether or not Objects are in the viewFrustumEx and need to be rendered or not.
         /// </summary>
-        /// <param name="entities"></param>
-        /// <param name="boundingFrustrum"></param>
-        /// <param name="hasCameraChanged"></param>
-        public bool FrustumCulling(List<ModelEntity> entities, BoundingFrustum boundingFrustrum, bool hasCameraChanged, Vector3 cameraPosition)
+        public bool FrustumCulling(BoundingFrustum boundingFrustrum, bool hasCameraChanged, Vector3 cameraPosition)
         {
             //Check if the culling mode has changed
             if (_previousMode != RenderingSettings.g_cpuculling)
@@ -247,21 +246,10 @@ namespace DeferredEngine.Renderer.Helper
             return hasAnythingChanged;
         }
 
-
-        //public void ProcessPhysics(List<BasicEntity> entities)
-        //{
-        //    for (int index1 = 0; index1 < entities.Count; index1++)
-        //    {
-        //        //BasicEntity entity = entities[index1];
-        //        //entity.CheckPhysics();
-        //    }
-        //}
-
         /// <summary>
         /// Should be called when the frame is done.
         /// </summary>
-        /// <param name="entities"></param>
-        public void FrustumCullingFinalizeFrame(List<ModelEntity> entities)
+        public void FrustumCullingFinalizeFrame()
         {
 
             for (int index1 = 0; index1 < Index; index1++)

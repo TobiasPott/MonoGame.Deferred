@@ -156,12 +156,12 @@ namespace DeferredEngine.Renderer
             _environmentModule = new EnvironmentPipelineModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
 
             _bloomFx = new BloomFx(content);
-            _taaFx = new TemporalAAFx(content);
+            _taaFx = new TemporalAAFx();
             _colorGradingFx = new ColorGradingFx(content);
 
-            _decalRenderModule = new DecalRenderModule(content, "Shaders/Deferred/DeferredDecal");
-            _helperGeometryRenderModule = new HelperGeometryRenderModule(content, "Shaders/Editor/LineEffect");
-            _distanceFieldRenderModule = new DistanceFieldRenderModule(content, "Shaders/SignedDistanceFields/volumeProjection")
+            _decalRenderModule = new DecalRenderModule();
+            _helperGeometryRenderModule = new HelperGeometryRenderModule();
+            _distanceFieldRenderModule = new DistanceFieldRenderModule()
             { EnvironmentProbeRenderModule = _environmentModule, PointLightRenderModule = _pointLightRenderModule };
 
         }
@@ -245,7 +245,7 @@ namespace DeferredEngine.Renderer
         /// <param name="gizmoContext">The data passed from our editor logic</param>
         /// <param name="gameTime"></param>
         /// <returns></returns>
-        public EditorLogic.EditorReceivedData Draw(Camera camera, MeshMaterialLibrary meshMaterialLibrary, EntitySceneGroup scene, EnvironmentProbe envProbe, GizmoDrawContext gizmoContext, GameTime gameTime)
+        public EditorLogic.EditorReceivedData Draw(Camera camera, DynamicMeshBatcher meshMaterialLibrary, EntitySceneGroup scene, EnvironmentProbe envProbe, GizmoDrawContext gizmoContext, GameTime gameTime)
         {
             //Reset the stat counter, so we can count stats/information for this frame only
             ResetStats();
@@ -325,7 +325,7 @@ namespace DeferredEngine.Renderer
             RenderHelperGeometry();
 
             //Set up the frustum culling for the next frame
-            meshMaterialLibrary.FrustumCullingFinalizeFrame(scene.Entities);
+            meshMaterialLibrary.FrustumCullingFinalizeFrame();
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)
@@ -356,7 +356,7 @@ namespace DeferredEngine.Renderer
             return false;
         }
 
-        private void RenderEditorOverlays(GizmoDrawContext gizmoContext, MeshMaterialLibrary meshMaterialLibrary, EntitySceneGroup scene, EnvironmentProbe envSample)
+        private void RenderEditorOverlays(GizmoDrawContext gizmoContext, DynamicMeshBatcher meshMaterialLibrary, EntitySceneGroup scene, EnvironmentProbe envSample)
         {
             if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
             {
@@ -406,7 +406,7 @@ namespace DeferredEngine.Renderer
         /// <param name="farPlane"></param>
         /// <param name="gameTime"></param>
         /// <param name="camera"></param>
-        private void DrawCubeMap(Vector3 origin, MeshMaterialLibrary meshMaterialLibrary, EntitySceneGroup scene, float farPlane, GameTime gameTime, Camera camera)
+        private void DrawCubeMap(Vector3 origin, DynamicMeshBatcher meshMaterialLibrary, EntitySceneGroup scene, float farPlane, GameTime gameTime, Camera camera)
         {
             //If our cubemap is not yet initialized, create a new one
             if (_renderTargetCubeMap == null)
@@ -487,7 +487,7 @@ namespace DeferredEngine.Renderer
                 _lightAccumulationModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _view, _inverseView, _viewIT, _projection, _viewProjection, _inverseViewProjection);
 
                 //Base stuff, for description look in Draw()
-                meshMaterialLibrary.FrustumCulling(scene.Entities, _boundingFrustum, true, origin);
+                meshMaterialLibrary.FrustumCulling(_boundingFrustum, true, origin);
 
                 DrawGBuffer(meshMaterialLibrary);
 
@@ -636,7 +636,7 @@ namespace DeferredEngine.Renderer
         /// <param name="pointLights"></param>
         /// <param name="dirLights"></param>
         /// <param name="camera"></param>
-        private void DrawShadowMaps(MeshMaterialLibrary meshMaterialLibrary, EntitySceneGroup scene, Camera camera)
+        private void DrawShadowMaps(DynamicMeshBatcher meshMaterialLibrary, EntitySceneGroup scene, Camera camera)
         {
             //Don't render for the first frame, we need a guideline first
             if (_boundingFrustum == null) UpdateViewProjection(meshMaterialLibrary, scene.Entities, camera);
@@ -660,7 +660,7 @@ namespace DeferredEngine.Renderer
         /// <param name="entities"></param>
         /// <param name="camera"></param>
         private void UpdateViewProjection(
-            MeshMaterialLibrary meshMaterialLibrary,
+            DynamicMeshBatcher meshMaterialLibrary,
             List<ModelEntity> entities,
             Camera camera)
         {
@@ -734,7 +734,7 @@ namespace DeferredEngine.Renderer
             }
 
             //We need to update whether or not entities are in our boundingFrustum and then cull them or not!
-            meshMaterialLibrary.FrustumCulling(entities, _boundingFrustum, _viewProjectionHasChanged, camera.Position);
+            meshMaterialLibrary.FrustumCulling(_boundingFrustum, _viewProjectionHasChanged, camera.Position);
 
             _lightAccumulationModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _view, _inverseView, _viewIT, _projection, _viewProjection, _inverseViewProjection);
 
@@ -834,7 +834,7 @@ namespace DeferredEngine.Renderer
         /// Draw all our meshes to the GBuffer - albedo, normal, depth - for further computation
         /// </summary>
         /// <param name="meshMaterialLibrary"></param>
-        private void DrawGBuffer(MeshMaterialLibrary meshMaterialLibrary)
+        private void DrawGBuffer(DynamicMeshBatcher meshMaterialLibrary)
         {
             _gBufferModule.Draw(meshMaterialLibrary, _viewProjection, _view);
 
@@ -1105,7 +1105,7 @@ namespace DeferredEngine.Renderer
             FullscreenTarget.Draw(_graphicsDevice);
         }
 
-        private RenderTarget2D DrawForward(RenderTarget2D input, MeshMaterialLibrary meshMaterialLibrary, Camera camera, List<DeferredPointLight> pointLights)
+        private RenderTarget2D DrawForward(RenderTarget2D input, DynamicMeshBatcher meshMaterialLibrary, Camera camera, List<DeferredPointLight> pointLights)
         {
             if (!RenderingSettings.g_EnableForward) return input;
 

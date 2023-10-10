@@ -1,5 +1,4 @@
 ﻿using DeferredEngine.Entities;
-using DeferredEngine.Recources;
 using DeferredEngine.Renderer.RenderModules;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,8 +10,8 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
     {
         private static HelperGeometryManager _instance;
 
-        private LineHelperManager _lineHelperManager;
-        private OctahedronHelperManager _octahedronHelperManager;
+        private readonly LineHelperManager _lineHelperManager;
+        private readonly OctahedronHelperManager _octahedronHelperManager;
 
         public HelperGeometryManager()
         {
