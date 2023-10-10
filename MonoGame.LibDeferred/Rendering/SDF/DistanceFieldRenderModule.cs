@@ -49,7 +49,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
             set { _effectSetup.Param_MeshOffset.SetValue(value); }
         }
 
-        public DistanceFieldRenderModule(ContentManager content, string shaderPath = "Shaders/SignedDistanceFields/volumeProjection")
+        public DistanceFieldRenderModule(ContentManager content, string shaderPath)
         {
             Load(content, shaderPath);
         }
@@ -69,7 +69,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
         }
 
 
-        public void Load(ContentManager content, string shaderPath = "Shaders/SignedDistanceFields/volumeProjection")
+        public void Load(ContentManager content, string shaderPath)
         {
 
         }
@@ -127,7 +127,6 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
             PointLightRenderModule.SetInstanceData(_instanceInverseMatrixArray, _instanceScaleArray, _instanceSDFIndexArray, _instancesCount);
             EnvironmentProbeRenderModule.SetInstanceData(_instanceInverseMatrixArray, _instanceScaleArray, _instanceSDFIndexArray, _instancesCount);
         }
-
         private void UpdateAtlas(List<SignedDistanceField> sdfDefinitionsPassed)
         {
             if (sdfDefinitionsPassed.Count < 1) return;
@@ -205,9 +204,12 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
             EnvironmentProbeRenderModule.SetVolumeTexParams(_atlasRenderTarget2D, _volumeTexSizeArray, _volumeTexResolutionArray);
         }
 
-
-        public RenderTarget2D CreateSDFTexture(GraphicsDevice graphics, Texture2D triangleData, int xsteps, int ysteps, int zsteps, SignedDistanceField sdf, int trianglesLength)
+        public RenderTarget2D CreateSDFTexture(GraphicsDevice graphics, Texture2D triangleData, Vector3 steps, SignedDistanceField sdf, int trianglesLength)
         {
+            int xsteps = (int)steps.X;
+            int ysteps = (int)steps.Y;
+            int zsteps = (int)steps.Z;
+
             RenderTarget2D output = new RenderTarget2D(graphics, xsteps * zsteps, ysteps, false, SurfaceFormat.Single, DepthFormat.None);
 
             graphics.SetRenderTarget(output);
@@ -271,21 +273,23 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
                 if (modelDefinition is SdfModelDefinition)
                 {
                     SdfModelDefinition sdfModelDefinition = (SdfModelDefinition)modelDefinition;
-                    SignedDistanceField uncomputedSignedDistanceField = sdfModelDefinition.SDF;
+                    SignedDistanceField uncomputedSdf = sdfModelDefinition.SDF;
                     Model unprocessedModel = sdfModelDefinition.Model;
 
                     //Set to false so it won't get covered in future
-                    uncomputedSignedDistanceField.NeedsToBeGenerated = false;
-                    uncomputedSignedDistanceField.IsLoaded = false;
-                    uncomputedSignedDistanceField.SdfTexture?.Dispose();
+                    uncomputedSdf.NeedsToBeGenerated = false;
+                    uncomputedSdf.IsLoaded = false;
+                    uncomputedSdf.SdfTexture?.Dispose();
 
                     //First generate tris
                     GenerateTriangles(unprocessedModel, ref sdfModelDefinition.SdfTriangles);
                     SdfTriangle[] triangles = sdfModelDefinition.SdfTriangles;
 
-                    int xsteps = (int)uncomputedSignedDistanceField.TextureResolution.X;
-                    int ysteps = (int)uncomputedSignedDistanceField.TextureResolution.Y;
-                    int zsteps = (int)uncomputedSignedDistanceField.TextureResolution.Z;
+
+                    Vector3 steps = uncomputedSdf.TextureResolution.Xyz();
+                    int xsteps = (int)uncomputedSdf.TextureResolution.X;
+                    int ysteps = (int)uncomputedSdf.TextureResolution.Y;
+                    int zsteps = (int)uncomputedSdf.TextureResolution.Z;
 
                     Texture2D output;
 
@@ -315,8 +319,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
 
                         triangleData.SetData(data);
 
-                        output = distanceFieldRenderModule.CreateSDFTexture(graphics, triangleData, xsteps, ysteps,
-                            zsteps, uncomputedSignedDistanceField, triangles.Length);
+                        output = distanceFieldRenderModule.CreateSDFTexture(graphics, triangleData, steps, uncomputedSdf, triangles.Length);
 
                         stopwatch.Stop();
 
@@ -326,11 +329,11 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
 
                         output.GetData(texData);
 
-                        string path = uncomputedSignedDistanceField.TexturePath;
+                        string path = uncomputedSdf.TexturePath;
                         DataStream.SaveImageData(texData, xsteps, ysteps, zsteps, path);
-                        uncomputedSignedDistanceField.TextureResolution = new Vector4(xsteps, ysteps, zsteps, 0);
-                        uncomputedSignedDistanceField.SdfTexture = output;
-                        uncomputedSignedDistanceField.IsLoaded = true;
+                        uncomputedSdf.TextureResolution = new Vector4(xsteps, ysteps, zsteps, 0);
+                        uncomputedSdf.SdfTexture = output;
+                        uncomputedSdf.IsLoaded = true;
 
                     }
                     else
@@ -359,14 +362,14 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
                                     dataArray[index + 1] = new float[xsteps * ysteps * zsteps];
                                     threads[i] = Task.Factory.StartNew(() =>
                                     {
-                                        GenerateData(xsteps, ysteps, zsteps, uncomputedSignedDistanceField,
+                                        GenerateData(xsteps, ysteps, zsteps, uncomputedSdf,
                                             ref dataArray[i + 1], i + 1,
                                             numberOfThreads, triangles);
                                     });
                                 }
 
                                 dataArray[0] = data;
-                                GenerateData(xsteps, ysteps, zsteps, uncomputedSignedDistanceField, ref dataArray[0], 0,
+                                GenerateData(xsteps, ysteps, zsteps, uncomputedSdf, ref dataArray[0], 0,
                                     numberOfThreads, triangles);
 
                                 Task.WaitAll(threads);
@@ -392,7 +395,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
                             }
                             else
                             {
-                                GenerateData(xsteps, ysteps, zsteps, uncomputedSignedDistanceField, ref data, 0,
+                                GenerateData(xsteps, ysteps, zsteps, uncomputedSdf, ref data, 0,
                                     numberOfThreads, triangles);
                             }
 
@@ -401,12 +404,13 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
                             Debug.Write("\nSDF generated in " + stopwatch.ElapsedMilliseconds + "ms with " +
                                         RenderingSettings.sdf_threads + " thread(s)");
 
-                            string path = uncomputedSignedDistanceField.TexturePath;
+                            string path = uncomputedSdf.TexturePath;
                             DataStream.SaveImageData(data, xsteps, ysteps, zsteps, path);
                             output.SetData(data);
-                            uncomputedSignedDistanceField.TextureResolution = new Vector4(xsteps, ysteps, zsteps, 0);
-                            uncomputedSignedDistanceField.SdfTexture = output;
-                            uncomputedSignedDistanceField.IsLoaded = true;
+                            uncomputedSdf.TextureResolution = new Vector4(xsteps, ysteps, zsteps, 0);
+                            uncomputedSdf.SdfTexture = output;
+                            uncomputedSdf.IsLoaded = true;
+
                         });
                     }
                 }

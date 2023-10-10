@@ -483,7 +483,6 @@ namespace DeferredEngine.Renderer.Helper
             {
                 Shaders.Hologram.Param_World.SetValue(localWorldMatrix);
                 Shaders.Hologram.Param_WorldViewProj.SetValue(localWorldMatrix * viewProjection);
-
                 Shaders.Hologram.Effect.CurrentTechnique.Passes[0].Apply();
             }
             else if (renderType == RenderType.IdRender || renderType == RenderType.IdOutline)

@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.RenderModules.SDF
 {
-    public class DistanceFieldEffectSetup : IDisposable
+    public class DistanceFieldEffectSetup : EffectSetupBase
     {
         public Effect Effect { get; protected set; }
 
@@ -28,7 +28,8 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
         public EffectParameter Param_TriangleTexResolution { get; protected set; }
         public EffectParameter Param_TriangleAmount { get; protected set; }
 
-        public DistanceFieldEffectSetup(string shaderPath = "Shaders/SignedDistanceFields/volumeProjection")
+        public DistanceFieldEffectSetup(string shaderPath = "Shaders/SignedDistanceFields/volumeProjection") 
+            : base(shaderPath)
         {
             Effect = ShaderGlobals.content.Load<Effect>(shaderPath);
 
@@ -54,7 +55,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
             Param_TriangleAmount = Effect.Parameters["TriangleAmount"];
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             Effect?.Dispose();
         }
