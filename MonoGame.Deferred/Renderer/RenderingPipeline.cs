@@ -14,7 +14,6 @@ using MonoGame.Ext;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Windows.UI.Composition;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //    MAIN RENDER FUNCTIONS, TheKosmonaut 2016
@@ -47,7 +46,7 @@ namespace DeferredEngine.Renderer
         private DistanceFieldRenderModule _distanceFieldRenderModule;
 
 
-        private TemporalAntialiasingFx _taaFx;
+        private TemporalAAFx _taaFx;
         private BloomFx _bloomFx;
         private ColorGradingFx _colorGradingFx;
 
@@ -157,7 +156,7 @@ namespace DeferredEngine.Renderer
             _environmentModule = new EnvironmentPipelineModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
 
             _bloomFx = new BloomFx(content);
-            _taaFx = new TemporalAntialiasingFx(content);
+            _taaFx = new TemporalAAFx(content);
             _colorGradingFx = new ColorGradingFx(content);
 
             _decalRenderModule = new DecalRenderModule(content, "Shaders/Deferred/DeferredDecal");
@@ -185,6 +184,7 @@ namespace DeferredEngine.Renderer
 
 
             _gBufferModule.Initialize(graphicsDevice, _spriteBatch);
+            _gBufferModule.GBufferTarget = _gBufferTarget;
             _forwardModule.Initialize(graphicsDevice, _spriteBatch);
             _shadowMapModule.Initialize(graphicsDevice, _spriteBatch);
 
@@ -836,7 +836,7 @@ namespace DeferredEngine.Renderer
         /// <param name="meshMaterialLibrary"></param>
         private void DrawGBuffer(MeshMaterialLibrary meshMaterialLibrary)
         {
-            _gBufferModule.Draw(meshMaterialLibrary, _gBufferTarget.Bindings, _viewProjection, _view);
+            _gBufferModule.Draw(meshMaterialLibrary, _viewProjection, _view);
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)

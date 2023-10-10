@@ -10,8 +10,11 @@ namespace DeferredEngine.Renderer.RenderModules
     //Just a template
     public class GBufferPipelineModule : PipelineModule, IRenderModule
     {
+        private GBufferTarget _gBufferTarget;
         private FullscreenTriangleBuffer _fullscreenTarget;
 
+
+        public GBufferTarget GBufferTarget { set { _gBufferTarget = value; } }
         public float FarClip
         { set { Shaders.GBuffer.Param_FarClip.SetValue(value); } }
 
@@ -35,9 +38,9 @@ namespace DeferredEngine.Renderer.RenderModules
         }
 
 
-        public void Draw(MeshMaterialLibrary meshMaterialLibrary, RenderTargetBinding[] _renderTargetBinding, Matrix viewProjection, Matrix view)
+        public void Draw(MeshMaterialLibrary meshMaterialLibrary, Matrix viewProjection, Matrix view)
         {
-            _graphicsDevice.SetRenderTargets(_renderTargetBinding);
+            _graphicsDevice.SetRenderTargets(_gBufferTarget.Bindings);
 
             //Clear the GBuffer
             if (RenderingSettings.g_ClearGBuffer)
@@ -50,7 +53,6 @@ namespace DeferredEngine.Renderer.RenderModules
             }
 
             //Draw the Gbuffer!
-
             meshMaterialLibrary.Draw(renderType: MeshMaterialLibrary.RenderType.Opaque, viewProjection: viewProjection, lightViewPointChanged: true, view: view, renderModule: this);
 
         }
@@ -95,12 +97,10 @@ namespace DeferredEngine.Renderer.RenderModules
                         Shaders.GBuffer.Param_Material_DiffuseColor.SetValue(material.DiffuseColor);
                         Shaders.GBuffer.Param_Material_Metallic.SetValue(material.EmissiveStrength / 8);
                     }
-                    //* Math.Max(material.EmissiveStrength,1));
-                    //}
                     else
-                        //{
+                    {
                         Shaders.GBuffer.Param_Material_DiffuseColor.SetValue(material.DiffuseColor);
-                    //}
+                    }
                 }
 
                 if (!material.HasRoughnessMap)
