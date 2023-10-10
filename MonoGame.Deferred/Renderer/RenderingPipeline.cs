@@ -269,7 +269,7 @@ namespace DeferredEngine.Renderer
             }
 
             //Update our view projection matrices if the camera moved
-            UpdateViewProjection(meshMaterialLibrary, scene.Entities, camera);
+            UpdateViewProjection(meshMaterialLibrary, camera);
 
             //Draw our meshes to the G Buffer
             DrawGBuffer(meshMaterialLibrary);
@@ -588,7 +588,7 @@ namespace DeferredEngine.Renderer
                 for (var index = 0; index < dirLights.Count; index++)
                 {
                     DeferredDirectionalLight light = dirLights[index];
-                    if (light.ShadowMap != null) light.ShadowMap.Dispose();
+                    light.ShadowMap?.Dispose();
                     light.ShadowMap = null;
 
                     light.ShadowFiltering = (DeferredDirectionalLight.ShadowFilteringTypes)(_forceShadowFiltering - 1);
@@ -639,7 +639,7 @@ namespace DeferredEngine.Renderer
         private void DrawShadowMaps(DynamicMeshBatcher meshMaterialLibrary, EntitySceneGroup scene, Camera camera)
         {
             //Don't render for the first frame, we need a guideline first
-            if (_boundingFrustum == null) UpdateViewProjection(meshMaterialLibrary, scene.Entities, camera);
+            if (_boundingFrustum == null) UpdateViewProjection(meshMaterialLibrary, camera);
 
             _shadowMapModule.Draw(meshMaterialLibrary, scene);
 
@@ -656,12 +656,8 @@ namespace DeferredEngine.Renderer
         /// <summary>
         /// Create the projection matrices
         /// </summary>
-        /// <param name="meshMaterialLibrary"></param>
-        /// <param name="entities"></param>
-        /// <param name="camera"></param>
         private void UpdateViewProjection(
             DynamicMeshBatcher meshMaterialLibrary,
-            List<ModelEntity> entities,
             Camera camera)
         {
             _viewProjectionHasChanged = camera.HasChanged;

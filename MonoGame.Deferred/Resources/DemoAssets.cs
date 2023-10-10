@@ -84,25 +84,25 @@ namespace DeferredEngine.Recources
 
             //Default Materials
 
-            BaseMaterial = CreateMaterial(Color.Red, 0.5f, 0, type: MaterialEffect.MaterialTypes.Basic);
+            BaseMaterial = CreateMaterialEffect(Color.Red, 0.5f, 0, type: MaterialEffect.MaterialTypes.Basic);
 
-            BaseMaterialGray = CreateMaterial(Color.LightGray, 0.8f, 0, type: MaterialEffect.MaterialTypes.Basic);
+            BaseMaterialGray = CreateMaterialEffect(Color.LightGray, 0.8f, 0, type: MaterialEffect.MaterialTypes.Basic);
 
-            MetalRough03Material = CreateMaterial(Color.Silver, 0.2f, 1);
-            AlphaBlendRim = CreateMaterial(Color.Silver, 0.05f, 1, type: MaterialEffect.MaterialTypes.ForwardShaded);
-            MirrorMaterial = CreateMaterial(Color.White, 0.05f, 1);
+            MetalRough03Material = CreateMaterialEffect(Color.Silver, 0.2f, 1);
+            AlphaBlendRim = CreateMaterialEffect(Color.Silver, 0.05f, 1, type: MaterialEffect.MaterialTypes.ForwardShaded);
+            MirrorMaterial = CreateMaterialEffect(Color.White, 0.05f, 1);
 
-            HologramMaterial = CreateMaterial(Color.White, 0.2f, 1, null, null, null, null, null, null, MaterialEffect.MaterialTypes.Hologram, 1);
+            HologramMaterial = CreateMaterialEffect(Color.White, 0.2f, 1, null, null, null, null, null, null, MaterialEffect.MaterialTypes.Hologram, 1);
 
-            EmissiveMaterial = CreateMaterial(Color.White, 0.2f, 1, null, null, null, null, null, null, MaterialEffect.MaterialTypes.Emissive, 1.5f);
+            EmissiveMaterial = CreateMaterialEffect(Color.White, 0.2f, 1, null, null, null, null, null, null, MaterialEffect.MaterialTypes.Emissive, 1.5f);
 
-            EmissiveMaterial2 = CreateMaterial(Color.MonoGameOrange, 0.2f, 1, null, null, null, null, null, null, MaterialEffect.MaterialTypes.Emissive, 1.8f);
-            EmissiveMaterial3 = CreateMaterial(Color.Violet, 0.2f, 1, null, null, null, null, null, null, MaterialEffect.MaterialTypes.Emissive, 1.8f);
-            EmissiveMaterial4 = CreateMaterial(Color.LimeGreen, 0.2f, 1, null, null, null, null, null, null, MaterialEffect.MaterialTypes.Emissive, 1.8f);
+            EmissiveMaterial2 = CreateMaterialEffect(Color.MonoGameOrange, 0.2f, 1, null, null, null, null, null, null, MaterialEffect.MaterialTypes.Emissive, 1.8f);
+            EmissiveMaterial3 = CreateMaterialEffect(Color.Violet, 0.2f, 1, null, null, null, null, null, null, MaterialEffect.MaterialTypes.Emissive, 1.8f);
+            EmissiveMaterial4 = CreateMaterialEffect(Color.LimeGreen, 0.2f, 1, null, null, null, null, null, null, MaterialEffect.MaterialTypes.Emissive, 1.8f);
 
-            GoldMaterial = CreateMaterial(Color.Gold, 0.2f, 1);
+            GoldMaterial = CreateMaterialEffect(Color.Gold, 0.2f, 1);
 
-            SilverMaterial = CreateMaterial(Color.Silver, 0.05f, 1);
+            SilverMaterial = CreateMaterialEffect(Color.Silver, 0.05f, 1);
 
             //Shader stuff
 
@@ -113,7 +113,7 @@ namespace DeferredEngine.Recources
             StanfordDragon = new SdfModelDefinition(content, "Art/default/dragon_uv_smooth", graphicsDevice, false, SdfModelDefinition.DefaultSdfResolution * 1.4f);
             StanfordDragonLowpoly = new SdfModelDefinition(content, "Art/default/dragon_lowpoly", graphicsDevice, true, SdfModelDefinition.DefaultSdfResolution * 1.2f);
 
-            DragonLowPolyMaterial = CreateMaterial(Color.Red, 0.5f, 0, type: MaterialEffect.MaterialTypes.Basic, normalMap: content.Load<Texture2D>("Art/default/dragon_normal"));
+            DragonLowPolyMaterial = CreateMaterialEffect(Color.Red, 0.5f, 0, type: MaterialEffect.MaterialTypes.Basic, normalMap: content.Load<Texture2D>("Art/default/dragon_normal"));
 
             HelmetModel = content.Load<Model>("Art/default/daft_helmets");
             SkullModel = content.Load<Model>("Art/default/skull");
@@ -162,7 +162,7 @@ namespace DeferredEngine.Recources
 
             ProcessHelmets();
 
-            RockMaterial = CreateMaterial(Color.White, roughness: 1, metallic: 0,
+            RockMaterial = CreateMaterialEffect(Color.White, roughness: 1, metallic: 0,
                 albedoMap: content.Load<Texture2D>("Art/test/squarebricks-diffuse"),
                 normalMap: content.Load<Texture2D>("Art/test/squarebricks-normal"),
                 roughnessMap: null,
@@ -192,7 +192,7 @@ namespace DeferredEngine.Recources
         /// <param name="type">2: hologram, 3:emissive</param>
         /// <param name="emissiveStrength"></param>
         /// <returns></returns>
-        private MaterialEffect CreateMaterial(Color color, float roughness, float metallic, Texture2D albedoMap = null, Texture2D normalMap = null, Texture2D roughnessMap = null, Texture2D metallicMap = null, Texture2D mask = null, Texture2D displacementMap = null, MaterialEffect.MaterialTypes type = 0, float emissiveStrength = 0)
+        private static MaterialEffect CreateMaterialEffect(Color color, float roughness, float metallic, Texture2D albedoMap = null, Texture2D normalMap = null, Texture2D roughnessMap = null, Texture2D metallicMap = null, Texture2D mask = null, Texture2D displacementMap = null, MaterialEffect.MaterialTypes type = 0, float emissiveStrength = 0)
         {
             MaterialEffect mat = new MaterialEffect(Shaders.DeferredClear.Effect);
             mat.Initialize(color, roughness, metallic, albedoMap, normalMap, roughnessMap, metallicMap, mask, displacementMap, type, emissiveStrength);
@@ -260,33 +260,6 @@ namespace DeferredEngine.Recources
                     meshPart.Effect = matEffect;
                 }
             }
-        }
-
-        private Model ProcessModel(Model model)
-        {
-            foreach (ModelMesh mesh in model.Meshes)
-            {
-                foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                {
-                    MaterialEffect matEffect = new MaterialEffect(meshPart.Effect);
-
-                    if (!(meshPart.Effect is BasicEffect))
-                    {
-                        throw new Exception("Can only process models with basic effect");
-                    }
-
-                    BasicEffect oEffect = meshPart.Effect as BasicEffect;
-
-                    if (oEffect.TextureEnabled)
-                        matEffect.AlbedoMap = oEffect.Texture;
-
-                    matEffect.DiffuseColor = oEffect.DiffuseColor;
-
-                    meshPart.Effect = matEffect;
-                }
-            }
-
-            return model;
         }
 
         //Assign specific materials to submeshes
