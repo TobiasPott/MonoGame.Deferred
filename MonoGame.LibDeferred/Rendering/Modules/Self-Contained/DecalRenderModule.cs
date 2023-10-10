@@ -1,4 +1,5 @@
 ﻿using DeferredEngine.Entities;
+using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -7,17 +8,8 @@ namespace DeferredEngine.Renderer.RenderModules
 {
     public class DecalRenderModule : IDisposable
     {
-        private Effect Effect;
+        private DecalEffectSetup _effectSetup = new DecalEffectSetup();
 
-        private EffectParameter Param_DecalMap;
-        private EffectParameter Param_WorldView;
-        private EffectParameter Param_WorldViewProj;
-        private EffectParameter Param_InverseWorldView;
-        private EffectParameter Param_DepthMap;
-        private EffectParameter Param_FarClip;
-
-        private EffectPass Pass_Decal;
-        private EffectPass Pass_Outline;
 
 
         private BlendState _decalBlend;
@@ -28,28 +20,17 @@ namespace DeferredEngine.Renderer.RenderModules
 
         private GraphicsDevice _graphicsDevice;
 
-        public float FarClip { set { Param_FarClip.SetValue(value); } }
-        public Texture2D DepthMap { set { Param_DepthMap.SetValue(value); } }
+        public float FarClip { set { _effectSetup.Param_FarClip.SetValue(value); } }
+        public Texture2D DepthMap { set { _effectSetup.Param_DepthMap.SetValue(value); } }
 
 
-        public DecalRenderModule(ContentManager content, string shaderPath = "Shaders/Deferred/DeferredDecal")
+        public DecalRenderModule(ContentManager content, string shaderPath)
         {
             Load(content, shaderPath);
         }
 
-        public void Load(ContentManager content, string shaderPath = "Shaders/Deferred/DeferredDecal")
+        public void Load(ContentManager content, string shaderPath)
         {
-            Effect = content.Load<Effect>(shaderPath);
-
-            Pass_Decal = Effect.Techniques["Decal"].Passes[0];
-            Pass_Outline = Effect.Techniques["Outline"].Passes[0];
-
-            Param_DecalMap = Effect.Parameters["DecalMap"];
-            Param_WorldView = Effect.Parameters["WorldView"];
-            Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
-            Param_InverseWorldView = Effect.Parameters["InverseWorldView"];
-            Param_DepthMap = Effect.Parameters["DepthMap"];
-            Param_FarClip = Effect.Parameters["FarClip"];
         }
 
         public void Initialize(GraphicsDevice graphicsDevice)
@@ -143,12 +124,12 @@ namespace DeferredEngine.Renderer.RenderModules
 
                 Matrix localMatrix = decal.World;
 
-                Param_DecalMap.SetValue(decal.Texture);
-                Param_WorldView.SetValue(localMatrix * view);
-                Param_WorldViewProj.SetValue(localMatrix * viewProjection);
-                Param_InverseWorldView.SetValue(inverseView * decal.InverseWorld);
+                _effectSetup.Param_DecalMap.SetValue(decal.Texture);
+                _effectSetup.Param_WorldView.SetValue(localMatrix * view);
+                _effectSetup.Param_WorldViewProj.SetValue(localMatrix * viewProjection);
+                _effectSetup.Param_InverseWorldView.SetValue(inverseView * decal.InverseWorld);
 
-                Pass_Decal.Apply();
+                _effectSetup.Pass_Decal.Apply();
 
                 _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 12);
             }
@@ -161,13 +142,12 @@ namespace DeferredEngine.Renderer.RenderModules
 
             Matrix localMatrix = decal.World;
 
-            Param_WorldView.SetValue(localMatrix * view);
-            Param_WorldViewProj.SetValue(localMatrix * viewProjection);
+            _effectSetup.Param_WorldView.SetValue(localMatrix * view);
+            _effectSetup.Param_WorldViewProj.SetValue(localMatrix * viewProjection);
 
-            Pass_Outline.Apply();
+            _effectSetup.Pass_Outline.Apply();
 
             _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.LineList, 0, 0, 12);
-
         }
 
         public void Dispose()
@@ -175,8 +155,48 @@ namespace DeferredEngine.Renderer.RenderModules
             _vertexBuffer?.Dispose();
             _indexBufferCage?.Dispose();
             _indexBufferCube?.Dispose();
-            Effect?.Dispose();
             _decalBlend?.Dispose();
+            _effectSetup?.Dispose();
         }
     }
+
+    public class DecalEffectSetup : EffectSetupBase
+    {
+        public Effect Effect { get; protected set; }
+
+        public EffectPass Pass_Decal { get; protected set; }
+        public EffectPass Pass_Outline { get; protected set; }
+
+        public EffectParameter Param_DecalMap { get; protected set; }
+        public EffectParameter Param_WorldView { get; protected set; }
+        public EffectParameter Param_WorldViewProj { get; protected set; }
+        public EffectParameter Param_InverseWorldView { get; protected set; }
+        public EffectParameter Param_DepthMap { get; protected set; }
+        public EffectParameter Param_FarClip { get; protected set; }
+
+
+        public DecalEffectSetup(string shaderPath = "Shaders/Deferred/DeferredDecal")
+              : base(shaderPath)
+        {
+            Effect = ShaderGlobals.content.Load<Effect>(shaderPath);
+
+            Pass_Decal = Effect.Techniques["Decal"].Passes[0];
+            Pass_Outline = Effect.Techniques["Outline"].Passes[0];
+
+            Param_DecalMap = Effect.Parameters["DecalMap"];
+            Param_WorldView = Effect.Parameters["WorldView"];
+            Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
+            Param_InverseWorldView = Effect.Parameters["InverseWorldView"];
+            Param_DepthMap = Effect.Parameters["DepthMap"];
+            Param_FarClip = Effect.Parameters["FarClip"];
+        }
+
+
+
+        public override void Dispose()
+        {
+            Effect?.Dispose();
+        }
+    }
+
 }

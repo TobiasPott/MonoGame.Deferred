@@ -89,7 +89,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 _effectSetup.Param_Material_MaskMap.SetValue(material.HasMask ? material.Mask : null);
 
                 _effectSetup.Effect_GBuffer.CurrentTechnique = material.GetGBufferTechnique(_effectSetup);
-                
+
                 // -------------------------
                 // Set value base material parameters
                 if (!material.HasAlbedoMap)
