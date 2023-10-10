@@ -16,31 +16,8 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
     //Just a template
     public class DistanceFieldRenderModule : IDisposable
     {
-        //private static Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/SignedDistanceFields/volumeProjection");
 
-        //private static EffectPass Pass_Distance = Effect.Techniques["Distance"].Passes[0];
-        //private static EffectPass Pass_Volume = Effect.Techniques["Volume"].Passes[0];
-        //private static EffectPass Pass_GenerateSDF = Effect.Techniques["GenerateSDF"].Passes[0];
-
-        //private static EffectParameter Param_FrustumCorners = Effect.Parameters["FrustumCorners"];
-        //private static EffectParameter Param_CameraPositon = Effect.Parameters["CameraPosition"];
-        //private static EffectParameter Param_DepthMap = Effect.Parameters["DepthMap"];
-
-        //private static EffectParameter Param_VolumeTex = Effect.Parameters["VolumeTex"];
-        //private static EffectParameter Param_VolumeTexSize = Effect.Parameters["VolumeTexSize"];
-        //private static EffectParameter Param_VolumeTexResolution = Effect.Parameters["VolumeTexResolution"];
-
-        //private static EffectParameter Param_InstanceInverseMatrix = Effect.Parameters["InstanceInverseMatrix"];
-        //private static EffectParameter Param_InstanceScale = Effect.Parameters["InstanceScale"];
-        //private static EffectParameter Param_InstanceSDFIndex = Effect.Parameters["InstanceSDFIndex"];
-        //private static EffectParameter Param_InstancesCount = Effect.Parameters["InstancesCount"];
-
-        //private static EffectParameter Param_MeshOffset = Effect.Parameters["MeshOffset"];
-        //private static EffectParameter Param_TriangleTexResolution = Effect.Parameters["TriangleTexResolution"];
-        //private static EffectParameter Param_TriangleAmount = Effect.Parameters["TriangleAmount"];
-
-
-        private DistanceFieldEffectSetup _pipelineSetup = new DistanceFieldEffectSetup();
+        private DistanceFieldEffectSetup _effectSetup = new DistanceFieldEffectSetup();
 
         public PointLightRenderModule PointLightRenderModule;
         public EnvironmentPipelineModule EnvironmentProbeRenderModule;
@@ -62,14 +39,14 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
         private SpriteBatch _spriteBatch;
         private RenderTarget2D _atlasRenderTarget2D;
 
-        public Vector3[] FrustumCornersWorldSpace { set { _pipelineSetup.Param_FrustumCorners.SetValue(value); } }
-        public Vector3 CameraPosition { set { _pipelineSetup.Param_CameraPositon.SetValue(value); } }
-        public Texture2D DepthMap { set { _pipelineSetup.Param_DepthMap.SetValue(value); } }
+        public Vector3[] FrustumCornersWorldSpace { set { _effectSetup.Param_FrustumCorners.SetValue(value); } }
+        public Vector3 CameraPosition { set { _effectSetup.Param_CameraPositon.SetValue(value); } }
+        public Texture2D DepthMap { set { _effectSetup.Param_DepthMap.SetValue(value); } }
 
 
         public Vector3 MeshOffset
         {
-            set { _pipelineSetup.Param_MeshOffset.SetValue(value); }
+            set { _effectSetup.Param_MeshOffset.SetValue(value); }
         }
 
         public DistanceFieldRenderModule(ContentManager content, string shaderPath = "Shaders/SignedDistanceFields/volumeProjection")
@@ -79,16 +56,16 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
 
         public void SetInstanceData(Matrix[] inverseMatrices, Vector3[] scales, float[] sdfIndices, int count)
         {
-            _pipelineSetup.Param_InstanceInverseMatrix.SetValue(inverseMatrices);
-            _pipelineSetup.Param_InstanceScale.SetValue(scales);
-            _pipelineSetup.Param_InstanceSDFIndex.SetValue(sdfIndices);
-            _pipelineSetup.Param_InstancesCount.SetValue((float)count);
+            _effectSetup.Param_InstanceInverseMatrix.SetValue(inverseMatrices);
+            _effectSetup.Param_InstanceScale.SetValue(scales);
+            _effectSetup.Param_InstanceSDFIndex.SetValue(sdfIndices);
+            _effectSetup.Param_InstancesCount.SetValue((float)count);
         }
         public void SetVolumeTexParams(Texture atlas, Vector3[] texSizes, Vector4[] texResolutions)
         {
-            _pipelineSetup.Param_VolumeTex.SetValue(atlas);
-            _pipelineSetup.Param_VolumeTexSize.SetValue(texSizes);
-            _pipelineSetup.Param_VolumeTexResolution.SetValue(texResolutions);
+            _effectSetup.Param_VolumeTex.SetValue(atlas);
+            _effectSetup.Param_VolumeTexSize.SetValue(texSizes);
+            _effectSetup.Param_VolumeTexResolution.SetValue(texResolutions);
         }
 
 
@@ -104,7 +81,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
 
         public void Dispose()
         {
-            _pipelineSetup.Dispose();
+            _effectSetup.Dispose();
         }
 
         public void Draw(Camera camera)
@@ -112,9 +89,9 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
             CameraPosition = camera.Position;
 
             if (RenderingSettings.sdf_drawvolume)
-                _pipelineSetup.Pass_Volume.Apply();
+                _effectSetup.Pass_Volume.Apply();
             else
-                _pipelineSetup.Pass_Distance.Apply();
+                _effectSetup.Pass_Distance.Apply();
             FullscreenTriangleBuffer.Instance.Draw(_graphicsDevice);
         }
 
@@ -243,10 +220,10 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
 
             MeshOffset = sdf.Offset;
 
-            _pipelineSetup.Param_TriangleTexResolution.SetValue(new Vector2(triangleData.Width, triangleData.Height));
-            _pipelineSetup.Param_TriangleAmount.SetValue((float)trianglesLength);
+            _effectSetup.Param_TriangleTexResolution.SetValue(new Vector2(triangleData.Width, triangleData.Height));
+            _effectSetup.Param_TriangleAmount.SetValue((float)trianglesLength);
 
-            _pipelineSetup.Pass_GenerateSDF.Apply();
+            _effectSetup.Pass_GenerateSDF.Apply();
             FullscreenTriangleBuffer.Instance.Draw(graphics);
 
             _signedDistanceFieldDefinitionsCount = -1;
