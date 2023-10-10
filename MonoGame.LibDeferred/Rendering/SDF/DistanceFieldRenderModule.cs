@@ -12,33 +12,35 @@ using System.Diagnostics;
 
 namespace DeferredEngine.Renderer.RenderModules.SDF
 {
+
     //Just a template
     public class DistanceFieldRenderModule : IDisposable
     {
-        private static Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/SignedDistanceFields/volumeProjection");
+        //private static Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/SignedDistanceFields/volumeProjection");
 
-        private static EffectPass Pass_Distance = Effect.Techniques["Distance"].Passes[0];
-        private static EffectPass Pass_Volume = Effect.Techniques["Volume"].Passes[0];
-        private static EffectPass Pass_GenerateSDF = Effect.Techniques["GenerateSDF"].Passes[0];
+        //private static EffectPass Pass_Distance = Effect.Techniques["Distance"].Passes[0];
+        //private static EffectPass Pass_Volume = Effect.Techniques["Volume"].Passes[0];
+        //private static EffectPass Pass_GenerateSDF = Effect.Techniques["GenerateSDF"].Passes[0];
 
-        private static EffectParameter Param_FrustumCorners = Effect.Parameters["FrustumCorners"];
-        private static EffectParameter Param_CameraPositon = Effect.Parameters["CameraPosition"];
-        private static EffectParameter Param_DepthMap = Effect.Parameters["DepthMap"];
+        //private static EffectParameter Param_FrustumCorners = Effect.Parameters["FrustumCorners"];
+        //private static EffectParameter Param_CameraPositon = Effect.Parameters["CameraPosition"];
+        //private static EffectParameter Param_DepthMap = Effect.Parameters["DepthMap"];
 
-        private static EffectParameter Param_VolumeTex = Effect.Parameters["VolumeTex"];
-        private static EffectParameter Param_VolumeTexSize = Effect.Parameters["VolumeTexSize"];
-        private static EffectParameter Param_VolumeTexResolution = Effect.Parameters["VolumeTexResolution"];
+        //private static EffectParameter Param_VolumeTex = Effect.Parameters["VolumeTex"];
+        //private static EffectParameter Param_VolumeTexSize = Effect.Parameters["VolumeTexSize"];
+        //private static EffectParameter Param_VolumeTexResolution = Effect.Parameters["VolumeTexResolution"];
 
-        private static EffectParameter Param_InstanceInverseMatrix = Effect.Parameters["InstanceInverseMatrix"];
-        private static EffectParameter Param_InstanceScale = Effect.Parameters["InstanceScale"];
-        private static EffectParameter Param_InstanceSDFIndex = Effect.Parameters["InstanceSDFIndex"];
-        private static EffectParameter Param_InstancesCount = Effect.Parameters["InstancesCount"];
+        //private static EffectParameter Param_InstanceInverseMatrix = Effect.Parameters["InstanceInverseMatrix"];
+        //private static EffectParameter Param_InstanceScale = Effect.Parameters["InstanceScale"];
+        //private static EffectParameter Param_InstanceSDFIndex = Effect.Parameters["InstanceSDFIndex"];
+        //private static EffectParameter Param_InstancesCount = Effect.Parameters["InstancesCount"];
 
-        private static EffectParameter Param_MeshOffset = Effect.Parameters["MeshOffset"];
-        private static EffectParameter Param_TriangleTexResolution = Effect.Parameters["TriangleTexResolution"];
-        private static EffectParameter Param_TriangleAmount = Effect.Parameters["TriangleAmount"];
+        //private static EffectParameter Param_MeshOffset = Effect.Parameters["MeshOffset"];
+        //private static EffectParameter Param_TriangleTexResolution = Effect.Parameters["TriangleTexResolution"];
+        //private static EffectParameter Param_TriangleAmount = Effect.Parameters["TriangleAmount"];
 
 
+        private DistanceFieldEffectSetup _pipelineSetup = new DistanceFieldEffectSetup();
 
         public PointLightRenderModule PointLightRenderModule;
         public EnvironmentPipelineModule EnvironmentProbeRenderModule;
@@ -60,14 +62,14 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
         private SpriteBatch _spriteBatch;
         private RenderTarget2D _atlasRenderTarget2D;
 
-        public Vector3[] FrustumCornersWorldSpace { set { Param_FrustumCorners.SetValue(value); } }
-        public Vector3 CameraPosition { set { Param_CameraPositon.SetValue(value); } }
-        public Texture2D DepthMap { set { Param_DepthMap.SetValue(value); } }
+        public Vector3[] FrustumCornersWorldSpace { set { _pipelineSetup.Param_FrustumCorners.SetValue(value); } }
+        public Vector3 CameraPosition { set { _pipelineSetup.Param_CameraPositon.SetValue(value); } }
+        public Texture2D DepthMap { set { _pipelineSetup.Param_DepthMap.SetValue(value); } }
 
 
         public Vector3 MeshOffset
         {
-            set { Param_MeshOffset.SetValue(value); }
+            set { _pipelineSetup.Param_MeshOffset.SetValue(value); }
         }
 
         public DistanceFieldRenderModule(ContentManager content, string shaderPath = "Shaders/SignedDistanceFields/volumeProjection")
@@ -77,43 +79,22 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
 
         public void SetInstanceData(Matrix[] inverseMatrices, Vector3[] scales, float[] sdfIndices, int count)
         {
-            Param_InstanceInverseMatrix.SetValue(inverseMatrices);
-            Param_InstanceScale.SetValue(scales);
-            Param_InstanceSDFIndex.SetValue(sdfIndices);
-            Param_InstancesCount.SetValue((float)count);
+            _pipelineSetup.Param_InstanceInverseMatrix.SetValue(inverseMatrices);
+            _pipelineSetup.Param_InstanceScale.SetValue(scales);
+            _pipelineSetup.Param_InstanceSDFIndex.SetValue(sdfIndices);
+            _pipelineSetup.Param_InstancesCount.SetValue((float)count);
         }
         public void SetVolumeTexParams(Texture atlas, Vector3[] texSizes, Vector4[] texResolutions)
         {
-            Param_VolumeTex.SetValue(atlas);
-            Param_VolumeTexSize.SetValue(texSizes);
-            Param_VolumeTexResolution.SetValue(texResolutions);
+            _pipelineSetup.Param_VolumeTex.SetValue(atlas);
+            _pipelineSetup.Param_VolumeTexSize.SetValue(texSizes);
+            _pipelineSetup.Param_VolumeTexResolution.SetValue(texResolutions);
         }
 
 
         public void Load(ContentManager content, string shaderPath = "Shaders/SignedDistanceFields/volumeProjection")
         {
-            Effect = content.Load<Effect>(shaderPath);
 
-            Param_FrustumCorners = Effect.Parameters["FrustumCorners"];
-            Param_CameraPositon = Effect.Parameters["CameraPosition"];
-            Param_DepthMap = Effect.Parameters["DepthMap"];
-
-            Param_VolumeTex = Effect.Parameters["VolumeTex"];
-            Param_VolumeTexSize = Effect.Parameters["VolumeTexSize"];
-            Param_VolumeTexResolution = Effect.Parameters["VolumeTexResolution"];
-
-            Param_InstanceInverseMatrix = Effect.Parameters["InstanceInverseMatrix"];
-            Param_InstanceScale = Effect.Parameters["InstanceScale"];
-            Param_InstanceSDFIndex = Effect.Parameters["InstanceSDFIndex"];
-            Param_InstancesCount = Effect.Parameters["InstancesCount"];
-
-            Param_MeshOffset = Effect.Parameters["MeshOffset"];
-            Param_TriangleTexResolution = Effect.Parameters["TriangleTexResolution"];
-            Param_TriangleAmount = Effect.Parameters["TriangleAmount"];
-
-            Pass_Distance = Effect.Techniques["Distance"].Passes[0];
-            Pass_Volume = Effect.Techniques["Volume"].Passes[0];
-            Pass_GenerateSDF = Effect.Techniques["GenerateSDF"].Passes[0];
         }
         public void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         {
@@ -123,7 +104,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
 
         public void Dispose()
         {
-            Effect?.Dispose();
+            _pipelineSetup.Dispose();
         }
 
         public void Draw(Camera camera)
@@ -131,9 +112,9 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
             CameraPosition = camera.Position;
 
             if (RenderingSettings.sdf_drawvolume)
-                Pass_Volume.Apply();
+                _pipelineSetup.Pass_Volume.Apply();
             else
-                Pass_Distance.Apply();
+                _pipelineSetup.Pass_Distance.Apply();
             FullscreenTriangleBuffer.Instance.Draw(_graphicsDevice);
         }
 
@@ -262,10 +243,10 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
 
             MeshOffset = sdf.Offset;
 
-            Param_TriangleTexResolution.SetValue(new Vector2(triangleData.Width, triangleData.Height));
-            Param_TriangleAmount.SetValue((float)trianglesLength);
+            _pipelineSetup.Param_TriangleTexResolution.SetValue(new Vector2(triangleData.Width, triangleData.Height));
+            _pipelineSetup.Param_TriangleAmount.SetValue((float)trianglesLength);
 
-            Pass_GenerateSDF.Apply();
+            _pipelineSetup.Pass_GenerateSDF.Apply();
             FullscreenTriangleBuffer.Instance.Draw(graphics);
 
             _signedDistanceFieldDefinitionsCount = -1;
