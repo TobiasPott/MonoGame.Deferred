@@ -122,7 +122,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.Clear(ClearOptions.Target, new Color(0, 0, 0, 0.0f), 1, 0);
             _graphicsDevice.BlendState = _lightBlendState;
 
-            PointLightRenderModule.Draw(pointLights, cameraOrigin, gameTime, _boundingFrustum, _viewProjectionHasChanged, _view, _viewProjection, _inverseView, _graphicsDevice);
+            PointLightRenderModule.Draw(pointLights, cameraOrigin, gameTime, _boundingFrustum, _viewProjectionHasChanged, _view, _viewProjection);
             DrawDirectionalLights(dirLights, cameraOrigin);
 
             ////Performance Profiler

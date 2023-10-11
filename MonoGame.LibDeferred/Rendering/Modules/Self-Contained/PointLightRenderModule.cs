@@ -6,12 +6,14 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
 {
-    public class PointLightRenderModule : IDisposable
+    public class PointLightRenderModule : PipelineModule
     {
+
         private DepthStencilState _stencilCullPass1;
         private DepthStencilState _stencilCullPass2;
 
-        public PointLightRenderModule(ContentManager content)
+        public PointLightRenderModule(ContentManager content, string shaderPath)
+            : base(content, shaderPath)
         {
             _stencilCullPass1 = new DepthStencilState()
             {
@@ -50,6 +52,11 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
 
         }
 
+        protected override void Load(ContentManager content, string shaderPath)
+        {
+
+        }
+
         public void SetGBufferParams(GBufferTarget gBufferTarget)
         {
             Shaders.DeferredPointLight.Param_AlbedoMap.SetValue(gBufferTarget.Albedo);
@@ -77,9 +84,8 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
         /// <param name="pointLights"></param>
         /// <param name="cameraOrigin"></param>
         /// <param name="gameTime"></param>
-        public void Draw(List<DeferredPointLight> pointLights, Vector3 cameraOrigin, GameTime gameTime, BoundingFrustum _boundingFrustum, bool _viewProjectionHasChanged, Matrix _view, Matrix _viewProjection, Matrix _inverseView, GraphicsDevice _graphicsDevice)
+        public void Draw(List<DeferredPointLight> pointLights, Vector3 cameraOrigin, GameTime gameTime, BoundingFrustum _boundingFrustum, bool _viewProjectionHasChanged, Matrix _view, Matrix _viewProjection)
         {
-
             if (pointLights.Count < 1) return;
 
             ModelMeshPart meshpart = StaticAssets.Instance.SphereMeshPart;
@@ -95,16 +101,14 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
             for (int index = 0; index < pointLights.Count; index++)
             {
                 DeferredPointLight light = pointLights[index];
-                DrawPointLight(light, cameraOrigin, vertexOffset, startIndex, primitiveCount, _boundingFrustum, _viewProjectionHasChanged, _view, _viewProjection, _inverseView, _graphicsDevice);
+                DrawPointLight(light, cameraOrigin, vertexOffset, startIndex, primitiveCount, _boundingFrustum, _viewProjectionHasChanged, _view, _viewProjection);
             }
         }
 
         /// <summary>
         /// Draw each individual point lights
         /// </summary>
-        /// <param name="light"></param>
-        /// <param name="cameraOrigin"></param>
-        private void DrawPointLight(DeferredPointLight light, Vector3 cameraOrigin, int vertexOffset, int startIndex, int primitiveCount, BoundingFrustum _boundingFrustum, bool _viewProjectionHasChanged, Matrix _view, Matrix _viewProjection, Matrix _inverseView, GraphicsDevice _graphicsDevice)
+        private void DrawPointLight(DeferredPointLight light, Vector3 cameraOrigin, int vertexOffset, int startIndex, int primitiveCount, BoundingFrustum _boundingFrustum, bool _viewProjectionHasChanged, Matrix _view, Matrix _viewProjection)
         {
             if (!light.IsEnabled) return;
 
@@ -208,7 +212,7 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
             }
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             _stencilCullPass1?.Dispose();
             _stencilCullPass2?.Dispose();

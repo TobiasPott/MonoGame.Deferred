@@ -151,7 +151,7 @@ namespace DeferredEngine.Renderer
             _forwardModule = new ForwardPipelineModule(content, "Shaders/forward/forward");
             _shadowMapModule = new ShadowMapPipelineModule(content, "Shaders/Shadow/ShadowMap");
 
-            _pointLightRenderModule = new PointLightRenderModule(content);
+            _pointLightRenderModule = new PointLightRenderModule(content, "Shaders/Deferred/DeferredPointLight");
             _lightAccumulationModule = new LightAccumulationModule() { PointLightRenderModule = _pointLightRenderModule };
             _environmentModule = new EnvironmentPipelineModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
 
@@ -188,6 +188,7 @@ namespace DeferredEngine.Renderer
             _forwardModule.Initialize(graphicsDevice, _spriteBatch);
             _shadowMapModule.Initialize(graphicsDevice, _spriteBatch);
 
+            _pointLightRenderModule.Initialize(graphicsDevice, _spriteBatch);
             _environmentModule.Initialize(graphicsDevice, _spriteBatch);
             _distanceFieldRenderModule.Initialize(graphicsDevice, _spriteBatch);
 

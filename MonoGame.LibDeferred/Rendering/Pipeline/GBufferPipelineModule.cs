@@ -26,8 +26,8 @@ namespace DeferredEngine.Renderer.RenderModules
 
         public bool ClearGBuffer { get => RenderingSettings.g_ClearGBuffer; }
 
-        public GBufferPipelineModule(ContentManager content, string shaderPathGbuffer)
-            : base(content, shaderPathGbuffer)
+        public GBufferPipelineModule(ContentManager content, string shaderPath)
+            : base(content, shaderPath)
         { }
 
         public override void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
