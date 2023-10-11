@@ -28,7 +28,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
         public EffectParameter Param_TriangleTexResolution { get; protected set; }
         public EffectParameter Param_TriangleAmount { get; protected set; }
 
-        public DistanceFieldEffectSetup(string shaderPath = "Shaders/SignedDistanceFields/volumeProjection") 
+        public DistanceFieldEffectSetup(string shaderPath = "Shaders/SDF/volumeProjection") 
             : base(shaderPath)
         {
             Effect = ShaderGlobals.content.Load<Effect>(shaderPath);
