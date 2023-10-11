@@ -533,12 +533,6 @@
 /processorParam:DebugMode=Auto
 /build:Shaders/Editor/LineEffect.fx
 
-#begin Shaders/Emissive/EmissiveDraw.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:Shaders/Emissive/EmissiveDraw.fx
-
 #begin Shaders/Forward/Forward.fx
 /importer:EffectImporter
 /processor:EffectProcessor
@@ -665,23 +659,11 @@
 /processorParam:DebugMode=Auto
 /build:Shaders/SignedDistanceFields/volumeProjection.fx
 
-#begin Shaders/SubsurfaceScattering/SubsurfaceScattering.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:Shaders/SubsurfaceScattering/SubsurfaceScattering.fx
-
 #begin Shaders/TemporalAntiAliasing/TemporalAntiAliasing.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
 /build:Shaders/TemporalAntiAliasing/TemporalAntiAliasing.fx
-
-#begin Shaders/Test/TexFilter.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:Shaders/Test/TexFilter.fx
 
 #begin Sponza/sponza_sdf_5.sdff
 /copy:Sponza/sponza_sdf_5.sdff

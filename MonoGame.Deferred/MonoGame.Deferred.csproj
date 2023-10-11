@@ -11,6 +11,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
     <Nullable>disable</Nullable>
+    <StartupObject>DeferredEngine.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Entities\**" />
