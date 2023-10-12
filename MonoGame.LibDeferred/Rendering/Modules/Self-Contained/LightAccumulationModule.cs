@@ -125,15 +125,6 @@ namespace DeferredEngine.Renderer.RenderModules
             PointLightRenderModule.Draw(pointLights, cameraOrigin, gameTime, _boundingFrustum, _viewProjectionHasChanged, _view, _viewProjection);
             DrawDirectionalLights(dirLights, cameraOrigin);
 
-            ////Performance Profiler
-            //if (GameSettings.d_profiler)
-            //{
-            //    long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-            //    GameStats.d_profileDrawLights = performanceCurrentTime - _performancePreviousTime;
-
-            //    _performancePreviousTime = performanceCurrentTime;
-            //}
-
         }
         private void ReconstructDepth()
         {

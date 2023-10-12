@@ -14,6 +14,8 @@ namespace DeferredEngine.Renderer
         public RenderTargetBinding[] Bindings => _bindings;
         public RenderTarget2D[] RenderTargets => _renderTargets;
 
+        public RenderTarget2D this[int index] => _renderTargets[index];
+        
         public MultiRenderTargetBase(GraphicsDevice graphicsDevice, int width, int height, int numberOfTargets)
         {
             _graphicsDevice = graphicsDevice;
