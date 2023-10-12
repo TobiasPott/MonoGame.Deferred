@@ -98,32 +98,18 @@ namespace DeferredEngine.Renderer
 
         private DynamicMultiRenderTarget _auxTargets;
 
-        private RenderTarget2D _renderTargetDecalOffTarget;
-
-        //private RenderTarget2D _renderTargetComposed;
-        //private RenderTarget2D _renderTargetBloom;
-
         //TAA
-        private RenderTarget2D _renderTargetTAA_1;
-        private RenderTarget2D _renderTargetTAA_2;
-
-        private RenderTarget2D _renderTargetSSR;
-
-        private RenderTarget2D _renderTargetSSAOEffect;
-
         private RenderTarget2D _renderTargetScreenSpaceEffectUpsampleBlurVertical;
         private RenderTarget2D _renderTargetScreenSpaceEffectUpsampleBlurHorizontal;
         private RenderTarget2D _renderTargetScreenSpaceEffectBlurFinal;
-
-        //private RenderTarget2D _renderTargetOutput;
 
         private RenderTarget2D _currentOutput;
 
         //Cubemap
         private RenderTargetCube _renderTargetCubeMap;
 
-        //Performance Profiler
 
+        //Performance Profiler
         private readonly Stopwatch _performanceTimer = new Stopwatch();
         private long _performancePreviousTime;
 
@@ -172,6 +158,13 @@ namespace DeferredEngine.Renderer
         public const int AUX_COMPOSE = 1;
         public const int AUX_DECAL = 2;
         public const int AUX_BLOOM = 3;
+
+        public const int SSFX_TAA_1 = 4;
+        public const int SSFX_TAA_2 = 5;
+
+        public const int SSFX_REFLECTION = 6;
+        public const int SSFX_AMBIENTOCCLUSION = 7;
+
         /// <summary>
         /// Initialize all our rendermodules and helpers. Done after the Load() function
         /// </summary>
@@ -182,23 +175,12 @@ namespace DeferredEngine.Renderer
             _spriteBatch = new SpriteBatch(graphicsDevice);
 
             RenderTarget2DDefinition[] auxDefinitions = new RenderTarget2DDefinition[]
-            { 
-                // Output
-                new RenderTarget2DDefinition(false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents),
-                // Compose
-                new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents),
-                // Decal
-                new RenderTarget2DDefinition(false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents),
-                // Bloom
-                new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents)
-            /*
-            RenderTarget2DDefinition decalOffTarget = new RenderTarget2DDefinition(false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
-            RenderTarget2DDefinition composedTarget = new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
-            RenderTarget2DDefinition bloomTarget = new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-            RenderTarget2DDefinition ssUpsampleBlurVerticalTarget = new RenderTarget2DDefinition(false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-            RenderTarget2DDefinition outputTarget = new RenderTarget2DDefinition(false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-            */
-        };
+            {
+                MultiRenderTargetBase.Aux_Output, MultiRenderTargetBase.Aux_Compose,
+                MultiRenderTargetBase.Aux_Decal, MultiRenderTargetBase.SSFx_Bloom,
+                MultiRenderTargetBase.SSFx_TAA_First, MultiRenderTargetBase.SSFx_TAA_Second,
+                MultiRenderTargetBase.SSFx_Reflections, MultiRenderTargetBase.SSFx_AmbientOcclusion
+            };
 
             _gBufferTarget = new GBufferTarget(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
             _lightingBufferTarget = new LightingBufferTarget(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
@@ -638,7 +620,7 @@ namespace DeferredEngine.Renderer
 
             if (_ssr != RenderingSettings.g_SSReflection)
             {
-                _graphicsDevice.SetRenderTarget(_renderTargetSSR);
+                _graphicsDevice.SetRenderTarget(_auxTargets[SSFX_REFLECTION]);
                 _graphicsDevice.Clear(new Color(0, 0, 0, 0.0f));
 
                 _ssr = RenderingSettings.g_SSReflection;
@@ -879,9 +861,9 @@ namespace DeferredEngine.Renderer
             if (!RenderingSettings.g_EnableDecals) return;
 
             //First copy albedo to decal offtarget
-            DrawTextureToScreenToFullScreen(_gBufferTarget.Albedo, BlendState.Opaque, _renderTargetDecalOffTarget);
+            DrawTextureToScreenToFullScreen(_gBufferTarget.Albedo, BlendState.Opaque, _auxTargets[AUX_DECAL]);
 
-            DrawTextureToScreenToFullScreen(_renderTargetDecalOffTarget, BlendState.Opaque, _gBufferTarget.Albedo);
+            DrawTextureToScreenToFullScreen(_auxTargets[AUX_DECAL], BlendState.Opaque, _gBufferTarget.Albedo);
 
             _decalRenderModule.Draw(decals, _view, _viewProjection, _inverseView);
         }
@@ -896,14 +878,14 @@ namespace DeferredEngine.Renderer
 
 
             //todo: more samples for more reflective materials!
-            _graphicsDevice.SetRenderTarget(_renderTargetSSR);
+            _graphicsDevice.SetRenderTarget(_auxTargets[SSFX_REFLECTION]);
             _graphicsDevice.BlendState = BlendState.Opaque;
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
             if (RenderingSettings.g_taa)
             {
-                Shaders.SSR.Param_TargetMap.SetValue(_temporalAAOffFrame ? _renderTargetTAA_1 : _renderTargetTAA_2);
+                Shaders.SSR.Param_TargetMap.SetValue(_temporalAAOffFrame ? _auxTargets[SSFX_TAA_1] : _auxTargets[SSFX_TAA_2]);
             }
             else
             {
@@ -936,7 +918,7 @@ namespace DeferredEngine.Renderer
         {
             if (!RenderingSettings.g_ssao_draw) return;
 
-            _graphicsDevice.SetRenderTarget(_renderTargetSSAOEffect);
+            _graphicsDevice.SetRenderTarget(_auxTargets[SSFX_AMBIENTOCCLUSION]);
 
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
@@ -1025,7 +1007,7 @@ namespace DeferredEngine.Renderer
 
             _spriteBatch.Begin(0, BlendState.Additive);
 
-            _spriteBatch.Draw(_renderTargetSSAOEffect, RenderingSettings.g_ScreenRect, Color.Red);
+            _spriteBatch.Draw(_auxTargets[SSFX_AMBIENTOCCLUSION], RenderingSettings.g_ScreenRect, Color.Red);
 
             _spriteBatch.End();
 
@@ -1168,10 +1150,10 @@ namespace DeferredEngine.Renderer
         {
             if (!RenderingSettings.g_taa) return input;
 
-            RenderTarget2D output = _temporalAAOffFrame ? _renderTargetTAA_2 : _renderTargetTAA_1;
+            RenderTarget2D output = !_temporalAAOffFrame ? _auxTargets[SSFX_TAA_1] : _auxTargets[SSFX_TAA_2];
             _taaFx.UseTonemap = RenderingSettings.g_taa_tonemapped;
             _taaFx.CurrentViewToPreviousViewProjection = _currentViewToPreviousViewProjection;
-            _taaFx.Draw(currentFrame: input, previousFrames: _temporalAAOffFrame ? _renderTargetTAA_1 : _renderTargetTAA_2, output: output);
+            _taaFx.Draw(currentFrame: input, previousFrames: _temporalAAOffFrame ? _auxTargets[SSFX_TAA_1] : _auxTargets[SSFX_TAA_2], output: output);
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)
@@ -1220,13 +1202,13 @@ namespace DeferredEngine.Renderer
                     DrawTextureToScreenToFullScreen(_lightingBufferTarget.Volume);
                     break;
                 case RenderModes.SSAO:
-                    DrawTextureToScreenToFullScreen(_renderTargetSSAOEffect);
+                    DrawTextureToScreenToFullScreen(_auxTargets[SSFX_AMBIENTOCCLUSION]);
                     break;
                 case RenderModes.SSBlur:
                     DrawTextureToScreenToFullScreen(_renderTargetScreenSpaceEffectBlurFinal);
                     break;
                 case RenderModes.SSR:
-                    DrawTextureToScreenToFullScreen(_renderTargetSSR);
+                    DrawTextureToScreenToFullScreen(_auxTargets[SSFX_REFLECTION]);
                     break;
                 case RenderModes.HDR:
                     DrawTextureToScreenToFullScreen(currentInput);
@@ -1299,17 +1281,10 @@ namespace DeferredEngine.Renderer
             //Discard first
             if (_renderTargetScreenSpaceEffectUpsampleBlurVertical != null)
             {
-                _renderTargetDecalOffTarget.Dispose();
-
                 _renderTargetScreenSpaceEffectUpsampleBlurVertical.Dispose();
 
                 if (!onlyEssentials)
                 {
-                    _renderTargetTAA_1.Dispose();
-                    _renderTargetTAA_2.Dispose();
-                    _renderTargetSSAOEffect.Dispose();
-                    _renderTargetSSR.Dispose();
-
                     _renderTargetScreenSpaceEffectUpsampleBlurHorizontal.Dispose();
                     _renderTargetScreenSpaceEffectBlurFinal.Dispose();
                 }
@@ -1326,7 +1301,6 @@ namespace DeferredEngine.Renderer
             _gBufferTarget.Resize(targetWidth, targetHeight);
             _lightingBufferTarget.Resize(targetWidth, targetHeight);
 
-            _renderTargetDecalOffTarget = new RenderTarget2D(_graphicsDevice, targetWidth, targetHeight, false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
             Shaders.DeferredPointLight.Param_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
 
             _renderTargetScreenSpaceEffectUpsampleBlurVertical = new RenderTarget2D(_graphicsDevice, targetWidth,
@@ -1336,17 +1310,10 @@ namespace DeferredEngine.Renderer
             {
                 _editorRender.SetUpRenderTarget(width, height);
 
-                _renderTargetTAA_1 = new RenderTarget2D(_graphicsDevice, targetWidth, targetHeight, false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-                _renderTargetTAA_2 = new RenderTarget2D(_graphicsDevice, targetWidth, targetHeight, false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-
                 _taaFx.Resolution = new Vector2(targetWidth, targetHeight);
 
                 Shaders.SSR.Param_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
                 _environmentModule.Resolution = new Vector2(targetWidth, targetHeight);
-                _renderTargetSSR = new RenderTarget2D(_graphicsDevice, targetWidth,
-                    targetHeight, false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-
-
 
                 ///////////////////
                 // HALF RESOLUTION
@@ -1359,12 +1326,6 @@ namespace DeferredEngine.Renderer
 
                 _renderTargetScreenSpaceEffectBlurFinal = new RenderTarget2D(_graphicsDevice, targetWidth,
                     targetHeight, false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
-
-                _renderTargetSSAOEffect = new RenderTarget2D(_graphicsDevice, targetWidth,
-                    targetHeight, false, SurfaceFormat.HalfSingle, DepthFormat.None, 0,
-                    RenderTargetUsage.DiscardContents);
-
-
 
                 Shaders.SSAO.Param_InverseResolution.SetValue(new Vector2(1.0f / targetWidth,
                     1.0f / targetHeight));
@@ -1392,7 +1353,7 @@ namespace DeferredEngine.Renderer
             Shaders.DeferredDirectionalLight.Param_SSShadowMap.SetValue(onlyEssentials ? _renderTargetScreenSpaceEffectUpsampleBlurVertical : _renderTargetScreenSpaceEffectBlurFinal);
 
             _environmentModule.SetGBufferParams(_gBufferTarget);
-            _environmentModule.SSRMap = _renderTargetSSR;
+            _environmentModule.SSRMap = _auxTargets[SSFX_REFLECTION];
 
             _decalRenderModule.DepthMap = _gBufferTarget.Depth;
 
@@ -1408,7 +1369,7 @@ namespace DeferredEngine.Renderer
 
             Shaders.SSAO.Param_NormalMap.SetValue(_gBufferTarget.Normal);
             Shaders.SSAO.Param_DepthMap.SetValue(_gBufferTarget.Depth);
-            Shaders.SSAO.Param_SSAOMap.SetValue(_renderTargetSSAOEffect);
+            Shaders.SSAO.Param_SSAOMap.SetValue(_auxTargets[SSFX_AMBIENTOCCLUSION]);
 
             Shaders.SSR.Param_NormalMap.SetValue(_gBufferTarget.Normal);
             Shaders.SSR.Param_DepthMap.SetValue(_gBufferTarget.Depth);
@@ -1481,14 +1442,11 @@ namespace DeferredEngine.Renderer
             _environmentModule?.Dispose();
             _gBufferModule?.Dispose();
             _decalRenderModule?.Dispose();
+
             _gBufferTarget?.Dispose();
             _lightingBufferTarget?.Dispose();
             _auxTargets?.Dispose();
-            _renderTargetDecalOffTarget?.Dispose();
-            _renderTargetTAA_1?.Dispose();
-            _renderTargetTAA_2?.Dispose();
-            _renderTargetSSR?.Dispose();
-            _renderTargetSSAOEffect?.Dispose();
+
             _renderTargetScreenSpaceEffectUpsampleBlurVertical?.Dispose();
             _renderTargetScreenSpaceEffectUpsampleBlurHorizontal?.Dispose();
             _currentOutput?.Dispose();
