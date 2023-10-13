@@ -52,7 +52,7 @@ namespace DeferredEngine.Recources.Helper
             }
             finally
             {
-                if(fs!=null) fs.Dispose();
+                fs?.Dispose();
             }
         }
 
@@ -66,10 +66,7 @@ namespace DeferredEngine.Recources.Helper
         /// <returns></returns>
         public static bool LoadFromFile(GraphicsDevice graphics, string path, out int zdepth, out Texture2D output)
         {
-            float[] data;
-            int width;
-            int height;
-            if (LoadFloatArray(path, out data, out width, out height, out zdepth))
+            if (LoadFloatArray(path, out float[] data, out int width, out int height, out zdepth))
             {
                 output = new Texture2D(graphics, width * zdepth, height, false, SurfaceFormat.Single);
                 output.SetData(data);
@@ -118,7 +115,7 @@ namespace DeferredEngine.Recources.Helper
             }
             finally
             {
-                if (fs != null) fs.Dispose();
+                fs?.Dispose();
             }
             return true;
         }
@@ -159,7 +156,7 @@ namespace DeferredEngine.Recources.Helper
             }
             finally
             {
-                if (fs != null) fs.Dispose();
+                fs?.Dispose();
             }
         }
 
@@ -195,7 +192,7 @@ namespace DeferredEngine.Recources.Helper
             }
             finally
             {
-                if (fs != null) fs.Dispose();
+                fs?.Dispose();
             }
             return true;
         }

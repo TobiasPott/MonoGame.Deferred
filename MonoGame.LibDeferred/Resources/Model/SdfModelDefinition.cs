@@ -19,8 +19,10 @@ namespace DeferredEngine.Recources
             : base(content, assetpath)
         {
             //SDF
-            SDF = new SignedDistanceField(content.RootDirectory + "/" + assetpath + ".sdft", graphics, BoundingBox, BoundingBoxOffset, sdfResolution);
-            SDF.IsUsed = UseSDF;
+            SDF = new SignedDistanceField(content.RootDirectory + "/" + assetpath + ".sdft", graphics, BoundingBox, BoundingBoxOffset, sdfResolution)
+            {
+                IsUsed = UseSDF
+            };
         }
 
         public SdfModelDefinition(Model model, BoundingBox box)

@@ -14,9 +14,9 @@ namespace DeferredEngine.Renderer.Helper
         private ModelMeshPart _mesh;
         private BoundingSphere _meshBoundingSphere;
 
-        private List<TransformableObject> _transforms = new List<TransformableObject>(InitialLibrarySize);
-        private List<Vector3> _worldBoundingCenters = new List<Vector3>(InitialLibrarySize);
-        private List<bool> _rendered = new List<bool>(InitialLibrarySize);
+        private readonly List<TransformableObject> _transforms = new List<TransformableObject>(InitialLibrarySize);
+        private readonly List<Vector3> _worldBoundingCenters = new List<Vector3>(InitialLibrarySize);
+        private readonly List<bool> _rendered = new(InitialLibrarySize);
 
         public int Count => _transforms.Count;
 

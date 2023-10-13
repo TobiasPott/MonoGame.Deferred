@@ -94,13 +94,13 @@ namespace HelperSuite.GUI
 
                 if (ToggleObject != null)
                 {
-                    if (ToggleField != null) ToggleField.SetValue(ToggleObject, Toggle, BindingFlags.Public, null, null);
-                    if (ToggleProperty != null) ToggleProperty.SetValue(ToggleObject, Toggle);
+                    ToggleField?.SetValue(ToggleObject, Toggle, BindingFlags.Public, null, null);
+                    ToggleProperty?.SetValue(ToggleObject, Toggle);
                 }
                 else
                 {
-                    if (ToggleField != null) ToggleField.SetValue(null, Toggle, BindingFlags.Static | BindingFlags.Public, null, null);
-                    if (ToggleProperty != null) ToggleProperty.SetValue(null, Toggle);
+                    ToggleField?.SetValue(null, Toggle, BindingFlags.Static | BindingFlags.Public, null, null);
+                    ToggleProperty?.SetValue(null, Toggle);
                 }
 
             }

@@ -43,10 +43,8 @@ namespace DeferredEngine.Recources
         
         protected void CreateBoundingBox(Model model)
         {
-            Vector3[] vertices;
-            int[] indices;
-            GeometryDataExtractor.GetVerticesAndIndicesFromModel(model, out vertices, out indices);
-
+            // ToDo: Implement method without indices output to reduce garbage consumption
+            GeometryDataExtractor.GetVerticesAndIndicesFromModel(model, out Vector3[] vertices, out _);
             BoundingBox = BoundingBox.CreateFromPoints(vertices);
         }
 

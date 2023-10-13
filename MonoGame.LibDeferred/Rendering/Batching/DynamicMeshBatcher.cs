@@ -63,8 +63,7 @@ namespace DeferredEngine.Renderer.Helper
 
             if (mat == null)
             {
-                var effect = mesh.Effect as MaterialEffect;
-                if (effect != null)
+                if (mesh.Effect is MaterialEffect effect)
                 {
                     mat = effect;
                 }

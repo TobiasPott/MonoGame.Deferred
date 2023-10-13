@@ -242,6 +242,7 @@ namespace DeferredEngine.Renderer
         //  MAIN DRAW FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
         /// <summary>
         /// Main Draw function of the game
         /// </summary>
@@ -368,8 +369,7 @@ namespace DeferredEngine.Renderer
         {
             if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
             {
-                if (RenderingSettings.e_drawoutlines)
-                    DrawTextureToScreenToFullScreen(_editorRender.GetOutlines(), BlendState.Additive);
+                if (RenderingSettings.e_drawoutlines) DrawTextureToScreenToFullScreen(_editorRender.GetOutlines(), BlendState.Additive);
 
                 _editorRender.DrawEditorElements(meshMaterialLibrary, scene, envSample, _staticViewProjection, _view, gizmoContext);
 
