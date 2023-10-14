@@ -27,7 +27,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoGame.GUI\MonoGame.GUI.csproj" />
-    <ProjectReference Include="..\MonoGame.HelperSuite\MonoGame.GUI.csproj" />
     <ProjectReference Include="..\MonoGame.LibDeferred\MonoGame.LibDeferred.csproj" />
   </ItemGroup>
   <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
