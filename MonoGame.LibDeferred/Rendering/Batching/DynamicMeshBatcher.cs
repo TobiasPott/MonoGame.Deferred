@@ -15,7 +15,7 @@ namespace DeferredEngine.Renderer.Helper
         private const int InitialLibrarySize = 64;
         private List<MaterialBatch> MaterialBatch = new List<MaterialBatch>(InitialLibrarySize);
 
-        private bool _previousMode = RenderingSettings.g_CpuCulling;
+        private bool _cpuCulling = RenderingSettings.g_CpuCulling;
 
         private readonly BoundingSphere _defaultBoundingSphere;
         private readonly RasterizerState _shadowGenerationRasterizerState = new RasterizerState() { CullMode = CullMode.CullCounterClockwiseFace, ScissorTestEnable = true };
@@ -138,30 +138,28 @@ namespace DeferredEngine.Renderer.Helper
         public bool FrustumCulling(BoundingFrustum boundingFrustrum, bool hasCameraChanged, Vector3 cameraPosition)
         {
             //Check if the culling mode has changed
-            if (_previousMode != RenderingSettings.g_CpuCulling)
+            if (_cpuCulling != RenderingSettings.g_CpuCulling)
             {
-                if (_previousMode)
+                if (_cpuCulling)
                 {
                     //If we previously did cull and now don't we need to set all the submeshes to render
-                    for (int index1 = 0; index1 < MaterialBatch.Count; index1++)
+                    for (int matBatchIndex = 0; matBatchIndex < MaterialBatch.Count; matBatchIndex++)
                     {
-                        MaterialBatch matLib = MaterialBatch[index1];
+                        MaterialBatch matLib = MaterialBatch[matBatchIndex];
                         for (int i = 0; i < matLib.Count; i++)
                         {
                             MeshBatch meshLib = matLib.GetMeshLibrary()[i];
                             for (int j = 0; j < meshLib.Rendered.Count; j++)
-                            {
-                                meshLib.Rendered[j] = _previousMode;
-                            }
+                                meshLib.Rendered[j] = true;
                         }
                     }
 
                 }
-                _previousMode = RenderingSettings.g_CpuCulling;
+                _cpuCulling = RenderingSettings.g_CpuCulling;
 
             }
-
             if (!RenderingSettings.g_CpuCulling) return false;
+
 
             bool hasAnythingChanged = false;
             //Ok we applied the transformation to all the entities, now update the submesh boundingboxes!
@@ -235,9 +233,9 @@ namespace DeferredEngine.Renderer.Helper
                     return;
             }
 
-            for (int index1 = 0; index1 < MaterialBatch.Count; index1++)
+            for (int matBatchIndex = 0; matBatchIndex < MaterialBatch.Count; matBatchIndex++)
             {
-                MaterialBatch matLib = MaterialBatch[index1];
+                MaterialBatch matLib = MaterialBatch[matBatchIndex];
 
                 if (matLib.Count < 1) continue;
 
@@ -252,11 +250,7 @@ namespace DeferredEngine.Renderer.Helper
                     for (int j = 0; j < meshLib.Rendered.Count; j++)
                     {
                         if (meshLib.Rendered[j])
-                        {
                             isUsed = true;
-                            //if (meshLib.GetWorldMatrices()[j].HasChanged)
-                            //    hasAnyObjectMoved = true;
-                        }
 
                         if (isUsed)// && hasAnyObjectMoved)
                             break;
@@ -271,21 +265,22 @@ namespace DeferredEngine.Renderer.Helper
                 MaterialEffect material = matLib.GetMaterial();
 
                 //Check if alpha or opaque!
-                if (renderType == RenderType.Opaque && material.IsTransparent || renderType == RenderType.Opaque && material.Type == MaterialEffect.MaterialTypes.ForwardShaded) continue;
+                if (renderType == RenderType.Opaque && material.IsTransparent 
+                    || renderType == RenderType.Opaque && material.Type == MaterialEffect.MaterialTypes.ForwardShaded) 
+                    continue;
                 if (renderType == RenderType.Hologram && material.Type != MaterialEffect.MaterialTypes.Hologram)
                     continue;
                 if (renderType != RenderType.Hologram && material.Type == MaterialEffect.MaterialTypes.Hologram)
                     continue;
 
                 if (renderType == RenderType.Forward &&
-                    material.Type != MaterialEffect.MaterialTypes.ForwardShaded) continue;
+                    material.Type != MaterialEffect.MaterialTypes.ForwardShaded) 
+                    continue;
 
                 //Set the appropriate Shader for the material
-                if (renderType == RenderType.ShadowOmnidirectional || renderType == RenderType.ShadowLinear)
-                {
-                    if (!material.HasShadow)
-                        continue;
-                }
+                if ((renderType == RenderType.ShadowOmnidirectional || renderType == RenderType.ShadowLinear) 
+                    && !material.HasShadow)
+                    continue;
 
                 if (renderType != RenderType.IdRender && renderType != RenderType.IdOutline)
                     RenderingStats.MaterialDraws++;
@@ -297,25 +292,25 @@ namespace DeferredEngine.Renderer.Helper
                     MeshBatch meshLib = matLib.GetMeshLibrary()[i];
 
                     //Initialize the mesh VB and IB
-                    _graphicsDevice.SetVertexBuffer(meshLib.GetMesh().VertexBuffer);
-                    _graphicsDevice.Indices = (meshLib.GetMesh().IndexBuffer);
-                    int primitiveCount = meshLib.GetMesh().PrimitiveCount;
-                    int vertexOffset = meshLib.GetMesh().VertexOffset;
+                    ModelMeshPart mesh = meshLib.GetMesh();
+                    _graphicsDevice.SetVertexBuffer(mesh.VertexBuffer);
+                    _graphicsDevice.Indices = mesh.IndexBuffer;
+                    int primitiveCount = mesh.PrimitiveCount;
+                    int vertexOffset = mesh.VertexOffset;
                     //int vCount = meshLib.GetMesh().NumVertices;
-                    int startIndex = meshLib.GetMesh().StartIndex;
+                    int startIndex = mesh.StartIndex;
 
                     //Now draw the local meshes!
                     for (int index = 0; index < meshLib.Count; index++)
                     {
-
                         //If it's set to "not rendered" skip
-                        //if (!meshLib.GetWorldMatrices()[index].Rendered) continue;
-                        if (!meshLib.Rendered[index]) continue;
+                        if (!meshLib.Rendered[index]) 
+                            continue;
 
                         Matrix localWorldMatrix = meshLib.GetTransforms()[index].World;
 
-                        if (!ApplyShaders(renderType, renderModule, localWorldMatrix, view, viewProjection, meshLib, index,
-                                outlineId, outlined)) continue;
+                        if (!ApplyShaders(renderType, renderModule, localWorldMatrix, view, viewProjection, meshLib, index, outlineId, outlined)) 
+                            continue;
                         RenderingStats.MeshDraws++;
 
                         _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, vertexOffset, startIndex,
@@ -410,24 +405,24 @@ namespace DeferredEngine.Renderer.Helper
             }
         }
 
-        private bool ApplyShaders(RenderType renderType, IRenderModule renderModule, Matrix localWorldMatrix, Matrix? view, Matrix viewProjection, MeshBatch meshLib, int index, int outlineId, bool outlined)
+        private bool ApplyShaders(RenderType renderType, IRenderModule renderModule, Matrix localToWorldMatrix, Matrix? view, Matrix viewProjection, MeshBatch meshLib, int index, int outlineId, bool outlined)
         {
             if (renderType == RenderType.Opaque
                 || renderType == RenderType.ShadowLinear
                 || renderType == RenderType.ShadowOmnidirectional
                 || renderType == RenderType.Forward)
             {
-                renderModule.Apply(localWorldMatrix, view, viewProjection);
+                renderModule.Apply(localToWorldMatrix, view, viewProjection);
             }
             else if (renderType == RenderType.Hologram)
             {
-                HologramEffectSetup.Instance.Param_World.SetValue(localWorldMatrix);
-                HologramEffectSetup.Instance.Param_WorldViewProj.SetValue(localWorldMatrix * viewProjection);
+                HologramEffectSetup.Instance.Param_World.SetValue(localToWorldMatrix);
+                HologramEffectSetup.Instance.Param_WorldViewProj.SetValue(localToWorldMatrix * viewProjection);
                 HologramEffectSetup.Instance.Effect.CurrentTechnique.Passes[0].Apply();
             }
             else if (renderType == RenderType.IdRender || renderType == RenderType.IdOutline)
             {
-                Shaders.IdRender.Param_WorldViewProj.SetValue(localWorldMatrix * viewProjection);
+                Shaders.IdRender.Param_WorldViewProj.SetValue(localToWorldMatrix * viewProjection);
 
                 int id = meshLib.GetTransforms()[index].Id;
 
@@ -445,7 +440,7 @@ namespace DeferredEngine.Renderer.Helper
                     {
                         _graphicsDevice.RasterizerState = RasterizerState.CullNone;
 
-                        Shaders.IdRender.Param_World.SetValue(localWorldMatrix);
+                        Shaders.IdRender.Param_World.SetValue(localToWorldMatrix);
 
                         if (outlined)
                             Shaders.IdRender.Technique_Outline.Apply();
