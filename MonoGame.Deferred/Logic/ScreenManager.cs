@@ -64,7 +64,7 @@ namespace DeferredEngine.Logic
             _debug = new DebugScreen();
             _guiRenderer = new GUIRenderer();
 
-            ShaderGlobals.content = content;
+            Globals.content = content;
 
             _assets.Load(content, graphicsDevice);
             _renderer.Load(content);
@@ -98,7 +98,6 @@ namespace DeferredEngine.Logic
         {
             if (_renderer != null)
             {
-                _renderer.UpdateResolution();
                 _guiLogic.UpdateResolution();
             }
         }

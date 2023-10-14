@@ -135,7 +135,7 @@ namespace DeferredEngine.Recources
         // Deferred Environment
         public static class Environment
         {
-            public static Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/Deferred/DeferredEnvironmentMap");
+            public static Effect Effect = Globals.content.Load<Effect>("Shaders/Deferred/DeferredEnvironmentMap");
 
             public static EffectPass Pass_Sky = Effect.Techniques["Sky"].Passes[0];
             public static EffectPass Pass_Basic = Effect.Techniques["Basic"].Passes[0];

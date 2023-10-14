@@ -32,7 +32,7 @@ namespace DeferredEngine.Renderer.PostProcessing
         public BloomFxEffectSetup(string shaderPath = "Shaders/BloomFilter/Bloom")
               : base(shaderPath)
         {
-            Effect = ShaderGlobals.content.Load<Effect>(shaderPath);
+            Effect = Globals.content.Load<Effect>(shaderPath);
 
             Technique_Extract = Effect.Techniques["Extract"];
             Technique_ExtractLuminance = Effect.Techniques["ExtractLuminance"];

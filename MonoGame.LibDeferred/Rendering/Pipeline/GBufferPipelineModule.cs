@@ -206,8 +206,8 @@ namespace DeferredEngine.Renderer.RenderModules
         public GBufferEffectSetup(string shaderPathBase = "Shaders/GbufferSetup/", string gBufferEffect = "GBuffer", string gBufferClearEffect = "ClearGBuffer")
               : base(shaderPathBase)
         {
-            Effect_GBuffer = ShaderGlobals.content.Load<Effect>(shaderPathBase + gBufferEffect);
-            Effect_Clear = ShaderGlobals.content.Load<Effect>(shaderPathBase + gBufferClearEffect);
+            Effect_GBuffer = Globals.content.Load<Effect>(shaderPathBase + gBufferEffect);
+            Effect_Clear = Globals.content.Load<Effect>(shaderPathBase + gBufferClearEffect);
 
             Pass_ClearGBuffer = Effect_Clear.Techniques["Clear"].Passes[0];
 

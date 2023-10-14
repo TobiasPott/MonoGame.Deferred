@@ -28,7 +28,7 @@ namespace DeferredEngine.Recources
         public HologramEffectSetup(string shaderPath = "Shaders/Hologram/HologramEffect")
               : base(shaderPath)
         {
-            Effect = ShaderGlobals.content.Load<Effect>(shaderPath);
+            Effect = Globals.content.Load<Effect>(shaderPath);
 
             // Parameters
             Param_World = Effect.Parameters["World"];

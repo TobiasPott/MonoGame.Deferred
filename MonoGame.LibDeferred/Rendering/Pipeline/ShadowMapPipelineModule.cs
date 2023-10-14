@@ -365,7 +365,7 @@ namespace DeferredEngine.Recources
         // Shadow Map
         public static class ShadowMap
         {
-            public static Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/Shadow/ShadowMap");
+            public static Effect Effect = Globals.content.Load<Effect>("Shaders/Shadow/ShadowMap");
 
             //Linear = VS Depth -> used for directional lights
             public static EffectPass Pass_LinearPass = Effect.Techniques["DrawLinearDepth"].Passes[0];

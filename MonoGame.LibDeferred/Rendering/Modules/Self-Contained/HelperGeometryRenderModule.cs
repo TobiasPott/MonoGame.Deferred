@@ -48,7 +48,7 @@ namespace DeferredEngine.Renderer.RenderModules
         public HelperGeometryEffectSetup(string shaderPath = "Shaders/Editor/LineEffect")
               : base(shaderPath)
         {
-            Effect = ShaderGlobals.content.Load<Effect>(shaderPath);
+            Effect = Globals.content.Load<Effect>(shaderPath);
 
             Pass_VertexColor = Effect.Techniques["VertexColor"].Passes[0];
             Pass_GlobalColor = Effect.Techniques["GlobalColor"].Passes[0];

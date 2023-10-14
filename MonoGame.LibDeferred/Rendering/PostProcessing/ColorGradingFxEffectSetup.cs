@@ -28,7 +28,7 @@ namespace DeferredEngine.Renderer.PostProcessing
         public ColorGradingFxEffectSetup(string shaderPath = "Shaders/PostProcessing/ColorGrading")
               : base(shaderPath)
         {
-            Effect = ShaderGlobals.content.Load<Effect>(shaderPath);
+            Effect = Globals.content.Load<Effect>(shaderPath);
 
             Technique_ApplyLUT = Effect.Techniques["ApplyLUT"];
             Technique_CreateLUT = Effect.Techniques["CreateLUT"];

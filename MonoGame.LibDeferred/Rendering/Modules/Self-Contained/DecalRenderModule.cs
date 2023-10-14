@@ -171,7 +171,7 @@ namespace DeferredEngine.Renderer.RenderModules
         public DecalEffectSetup(string shaderPath = "Shaders/Deferred/DeferredDecal")
               : base(shaderPath)
         {
-            Effect = ShaderGlobals.content.Load<Effect>(shaderPath);
+            Effect = Globals.content.Load<Effect>(shaderPath);
 
             Pass_Decal = Effect.Techniques["Decal"].Passes[0];
             Pass_Outline = Effect.Techniques["Outline"].Passes[0];

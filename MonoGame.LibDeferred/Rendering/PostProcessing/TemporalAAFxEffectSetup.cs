@@ -28,7 +28,7 @@ namespace DeferredEngine.Recources
         public TemporalAAFxEffectSetup(string shaderPath = "Shaders/TemporalAntiAliasing/TemporalAntiAliasing")
               : base(shaderPath)
         {
-            Effect = ShaderGlobals.content.Load<Effect>(shaderPath);
+            Effect = Globals.content.Load<Effect>(shaderPath);
 
             Technique_TemporalAA = Effect.Techniques["TemporalAntialiasing"];
             Technique_TonemapInverse = Effect.Techniques["InverseTonemap"];

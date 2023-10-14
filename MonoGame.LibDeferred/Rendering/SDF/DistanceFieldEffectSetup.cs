@@ -31,7 +31,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
         public DistanceFieldEffectSetup(string shaderPath = "Shaders/SDF/volumeProjection") 
             : base(shaderPath)
         {
-            Effect = ShaderGlobals.content.Load<Effect>(shaderPath);
+            Effect = Globals.content.Load<Effect>(shaderPath);
 
             Pass_Distance = Effect.Techniques["Distance"].Passes[0];
             Pass_Volume = Effect.Techniques["Volume"].Passes[0];

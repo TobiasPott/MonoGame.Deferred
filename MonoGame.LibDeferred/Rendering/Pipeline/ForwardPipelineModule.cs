@@ -216,7 +216,7 @@ namespace DeferredEngine.Recources
         // Forward
         public static class Forward
         {
-            public static Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/forward/forward");
+            public static Effect Effect = Globals.content.Load<Effect>("Shaders/forward/forward");
 
             public static EffectPass Pass_Default = Effect.Techniques["Default"].Passes[0];
 
