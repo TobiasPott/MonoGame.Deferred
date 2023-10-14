@@ -10,6 +10,7 @@ using DeferredEngine.Renderer.RenderModules.SDF;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Ext;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -975,7 +976,7 @@ namespace DeferredEngine.Renderer
 
             RenderTarget2D output = !_taaFx.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2];
             _taaFx.UseTonemap = RenderingSettings.g_taa_tonemapped;
-            _taaFx.Draw(currentFrame: input, previousFrames: _taaFx.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2], output: output);
+            _taaFx.Draw(input, _taaFx.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2], output);
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)
@@ -992,7 +993,6 @@ namespace DeferredEngine.Renderer
         private void DrawSignedDistanceFieldFunctions(Camera camera)
         {
             if (!RenderingSettings.sdf_drawdistance) return;
-
             _distanceFieldRenderModule.Draw(camera);
         }
 
@@ -1196,33 +1196,13 @@ namespace DeferredEngine.Renderer
         {
             if (blendState == null) blendState = BlendState.Opaque;
 
-            int height;
-            int width;
-            if (Math.Abs(texture.Width / (float)texture.Height - RenderingSettings.g_ScreenWidth / (float)RenderingSettings.g_ScreenHeight) < 0.001)
-            //If same aspectratio
-            {
-                height = RenderingSettings.g_ScreenHeight;
-                width = RenderingSettings.g_ScreenWidth;
-            }
-            else
-            {
-                if (RenderingSettings.g_ScreenHeight < RenderingSettings.g_ScreenWidth)
-                {
-                    //Should be squared!
-                    height = RenderingSettings.g_ScreenHeight;
-                    width = RenderingSettings.g_ScreenHeight;
-                }
-                else
-                {
-                    height = RenderingSettings.g_ScreenWidth;
-                    width = RenderingSettings.g_ScreenWidth;
-                }
-            }
+            RenderingSettings.GetDestinationRectangle(texture.GetAspect(), out Rectangle destRectangle);
             _graphicsDevice.SetRenderTarget(output);
             _spriteBatch.Begin(0, blendState, _supersampling > 1 ? SamplerState.LinearWrap : SamplerState.PointClamp);
-            _spriteBatch.Draw(texture, new Rectangle(0, 0, width, height), Color.White);
+            _spriteBatch.Draw(texture, destRectangle, Color.White);
             _spriteBatch.End();
         }
+
 
         #endregion
 

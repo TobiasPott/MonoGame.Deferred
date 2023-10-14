@@ -26,6 +26,34 @@ namespace DeferredEngine.Recources
             g_ScreenRect.Height = g_ScreenHeight;
             g_ScreenAspect = g_ScreenWidth / g_ScreenHeight;
         }
+        public static void GetDestinationRectangle(float sourceAspect, out Rectangle destRectangle)
+        {
+            int height;
+            int width;
+
+            if (Math.Abs(sourceAspect - RenderingSettings.g_ScreenAspect) < 0.001)
+            //If same aspectratio
+            {
+                height = RenderingSettings.g_ScreenHeight;
+                width = RenderingSettings.g_ScreenWidth;
+            }
+            else
+            {
+                if (RenderingSettings.g_ScreenHeight < RenderingSettings.g_ScreenWidth)
+                {
+                    //Should be squared!
+                    height = RenderingSettings.g_ScreenHeight;
+                    width = RenderingSettings.g_ScreenHeight;
+                }
+                else
+                {
+                    height = RenderingSettings.g_ScreenWidth;
+                    width = RenderingSettings.g_ScreenWidth;
+                }
+            }
+
+            destRectangle = new Rectangle(0, 0, width, height);
+        }
 
     }
 }
