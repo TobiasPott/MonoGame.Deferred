@@ -1,5 +1,4 @@
 ﻿using DeferredEngine.Entities;
-using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -66,11 +65,10 @@ namespace DeferredEngine.Renderer.Helper
             }
 
             //We need to calcualte a new average distance
-            if (hasAnythingChanged && RenderingSettings.g_cpusort)
+            if (hasAnythingChanged)
             {
                 distance = 0;
-
-                for (var i = 0; i < _worldBoundingCenters.Count; i++)
+                for (int i = 0; i < _worldBoundingCenters.Count; i++)
                 {
                     distance += Vector3.DistanceSquared(cameraPosition, _worldBoundingCenters[i]);
                 }

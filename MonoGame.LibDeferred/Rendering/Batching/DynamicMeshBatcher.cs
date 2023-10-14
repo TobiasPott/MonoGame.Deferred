@@ -12,12 +12,11 @@ namespace DeferredEngine.Renderer.Helper
     // Controls all Materials and Meshes, so they are ordered at render time.
     public class DynamicMeshBatcher
     {
-        private const int InitialLibrarySize = 10;
-        public MaterialBatch[] MaterialBatch = new MaterialBatch[InitialLibrarySize];
+        private const int InitialLibrarySize = 64;
+        private List<MaterialBatch> MaterialBatch = new List<MaterialBatch>(InitialLibrarySize);
 
         public int[] MaterialLibPointer = new int[InitialLibrarySize];
 
-        public int Index;
 
         private bool _previousMode = RenderingSettings.g_cpuculling;
         private readonly BoundingSphere _defaultBoundingSphere;
@@ -26,6 +25,7 @@ namespace DeferredEngine.Renderer.Helper
 
         private readonly FullscreenTriangleBuffer _fullscreenTarget;
         private readonly GraphicsDevice _graphicsDevice;
+
 
         public DynamicMeshBatcher(GraphicsDevice graphics)
         {
@@ -74,7 +74,7 @@ namespace DeferredEngine.Renderer.Helper
             }
 
             //Check if we already have a material like that, if yes put it in there!
-            for (var i = 0; i < Index; i++)
+            for (var i = 0; i < MaterialBatch.Count; i++)
             {
                 MaterialBatch matLib = MaterialBatch[i];
                 if (matLib.HasMaterial(mat))
@@ -88,47 +88,13 @@ namespace DeferredEngine.Renderer.Helper
             //We have no MatLib for that specific Material yet. Make a new one.
             if (!found)
             {
-                MaterialBatch[Index] = new MaterialBatch();
-                MaterialBatch[Index].SetMaterial(mat);
-                MaterialBatch[Index].Register(mesh, transform, boundingSphere);
-                Index++;
+                MaterialBatch batch = new MaterialBatch();
+                batch.SetMaterial(mat);
+                batch.Register(mesh, transform, boundingSphere);
+                MaterialBatch.Add(batch);
+                Debug.WriteLine($"Created new material batch array (GC!): {MaterialBatch.Count}");
             }
 
-            //If we exceeded our array length, make the array bigger.
-            if (Index >= MaterialBatch.Length)
-            {
-                MaterialBatch[] tempLib = new MaterialBatch[Index + 1];
-                MaterialBatch.CopyTo(tempLib, 0);
-                MaterialBatch = tempLib;
-
-                MaterialLibPointer = new int[Index + 1];
-                //sort from 0 to Index
-                for (int j = 0; j < MaterialLibPointer.Length; j++)
-                {
-                    MaterialLibPointer[j] = j;
-                }
-                SortByDistance();
-            }
-        }
-
-        //Not a real sort, but it does it's job over time
-        private void SortByDistance()
-        {
-            if (!RenderingSettings.g_cpusort) return;
-
-            for (int i = 1; i < Index; i++)
-            {
-                float distanceI = MaterialBatch[MaterialLibPointer[i]].DistanceSquared;
-                float distanceJ = MaterialBatch[MaterialLibPointer[i - 1]].DistanceSquared;
-
-                if (distanceJ < distanceI)
-                {
-                    //swap
-                    int temp = MaterialLibPointer[i];
-                    MaterialLibPointer[i] = MaterialLibPointer[i - 1];
-                    MaterialLibPointer[i - 1] = temp;
-                }
-            }
         }
 
         public void DeleteFromRegistry(ModelEntity entity)
@@ -151,21 +117,14 @@ namespace DeferredEngine.Renderer.Helper
         {
             // ToDo: @tpott: add index lookup of the mat argument to only delete from library of the correct material
             Debug.WriteLine($"DeleteFromRegistry: Unused {mat} argument.");
-            for (var i = 0; i < Index; i++)
+            for (var i = 0; i < MaterialBatch.Count; i++)
             {
                 MaterialBatch matLib = MaterialBatch[i];
                 //if (matLib.HasMaterial(mat))
                 //{
                 if (matLib.DeleteFromRegistry(mesh, transform))
                 {
-                    for (var j = i; j < Index - 1; j++)
-                    {
-                        //slide down one
-                        MaterialBatch[j] = MaterialBatch[j + 1];
-
-                    }
-                    Index--;
-
+                    MaterialBatch.RemoveAt(i);
                     break;
                 }
                 //}
@@ -183,7 +142,7 @@ namespace DeferredEngine.Renderer.Helper
                 if (_previousMode)
                 {
                     //If we previously did cull and now don't we need to set all the submeshes to render
-                    for (int index1 = 0; index1 < Index; index1++)
+                    for (int index1 = 0; index1 < MaterialBatch.Count; index1++)
                     {
                         MaterialBatch matLib = MaterialBatch[index1];
                         for (int i = 0; i < matLib.Count; i++)
@@ -206,20 +165,18 @@ namespace DeferredEngine.Renderer.Helper
             bool hasAnythingChanged = false;
             //Ok we applied the transformation to all the entities, now update the submesh boundingboxes!
             // Parallel.For(0, Index, index1 =>
-            for (int index1 = 0; index1 < Index; index1++)
+            for (int matBatchIndex = 0; matBatchIndex < MaterialBatch.Count; matBatchIndex++)
             {
                 float distance = 0;
                 int counter = 0;
 
 
-                MaterialBatch matLib = RenderingSettings.g_cpusort
-                    ? MaterialBatch[MaterialLibPointer[index1]]
-                    : MaterialBatch[index1];
+                //MaterialBatch matLib = RenderingSettings.g_cpusort ? MaterialBatch[MaterialLibPointer[index1]] : MaterialBatch[index1];
+                MaterialBatch matLib = MaterialBatch[matBatchIndex];
                 for (int i = 0; i < matLib.Count; i++)
                 {
                     MeshBatch meshLib = matLib.GetMeshLibrary()[i];
-                    float? distanceSq = meshLib.UpdatePositionAndCheckRender(hasCameraChanged, boundingFrustrum,
-                        cameraPosition, _defaultBoundingSphere);
+                    float? distanceSq = meshLib.UpdatePositionAndCheckRender(hasCameraChanged, boundingFrustrum, cameraPosition, _defaultBoundingSphere);
 
                     //If we get a new distance, apply it to the material
                     if (distanceSq != null)
@@ -238,10 +195,6 @@ namespace DeferredEngine.Renderer.Helper
                 }
             }//);
 
-            //finally sort the materials by distance. Bubble sort should in theory be fast here since little changes.
-            if (hasAnythingChanged)
-                SortByDistance();
-
             return hasAnythingChanged;
         }
 
@@ -250,14 +203,11 @@ namespace DeferredEngine.Renderer.Helper
         /// </summary>
         public void FrustumCullingFinalizeFrame()
         {
-
-            for (int index1 = 0; index1 < Index; index1++)
+            for (int i = 0; i < MaterialBatch.Count; i++)
             {
-                MaterialBatch matLib = RenderingSettings.g_cpusort ? MaterialBatch[MaterialLibPointer[index1]] : MaterialBatch[index1];
-
+                MaterialBatch matLib = MaterialBatch[i];
                 matLib.HasChangedThisFrame = false;
             }
-
         }
 
         public enum RenderType
@@ -284,7 +234,7 @@ namespace DeferredEngine.Renderer.Helper
                     return;
             }
 
-            for (int index1 = 0; index1 < Index; index1++)
+            for (int index1 = 0; index1 < MaterialBatch.Count; index1++)
             {
                 MaterialBatch matLib = MaterialBatch[index1];
 
@@ -387,9 +337,9 @@ namespace DeferredEngine.Renderer.Helper
             {
                 bool discardFrame = true;
 
-                for (int index1 = 0; index1 < Index; index1++)
+                for (int matBatchIndex = 0; matBatchIndex < MaterialBatch.Count; matBatchIndex++)
                 {
-                    MaterialBatch matLib = MaterialBatch[index1];
+                    MaterialBatch matLib = MaterialBatch[matBatchIndex];
 
                     //We determined beforehand whether something changed this frame
                     if (matLib.HasChangedThisFrame)

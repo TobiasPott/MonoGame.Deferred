@@ -29,7 +29,6 @@ namespace DeferredEngine.Recources
         //Settings
         public static RenderModes g_rendermode = RenderModes.Deferred;
         public static float g_farplane = 500;
-        public static bool g_cpusort = true;
         public static bool g_cpuculling = true;
         public static bool g_batchbymaterial = false; //Note this must be activated before the application is started.
 
@@ -75,9 +74,9 @@ namespace DeferredEngine.Recources
             ApplyDefaultsTAA();
 
             ApplyDefaultsEnvironmentMap();
-            
+
             ApplyDefaultsSSR();
-            
+
             g_Linear = _g_Linear;
 
             d_defaultmaterial = false;
