@@ -887,7 +887,7 @@ namespace DeferredEngine.Renderer
 
         private RenderTarget2D DrawBloom(RenderTarget2D input)
         {
-            if (RenderingSettings.g_BloomEnable)
+            if (RenderingSettings.Bloom.Enabled)
             {
                 Texture2D bloom = _bloomFx.Draw(input);
 

@@ -351,76 +351,77 @@ namespace DeferredEngine.Logic
 
             bloomList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Bloom")
             {
-                ToggleField = typeof(RenderingSettings).GetField("g_BloomEnable"),
-                Toggle = RenderingSettings.g_BloomEnable
+                ToggleField = typeof(RenderingSettings.Bloom).GetField("Enable"),
+                Toggle = RenderingSettings.Bloom.Enabled
             });
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 4, 1, "Threshold: ")
             {
-                SliderField = typeof(RenderingSettings).GetField("g_BloomThreshold"),
-                SliderValue = RenderingSettings.g_BloomThreshold
+                SliderField = typeof(RenderingSettings.Bloom).GetField("Threshold"),
+                SliderValue = RenderingSettings.Bloom.Threshold
             });
+
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP0 Radius: ")
             {
-                SliderField = typeof(RenderingSettings).GetField("g_BloomRadius1"),
-                SliderValue = RenderingSettings.g_BloomRadius1
+                SliderField = typeof(RenderingSettings.Bloom).GetField("Radius1"),
+                SliderValue = RenderingSettings.Bloom.Radius1
             });
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP0 Strength: ")
             {
-                SliderField = typeof(RenderingSettings).GetField("g_BloomStrength1"),
-                SliderValue = RenderingSettings.g_BloomStrength1
+                SliderField = typeof(RenderingSettings.Bloom).GetField("Strength1"),
+                SliderValue = RenderingSettings.Bloom.Strength1
             });
 
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP1 Radius: ")
             {
-                SliderField = typeof(RenderingSettings).GetField("g_BloomRadius2"),
-                SliderValue = RenderingSettings.g_BloomRadius2
+                SliderField = typeof(RenderingSettings.Bloom).GetField("Radius2"),
+                SliderValue = RenderingSettings.Bloom.Radius2
             });
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP1 Strength: ")
             {
-                SliderField = typeof(RenderingSettings).GetField("g_BloomStrength2"),
-                SliderValue = RenderingSettings.g_BloomStrength2
+                SliderField = typeof(RenderingSettings.Bloom).GetField("Strength2"),
+                SliderValue = RenderingSettings.Bloom.Strength2
             });
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP2 Radius: ")
             {
-                SliderField = typeof(RenderingSettings).GetField("g_BloomRadius3"),
-                SliderValue = RenderingSettings.g_BloomRadius3
+                SliderField = typeof(RenderingSettings.Bloom).GetField("Radius3"),
+                SliderValue = RenderingSettings.Bloom.Radius3
             });
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP2 Strength: ")
             {
-                SliderField = typeof(RenderingSettings).GetField("g_BloomStrength3"),
-                SliderValue = RenderingSettings.g_BloomStrength3
+                SliderField = typeof(RenderingSettings.Bloom).GetField("Strength3"),
+                SliderValue = RenderingSettings.Bloom.Strength3
             });
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP3 Radius: ")
             {
-                SliderField = typeof(RenderingSettings).GetField("g_BloomRadius4"),
-                SliderValue = RenderingSettings.g_BloomRadius4
+                SliderField = typeof(RenderingSettings.Bloom).GetField("Radius4"),
+                SliderValue = RenderingSettings.Bloom.Radius4
             });
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP3 Strength: ")
             {
-                SliderField = typeof(RenderingSettings).GetField("g_BloomStrength4"),
-                SliderValue = RenderingSettings.g_BloomStrength4
+                SliderField = typeof(RenderingSettings.Bloom).GetField("Strength4"),
+                SliderValue = RenderingSettings.Bloom.Strength4
             });
 
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP4 Radius: ")
             {
-                SliderField = typeof(RenderingSettings).GetField("g_BloomRadius5"),
-                SliderValue = RenderingSettings.g_BloomRadius5
+                SliderField = typeof(RenderingSettings.Bloom).GetField("Radius5"),
+                SliderValue = RenderingSettings.Bloom.Radius5
             });
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP4 Strength: ")
             {
-                SliderField = typeof(RenderingSettings).GetField("g_BloomStrength5"),
-                SliderValue = RenderingSettings.g_BloomStrength5
+                SliderField = typeof(RenderingSettings.Bloom).GetField("Strength5"),
+                SliderValue = RenderingSettings.Bloom.Strength5
             });
 
             _rightSideList.Alignment = GUIStyle.GUIAlignment.TopRight;
