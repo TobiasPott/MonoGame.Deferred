@@ -39,7 +39,7 @@ namespace DeferredEngine.Renderer
         private ShadowMapPipelineModule _shadowMapModule;
 
         private PointLightRenderModule _pointLightRenderModule;
-        private LightAccumulationModule _lightAccumulationModule;
+        private LightingPipelineModule _lightAccumulationModule;
         private EnvironmentPipelineModule _environmentModule;
         private DecalRenderModule _decalRenderModule;
         private HelperGeometryRenderModule _helperGeometryRenderModule;
@@ -112,7 +112,7 @@ namespace DeferredEngine.Renderer
             _shadowMapModule = new ShadowMapPipelineModule(content, "Shaders/Shadow/ShadowMap");
 
             _pointLightRenderModule = new PointLightRenderModule(content, "Shaders/Deferred/DeferredPointLight");
-            _lightAccumulationModule = new LightAccumulationModule() { PointLightRenderModule = _pointLightRenderModule };
+            _lightAccumulationModule = new LightingPipelineModule() { PointLightRenderModule = _pointLightRenderModule };
             _environmentModule = new EnvironmentPipelineModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
 
             _decalRenderModule = new DecalRenderModule();
@@ -273,7 +273,7 @@ namespace DeferredEngine.Renderer
             RenderMode(_currentOutput);
 
             //Draw signed distance field functions
-            DrawSignedDistanceFieldFunctions(camera);
+            DrawSDFs(camera);
 
             //Additional editor elements that overlay our screen
 
@@ -660,10 +660,10 @@ namespace DeferredEngine.Renderer
         /// <summary>
         /// Draw all our meshes to the GBuffer - albedo, normal, depth - for further computation
         /// </summary>
-        /// <param name="meshMaterialLibrary"></param>
-        private void DrawGBuffer(DynamicMeshBatcher meshMaterialLibrary)
+        /// <param name="meshBatcher"></param>
+        private void DrawGBuffer(DynamicMeshBatcher meshBatcher)
         {
-            _gBufferModule.Draw(meshMaterialLibrary, _matrices);
+            _gBufferModule.Draw(meshBatcher, _matrices);
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)
@@ -873,7 +873,7 @@ namespace DeferredEngine.Renderer
             FullscreenTarget.Draw(_graphicsDevice);
         }
 
-        private RenderTarget2D DrawForward(RenderTarget2D input, DynamicMeshBatcher meshMaterialLibrary, Camera camera, List<DeferredPointLight> pointLights)
+        private RenderTarget2D DrawForward(RenderTarget2D input, DynamicMeshBatcher meshBatcher, Camera camera, List<DeferredPointLight> pointLights)
         {
             if (!RenderingSettings.g_EnableForward) return input;
 
@@ -881,7 +881,7 @@ namespace DeferredEngine.Renderer
             ReconstructDepth();
 
             _forwardModule.PrepareDraw(camera, pointLights, _boundingFrustum);
-            return _forwardModule.Draw(meshMaterialLibrary, input, _matrices);
+            return _forwardModule.Draw(meshBatcher, input, _matrices);
         }
 
         private RenderTarget2D DrawBloom(RenderTarget2D input)
@@ -930,11 +930,39 @@ namespace DeferredEngine.Renderer
             return RenderingSettings.TAA.UseTonemapping ? input : output;
         }
 
-        private void DrawSignedDistanceFieldFunctions(Camera camera)
+        private void DrawSDFs(Camera camera)
         {
             if (!RenderingSettings.SDF.DrawDistance) 
                 return;
             _distanceFieldRenderModule.Draw(camera);
+        }
+
+        /// <summary>
+        /// Add some post processing to the image
+        /// </summary>
+        /// <param name="currentInput"></param>
+        private void DrawPostProcessing(RenderTarget2D currentInput)
+        {
+            if (!RenderingSettings.g_PostProcessing) return;
+
+            RenderTarget2D destinationRenderTarget;
+
+            //destinationRenderTarget = _renderTargetOutput;
+            destinationRenderTarget = _auxTargets[MRT.AUX_OUTPUT];
+
+            Shaders.PostProcssing.Param_ScreenTexture.SetValue(currentInput);
+            _graphicsDevice.SetRenderTarget(destinationRenderTarget);
+
+            _graphicsDevice.DepthStencilState = DepthStencilState.Default;
+            _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+
+            Shaders.PostProcssing.Effect.CurrentTechnique.Passes[0].Apply();
+            FullscreenTarget.Draw(_graphicsDevice);
+
+            if (_colorGradingFx.Enabled)
+                destinationRenderTarget = _colorGradingFx.Draw(destinationRenderTarget);
+
+            DrawTextureToScreenToFullScreen(destinationRenderTarget);
         }
 
         /// <summary>
@@ -991,34 +1019,7 @@ namespace DeferredEngine.Renderer
                 _performancePreviousTime = performanceCurrentTime;
             }
         }
-
-        /// <summary>
-        /// Add some post processing to the image
-        /// </summary>
-        /// <param name="currentInput"></param>
-        private void DrawPostProcessing(RenderTarget2D currentInput)
-        {
-            if (!RenderingSettings.g_PostProcessing) return;
-
-            RenderTarget2D destinationRenderTarget;
-
-            //destinationRenderTarget = _renderTargetOutput;
-            destinationRenderTarget = _auxTargets[MRT.AUX_OUTPUT];
-
-            Shaders.PostProcssing.Param_ScreenTexture.SetValue(currentInput);
-            _graphicsDevice.SetRenderTarget(destinationRenderTarget);
-
-            _graphicsDevice.DepthStencilState = DepthStencilState.Default;
-            _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-
-            Shaders.PostProcssing.Effect.CurrentTechnique.Passes[0].Apply();
-            FullscreenTarget.Draw(_graphicsDevice);
-
-            if (_colorGradingFx.Enabled)
-                destinationRenderTarget = _colorGradingFx.Draw(destinationRenderTarget);
-
-            DrawTextureToScreenToFullScreen(destinationRenderTarget);
-        }
+        
         #endregion
 
         #endregion

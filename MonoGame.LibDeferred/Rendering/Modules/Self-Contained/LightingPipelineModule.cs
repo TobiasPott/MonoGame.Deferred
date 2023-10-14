@@ -8,12 +8,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
-    public class LightAccumulationModule : IDisposable
+    public class LightingPipelineModule : IDisposable
     {
         private GraphicsDevice _graphicsDevice;
         private FullscreenTriangleBuffer _fullscreenTarget;
 
-        private bool _g_UseDepthStencilLightCulling;
+        private bool _useDepthStencilLightCulling;
         private PipelineMatrices _matrices;
         private BlendState _lightBlendState;
         private BoundingFrustum _boundingFrustum;
@@ -23,8 +23,9 @@ namespace DeferredEngine.Renderer.RenderModules
         public PointLightRenderModule PointLightRenderModule;
 
 
-        public LightAccumulationModule()
+        public LightingPipelineModule()
         { }
+
         public void Load(ContentManager content, string shaderPath = "")
         {
 
@@ -62,9 +63,6 @@ namespace DeferredEngine.Renderer.RenderModules
             RenderTargetBinding[] renderTargetLightBinding, 
             RenderTarget2D renderTargetDiffuse)
         {
-            List<DeferredPointLight> pointLights = scene.PointLights;
-            List<DeferredDirectionalLight> dirLights = scene.DirectionalLights;
-
             //Reconstruct Depth
             if (RenderingSettings.g_UseDepthStencilLightCulling > 0)
             {
@@ -73,13 +71,13 @@ namespace DeferredEngine.Renderer.RenderModules
                 _graphicsDevice.Clear(ClearOptions.Stencil, new Color(0, 0, 0, 0.0f), 1, 0);
                 ReconstructDepth();
 
-                _g_UseDepthStencilLightCulling = true;
+                _useDepthStencilLightCulling = true;
             }
             else
             {
-                if (_g_UseDepthStencilLightCulling)
+                if (_useDepthStencilLightCulling)
                 {
-                    _g_UseDepthStencilLightCulling = false;
+                    _useDepthStencilLightCulling = false;
                     _graphicsDevice.SetRenderTarget(renderTargetDiffuse);
                     _graphicsDevice.Clear(ClearOptions.DepthBuffer, new Color(0, 0, 0, 0.0f), 1, 0);
                 }
@@ -97,8 +95,8 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.Clear(ClearOptions.Target, new Color(0, 0, 0, 0.0f), 1, 0);
             _graphicsDevice.BlendState = _lightBlendState;
 
-            PointLightRenderModule.Draw(pointLights, cameraOrigin, gameTime, _boundingFrustum, _viewProjectionHasChanged, _matrices.View, _matrices.ViewProjection);
-            DrawDirectionalLights(dirLights, cameraOrigin);
+            PointLightRenderModule.Draw(scene.PointLights, cameraOrigin, gameTime, _boundingFrustum, _viewProjectionHasChanged, _matrices.View, _matrices.ViewProjection);
+            DrawDirectionalLights(scene.DirectionalLights, cameraOrigin);
 
         }
         private void ReconstructDepth()
