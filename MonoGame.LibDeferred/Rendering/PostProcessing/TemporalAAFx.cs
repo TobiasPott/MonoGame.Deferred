@@ -50,10 +50,10 @@ namespace DeferredEngine.Renderer.PostProcessing
 
         public bool UpdateViewProjection(PipelineMatrices matrices)
         {
-            if (RenderingSettings.g_taa)
+            if (RenderingSettings.TAA.Enabled)
             {
 
-                switch (RenderingSettings.g_taa_jittermode)
+                switch (RenderingSettings.TAA.JitterMode)
                 {
                     case 0: //2 frames, just basic translation. Worst taa implementation. Not good with the continous integration used
                         {

@@ -71,8 +71,6 @@ namespace DeferredEngine.Recources
 
             ApplyDefaultsPostProcessing();
 
-            ApplyDefaultsTAA();
-
             EnvironmentMapping.ApplyDefaultsEnvironmentMap();
 
             ApplyDefaultsSSR();

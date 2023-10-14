@@ -204,14 +204,14 @@ namespace DeferredEngine.Logic
 
             postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Temporal AA")
             {
-                ToggleField = typeof(RenderingSettings).GetField("g_taa"),
-                Toggle = RenderingSettings.g_taa
+                ToggleField = typeof(RenderingSettings.TAA).GetField("Enabled"),
+                Toggle = RenderingSettings.TAA.Enabled
             });
 
             postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Tonemap TAA")
             {
-                ToggleField = typeof(RenderingSettings).GetField("g_taa_tonemapped"),
-                Toggle = RenderingSettings.g_taa_tonemapped
+                ToggleField = typeof(RenderingSettings.TAA).GetField("UseTonemapping"),
+                Toggle = RenderingSettings.TAA.UseTonemapping
             });
 
             postprocessingList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 4, 2, "WhitePoint: ")
