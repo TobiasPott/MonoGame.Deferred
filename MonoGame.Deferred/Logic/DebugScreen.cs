@@ -218,7 +218,7 @@ namespace DeferredEngine.Logic
 
         public void Draw(GameTime gameTime)
         {
-            if (RenderingSettings.u_showdisplayinfo > 0 || ConsoleOpen)
+            if (RenderingSettings.u_ShowDisplayInfo > 0 || ConsoleOpen)
             {
                 _fps = 0.9 * _fps + 0.1 * (1000 / gameTime.ElapsedGameTime.TotalMilliseconds);
 
@@ -294,14 +294,14 @@ namespace DeferredEngine.Logic
 
                 StringList.Clear();
 
-                if (RenderingSettings.u_showdisplayinfo == 1) //most basic, only show fps
+                if (RenderingSettings.u_ShowDisplayInfo == 1) //most basic, only show fps
                 {
                     _spriteBatch.DrawString(_sprFont,
                     string.Format(Math.Round(_smoothfps).ToString()),
                     new Vector2(10.0f, 10.0f), Color.White);
                 }
 
-                if (RenderingSettings.u_showdisplayinfo <= 1)
+                if (RenderingSettings.u_ShowDisplayInfo <= 1)
                 {
                     _spriteBatch.End();
                     StringList.Clear();
@@ -330,7 +330,7 @@ namespace DeferredEngine.Logic
                 _mngStringBuilder.Append(sb_multipliedBy);
                 _mngStringBuilder.Append(RenderingSettings.g_ScreenHeight);
                 _mngStringBuilder.Append(sb_emptySpace);
-                _mngStringBuilder.Append(RenderModesToString(RenderingSettings.g_rendermode));
+                _mngStringBuilder.Append(RenderModesToString(RenderingSettings.g_RenderMode));
                 _mngStringBuilder.Append(sb_memoryGc);
                 _mngStringBuilder.Append(totalmemory / 1024);
                 _mngStringBuilder.Append(sb_dotdotdot);

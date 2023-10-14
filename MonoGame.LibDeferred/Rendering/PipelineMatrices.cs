@@ -62,7 +62,7 @@ namespace DeferredEngine.Renderer
         {
             //View matrix
             View = Matrix.CreateLookAt(camera.Position, camera.Lookat, camera.Up);
-            Projection = Matrix.CreatePerspectiveFieldOfView(camera.FieldOfView, RenderingSettings.g_ScreenAspect, 1, RenderingSettings.g_farplane);
+            Projection = Matrix.CreatePerspectiveFieldOfView(camera.FieldOfView, RenderingSettings.g_ScreenAspect, 1, RenderingSettings.g_FarPlane);
 
             // update our projection matrices
             this.UpdateFromView();

@@ -114,7 +114,7 @@ namespace DeferredEngine.Logic
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Highlight Meshes")
             {
                 ToggleField = typeof(RenderingSettings).GetField("e_drawoutlines"),
-                Toggle = RenderingSettings.e_drawoutlines
+                Toggle = RenderingSettings.e_DrawOutlines
             });
 
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Show Controls")
@@ -127,7 +127,7 @@ namespace DeferredEngine.Logic
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Default Material")
             {
                 ToggleField = typeof(RenderingSettings).GetField("d_defaultmaterial"),
-                Toggle = RenderingSettings.d_defaultmaterial
+                Toggle = RenderingSettings.d_DefaultMaterial
             });
 
             _rightSideList.AddElement(new GuiSliderFloatText(defaultStyle, 0.1f, 3/*(float) (Math.PI - 0.1)*/, 2, "Field Of View: ")

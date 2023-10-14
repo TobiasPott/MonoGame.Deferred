@@ -17,7 +17,7 @@ namespace DeferredEngine.Renderer.Helper
 
         public LineHelper(Vector3 start, Vector3 end, short time, Color starColor, Color endColor, LineHelperManager lineHelperManager)
         {
-            if (!RenderingSettings.d_drawlines) return;
+            if (!RenderingSettings.d_Drawlines) return;
 
             _start = start;
             _end = end;
@@ -36,7 +36,7 @@ namespace DeferredEngine.Renderer.Helper
 
         public LineHelper(Vector3 start, Vector3 end, short time, LineHelperManager lineHelperManager)
         {
-            if (!RenderingSettings.d_drawlines) return;
+            if (!RenderingSettings.d_Drawlines) return;
 
             _start = start;
             _end = end;

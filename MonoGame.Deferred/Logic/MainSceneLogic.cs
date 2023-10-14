@@ -213,7 +213,7 @@ namespace DeferredEngine.Logic
                 _renderModeCycle++;
                 if (_renderModeCycle > Enum.GetNames(typeof(Renderer.RenderModes)).Length - 1) _renderModeCycle = 0;
 
-                RenderingSettings.g_rendermode = (Renderer.RenderModes)_renderModeCycle;
+                RenderingSettings.g_RenderMode = (Renderer.RenderModes)_renderModeCycle;
             }
         }
 

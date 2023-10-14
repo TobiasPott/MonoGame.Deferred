@@ -18,7 +18,7 @@ namespace DeferredEngine.Renderer.Helper
         public int[] MaterialLibPointer = new int[InitialLibrarySize];
 
 
-        private bool _previousMode = RenderingSettings.g_cpuculling;
+        private bool _previousMode = RenderingSettings.g_CpuCulling;
         private readonly BoundingSphere _defaultBoundingSphere;
         private readonly RasterizerState _shadowGenerationRasterizerState = new RasterizerState() { CullMode = CullMode.CullCounterClockwiseFace, ScissorTestEnable = true };
         private readonly DepthStencilState _depthWrite = new DepthStencilState() { DepthBufferEnable = true, DepthBufferWriteEnable = true, DepthBufferFunction = CompareFunction.Always };
@@ -137,7 +137,7 @@ namespace DeferredEngine.Renderer.Helper
         public bool FrustumCulling(BoundingFrustum boundingFrustrum, bool hasCameraChanged, Vector3 cameraPosition)
         {
             //Check if the culling mode has changed
-            if (_previousMode != RenderingSettings.g_cpuculling)
+            if (_previousMode != RenderingSettings.g_CpuCulling)
             {
                 if (_previousMode)
                 {
@@ -156,11 +156,11 @@ namespace DeferredEngine.Renderer.Helper
                     }
 
                 }
-                _previousMode = RenderingSettings.g_cpuculling;
+                _previousMode = RenderingSettings.g_CpuCulling;
 
             }
 
-            if (!RenderingSettings.g_cpuculling) return false;
+            if (!RenderingSettings.g_CpuCulling) return false;
 
             bool hasAnythingChanged = false;
             //Ok we applied the transformation to all the entities, now update the submesh boundingboxes!

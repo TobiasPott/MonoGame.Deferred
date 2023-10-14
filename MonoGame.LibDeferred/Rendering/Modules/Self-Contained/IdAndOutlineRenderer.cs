@@ -45,7 +45,7 @@ namespace DeferredEngine.Renderer.RenderModules
             if (mouseMoved)
                 DrawIds(meshMat, scene, matrices, envSample, drawContext);
 
-            if (RenderingSettings.e_drawoutlines)
+            if (RenderingSettings.e_DrawOutlines)
                 DrawOutlines(meshMat, matrices, mouseMoved, HoveredId, drawContext, mouseMoved);
         }
 

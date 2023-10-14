@@ -317,7 +317,7 @@ namespace DeferredEngine.Renderer
         {
             if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
             {
-                if (RenderingSettings.e_drawoutlines) DrawTextureToScreenToFullScreen(_editorRender.GetOutlines(), BlendState.Additive);
+                if (RenderingSettings.e_DrawOutlines) DrawTextureToScreenToFullScreen(_editorRender.GetOutlines(), BlendState.Additive);
 
                 _editorRender.DrawEditorElements(scene, envProbe, _matrices, gizmoContext);
 
@@ -327,7 +327,7 @@ namespace DeferredEngine.Renderer
                     {
                         _decalRenderModule.DrawOutlines(decal, _matrices);
                     }
-                    if (RenderingSettings.e_drawboundingbox
+                    if (RenderingSettings.e_DrawBoundingBox
                         && gizmoContext.SelectedObject is ModelEntity entity)
                     {
                         HelperGeometryManager.GetInstance().AddBoundingBox(entity);
@@ -473,9 +473,9 @@ namespace DeferredEngine.Renderer
         private void CheckRenderChanges(EntitySceneGroup scene)
         {
             List<DeferredDirectionalLight> dirLights = scene.DirectionalLights;
-            if (Math.Abs(_g_FarClip - RenderingSettings.g_farplane) > 0.0001f)
+            if (Math.Abs(_g_FarClip - RenderingSettings.g_FarPlane) > 0.0001f)
             {
-                _g_FarClip = RenderingSettings.g_farplane;
+                _g_FarClip = RenderingSettings.g_FarPlane;
                 _gBufferModule.FarClip = _g_FarClip;
                 _decalRenderModule.FarClip = _g_FarClip;
                 Shaders.DeferredPointLight.Param_FarClip.SetValue(_g_FarClip);
@@ -490,9 +490,9 @@ namespace DeferredEngine.Renderer
                 if (!_g_SSReflectionNoise) Shaders.SSR.Param_Time.SetValue(0.0f);
             }
 
-            if (_forceShadowFiltering != RenderingSettings.g_shadowforcefiltering)
+            if (_forceShadowFiltering != RenderingSettings.g_ShadowForceFiltering)
             {
-                _forceShadowFiltering = RenderingSettings.g_shadowforcefiltering;
+                _forceShadowFiltering = RenderingSettings.g_ShadowForceFiltering;
 
                 for (var index = 0; index < dirLights.Count; index++)
                 {
@@ -506,9 +506,9 @@ namespace DeferredEngine.Renderer
                 }
             }
 
-            if (_forceShadowSS != RenderingSettings.g_shadowforcescreenspace)
+            if (_forceShadowSS != RenderingSettings.g_ShadowForceScreenSpace)
             {
-                _forceShadowSS = RenderingSettings.g_shadowforcescreenspace;
+                _forceShadowSS = RenderingSettings.g_ShadowForceScreenSpace;
 
                 for (var index = 0; index < dirLights.Count; index++)
                 {
@@ -945,7 +945,7 @@ namespace DeferredEngine.Renderer
         /// <param name="editorData"></param>
         private void RenderMode(RenderTarget2D currentInput)
         {
-            switch (RenderingSettings.g_rendermode)
+            switch (RenderingSettings.g_RenderMode)
             {
                 case RenderModes.Albedo:
                     DrawTextureToScreenToFullScreen(_gBufferTarget.Albedo);

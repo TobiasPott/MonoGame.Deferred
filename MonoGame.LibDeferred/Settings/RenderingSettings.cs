@@ -7,14 +7,14 @@ namespace DeferredEngine.Recources
     public static partial class RenderingSettings
     {
 
-        public static int u_showdisplayinfo = 3;
+        public static int u_ShowDisplayInfo = 3;
 
         //Editor
         public static bool e_IsEditorEnabled = true;
-        public static bool e_drawoutlines = true;
-        public static bool e_drawboundingbox = true;
+        public static bool e_DrawOutlines = true;
+        public static bool e_DrawBoundingBox = true;
         //debug
-        public static bool d_drawlines = true;
+        public static bool d_Drawlines = true;
         //Profiler
         public static bool d_IsProfileEnabled = false;
 
@@ -23,14 +23,14 @@ namespace DeferredEngine.Recources
 
         //Renderer
         //Default Material
-        public static bool d_defaultmaterial = false;
-        public static float m_defaultroughness = 0.5f;
+        public static bool d_DefaultMaterial = false;
+        public static float m_DefaultRoughness = 0.5f;
 
         //Settings
-        public static RenderModes g_rendermode = RenderModes.Deferred;
-        public static float g_farplane = 500;
-        public static bool g_cpuculling = true;
-        public static bool g_batchbymaterial = false; //Note this must be activated before the application is started.
+        public static RenderModes g_RenderMode = RenderModes.Deferred;
+        public static float g_FarPlane = 500;
+        public static bool g_CpuCulling = true;
+        public static bool g_BatchByMaterial = false; //Note this must be activated before the application is started.
 
         //Deferred Decals
         public static bool g_EnableDecals = true;
@@ -38,8 +38,8 @@ namespace DeferredEngine.Recources
         public static bool g_EnableForward = true;
 
         //Shadow Settings
-        public static int g_shadowforcefiltering = 0; //1 = PCF, 2 3 better PCF  4 = Poisson, 5 = VSM;
-        public static bool g_shadowforcescreenspace = false;
+        public static int g_ShadowForceFiltering = 0; //1 = PCF, 2 3 better PCF  4 = Poisson, 5 = VSM;
+        public static bool g_ShadowForceScreenSpace = false;
 
 
 
@@ -75,7 +75,7 @@ namespace DeferredEngine.Recources
 
             g_Linear = _g_Linear;
 
-            d_defaultmaterial = false;
+            d_DefaultMaterial = false;
             SCurveStrength = _sCurveStrength;
             Exposure = _exposure;
             ChromaticAbberationStrength = _chromaticAbberationStrength;
