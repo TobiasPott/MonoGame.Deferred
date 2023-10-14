@@ -10,6 +10,7 @@ namespace DeferredEngine.Renderer.PostProcessing
     public class TemporalAAFx : BaseFx
     {
 
+        private TemporalAAFxEffectSetup _effectSetup = new TemporalAAFxEffectSetup();
         private bool _enabled = true;
         private bool _useTonemapping = true;
         private HaltonSequence _haltonSequence = new HaltonSequence();
@@ -20,14 +21,14 @@ namespace DeferredEngine.Renderer.PostProcessing
         public bool IsOffFrame { get; protected set; } = true;
         public int JitterMode = 2;
 
-        public Vector3[] FrustumCorners { set { Shaders.TAA.Param_FrustumCorners.SetValue(value); } }
-        public Vector2 Resolution { set { Shaders.TAA.Param_Resolution.SetValue(value); } }
-        public RenderTarget2D DepthMap { set { Shaders.TAA.Param_DepthMap.SetValue(value); } }
+        public Vector3[] FrustumCorners { set { _effectSetup.Param_FrustumCorners.SetValue(value); } }
+        public Vector2 Resolution { set { _effectSetup.Param_Resolution.SetValue(value); } }
+        public RenderTarget2D DepthMap { set { _effectSetup.Param_DepthMap.SetValue(value); } }
 
         public bool UseTonemap
         {
             get { return _useTonemapping && RenderingSettings.TAA.UseTonemapping; }
-            set { _useTonemapping = value; Shaders.TAA.Param_UseTonemap.SetValue(value); }
+            set { _useTonemapping = value; _effectSetup.Param_UseTonemap.SetValue(value); }
         }
 
 
@@ -41,17 +42,17 @@ namespace DeferredEngine.Renderer.PostProcessing
             _graphicsDevice.SetRenderTarget(output);
             _graphicsDevice.BlendState = BlendState.Opaque;
 
-            Shaders.TAA.Param_AccumulationMap.SetValue(previousFrames);
-            Shaders.TAA.Param_UpdateMap.SetValue(currentFrame);
-            Shaders.TAA.Param_CurrentToPrevious.SetValue(Matrices.CurrentViewToPreviousViewProjection);
+            _effectSetup.Param_AccumulationMap.SetValue(previousFrames);
+            _effectSetup.Param_UpdateMap.SetValue(currentFrame);
+            _effectSetup.Param_CurrentToPrevious.SetValue(Matrices.CurrentViewToPreviousViewProjection);
 
-            this.Draw(Shaders.TAA.Pass_TemporalAA);
+            this.Draw(_effectSetup.Pass_TemporalAA);
 
             if (UseTonemap)
             {
                 _graphicsDevice.SetRenderTarget(currentFrame);
-                Shaders.TAA.Param_UpdateMap.SetValue(output);
-                this.Draw(Shaders.TAA.Pass_TonemapInverse);
+                _effectSetup.Param_UpdateMap.SetValue(output);
+                this.Draw(_effectSetup.Pass_TonemapInverse);
             }
         }
 
@@ -84,30 +85,7 @@ namespace DeferredEngine.Renderer.PostProcessing
 
         public override void Dispose()
         {
-        }
-    }
-}
-
-namespace DeferredEngine.Recources
-{
-    public static partial class Shaders
-    {
-        public static class TAA
-        {
-
-            public static Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/TemporalAntiAliasing/TemporalAntiAliasing");
-
-            public static EffectPass Pass_TemporalAA = Effect.Techniques["TemporalAntialiasing"].Passes[0];
-            public static EffectPass Pass_TonemapInverse = Effect.Techniques["InverseTonemap"].Passes[0];
-
-            public static EffectParameter Param_AccumulationMap = Effect.Parameters["AccumulationMap"];
-            public static EffectParameter Param_UpdateMap = Effect.Parameters["UpdateMap"];
-            public static EffectParameter Param_DepthMap = Effect.Parameters["DepthMap"];
-            public static EffectParameter Param_CurrentToPrevious = Effect.Parameters["CurrentToPrevious"];
-            public static EffectParameter Param_Resolution = Effect.Parameters["Resolution"];
-            public static EffectParameter Param_FrustumCorners = Effect.Parameters["FrustumCorners"];
-            public static EffectParameter Param_UseTonemap = Effect.Parameters["UseTonemap"];
-
+            _effectSetup?.Dispose();
         }
     }
 }
