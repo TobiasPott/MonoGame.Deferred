@@ -41,7 +41,21 @@ namespace DeferredEngine.Renderer.PostProcessing
     /// </summary>
     public partial class BloomFx : IDisposable
     {
-        #region fields & properties
+
+        private static readonly float[] Wide_Strength = new float[] { 0.5f, 1, 2, 1, 2 };
+        private static readonly float[] Wide_Radius = new float[] { 1.0f, 2.0f, 2.0f, 4.0f, 4.0f };
+
+        private static readonly float[] SuperWide_Strength = new float[] { 0.9f, 1, 1, 2, 6 };
+        private static readonly float[] SuperWide_Radius = new float[] { 2.0f, 2.0f, 2.0f, 2.0f, 4.0f };
+
+        private static readonly float[] Focused_Strength = new float[] { 0.9f, 1, 1, 1, 2 };
+        private static readonly float[] Focused_Radius = new float[] { 2.0f, 2.0f, 2.0f, 2.0f, 4.0f };
+
+        private static readonly float[] Small_Strength = new float[] { 0.8f, 1, 1, 1, 1 };
+        private static readonly float[] Small_Radius = new float[] { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
+
+        private static readonly float[] Cheap_Strength = new float[] { 0.8f, 2, 0, 0, 0 };
+        private static readonly float[] Cheap_Radius = new float[] { 2.0f, 2.0f, 0, 0, 0 };
 
 
         //RenderTargets
@@ -121,7 +135,6 @@ namespace DeferredEngine.Renderer.PostProcessing
 
         #endregion
 
-        #endregion
 
 
         public BloomFx(ContentManager content)
@@ -184,74 +197,40 @@ namespace DeferredEngine.Renderer.PostProcessing
             {
                 case BloomPresets.Wide:
                     {
-                        _strength[0] = 0.5f;
-                        _strength[1] = 1;
-                        _strength[2] = 2;
-                        _strength[3] = 1;
-                        _strength[4] = 2;
-                        _radius[4] = 4.0f;
-                        _radius[3] = 4.0f;
-                        _radius[2] = 2.0f;
-                        _radius[1] = 2.0f;
-                        _radius[0] = 1.0f;
+                        Array.Copy(Wide_Strength, _strength, _strength.Length);
+                        Array.Copy(Wide_Radius, _radius, _radius.Length);
                         BloomStreakLength = 1;
                         BloomDownsamplePasses = 5;
                         break;
                     }
                 case BloomPresets.SuperWide:
                     {
-                        _strength[0] = 0.9f;
-                        _strength[1] = 1;
-                        _strength[2] = 1;
-                        _strength[3] = 2;
-                        _strength[4] = 6;
-                        _radius[4] = 4.0f;
-                        _radius[3] = 2.0f;
-                        _radius[2] = 2.0f;
-                        _radius[1] = 2.0f;
-                        _radius[0] = 2.0f;
+                        Array.Copy(SuperWide_Strength, _strength, _strength.Length);
+                        Array.Copy(SuperWide_Radius, _radius, _radius.Length);
                         BloomStreakLength = 1;
                         BloomDownsamplePasses = 5;
                         break;
                     }
                 case BloomPresets.Focussed:
                     {
-                        _strength[0] = 0.8f;
-                        _strength[1] = 1;
-                        _strength[2] = 1;
-                        _strength[3] = 1;
-                        _strength[4] = 2;
-                        _radius[4] = 4.0f;
-                        _radius[3] = 2.0f;
-                        _radius[2] = 2.0f;
-                        _radius[1] = 2.0f;
-                        _radius[0] = 2.0f;
+                        Array.Copy(Focused_Strength, _strength, _strength.Length);
+                        Array.Copy(Focused_Radius, _radius, _radius.Length);
                         BloomStreakLength = 1;
                         BloomDownsamplePasses = 5;
                         break;
                     }
                 case BloomPresets.Small:
                     {
-                        _strength[0] = 0.8f;
-                        _strength[1] = 1;
-                        _strength[2] = 1;
-                        _strength[3] = 1;
-                        _strength[4] = 1;
-                        _radius[4] = 1;
-                        _radius[3] = 1;
-                        _radius[2] = 1;
-                        _radius[1] = 1;
-                        _radius[0] = 1;
+                        Array.Copy(Small_Strength, _strength, _strength.Length);
+                        Array.Copy(Small_Radius, _radius, _radius.Length);
                         BloomStreakLength = 1;
                         BloomDownsamplePasses = 5;
                         break;
                     }
                 case BloomPresets.Cheap:
                     {
-                        _strength[0] = 0.8f;
-                        _strength[1] = 2;
-                        _radius[1] = 2;
-                        _radius[0] = 2;
+                        Array.Copy(Cheap_Strength, _strength, _strength.Length);
+                        Array.Copy(Cheap_Radius, _radius, _radius.Length);
                         BloomStreakLength = 1;
                         BloomDownsamplePasses = 2;
                         break;
