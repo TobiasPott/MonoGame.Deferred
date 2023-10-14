@@ -69,6 +69,8 @@ namespace DeferredEngine.Renderer
         }
         public void UpdateFromView()
         {
+            PreviousViewProjection = ViewProjection;
+
             // update our projection matrices
             InverseView = Matrix.Invert(View);
             ViewIT = Matrix.Transpose(InverseView);

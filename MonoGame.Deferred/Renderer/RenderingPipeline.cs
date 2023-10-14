@@ -10,7 +10,6 @@ using DeferredEngine.Renderer.RenderModules.SDF;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Ext;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -54,13 +53,6 @@ namespace DeferredEngine.Renderer
         private bool _viewProjectionHasChanged;
         //Projection Matrices and derivates used in shaders
         private PipelineMatrices _matrices;
-
-        //Temporal Anti Aliasing
-        private bool _isTaaOffFrame = true;
-        private Vector3[] _haltonSequence;
-        private int _haltonSequenceIndex = -1;
-        private const int HaltonSequenceLength = 16;
-
 
         //Bounding Frusta of our view projection, to calculate which objects are inside the view
         private BoundingFrustum _boundingFrustum;
@@ -188,7 +180,6 @@ namespace DeferredEngine.Renderer
                 return;
             _editorRender.Update(gameTime);
             _distanceFieldRenderModule.UpdateSdfGenerator(entities);
-
         }
 
         #region RENDER FUNCTIONS
@@ -364,7 +355,7 @@ namespace DeferredEngine.Renderer
         /// Another draw function, but this time for cubemaps. Doesn't need all the stuff we have in the main draw function
         /// </summary>
         /// <param name="origin">from where do we render the cubemap</param>
-        private void DrawCubeMap(Vector3 origin, DynamicMeshBatcher meshMaterialLibrary, EntitySceneGroup scene, float farPlane, GameTime gameTime, Camera camera)
+        private void DrawCubeMap(Vector3 origin, DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, float farPlane, GameTime gameTime, Camera camera)
         {
             //If our cubemap is not yet initialized, create a new one
             if (_renderTargetCubeMap == null)
@@ -407,9 +398,9 @@ namespace DeferredEngine.Renderer
                 _lightAccumulationModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
 
                 //Base stuff, for description look in Draw()
-                meshMaterialLibrary.FrustumCulling(_boundingFrustum, true, origin);
+                meshBatcher.FrustumCulling(_boundingFrustum, true, origin);
 
-                DrawGBuffer(meshMaterialLibrary);
+                DrawGBuffer(meshBatcher);
 
                 bool volumeEnabled = RenderingSettings.g_VolumetricLights;
                 RenderingSettings.g_VolumetricLights = false;
@@ -551,17 +542,18 @@ namespace DeferredEngine.Renderer
         /// <summary>
         /// Draw our shadow maps from the individual lights. Check if something has changed first, otherwise leave as it is
         /// </summary>
-        /// <param name="meshMaterialLibrary"></param>
+        /// <param name="meshBatcher"></param>
         /// <param name="entities"></param>
         /// <param name="pointLights"></param>
         /// <param name="dirLights"></param>
         /// <param name="camera"></param>
-        private void DrawShadowMaps(DynamicMeshBatcher meshMaterialLibrary, EntitySceneGroup scene, Camera camera)
+        private void DrawShadowMaps(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, Camera camera)
         {
             //Don't render for the first frame, we need a guideline first
-            if (_boundingFrustum == null) UpdateViewProjection(meshMaterialLibrary, camera);
+            if (_boundingFrustum == null)
+                UpdateViewProjection(meshBatcher, camera);
 
-            _shadowMapModule.Draw(meshMaterialLibrary, scene);
+            _shadowMapModule.Draw(meshBatcher, scene);
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)
@@ -576,7 +568,7 @@ namespace DeferredEngine.Renderer
         /// <summary>
         /// Create the projection matrices
         /// </summary>
-        private void UpdateViewProjection(DynamicMeshBatcher meshMaterialLibrary, Camera camera)
+        private void UpdateViewProjection(DynamicMeshBatcher meshBatcher, Camera camera)
         {
             _viewProjectionHasChanged = camera.HasChanged;
 
@@ -584,7 +576,7 @@ namespace DeferredEngine.Renderer
             if (RenderingSettings.g_taa)
             {
                 _viewProjectionHasChanged = true;
-                _isTaaOffFrame = !_isTaaOffFrame;
+                _taaFx.SwapOffFrame();
             }
 
             //If the camera didn't do anything we don't need to update this stuff
@@ -597,29 +589,7 @@ namespace DeferredEngine.Renderer
                 //Temporal AA
                 if (RenderingSettings.g_taa)
                 {
-                    switch (RenderingSettings.g_taa_jittermode)
-                    {
-                        case 0: //2 frames, just basic translation. Worst taa implementation. Not good with the continous integration used
-                            {
-                                Vector2 translation = Vector2.One * (_isTaaOffFrame ? 0.5f : -0.5f);
-                                _matrices.ViewProjection *= (translation / RenderingSettings.g_ScreenResolution).ToMatrixTranslationXY();
-                            }
-                            break;
-                        case 1: // Just random translation
-                            {
-                                float randomAngle = FastRand.NextAngle();
-                                Vector2 translation = (new Vector2((float)Math.Sin(randomAngle), (float)Math.Cos(randomAngle)) / RenderingSettings.g_ScreenResolution) * 0.5f; ;
-                                _matrices.ViewProjection *= translation.ToMatrixTranslationXY();
-
-                            }
-                            break;
-                        case 2: // Halton sequence, default
-                            {
-                                Vector3 translation = GetHaltonSequence();
-                                _matrices.ViewProjection *= Matrix.CreateTranslation(translation);
-                            }
-                            break;
-                    }
+                    _taaFx?.UpdateViewProjection(_matrices);
                 }
 
                 _matrices.PreviousViewProjection = _matrices.ViewProjection;
@@ -633,7 +603,7 @@ namespace DeferredEngine.Renderer
             }
 
             //We need to update whether or not entities are in our boundingFrustum and then cull them or not!
-            meshMaterialLibrary.FrustumCulling(_boundingFrustum, _viewProjectionHasChanged, camera.Position);
+            meshBatcher.FrustumCulling(_boundingFrustum, _viewProjectionHasChanged, camera.Position);
 
             _lightAccumulationModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
 
@@ -645,45 +615,6 @@ namespace DeferredEngine.Renderer
 
                 _performancePreviousTime = performanceCurrentTime;
             }
-        }
-
-        /// <summary>
-        /// The halton sequence is a good way to create good distribution
-        /// I use a 2,3 sequence
-        /// https://en.wikipedia.org/wiki/Halton_sequence
-        /// </summary>
-        /// <returns></returns>
-        private Vector3 GetHaltonSequence()
-        {
-            //First time? Create the sequence
-            if (_haltonSequence == null)
-            {
-                _haltonSequence = new Vector3[HaltonSequenceLength];
-                for (int index = 0; index < HaltonSequenceLength; index++)
-                {
-                    for (int baseValue = 2; baseValue <= 3; baseValue++)
-                    {
-                        float result = 0;
-                        float f = 1;
-                        int i = index + 1;
-
-                        while (i > 0)
-                        {
-                            f /= baseValue;
-                            result += f * (i % baseValue);
-                            i /= baseValue; //floor / int()
-                        }
-
-                        if (baseValue == 2)
-                            _haltonSequence[index].X = (result - 0.5f) * 2 * RenderingSettings.g_ScreenInverseResolution.X;
-                        else
-                            _haltonSequence[index].Y = (result - 0.5f) * 2 * RenderingSettings.g_ScreenInverseResolution.Y;
-                    }
-                }
-            }
-            _haltonSequenceIndex++;
-            if (_haltonSequenceIndex >= HaltonSequenceLength) _haltonSequenceIndex = 0;
-            return _haltonSequence[_haltonSequenceIndex];
         }
 
         /// <summary>
@@ -780,7 +711,7 @@ namespace DeferredEngine.Renderer
 
             if (RenderingSettings.g_taa)
             {
-                Shaders.SSR.Param_TargetMap.SetValue(_isTaaOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2]);
+                Shaders.SSR.Param_TargetMap.SetValue(_taaFx.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2]);
             }
             else
             {
@@ -1042,9 +973,9 @@ namespace DeferredEngine.Renderer
         {
             if (!RenderingSettings.g_taa) return input;
 
-            RenderTarget2D output = !_isTaaOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2];
+            RenderTarget2D output = !_taaFx.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2];
             _taaFx.UseTonemap = RenderingSettings.g_taa_tonemapped;
-            _taaFx.Draw(currentFrame: input, previousFrames: _isTaaOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2], output: output);
+            _taaFx.Draw(currentFrame: input, previousFrames: _taaFx.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2], output: output);
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)
@@ -1161,8 +1092,6 @@ namespace DeferredEngine.Renderer
         /// </summary>
         public void UpdateResolution()
         {
-            _haltonSequence = null;
-
             SetUpRenderTargets(RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight, false);
         }
 

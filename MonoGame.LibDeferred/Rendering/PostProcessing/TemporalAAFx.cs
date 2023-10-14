@@ -1,6 +1,8 @@
 ﻿using DeferredEngine.Recources;
+using DeferredEngine.Renderer.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Ext;
 
 namespace DeferredEngine.Renderer.PostProcessing
 {
@@ -9,6 +11,7 @@ namespace DeferredEngine.Renderer.PostProcessing
     {
 
         public PipelineMatrices Matrices { get; set; }
+        public bool IsOffFrame { get; protected set; } = true;
 
         public Vector3[] FrustumCorners { set { Shaders.TAA.Param_FrustumCorners.SetValue(value); } }
         public Vector2 Resolution { set { Shaders.TAA.Param_Resolution.SetValue(value); } }
@@ -18,10 +21,14 @@ namespace DeferredEngine.Renderer.PostProcessing
 
 
 
+        private HaltonSequence _haltonSequence = new HaltonSequence();
+
 
         public TemporalAAFx()
         { }
 
+        public void SwapOffFrame()
+        { IsOffFrame = !IsOffFrame; }
         public void Draw(RenderTarget2D currentFrame, RenderTarget2D previousFrames, RenderTarget2D output)
         {
             _graphicsDevice.SetRenderTarget(output);
@@ -39,6 +46,37 @@ namespace DeferredEngine.Renderer.PostProcessing
                 Shaders.TAA.Param_UpdateMap.SetValue(output);
                 this.Draw(Shaders.TAA.Pass_TonemapInverse);
             }
+        }
+
+        public bool UpdateViewProjection(PipelineMatrices matrices)
+        {
+            if (RenderingSettings.g_taa)
+            {
+
+                switch (RenderingSettings.g_taa_jittermode)
+                {
+                    case 0: //2 frames, just basic translation. Worst taa implementation. Not good with the continous integration used
+                        {
+                            Vector2 translation = Vector2.One * (this.IsOffFrame ? 0.5f : -0.5f);
+                            matrices.ViewProjection *= (translation / RenderingSettings.g_ScreenResolution).ToMatrixTranslationXY();
+                            return true;
+                        }
+                    case 1: // Just random translation
+                        {
+                            float randomAngle = FastRand.NextAngle();
+                            Vector2 translation = (new Vector2((float)Math.Sin(randomAngle), (float)Math.Cos(randomAngle)) / RenderingSettings.g_ScreenResolution) * 0.5f;
+                            matrices.ViewProjection *= translation.ToMatrixTranslationXY();
+                            return true;
+                        }
+                    case 2: // Halton sequence, default
+                        {
+                            Vector3 translation = _haltonSequence.GetHaltonSequence();
+                            matrices.ViewProjection *= Matrix.CreateTranslation(translation);
+                            return true;
+                        }
+                }
+            }
+            return false;
         }
 
         public override void Dispose()
