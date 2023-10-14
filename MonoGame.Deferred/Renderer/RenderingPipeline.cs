@@ -1016,7 +1016,7 @@ namespace DeferredEngine.Renderer
             Shaders.PostProcssing.Effect.CurrentTechnique.Passes[0].Apply();
             FullscreenTarget.Draw(_graphicsDevice);
 
-            if (RenderingSettings.g_ColorGrading)
+            if (_colorGradingFx.Enabled)
                 destinationRenderTarget = _colorGradingFx.Draw(destinationRenderTarget);
 
             DrawTextureToScreenToFullScreen(destinationRenderTarget);

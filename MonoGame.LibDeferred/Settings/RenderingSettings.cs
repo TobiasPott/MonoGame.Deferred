@@ -55,8 +55,6 @@ namespace DeferredEngine.Recources
         }
 
         public static bool g_VolumetricLights = true;
-        public static bool g_ClearGBuffer = true;
-
 
         public static int g_UseDepthStencilLightCulling = 1; //None, Depth, Depth+Stencil
 

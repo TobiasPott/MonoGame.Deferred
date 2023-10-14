@@ -392,4 +392,15 @@ namespace DeferredEngine.Renderer.PostProcessing
             _effectSetup?.Dispose();
         }
     }
+
+    //enums
+    public enum BloomPresets
+    {
+        Wide,
+        Focussed,
+        Small,
+        SuperWide,
+        Cheap
+    };
+
 }

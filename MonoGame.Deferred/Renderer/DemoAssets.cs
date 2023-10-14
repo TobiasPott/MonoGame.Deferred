@@ -181,17 +181,6 @@ namespace DeferredEngine.Recources
         /// <summary>
         /// Create custom materials, you can add certain maps like Albedo, normal, etc. if you like.
         /// </summary>
-        /// <param name="color"></param>
-        /// <param name="roughness"></param>
-        /// <param name="metallic"></param>
-        /// <param name="albedoMap"></param>
-        /// <param name="normalMap"></param>
-        /// <param name="roughnessMap"></param>
-        /// <param name="metallicMap"></param>
-        /// <param name="mask"></param>
-        /// <param name="type">2: hologram, 3:emissive</param>
-        /// <param name="emissiveStrength"></param>
-        /// <returns></returns>
         private static MaterialEffect CreateMaterialEffect(Color color, float roughness, float metallic, Texture2D albedoMap = null, Texture2D normalMap = null, Texture2D roughnessMap = null, Texture2D metallicMap = null, Texture2D mask = null, Texture2D displacementMap = null, MaterialEffect.MaterialTypes type = 0, float emissiveStrength = 0)
         {
             MaterialEffect mat = new MaterialEffect(Shaders.Deferred.Effect_Clear);

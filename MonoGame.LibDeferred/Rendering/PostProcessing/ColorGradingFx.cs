@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using DeferredEngine.Recources;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 
@@ -15,32 +16,21 @@ namespace DeferredEngine.Renderer.PostProcessing
     /// You can use Draw() to apply the color grading / color correction to an image and use the returned texture for output.
     /// You can use CreateLUT to create default Look-up tables with unmodified colors.
     /// </summary>
-    public class ColorGradingFx : BaseFx
+    public partial class ColorGradingFx : BaseFx
     {
 
-        #region fields & properties
-
-        #region fields
-        private readonly Effect _shaderEffect;
-
-        private RenderTarget2D _renderTarget;
-
-        private readonly EffectParameter _sizeParam;
-        private readonly EffectParameter _sizeRootParam;
-        private readonly EffectParameter _inputTextureParam;
-        private readonly EffectParameter _lutParam;
-        private readonly EffectPass _createLUTPass;
-        private readonly EffectPass _applyLUTPass;
+        private bool _enabled = true;
+        public bool Enabled { get => _enabled && RenderingSettings.g_ColorGrading; set { _enabled = value; } }
 
         private int _size;
+        private RenderTarget2D _renderTarget;
+
         private Texture2D _inputTexture;
         private Texture2D _lookupTable;
-
+        private ColorGradingFxEffectSetup _effectSetup = new ColorGradingFxEffectSetup();
         public enum LUTSizes { Size16, Size32 };
 
-        #endregion
 
-        #region properties
         private int Size
         {
             get { return _size; }
@@ -50,8 +40,8 @@ namespace DeferredEngine.Renderer.PostProcessing
                 {
                     if (value != 16 && value != 32) throw new NotImplementedException("only 16 and 32 supported right now");
                     _size = value;
-                    _sizeParam.SetValue((float)_size);
-                    _sizeRootParam.SetValue((float)(_size == 16 ? 4 : 8));
+                    _effectSetup.Param_Size.SetValue((float)_size);
+                    _effectSetup.Param_SizeRoot.SetValue((float)(_size == 16 ? 4 : 8));
                 }
             }
         }
@@ -64,7 +54,7 @@ namespace DeferredEngine.Renderer.PostProcessing
                 if (value != _inputTexture)
                 {
                     _inputTexture = value;
-                    _inputTextureParam.SetValue(value);
+                    _effectSetup.Param_InputTexture.SetValue(value);
                 }
             }
         }
@@ -77,45 +67,28 @@ namespace DeferredEngine.Renderer.PostProcessing
                 if (value != _lookupTable)
                 {
                     _lookupTable = value;
-                    _lutParam.SetValue(value);
+                    _effectSetup.Param_LUT.SetValue(value);
                 }
             }
         }
-        #endregion
 
-        #endregion
 
-        #region initialize
+
+
         /// <summary>
         /// A filter that allows color grading by using Look up tables
         /// </summary>
-        /// <param name="graphics"></param>
-        /// <param name="content"></param>
-        /// <param name="shaderPath">the relative shader path needed for the content manager to load. For example "Shaders/ColorGrading/Colorgrading"</param>
         public ColorGradingFx(ContentManager content, string shaderPath = "Shaders/PostProcessing/ColorGrading")
         {
-            _shaderEffect = content.Load<Effect>(shaderPath);
-            _sizeParam = _shaderEffect.Parameters["Size"];
-            _sizeRootParam = _shaderEffect.Parameters["SizeRoot"];
-            _inputTextureParam = _shaderEffect.Parameters["InputTexture"];
-            _lutParam = _shaderEffect.Parameters["LUT"];
-
-            _applyLUTPass = _shaderEffect.Techniques["ApplyLUT"].Passes[0];
-            _createLUTPass = _shaderEffect.Techniques["CreateLUT"].Passes[0];
-
             LookUpTable = content.Load<Texture2D>("Shaders/PostProcessing/lut");
         }
 
-
         public override void Dispose()
         {
-            _shaderEffect?.Dispose();
+            _effectSetup?.Dispose();
             _renderTarget?.Dispose();
         }
 
-        #endregion
-
-        #region main functions
 
         /// <summary>
         /// returns a modified image with color grading applied.
@@ -137,12 +110,11 @@ namespace DeferredEngine.Renderer.PostProcessing
             }
 
             InputTexture = input;
-            //LookUpTable = lookupTable;
             Size = (lookupTable.Width == 64) ? 16 : 32;
 
             _graphicsDevice.SetRenderTarget(_renderTarget);
             _graphicsDevice.BlendState = BlendState.Opaque;
-            this.Draw(_applyLUTPass);
+            this.Draw(_effectSetup.Pass_ApplyLUT);
             return _renderTarget;
         }
 
@@ -157,15 +129,15 @@ namespace DeferredEngine.Renderer.PostProcessing
         {
             _renderTarget?.Dispose();
 
-            _sizeParam.SetValue((float)(lutsize == LUTSizes.Size16 ? 16 : 32));
-            _sizeRootParam.SetValue((float)(lutsize == LUTSizes.Size16 ? 4 : 8));
+            _effectSetup.Param_Size.SetValue((float)(lutsize == LUTSizes.Size16 ? 16 : 32));
+            _effectSetup.Param_SizeRoot.SetValue((float)(lutsize == LUTSizes.Size16 ? 4 : 8));
             int size = lutsize == LUTSizes.Size16 ? 16 * 4 : 32 * 8;
 
             _renderTarget = new RenderTarget2D(_graphicsDevice, size, size, false, SurfaceFormat.Color, DepthFormat.None);
 
             _graphicsDevice.SetRenderTarget(_renderTarget);
 
-            this.Draw(_createLUTPass);
+            this.Draw(_effectSetup.Pass_CreateLUT);
 
             //Save this texture
             Stream stream = File.Create(relativeFilePath);
@@ -173,7 +145,6 @@ namespace DeferredEngine.Renderer.PostProcessing
             stream.Dispose();
         }
 
-        #endregion
 
     }
 }

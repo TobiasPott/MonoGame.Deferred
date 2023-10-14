@@ -11,7 +11,6 @@ namespace DeferredEngine.Renderer.RenderModules
     public class GBufferPipelineModule : PipelineModule, IRenderModule
     {
         private GBufferEffectSetup _effectSetup = new GBufferEffectSetup();
-
         private GBufferTarget _gBufferTarget;
         private FullscreenTriangleBuffer _fullscreenTarget;
 
@@ -23,8 +22,8 @@ namespace DeferredEngine.Renderer.RenderModules
         public Vector3 Camera
         { set { _effectSetup.Param_Camera.SetValue(value); } }
 
+        public bool ClearGBuffer { get; set; } = true;
 
-        public bool ClearGBuffer { get => RenderingSettings.g_ClearGBuffer; }
 
         public GBufferPipelineModule(ContentManager content, string shaderPath)
             : base(content, shaderPath)
