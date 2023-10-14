@@ -54,32 +54,16 @@ namespace DeferredEngine.Renderer.RenderModules
         /// <summary>
         /// Needs to be called before draw
         /// </summary>
-        /// <param name="boundingFrustum"></param>
-        /// <param name="viewProjHasChanged"></param>
-        /// <param name="view"></param>
-        /// <param name="inverseView"></param>
-        /// <param name="viewIT"></param>
-        /// <param name="projection"></param>
-        /// <param name="viewProjection"></param>
-        /// <param name="staticViewProjection"></param>
-        /// <param name="inverseViewProjection"></param>
-        public void UpdateViewProjection(BoundingFrustum boundingFrustum,
-                                         bool viewProjHasChanged,
-                                         Matrix view,
-                                         Matrix inverseView,
-                                         Matrix viewIT,
-                                         Matrix projection,
-                                         Matrix viewProjection,
-                                         Matrix inverseViewProjection)
+        public void UpdateViewProjection(BoundingFrustum boundingFrustum, bool viewProjHasChanged, PipelineMatrices matrices)
         {
             _boundingFrustum = boundingFrustum;
             _viewProjectionHasChanged = viewProjHasChanged;
-            _view = view;
-            _inverseView = inverseView;
-            _viewIT = viewIT;
-            _projection = projection;
-            _viewProjection = viewProjection;
-            _inverseViewProjection = inverseViewProjection;
+            _view = matrices.View;
+            _inverseView = matrices.InverseView;
+            _viewIT = matrices.ViewIT;
+            _projection = matrices.Projection;
+            _viewProjection = matrices.ViewProjection;
+            _inverseViewProjection = matrices.InverseViewProjection;
         }
 
         /// <summary>

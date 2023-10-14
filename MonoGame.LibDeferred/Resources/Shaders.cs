@@ -1,4 +1,5 @@
 ﻿using DeferredEngine.Renderer;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -130,6 +131,16 @@ namespace DeferredEngine.Recources
             public static readonly EffectTechnique Technique_SSAO = Effect.Techniques["SSAO"];
             public static readonly EffectTechnique Technique_BlurHorizontal = Effect.Techniques["BilateralHorizontal"];
             public static readonly EffectTechnique Technique_BlurVertical = Effect.Techniques["BilateralVertical"];
+
+            public static void SetCameraAndMatrices(Vector3 cameraPosition, PipelineMatrices matrices)
+            {
+                Shaders.SSAO.Param_InverseViewProjection.SetValue(matrices.InverseViewProjection);
+                Shaders.SSAO.Param_Projection.SetValue(matrices.Projection);
+                Shaders.SSAO.Param_ViewProjection.SetValue(matrices.ViewProjection);
+
+                Shaders.SSAO.Param_CameraPosition.SetValue(cameraPosition);
+            }
+
         }
 
         //Gaussian Blur

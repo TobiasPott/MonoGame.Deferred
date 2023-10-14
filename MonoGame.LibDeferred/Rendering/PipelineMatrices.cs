@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using DeferredEngine.Entities;
+using DeferredEngine.Recources;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -13,8 +15,10 @@ namespace DeferredEngine.Renderer
         public Matrix ViewIT;
         public Matrix Projection;
         public Matrix ViewProjection;
+
         public Matrix StaticViewProjection;
         public Matrix InverseViewProjection;
+
         public Matrix PreviousViewProjection;
         public Matrix CurrentViewToPreviousViewProjection;
 
@@ -53,15 +57,29 @@ namespace DeferredEngine.Renderer
                         break;
                     }
             }
+        }
+        public void SetFromCamera(Camera camera)
+        {
+            //View matrix
+            View = Matrix.CreateLookAt(camera.Position, camera.Lookat, camera.Up);
+            Projection = Matrix.CreatePerspectiveFieldOfView(camera.FieldOfView, RenderingSettings.g_ScreenAspect, 1, RenderingSettings.g_farplane);
 
+            // update our projection matrices
+            this.UpdateFromView();
         }
         public void UpdateFromView()
         {
-            //Create our projection matrices
+            // update our projection matrices
             InverseView = Matrix.Invert(View);
+            ViewIT = Matrix.Transpose(InverseView);
             ViewProjection = View * Projection;
             InverseViewProjection = Matrix.Invert(ViewProjection);
-            ViewIT = Matrix.Transpose(InverseView);
+
+            // this is the unjittered viewProjection. For some effects we don't want the jittered one
+            StaticViewProjection = ViewProjection;
+
+            // Transformation for TAA - from current view back to the old view projection
+            CurrentViewToPreviousViewProjection = Matrix.Invert(View) * PreviousViewProjection;
 
         }
     }

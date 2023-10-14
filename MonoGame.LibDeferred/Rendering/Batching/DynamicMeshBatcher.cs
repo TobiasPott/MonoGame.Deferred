@@ -271,7 +271,9 @@ namespace DeferredEngine.Renderer.Helper
             Forward,
         }
 
-        public void Draw(RenderType renderType, Matrix viewProjection, bool lightViewPointChanged = false, bool hasAnyObjectMoved = false, bool outlined = false, int outlineId = 0, Matrix? view = null, IRenderModule renderModule = null)
+        public void Draw(RenderType renderType, PipelineMatrices matrices, bool lightViewPointChanged = false, bool hasAnyObjectMoved = false, bool outlined = false, int outlineId = 0, IRenderModule renderModule = null)
+            => Draw(renderType, matrices.ViewProjection, matrices.View, lightViewPointChanged, hasAnyObjectMoved, outlined, outlineId, renderModule);
+        public void Draw(RenderType renderType, Matrix viewProjection, Matrix? view, bool lightViewPointChanged = false, bool hasAnyObjectMoved = false, bool outlined = false, int outlineId = 0, IRenderModule renderModule = null)
         {
             SetBlendAndRasterizerState(renderType);
 

@@ -158,21 +158,21 @@ namespace DeferredEngine.Renderer.RenderModules
         }
 
         public void DrawIds(DynamicMeshBatcher meshMaterialLibrary, EntitySceneGroup scene, EnvironmentProbe envSample,
-            Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
+            PipelineMatrices matrices, GizmoDrawContext gizmoContext)
         {
-            _idAndOutlineRenderer.Draw(meshMaterialLibrary, scene, envSample, staticViewProjection, view, gizmoContext, _mouseMovement);
+            _idAndOutlineRenderer.Draw(meshMaterialLibrary, scene, envSample, matrices, gizmoContext, _mouseMovement);
         }
 
         public void DrawEditorElements(DynamicMeshBatcher meshMaterialLibrary, EntitySceneGroup scene, EnvironmentProbe envSample,
-            Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
+           PipelineMatrices matrices, GizmoDrawContext gizmoContext)
         {
             _graphicsDevice.SetRenderTarget(null);
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             _graphicsDevice.BlendState = BlendState.Opaque;
 
-            DrawGizmo(staticViewProjection, gizmoContext);
-            DrawBillboards(scene, envSample, staticViewProjection, view, gizmoContext);
+            DrawGizmo(matrices.StaticViewProjection, gizmoContext);
+            DrawBillboards(scene, envSample, matrices.StaticViewProjection, matrices.View, gizmoContext);
         }
 
         public void DrawGizmo(Matrix staticViewProjection, GizmoDrawContext gizmoContext)

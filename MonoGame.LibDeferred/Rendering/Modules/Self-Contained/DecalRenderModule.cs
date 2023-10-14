@@ -103,6 +103,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _indexBufferCube.SetData(Indices2);
         }
 
+        public void Draw(List<Decal> decals, PipelineMatrices matrices) => Draw(decals, matrices.View, matrices.ViewProjection, matrices.InverseView);
         public void Draw(List<Decal> decals, Matrix view, Matrix viewProjection, Matrix inverseView)
         {
             _graphicsDevice.SetVertexBuffer(_vertexBuffer);
@@ -127,15 +128,15 @@ namespace DeferredEngine.Renderer.RenderModules
             }
         }
 
-        public void DrawOutlines(Decal decal, Matrix viewProjection, Matrix view)
+        public void DrawOutlines(Decal decal, PipelineMatrices matrices)
         {
             _graphicsDevice.SetVertexBuffer(_vertexBuffer);
             _graphicsDevice.Indices = _indexBufferCage;
 
             Matrix localMatrix = decal.World;
 
-            _effectSetup.Param_WorldView.SetValue(localMatrix * view);
-            _effectSetup.Param_WorldViewProj.SetValue(localMatrix * viewProjection);
+            _effectSetup.Param_WorldView.SetValue(localMatrix * matrices.View);
+            _effectSetup.Param_WorldViewProj.SetValue(localMatrix * matrices.ViewProjection);
 
             _effectSetup.Pass_Outline.Apply();
 

@@ -38,7 +38,7 @@ namespace DeferredEngine.Renderer.RenderModules
         protected override void Load(ContentManager content, string shaderPath)
         {
         }
-        public void Draw(DynamicMeshBatcher meshMaterialLibrary, Matrix viewProjection, Matrix view)
+        public void Draw(DynamicMeshBatcher meshMaterialLibrary, PipelineMatrices matrices)
         {
             _graphicsDevice.SetRenderTargets(_gBufferTarget.Bindings);
 
@@ -53,7 +53,7 @@ namespace DeferredEngine.Renderer.RenderModules
             }
 
             //Draw the Gbuffer!
-            meshMaterialLibrary.Draw(renderType: DynamicMeshBatcher.RenderType.Opaque, viewProjection: viewProjection, view: view, lightViewPointChanged: true, renderModule: this);
+            meshMaterialLibrary.Draw(renderType: DynamicMeshBatcher.RenderType.Opaque, matrices: matrices, lightViewPointChanged: true, renderModule: this);
 
         }
 

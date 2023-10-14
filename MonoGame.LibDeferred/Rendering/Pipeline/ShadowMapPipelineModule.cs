@@ -190,6 +190,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
                     meshMaterialLibrary.Draw(renderType: DynamicMeshBatcher.RenderType.ShadowOmnidirectional,
                         viewProjection: lightViewProjection,
+                        view: null,
                         lightViewPointChanged: true,
                         hasAnyObjectMoved: light.HasChanged,
                         renderModule: this);
@@ -228,6 +229,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
                     meshMaterialLibrary.Draw(renderType: DynamicMeshBatcher.RenderType.ShadowOmnidirectional,
                         viewProjection: lightViewProjection,
+                        view: null,
                         lightViewPointChanged: light.HasChanged,
                         hasAnyObjectMoved: true,
                         renderModule: this);
@@ -276,7 +278,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 Shaders.ShadowMap.Param_SizeBias.SetValue(RenderingSettings.ShadowBias * 2048 / light.ShadowResolution);
 
                 meshMaterialLibrary.Draw(DynamicMeshBatcher.RenderType.ShadowLinear,
-                    light.LightViewProjection, light.HasChanged, false, false, 0, light.LightView, renderModule: this);
+                    light.LightViewProjection, light.LightView, light.HasChanged, false, false, 0, renderModule: this);
             }
             else
             {
@@ -294,7 +296,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 Shaders.ShadowMap.Param_SizeBias.SetValue(RenderingSettings.ShadowBias * 2048 / light.ShadowResolution);
 
                 meshMaterialLibrary.Draw(DynamicMeshBatcher.RenderType.ShadowLinear,
-                    light.LightViewProjection, false, true, false, 0, light.LightView, renderModule: this);
+                    light.LightViewProjection, light.LightView, false, true, false, 0,  renderModule: this);
             }
 
             //Blur!

@@ -169,6 +169,9 @@ namespace DeferredEngine.Renderer
             _taaFx.Initialize(graphicsDevice, FullscreenTriangleBuffer.Instance);
             _colorGradingFx.Initialize(graphicsDevice, FullscreenTriangleBuffer.Instance);
 
+
+            _boundingFrustum = new BoundingFrustum(_matrices.ViewProjection);
+
             //Apply some base settings to overwrite shader defaults with game settings defaults
             RenderingSettings.ApplySettings();
 
@@ -275,7 +278,7 @@ namespace DeferredEngine.Renderer
 
             //Draw the elements that we are hovering over with outlines
             if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
-                _editorRender.DrawIds(meshMaterialLibrary, scene, envProbe, _matrices.StaticViewProjection, _matrices.View, gizmoContext);
+                _editorRender.DrawIds(meshMaterialLibrary, scene, envProbe, _matrices, gizmoContext);
 
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
             RenderMode(_currentOutput);
@@ -328,14 +331,14 @@ namespace DeferredEngine.Renderer
             {
                 if (RenderingSettings.e_drawoutlines) DrawTextureToScreenToFullScreen(_editorRender.GetOutlines(), BlendState.Additive);
 
-                _editorRender.DrawEditorElements(meshMaterialLibrary, scene, envSample, _matrices.StaticViewProjection, _matrices.View, gizmoContext);
+                _editorRender.DrawEditorElements(meshMaterialLibrary, scene, envSample, _matrices, gizmoContext);
 
 
                 if (gizmoContext.SelectedObject != null)
                 {
-                    if (gizmoContext.SelectedObject is Decal)
+                    if (gizmoContext.SelectedObject is Decal decal)
                     {
-                        _decalRenderModule.DrawOutlines(gizmoContext.SelectedObject as Decal, _matrices.StaticViewProjection, _matrices.View);
+                        _decalRenderModule.DrawOutlines(decal, _matrices);
                     }
 
                     if (RenderingSettings.e_drawboundingbox)
@@ -401,12 +404,10 @@ namespace DeferredEngine.Renderer
                 //yep we changed
                 _viewProjectionHasChanged = true;
 
-                if (_boundingFrustum == null) _boundingFrustum = new BoundingFrustum(_matrices.ViewProjection);
-                else _boundingFrustum.Matrix = _matrices.ViewProjection;
+                _boundingFrustum.Matrix = _matrices.ViewProjection;
                 ComputeFrustumCorners(_boundingFrustum, camera);
 
-                _lightAccumulationModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices.View, _matrices.InverseView,
-                    _matrices.ViewIT, _matrices.Projection, _matrices.ViewProjection, _matrices.InverseViewProjection);
+                _lightAccumulationModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
 
                 //Base stuff, for description look in Draw()
                 meshMaterialLibrary.FrustumCulling(_boundingFrustum, true, origin);
@@ -428,7 +429,7 @@ namespace DeferredEngine.Renderer
                 Compose();
 
                 RenderingSettings.g_taa = tempAa;
-                DrawTextureToScreenToCube(_auxTargets[MRT.AUX_COMPOSE], _renderTargetCubeMap, cubeMapFace);
+                DrawTextureToScreenToCube(_auxTargets[MRT.AUX_COMPOSE], _renderTargetCubeMap, (CubeMapFace?)i);
             }
             Shaders.DeferredCompose.Param_UseSSAO.SetValue(RenderingSettings.g_ssao_draw);
 
@@ -578,9 +579,7 @@ namespace DeferredEngine.Renderer
         /// <summary>
         /// Create the projection matrices
         /// </summary>
-        private void UpdateViewProjection(
-            DynamicMeshBatcher meshMaterialLibrary,
-            Camera camera)
+        private void UpdateViewProjection(DynamicMeshBatcher meshMaterialLibrary, Camera camera)
         {
             _viewProjectionHasChanged = camera.HasChanged;
 
@@ -595,24 +594,9 @@ namespace DeferredEngine.Renderer
             if (_viewProjectionHasChanged)
             {
                 //View matrix
-                _matrices.View = Matrix.CreateLookAt(camera.Position, camera.Lookat, camera.Up);
-                _matrices.InverseView = Matrix.Invert(_matrices.View);
+                _matrices.SetFromCamera(camera);
 
-                _matrices.ViewIT = Matrix.Transpose(_matrices.InverseView);
                 Shaders.DeferredPointLight.Param_InverseView.SetValue(_matrices.InverseView);
-
-                _matrices.Projection = Matrix.CreatePerspectiveFieldOfView(camera.FieldOfView, RenderingSettings.g_ScreenAspect, 1, RenderingSettings.g_farplane);
-
-                _gBufferModule.Camera = camera.Position;
-
-                _matrices.ViewProjection = _matrices.View * _matrices.Projection;
-
-                //this is the unjittered viewProjection. For some effects we don't want the jittered one
-                _matrices.StaticViewProjection = _matrices.ViewProjection;
-
-                //Transformation for TAA - from current view back to the old view projection
-                _matrices.CurrentViewToPreviousViewProjection = Matrix.Invert(_matrices.View) * _matrices.PreviousViewProjection;
-
                 //Temporal AA
                 if (RenderingSettings.g_taa)
                 {
@@ -654,8 +638,7 @@ namespace DeferredEngine.Renderer
             //We need to update whether or not entities are in our boundingFrustum and then cull them or not!
             meshMaterialLibrary.FrustumCulling(_boundingFrustum, _viewProjectionHasChanged, camera.Position);
 
-            _lightAccumulationModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices.View, _matrices.InverseView,
-                _matrices.ViewIT, _matrices.Projection, _matrices.ViewProjection, _matrices.InverseViewProjection);
+            _lightAccumulationModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)
@@ -755,7 +738,7 @@ namespace DeferredEngine.Renderer
         /// <param name="meshMaterialLibrary"></param>
         private void DrawGBuffer(DynamicMeshBatcher meshMaterialLibrary)
         {
-            _gBufferModule.Draw(meshMaterialLibrary, _matrices.ViewProjection, _matrices.View);
+            _gBufferModule.Draw(meshMaterialLibrary, _matrices);
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)
@@ -780,7 +763,7 @@ namespace DeferredEngine.Renderer
 
             DrawTextureToScreenToFullScreen(_auxTargets[MRT.AUX_DECAL], BlendState.Opaque, _gBufferTarget.Albedo);
 
-            _decalRenderModule.Draw(decals, _matrices.View, _matrices.ViewProjection, _matrices.InverseView);
+            _decalRenderModule.Draw(decals, _matrices);
         }
 
         /// <summary>
@@ -838,10 +821,7 @@ namespace DeferredEngine.Renderer
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
-            Shaders.SSAO.Param_InverseViewProjection.SetValue(_matrices.InverseViewProjection);
-            Shaders.SSAO.Param_Projection.SetValue(_matrices.Projection);
-            Shaders.SSAO.Param_ViewProjection.SetValue(_matrices.ViewProjection);
-            Shaders.SSAO.Param_CameraPosition.SetValue(camera.Position);
+            Shaders.SSAO.SetCameraAndMatrices(camera.Position, _matrices);
 
             Shaders.SSAO.Effect.CurrentTechnique = Shaders.SSAO.Technique_SSAO;
             Shaders.SSAO.Effect.CurrentTechnique.Passes[0].Apply();
@@ -1032,7 +1012,7 @@ namespace DeferredEngine.Renderer
             ReconstructDepth();
 
             _forwardModule.PrepareDraw(camera, pointLights, _boundingFrustum);
-            return _forwardModule.Draw(meshMaterialLibrary, input, _matrices.ViewProjection);
+            return _forwardModule.Draw(meshMaterialLibrary, input, _matrices);
         }
 
         private RenderTarget2D DrawBloom(RenderTarget2D input)
