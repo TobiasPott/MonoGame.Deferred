@@ -92,7 +92,7 @@ namespace DeferredEngine.Renderer.Helper
                 batch.SetMaterial(mat);
                 batch.Register(mesh, transform, boundingSphere);
                 MaterialBatch.Add(batch);
-                Debug.WriteLine($"Created new material batch array (GC!): {MaterialBatch.Count}");
+                //Debug.WriteLine($"Created new material batch array (GC!): {MaterialBatch.Count}");
             }
 
         }

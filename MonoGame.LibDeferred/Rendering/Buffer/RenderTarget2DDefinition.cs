@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
+using WinRT;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //    MAIN RENDER FUNCTIONS, TheKosmonaut 2016
@@ -9,11 +10,17 @@ namespace DeferredEngine.Renderer
 
     public enum ResamplingModes
     {
-        Downsample_x2 = -2,
-        Downsample_x1 = -1,
+        Downsample_x5 = -32,
+        Downsample_x4 = -16,
+        Downsample_x3 = -8,
+        Downsample_x2 = -4,
+        Downsample_x1 = -2,
         Original = 0,
-        Upsample_x1 = 1,
-        Upsample_x2 = 2
+        Upsample_x1 = 2,
+        Upsample_x2 = 4,
+        Upsample_x3 = 8,
+        Upsample_x4 = 16,
+        Upsample_x5 = 32
     }
 
     public struct RenderTarget2DDefinition
@@ -65,26 +72,22 @@ namespace DeferredEngine.Renderer
         {
             if (this.Resampling != ResamplingModes.Original)
                 this.Resample(this.Resampling, ref width, ref height);
+
+            Debug.WriteLine($"CreateRenderTarget: {width} x {height}");
             return new RenderTarget2D(graphicsDevice, width, height, MipMap, Format, DepthFormat, MultiSampleCount, Usage);
         }
 
         private void Resample(ResamplingModes resampling, ref int width, ref int height)
         {
-            if (resampling == ResamplingModes.Downsample_x1)
+            if (resampling < 0)
             {
-                width /= 2; height /= 2;
+                int downsample = Math.Abs((int)resampling); 
+                width /= downsample; height /= downsample;
             }
-            else if (resampling == ResamplingModes.Downsample_x2)
+            else if (resampling > 0)
             {
-                width /= 4; height /= 4;
-            }
-            else if (resampling == ResamplingModes.Upsample_x1)
-            {
-                width *= 2; height *= 2;
-            }
-            else if (resampling == ResamplingModes.Upsample_x2)
-            {
-                width *= 4; height *= 4;
+                int upsample = Math.Abs((int)resampling);
+                width *= upsample; height *= upsample;
             }
         }
 
