@@ -60,7 +60,6 @@ namespace DeferredEngine.Recources
 
 
         public static float ShadowBias = 0.005f;
-        public static bool e_saveBoundingBoxes = true;
         public static bool d_hotreloadshaders = true;
 
         public static void ApplySettings()
