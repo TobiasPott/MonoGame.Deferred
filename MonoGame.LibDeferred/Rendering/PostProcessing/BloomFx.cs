@@ -43,8 +43,6 @@ namespace DeferredEngine.Renderer.PostProcessing
     {
         #region fields & properties
 
-        //resolution
-        private Vector2 _resolution;
 
         //RenderTargets
         private RenderTarget2D _bloomRenderTarget2DMip0;
@@ -53,10 +51,6 @@ namespace DeferredEngine.Renderer.PostProcessing
         private RenderTarget2D _bloomRenderTarget2DMip3;
         private RenderTarget2D _bloomRenderTarget2DMip4;
         private RenderTarget2D _bloomRenderTarget2DMip5;
-
-        //Objects
-        private GraphicsDevice _graphicsDevice;
-        private FullscreenTriangleBuffer _fullscreenTarget;
 
         //Shader + variables
         private Effect Effect;
@@ -73,24 +67,21 @@ namespace DeferredEngine.Renderer.PostProcessing
         private EffectParameter Param_StreakLength;
         private EffectParameter Param_Threshold;
 
+        //resolution
+        private Vector2 _resolution;
         //Preset variables for different mip levels
-        private float _bloomRadius1 = 1.0f;
-        private float _bloomRadius2 = 1.0f;
-        private float _bloomRadius3 = 1.0f;
-        private float _bloomRadius4 = 1.0f;
-        private float _bloomRadius5 = 1.0f;
-
-        private float _bloomStrength1 = 1.0f;
-        private float _bloomStrength2 = 1.0f;
-        private float _bloomStrength3 = 1.0f;
-        private float _bloomStrength4 = 1.0f;
-        private float _bloomStrength5 = 1.0f;
+        private readonly float[] _radius = new float[5];
+        private readonly float[] _strength = new float[5];
 
         private float _radiusMultiplier = 1.0f;
 
 
         public bool BloomUseLuminance = true;
         public int BloomDownsamplePasses = 5;
+
+        //Objects
+        private GraphicsDevice _graphicsDevice;
+        private FullscreenTriangleBuffer _fullscreenTarget;
 
 
         #region properties
@@ -122,68 +113,11 @@ namespace DeferredEngine.Renderer.PostProcessing
             }
         }
         private Vector2 _bloomInverseResolutionField;
+        private float BloomRadius { set { Param_Radius.SetValue(value * _radiusMultiplier); } }
 
-        private float BloomRadius
-        {
-            get
-            {
-                return _bloomRadius;
-            }
-
-            set
-            {
-                if (Math.Abs(_bloomRadius - value) > 0.001f)
-                {
-                    _bloomRadius = value;
-                    Param_Radius.SetValue(_bloomRadius * _radiusMultiplier);
-                }
-
-            }
-        }
-        private float _bloomRadius;
-
-        private float BloomStrength
-        {
-            get { return _bloomStrength; }
-            set
-            {
-                if (Math.Abs(_bloomStrength - value) > 0.001f)
-                {
-                    _bloomStrength = value;
-                    Param_Strength.SetValue(_bloomStrength);
-                }
-
-            }
-        }
-        private float _bloomStrength;
-
-        public float BloomStreakLength
-        {
-            get { return _bloomStreakLength; }
-            set
-            {
-                if (Math.Abs(_bloomStreakLength - value) > 0.001f)
-                {
-                    _bloomStreakLength = value;
-                    Param_StreakLength.SetValue(_bloomStreakLength);
-                }
-            }
-        }
-        private float _bloomStreakLength;
-
-        public float BloomThreshold
-        {
-            get { return _bloomThreshold; }
-            set
-            {
-                if (Math.Abs(_bloomThreshold - value) > 0.001f)
-                {
-                    _bloomThreshold = value;
-                    Param_Threshold.SetValue(_bloomThreshold);
-                }
-            }
-        }
-        private float _bloomThreshold;
+        private float BloomStrength { set { Param_Strength.SetValue(value); } }
+        public float BloomStreakLength { set { Param_StreakLength.SetValue(value); } }
+        public float BloomThreshold { set { Param_Threshold.SetValue(value); } }
 
         #endregion
 
@@ -250,74 +184,74 @@ namespace DeferredEngine.Renderer.PostProcessing
             {
                 case BloomPresets.Wide:
                     {
-                        _bloomStrength1 = 0.5f;
-                        _bloomStrength2 = 1;
-                        _bloomStrength3 = 2;
-                        _bloomStrength4 = 1;
-                        _bloomStrength5 = 2;
-                        _bloomRadius5 = 4.0f;
-                        _bloomRadius4 = 4.0f;
-                        _bloomRadius3 = 2.0f;
-                        _bloomRadius2 = 2.0f;
-                        _bloomRadius1 = 1.0f;
+                        _strength[0] = 0.5f;
+                        _strength[1] = 1;
+                        _strength[2] = 2;
+                        _strength[3] = 1;
+                        _strength[4] = 2;
+                        _radius[4] = 4.0f;
+                        _radius[3] = 4.0f;
+                        _radius[2] = 2.0f;
+                        _radius[1] = 2.0f;
+                        _radius[0] = 1.0f;
                         BloomStreakLength = 1;
                         BloomDownsamplePasses = 5;
                         break;
                     }
                 case BloomPresets.SuperWide:
                     {
-                        _bloomStrength1 = 0.9f;
-                        _bloomStrength2 = 1;
-                        _bloomStrength3 = 1;
-                        _bloomStrength4 = 2;
-                        _bloomStrength5 = 6;
-                        _bloomRadius5 = 4.0f;
-                        _bloomRadius4 = 2.0f;
-                        _bloomRadius3 = 2.0f;
-                        _bloomRadius2 = 2.0f;
-                        _bloomRadius1 = 2.0f;
+                        _strength[0] = 0.9f;
+                        _strength[1] = 1;
+                        _strength[2] = 1;
+                        _strength[3] = 2;
+                        _strength[4] = 6;
+                        _radius[4] = 4.0f;
+                        _radius[3] = 2.0f;
+                        _radius[2] = 2.0f;
+                        _radius[1] = 2.0f;
+                        _radius[0] = 2.0f;
                         BloomStreakLength = 1;
                         BloomDownsamplePasses = 5;
                         break;
                     }
                 case BloomPresets.Focussed:
                     {
-                        _bloomStrength1 = 0.8f;
-                        _bloomStrength2 = 1;
-                        _bloomStrength3 = 1;
-                        _bloomStrength4 = 1;
-                        _bloomStrength5 = 2;
-                        _bloomRadius5 = 4.0f;
-                        _bloomRadius4 = 2.0f;
-                        _bloomRadius3 = 2.0f;
-                        _bloomRadius2 = 2.0f;
-                        _bloomRadius1 = 2.0f;
+                        _strength[0] = 0.8f;
+                        _strength[1] = 1;
+                        _strength[2] = 1;
+                        _strength[3] = 1;
+                        _strength[4] = 2;
+                        _radius[4] = 4.0f;
+                        _radius[3] = 2.0f;
+                        _radius[2] = 2.0f;
+                        _radius[1] = 2.0f;
+                        _radius[0] = 2.0f;
                         BloomStreakLength = 1;
                         BloomDownsamplePasses = 5;
                         break;
                     }
                 case BloomPresets.Small:
                     {
-                        _bloomStrength1 = 0.8f;
-                        _bloomStrength2 = 1;
-                        _bloomStrength3 = 1;
-                        _bloomStrength4 = 1;
-                        _bloomStrength5 = 1;
-                        _bloomRadius5 = 1;
-                        _bloomRadius4 = 1;
-                        _bloomRadius3 = 1;
-                        _bloomRadius2 = 1;
-                        _bloomRadius1 = 1;
+                        _strength[0] = 0.8f;
+                        _strength[1] = 1;
+                        _strength[2] = 1;
+                        _strength[3] = 1;
+                        _strength[4] = 1;
+                        _radius[4] = 1;
+                        _radius[3] = 1;
+                        _radius[2] = 1;
+                        _radius[1] = 1;
+                        _radius[0] = 1;
                         BloomStreakLength = 1;
                         BloomDownsamplePasses = 5;
                         break;
                     }
                 case BloomPresets.Cheap:
                     {
-                        _bloomStrength1 = 0.8f;
-                        _bloomStrength2 = 2;
-                        _bloomRadius2 = 2;
-                        _bloomRadius1 = 2;
+                        _strength[0] = 0.8f;
+                        _strength[1] = 2;
+                        _radius[1] = 2;
+                        _radius[0] = 2;
                         BloomStreakLength = 1;
                         BloomDownsamplePasses = 2;
                         break;
@@ -421,8 +355,8 @@ namespace DeferredEngine.Renderer.PostProcessing
                                 _graphicsDevice.SetRenderTarget(_bloomRenderTarget2DMip4);
                                 BloomScreenTexture = _bloomRenderTarget2DMip5;
 
-                                BloomStrength = _bloomStrength5;
-                                BloomRadius = _bloomRadius5;
+                                BloomStrength = _strength[4];
+                                BloomRadius = _radius[4];
                                 Pass_Upsample.Apply();
                                 _fullscreenTarget.Draw(_graphicsDevice);
 
@@ -435,8 +369,8 @@ namespace DeferredEngine.Renderer.PostProcessing
                             _graphicsDevice.SetRenderTarget(_bloomRenderTarget2DMip3);
                             BloomScreenTexture = _bloomRenderTarget2DMip4;
 
-                            BloomStrength = _bloomStrength4;
-                            BloomRadius = _bloomRadius4;
+                            BloomStrength = _strength[3];
+                            BloomRadius = _radius[3];
                             Pass_Upsample.Apply();
                             _fullscreenTarget.Draw(_graphicsDevice);
 
@@ -450,8 +384,8 @@ namespace DeferredEngine.Renderer.PostProcessing
                         _graphicsDevice.SetRenderTarget(_bloomRenderTarget2DMip2);
                         BloomScreenTexture = _bloomRenderTarget2DMip3;
 
-                        BloomStrength = _bloomStrength3;
-                        BloomRadius = _bloomRadius3;
+                        BloomStrength = _strength[2];
+                        BloomRadius = _radius[2];
                         Pass_Upsample.Apply();
                         _fullscreenTarget.Draw(_graphicsDevice);
 
@@ -465,8 +399,8 @@ namespace DeferredEngine.Renderer.PostProcessing
                     _graphicsDevice.SetRenderTarget(_bloomRenderTarget2DMip1);
                     BloomScreenTexture = _bloomRenderTarget2DMip2;
 
-                    BloomStrength = _bloomStrength2;
-                    BloomRadius = _bloomRadius2;
+                    BloomStrength = _strength[1];
+                    BloomRadius = _radius[1];
                     Pass_Upsample.Apply();
                     _fullscreenTarget.Draw(_graphicsDevice);
 
@@ -479,8 +413,8 @@ namespace DeferredEngine.Renderer.PostProcessing
                 _graphicsDevice.SetRenderTarget(_bloomRenderTarget2DMip0);
                 BloomScreenTexture = _bloomRenderTarget2DMip1;
 
-                BloomStrength = _bloomStrength1;
-                BloomRadius = _bloomRadius1;
+                BloomStrength = _strength[0];
+                BloomRadius = _radius[0];
 
                 Pass_Upsample.Apply();
                 _fullscreenTarget.Draw(_graphicsDevice);
@@ -493,17 +427,8 @@ namespace DeferredEngine.Renderer.PostProcessing
 
         private void ApplyGameSettings()
         {
-            _bloomRadius1 = RenderingSettings.Bloom.Radius1;
-            _bloomRadius2 = RenderingSettings.Bloom.Radius2;
-            _bloomRadius3 = RenderingSettings.Bloom.Radius3;
-            _bloomRadius4 = RenderingSettings.Bloom.Radius4;
-            _bloomRadius5 = RenderingSettings.Bloom.Radius5;
-
-            _bloomStrength1 = RenderingSettings.Bloom.Strength1;
-            _bloomStrength2 = RenderingSettings.Bloom.Strength2;
-            _bloomStrength3 = RenderingSettings.Bloom.Strength3;
-            _bloomStrength4 = RenderingSettings.Bloom.Strength4;
-            _bloomStrength5 = RenderingSettings.Bloom.Strength5;
+            Array.Copy(RenderingSettings.Bloom.Radius, _radius, _radius.Length);
+            Array.Copy(RenderingSettings.Bloom.Strength, _strength, _strength.Length);
 
             BloomThreshold = RenderingSettings.Bloom.Threshold * 0.1f;
         }

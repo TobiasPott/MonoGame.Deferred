@@ -351,7 +351,7 @@ namespace DeferredEngine.Logic
 
             bloomList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Bloom")
             {
-                ToggleField = typeof(RenderingSettings.Bloom).GetField("Enable"),
+                ToggleField = typeof(RenderingSettings.Bloom).GetField("Enabled"),
                 Toggle = RenderingSettings.Bloom.Enabled
             });
 
@@ -361,68 +361,21 @@ namespace DeferredEngine.Logic
                 SliderValue = RenderingSettings.Bloom.Threshold
             });
 
+            // ToDo: @tpott: Reintroduce UI for bloom values
+            //for (int i = 0; i < 5; i++)
+            //{
+            //    bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP0 Radius: ")
+            //    {
+            //        SliderField = typeof(RenderingSettings.Bloom).GetField("Radius1"),
+            //        SliderValue = RenderingSettings.Bloom.Radius[i]
+            //    });
 
-            bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP0 Radius: ")
-            {
-                SliderField = typeof(RenderingSettings.Bloom).GetField("Radius1"),
-                SliderValue = RenderingSettings.Bloom.Radius1
-            });
-
-            bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP0 Strength: ")
-            {
-                SliderField = typeof(RenderingSettings.Bloom).GetField("Strength1"),
-                SliderValue = RenderingSettings.Bloom.Strength1
-            });
-
-
-            bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP1 Radius: ")
-            {
-                SliderField = typeof(RenderingSettings.Bloom).GetField("Radius2"),
-                SliderValue = RenderingSettings.Bloom.Radius2
-            });
-
-            bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP1 Strength: ")
-            {
-                SliderField = typeof(RenderingSettings.Bloom).GetField("Strength2"),
-                SliderValue = RenderingSettings.Bloom.Strength2
-            });
-
-            bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP2 Radius: ")
-            {
-                SliderField = typeof(RenderingSettings.Bloom).GetField("Radius3"),
-                SliderValue = RenderingSettings.Bloom.Radius3
-            });
-
-            bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP2 Strength: ")
-            {
-                SliderField = typeof(RenderingSettings.Bloom).GetField("Strength3"),
-                SliderValue = RenderingSettings.Bloom.Strength3
-            });
-
-            bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP3 Radius: ")
-            {
-                SliderField = typeof(RenderingSettings.Bloom).GetField("Radius4"),
-                SliderValue = RenderingSettings.Bloom.Radius4
-            });
-
-            bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP3 Strength: ")
-            {
-                SliderField = typeof(RenderingSettings.Bloom).GetField("Strength4"),
-                SliderValue = RenderingSettings.Bloom.Strength4
-            });
-
-
-            bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP4 Radius: ")
-            {
-                SliderField = typeof(RenderingSettings.Bloom).GetField("Radius5"),
-                SliderValue = RenderingSettings.Bloom.Radius5
-            });
-
-            bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP4 Strength: ")
-            {
-                SliderField = typeof(RenderingSettings.Bloom).GetField("Strength5"),
-                SliderValue = RenderingSettings.Bloom.Strength5
-            });
+            //    bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP0 Strength: ")
+            //    {
+            //        SliderField = typeof(RenderingSettings.Bloom).GetField("Strength1"),
+            //        SliderValue = RenderingSettings.Bloom.Strength1
+            //    });
+            //}
 
             _rightSideList.Alignment = GUIStyle.GUIAlignment.TopRight;
         }
