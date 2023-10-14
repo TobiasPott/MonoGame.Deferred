@@ -95,8 +95,7 @@ namespace DeferredEngine.Renderer
         //Render targets
         private GBufferTarget _gBufferTarget;
         private LightingBufferTarget _lightingBufferTarget;
-
-        private DynamicMultiRenderTarget _auxTargets;
+        private MRT.PipelineTargets _auxTargets;
 
         // Final output
         private RenderTarget2D _currentOutput;
@@ -116,8 +115,6 @@ namespace DeferredEngine.Renderer
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        #region BASE FUNCTIONS
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  BASE FUNCTIONS
@@ -162,7 +159,7 @@ namespace DeferredEngine.Renderer
 
             _gBufferTarget = new GBufferTarget(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
             _lightingBufferTarget = new LightingBufferTarget(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
-            _auxTargets = new DynamicMultiRenderTarget(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight, MRT.PipelineDefinitions);
+            _auxTargets = new MRT.PipelineTargets(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
 
             _editorRender = new EditorRender();
             _editorRender.Initialize(graphicsDevice);
@@ -207,8 +204,6 @@ namespace DeferredEngine.Renderer
             sdfGenerator.Update(entities, _graphicsDevice, _distanceFieldRenderModule, ref _sdfDefinitions);
 
         }
-
-        #endregion
 
         #region RENDER FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1266,6 +1261,7 @@ namespace DeferredEngine.Renderer
             // Update multi render target size
             _gBufferTarget.Resize(targetWidth, targetHeight);
             _lightingBufferTarget.Resize(targetWidth, targetHeight);
+            _auxTargets.Resize(targetWidth, targetHeight);
 
             Shaders.DeferredPointLight.Param_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
 

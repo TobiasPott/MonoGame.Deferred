@@ -29,6 +29,10 @@ namespace DeferredEngine.Renderer
             if (_width != width || _height != height)
             {
                 base.Resize(width, height);
+                _renderTargets[ALBEDO]?.Dispose();
+                _renderTargets[NORMAL]?.Dispose();
+                _renderTargets[DEPTH]?.Dispose();
+
                 _renderTargets[ALBEDO] = Definitions[ALBEDO].CreateRenderTarget(_graphicsDevice, _width, _height);
                 _renderTargets[NORMAL] = Definitions[NORMAL].CreateRenderTarget(_graphicsDevice, _width, _height);
                 _renderTargets[DEPTH] = Definitions[DEPTH].CreateRenderTarget(_graphicsDevice, _width, _height);
