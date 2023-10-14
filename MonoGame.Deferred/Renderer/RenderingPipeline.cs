@@ -52,7 +52,6 @@ namespace DeferredEngine.Renderer
 
         //View Projection
         private bool _viewProjectionHasChanged;
-        private Vector2 _inverseResolution;
         //Projection Matrices and derivates used in shaders
         private PipelineMatrices _matrices;
 
@@ -113,7 +112,6 @@ namespace DeferredEngine.Renderer
         /// <param name="content"></param>
         public void Load(ContentManager content)
         {
-            _inverseResolution = Vector2.One / RenderingSettings.g_ScreenResolution;
             _matrices = new PipelineMatrices();
 
             _gBufferModule = new GBufferPipelineModule(content, "Shaders/GbufferSetup/GBuffer");
@@ -208,14 +206,14 @@ namespace DeferredEngine.Renderer
         /// Main Draw function of the game
         /// </summary>
         /// <param name="camera">view point of the renderer</param>
-        /// <param name="meshMaterialLibrary">a class that has stored all our mesh data</param>
+        /// <param name="meshBatcher">a class that has stored all our mesh data</param>
         /// <param name="entities">entities and their properties</param>
         /// <param name="pointLights"></param>
         /// <param name="directionalLights"></param>
         /// <param name="gizmoContext">The data passed from our editor logic</param>
         /// <param name="gameTime"></param>
         /// <returns></returns>
-        public EditorLogic.EditorReceivedData Draw(Camera camera, DynamicMeshBatcher meshMaterialLibrary, EntitySceneGroup scene, EnvironmentProbe envProbe, GizmoDrawContext gizmoContext, GameTime gameTime)
+        public EditorLogic.EditorReceivedData Draw(Camera camera, DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, EnvironmentProbe envProbe, GizmoDrawContext gizmoContext, GameTime gameTime)
         {
             //Reset the stat counter, so we can count stats/information for this frame only
             ResetStats();
@@ -224,7 +222,7 @@ namespace DeferredEngine.Renderer
             CheckRenderChanges(scene);
 
             //Render ShadowMaps
-            DrawShadowMaps(meshMaterialLibrary, scene, camera);
+            DrawShadowMaps(meshBatcher, scene, camera);
 
             //Update SDFs
             if (IsSDFUsed(scene.PointLights))
@@ -235,14 +233,14 @@ namespace DeferredEngine.Renderer
             //We do this either when pressing C or at the start of the program (_renderTargetCube == null) or when the game settings want us to do it every frame
             if (RenderingSettings.g_envmapupdateeveryframe)
             {
-                DrawCubeMap(envProbe.Position, meshMaterialLibrary, scene, 300, gameTime, camera);
+                DrawCubeMap(envProbe.Position, meshBatcher, scene, 300, gameTime, camera);
             }
 
             //Update our view projection matrices if the camera moved
-            UpdateViewProjection(meshMaterialLibrary, camera);
+            UpdateViewProjection(meshBatcher, camera);
 
             //Draw our meshes to the G Buffer
-            DrawGBuffer(meshMaterialLibrary);
+            DrawGBuffer(meshBatcher);
 
             //Deferred Decals
             DrawDecals(scene.Decals);
@@ -269,7 +267,7 @@ namespace DeferredEngine.Renderer
             _currentOutput = Compose(); //-> output _renderTargetComposed
 
             //Forward
-            _currentOutput = DrawForward(_currentOutput, meshMaterialLibrary, camera, scene.PointLights);
+            _currentOutput = DrawForward(_currentOutput, meshBatcher, camera, scene.PointLights);
 
             //Compose the image and add information from previous frames to apply temporal super sampling
             _currentOutput = TonemapAndCombineTemporalAntialiasing(_currentOutput); // -> output: _temporalAAOffFrame ? _renderTargetTAA_2 : _renderTargetTAA_1
@@ -279,7 +277,7 @@ namespace DeferredEngine.Renderer
 
             //Draw the elements that we are hovering over with outlines
             if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
-                _editorRender.DrawIds(meshMaterialLibrary, scene, envProbe, _matrices, gizmoContext);
+                _editorRender.DrawIds(meshBatcher, scene, envProbe, _matrices, gizmoContext);
 
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
             RenderMode(_currentOutput);
@@ -289,13 +287,13 @@ namespace DeferredEngine.Renderer
 
             //Additional editor elements that overlay our screen
 
-            RenderEditorOverlays(gizmoContext, meshMaterialLibrary, scene, envProbe);
+            RenderEditorOverlays(gizmoContext, scene, envProbe);
 
             //Draw debug geometry
             RenderHelperGeometry();
 
             //Set up the frustum culling for the next frame
-            meshMaterialLibrary.FrustumCullingFinalizeFrame();
+            meshBatcher.FrustumCullingFinalizeFrame();
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)
@@ -326,7 +324,7 @@ namespace DeferredEngine.Renderer
             return false;
         }
 
-        private void RenderEditorOverlays(GizmoDrawContext gizmoContext, DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, EnvironmentProbe envProbe)
+        private void RenderEditorOverlays(GizmoDrawContext gizmoContext, EntitySceneGroup scene, EnvironmentProbe envProbe)
         {
             if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
             {
@@ -334,19 +332,17 @@ namespace DeferredEngine.Renderer
 
                 _editorRender.DrawEditorElements(scene, envProbe, _matrices, gizmoContext);
 
-
                 if (gizmoContext.SelectedObject != null)
                 {
                     if (gizmoContext.SelectedObject is Decal decal)
                     {
                         _decalRenderModule.DrawOutlines(decal, _matrices);
                     }
-
-                    if (RenderingSettings.e_drawboundingbox)
-                        if (gizmoContext.SelectedObject is ModelEntity)
-                        {
-                            HelperGeometryManager.GetInstance().AddBoundingBox(gizmoContext.SelectedObject as ModelEntity);
-                        }
+                    if (RenderingSettings.e_drawboundingbox
+                        && gizmoContext.SelectedObject is ModelEntity entity)
+                    {
+                        HelperGeometryManager.GetInstance().AddBoundingBox(entity);
+                    }
                 }
             }
 
@@ -679,9 +675,9 @@ namespace DeferredEngine.Renderer
                         }
 
                         if (baseValue == 2)
-                            _haltonSequence[index].X = (result - 0.5f) * 2 * _inverseResolution.X;
+                            _haltonSequence[index].X = (result - 0.5f) * 2 * RenderingSettings.g_ScreenInverseResolution.X;
                         else
-                            _haltonSequence[index].Y = (result - 0.5f) * 2 * _inverseResolution.Y;
+                            _haltonSequence[index].Y = (result - 0.5f) * 2 * RenderingSettings.g_ScreenInverseResolution.Y;
                     }
                 }
             }
@@ -1165,7 +1161,6 @@ namespace DeferredEngine.Renderer
         /// </summary>
         public void UpdateResolution()
         {
-            _inverseResolution = Vector2.One / RenderingSettings.g_ScreenResolution;
             _haltonSequence = null;
 
             SetUpRenderTargets(RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight, false);
