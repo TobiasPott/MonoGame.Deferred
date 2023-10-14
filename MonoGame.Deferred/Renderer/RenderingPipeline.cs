@@ -53,6 +53,8 @@ namespace DeferredEngine.Renderer
         //View Projection
         private bool _viewProjectionHasChanged;
         private Vector2 _inverseResolution;
+        //Projection Matrices and derivates used in shaders
+        private PipelineMatrices _matrices;
 
         //Temporal Anti Aliasing
         private bool _isTaaOffFrame = true;
@@ -60,8 +62,6 @@ namespace DeferredEngine.Renderer
         private int _haltonSequenceIndex = -1;
         private const int HaltonSequenceLength = 16;
 
-        //Projection Matrices and derivates used in shaders
-        private PipelineMatrices _matrices = new PipelineMatrices();
 
         //Bounding Frusta of our view projection, to calculate which objects are inside the view
         private BoundingFrustum _boundingFrustum;
@@ -114,6 +114,7 @@ namespace DeferredEngine.Renderer
         public void Load(ContentManager content)
         {
             _inverseResolution = Vector2.One / RenderingSettings.g_ScreenResolution;
+            _matrices = new PipelineMatrices();
 
             _gBufferModule = new GBufferPipelineModule(content, "Shaders/GbufferSetup/GBuffer");
             _forwardModule = new ForwardPipelineModule(content, "Shaders/forward/forward");
@@ -124,7 +125,7 @@ namespace DeferredEngine.Renderer
             _environmentModule = new EnvironmentPipelineModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
 
             _bloomFx = new BloomFx(content);
-            _taaFx = new TemporalAAFx();
+            _taaFx = new TemporalAAFx() { Matrices = _matrices };
             _colorGradingFx = new ColorGradingFx(content);
 
             _decalRenderModule = new DecalRenderModule();
@@ -325,13 +326,13 @@ namespace DeferredEngine.Renderer
             return false;
         }
 
-        private void RenderEditorOverlays(GizmoDrawContext gizmoContext, DynamicMeshBatcher meshMaterialLibrary, EntitySceneGroup scene, EnvironmentProbe envSample)
+        private void RenderEditorOverlays(GizmoDrawContext gizmoContext, DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, EnvironmentProbe envProbe)
         {
             if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
             {
                 if (RenderingSettings.e_drawoutlines) DrawTextureToScreenToFullScreen(_editorRender.GetOutlines(), BlendState.Additive);
 
-                _editorRender.DrawEditorElements(meshMaterialLibrary, scene, envSample, _matrices, gizmoContext);
+                _editorRender.DrawEditorElements(scene, envProbe, _matrices, gizmoContext);
 
 
                 if (gizmoContext.SelectedObject != null)
@@ -1047,7 +1048,6 @@ namespace DeferredEngine.Renderer
 
             RenderTarget2D output = !_isTaaOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2];
             _taaFx.UseTonemap = RenderingSettings.g_taa_tonemapped;
-            _taaFx.CurrentViewToPreviousViewProjection = _matrices.CurrentViewToPreviousViewProjection;
             _taaFx.Draw(currentFrame: input, previousFrames: _isTaaOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2], output: output);
 
             //Performance Profiler

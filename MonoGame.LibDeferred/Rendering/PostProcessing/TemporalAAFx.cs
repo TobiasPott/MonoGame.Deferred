@@ -8,7 +8,7 @@ namespace DeferredEngine.Renderer.PostProcessing
     public class TemporalAAFx : BaseFx
     {
 
-        public Matrix CurrentViewToPreviousViewProjection;
+        public PipelineMatrices Matrices { get; set; }
 
         public Vector3[] FrustumCorners { set { Shaders.TAA.Param_FrustumCorners.SetValue(value); } }
         public Vector2 Resolution { set { Shaders.TAA.Param_Resolution.SetValue(value); } }
@@ -29,7 +29,7 @@ namespace DeferredEngine.Renderer.PostProcessing
 
             Shaders.TAA.Param_AccumulationMap.SetValue(previousFrames);
             Shaders.TAA.Param_UpdateMap.SetValue(currentFrame);
-            Shaders.TAA.Param_CurrentToPrevious.SetValue(CurrentViewToPreviousViewProjection);
+            Shaders.TAA.Param_CurrentToPrevious.SetValue(Matrices.CurrentViewToPreviousViewProjection);
 
             this.Draw(Shaders.TAA.Pass_TemporalAA);
 

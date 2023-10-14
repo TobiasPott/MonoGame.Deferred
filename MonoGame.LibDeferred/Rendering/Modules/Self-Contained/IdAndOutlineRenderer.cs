@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Ext;
-using Windows.UI.Composition;
+using System.Windows.Forms;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
@@ -35,10 +35,6 @@ namespace DeferredEngine.Renderer.RenderModules
         public void Draw(DynamicMeshBatcher meshMat, EntitySceneGroup scene, EnvironmentProbe envSample,
             PipelineMatrices matrices, GizmoDrawContext drawContext, bool mouseMoved)
         {
-            List<Decal> decals = scene.Decals;
-            List<DeferredPointLight> pointLights = scene.PointLights;
-            List<DeferredDirectionalLight> dirLights = scene.DirectionalLights;
-
             if (drawContext.GizmoTransformationMode)
             {
                 _graphicsDevice.SetRenderTarget(_idRenderTarget2D);
@@ -47,20 +43,13 @@ namespace DeferredEngine.Renderer.RenderModules
             }
 
             if (mouseMoved)
-            {
-                DrawIds(meshMat, decals, pointLights, dirLights, envSample, matrices, drawContext);
-            }
+                DrawIds(meshMat, scene, matrices, envSample, drawContext);
 
             if (RenderingSettings.e_drawoutlines)
                 DrawOutlines(meshMat, matrices, mouseMoved, HoveredId, drawContext, mouseMoved);
         }
 
-        public void DrawIds(DynamicMeshBatcher meshMat,
-            List<Decal> decals,
-            List<DeferredPointLight> pointLights,
-            List<DeferredDirectionalLight> dirLights,
-            EnvironmentProbe envSample,
-            PipelineMatrices matrices, GizmoDrawContext gizmoContext)
+        public void DrawIds(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, PipelineMatrices matrices, EnvironmentProbe envSample, GizmoDrawContext gizmoContext)
         {
 
             _graphicsDevice.SetRenderTarget(_idRenderTarget2D);
@@ -69,10 +58,10 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-            meshMat.Draw(DynamicMeshBatcher.RenderType.IdRender, matrices);
+            meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdRender, matrices);
 
             //Now onto the billboards
-            DrawBillboards(decals, pointLights, dirLights, envSample, matrices.ViewProjection, matrices.View);
+            DrawBillboards(scene, envSample, matrices);
 
             //Now onto the gizmos
             DrawGizmos(matrices.ViewProjection, gizmoContext);
@@ -104,11 +93,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 2);
         }
 
-        public void DrawBillboards(List<Decal> decals,
-            List<DeferredPointLight> lights,
-            List<DeferredDirectionalLight> dirLights,
-            EnvironmentProbe envSample,
-            Matrix staticViewProjection, Matrix view)
+        public void DrawBillboards(EntitySceneGroup scene, EnvironmentProbe envSample, PipelineMatrices matrices)
         {
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             _graphicsDevice.SetVertexBuffer(_billboardBuffer.VBuffer);
@@ -118,6 +103,12 @@ namespace DeferredEngine.Renderer.RenderModules
 
             Shaders.Billboard.Effect.CurrentTechnique = Shaders.Billboard.Technique_Id;
 
+            Matrix staticViewProjection = matrices.StaticViewProjection;
+            Matrix view = matrices.View;
+            List<Decal> decals = scene.Decals;
+            List<DeferredPointLight> pointLights = scene.PointLights;
+            List<DeferredDirectionalLight> dirLights = scene.DirectionalLights;
+
             for (int index = 0; index < decals.Count; index++)
             {
                 var decal = decals[index];
@@ -125,9 +116,9 @@ namespace DeferredEngine.Renderer.RenderModules
                 DrawBillboard(world, view, staticViewProjection, decal.Id);
             }
 
-            for (int index = 0; index < lights.Count; index++)
+            for (int index = 0; index < pointLights.Count; index++)
             {
-                var light = lights[index];
+                var light = pointLights[index];
                 Matrix world = Matrix.CreateTranslation(light.Position);
                 DrawBillboard(world, view, staticViewProjection, light.Id);
             }
@@ -232,7 +223,7 @@ namespace DeferredEngine.Renderer.RenderModules
             }
         }
 
-        public RenderTarget2D GetRt()
+        public RenderTarget2D GetRenderTarget2D()
         {
             return _idRenderTarget2D;
         }

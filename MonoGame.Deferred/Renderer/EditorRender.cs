@@ -62,6 +62,10 @@ namespace DeferredEngine.Renderer.RenderModules
         {
             _idAndOutlineRenderer.SetUpRenderTarget(width, height);
         }
+        public RenderTarget2D GetOutlines()
+        {
+            return _idAndOutlineRenderer.GetRenderTarget2D();
+        }
 
 
         public void DrawBillboards(EntitySceneGroup scene, EnvironmentProbe envSample, Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
@@ -79,7 +83,6 @@ namespace DeferredEngine.Renderer.RenderModules
             Shaders.Billboard.Param_IdColor.SetValue(Color.Gray.ToVector3());
 
             //Decals
-
             Shaders.Billboard.Param_Texture.SetValue(StaticAssets.Instance.IconDecal);
             for (int index = 0; index < decals.Count; index++)
             {
@@ -88,7 +91,6 @@ namespace DeferredEngine.Renderer.RenderModules
             }
 
             //Lights
-
             Shaders.Billboard.Param_Texture.SetValue(StaticAssets.Instance.IconLight);
             for (int index = 0; index < pointLights.Count; index++)
             {
@@ -96,38 +98,25 @@ namespace DeferredEngine.Renderer.RenderModules
                 DrawBillboard(light, staticViewProjection, view, gizmoContext);
             }
 
+            HelperGeometryManager helperManager = HelperGeometryManager.GetInstance();
             //DirectionalLights
             for (var index = 0; index < dirLights.Count; index++)
             {
                 DeferredDirectionalLight light = dirLights[index];
                 DrawBillboard(light, staticViewProjection, view, gizmoContext);
 
-                HelperGeometryManager.GetInstance()
-                    .AddLineStartDir(light.Position, light.Direction * 10, 1, Color.Black, light.Color);
-                HelperGeometryManager.GetInstance()
-                    .AddLineStartDir(light.Position + Vector3.UnitX * 10, light.Direction * 10, 1, Color.Black,
-                        light.Color);
-                HelperGeometryManager.GetInstance()
-                    .AddLineStartDir(light.Position - Vector3.UnitX * 10, light.Direction * 10, 1, Color.Black,
-                        light.Color);
-                HelperGeometryManager.GetInstance()
-                    .AddLineStartDir(light.Position + Vector3.UnitY * 10, light.Direction * 10, 1, Color.Black,
-                        light.Color);
-                HelperGeometryManager.GetInstance()
-                    .AddLineStartDir(light.Position - Vector3.UnitY * 10, light.Direction * 10, 1, Color.Black,
-                        light.Color);
-                HelperGeometryManager.GetInstance()
-                    .AddLineStartDir(light.Position + Vector3.UnitZ * 10, light.Direction * 10, 1, Color.Black,
-                        light.Color);
-                HelperGeometryManager.GetInstance()
-                    .AddLineStartDir(light.Position - Vector3.UnitZ * 10, light.Direction * 10, 1, Color.Black,
-                        light.Color);
+                helperManager.AddLineStartDir(light.Position, light.Direction * 10, 1, Color.Black, light.Color);
+                helperManager.AddLineStartDir(light.Position + Vector3.UnitX * 10, light.Direction * 10, 1, Color.Black, light.Color);
+                helperManager.AddLineStartDir(light.Position - Vector3.UnitX * 10, light.Direction * 10, 1, Color.Black, light.Color);
+                helperManager.AddLineStartDir(light.Position + Vector3.UnitY * 10, light.Direction * 10, 1, Color.Black, light.Color);
+                helperManager.AddLineStartDir(light.Position - Vector3.UnitY * 10, light.Direction * 10, 1, Color.Black, light.Color);
+                helperManager.AddLineStartDir(light.Position + Vector3.UnitZ * 10, light.Direction * 10, 1, Color.Black, light.Color);
+                helperManager.AddLineStartDir(light.Position - Vector3.UnitZ * 10, light.Direction * 10, 1, Color.Black, light.Color);
 
                 if (light.CastShadows)
                 {
                     BoundingFrustum boundingFrustumShadow = new BoundingFrustum(light.LightViewProjection);
-
-                    HelperGeometryManager.GetInstance().CreateBoundingBoxLines(boundingFrustumShadow);
+                    helperManager.CreateBoundingBoxLines(boundingFrustumShadow);
                 }
             }
 
@@ -157,42 +146,38 @@ namespace DeferredEngine.Renderer.RenderModules
                 Shaders.Billboard.Param_IdColor.SetValue(Color.Gray.ToVector3());
         }
 
-        public void DrawIds(DynamicMeshBatcher meshMaterialLibrary, EntitySceneGroup scene, EnvironmentProbe envSample,
-            PipelineMatrices matrices, GizmoDrawContext gizmoContext)
+        public void DrawIds(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, EnvironmentProbe envSample, PipelineMatrices matrices, GizmoDrawContext gizmoContext)
         {
-            _idAndOutlineRenderer.Draw(meshMaterialLibrary, scene, envSample, matrices, gizmoContext, _mouseMovement);
+            _idAndOutlineRenderer.Draw(meshBatcher, scene, envSample, matrices, gizmoContext, _mouseMovement);
         }
 
-        public void DrawEditorElements(DynamicMeshBatcher meshMaterialLibrary, EntitySceneGroup scene, EnvironmentProbe envSample,
-           PipelineMatrices matrices, GizmoDrawContext gizmoContext)
+        public void DrawEditorElements(EntitySceneGroup scene, EnvironmentProbe envSample, PipelineMatrices matrices, GizmoDrawContext gizmoContext)
         {
             _graphicsDevice.SetRenderTarget(null);
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             _graphicsDevice.BlendState = BlendState.Opaque;
 
-            DrawGizmo(matrices.StaticViewProjection, gizmoContext);
+            DrawGizmo(matrices, gizmoContext);
             DrawBillboards(scene, envSample, matrices.StaticViewProjection, matrices.View, gizmoContext);
         }
 
-        public void DrawGizmo(Matrix staticViewProjection, GizmoDrawContext gizmoContext)
+        protected void DrawGizmo(PipelineMatrices matrices, GizmoDrawContext gizmoContext)
         {
             if (gizmoContext.SelectedObjectId == 0) return;
-
-
 
             Vector3 position = gizmoContext.SelectedObjectPosition;
             GizmoModes gizmoMode = gizmoContext.GizmoMode;
             Matrix rotation = (RenderingStats.e_LocalTransformation || gizmoMode == GizmoModes.Scale) ? gizmoContext.SelectedObject.RotationMatrix : Matrix.Identity;
 
             //Z
-            DrawArrow(position, rotation, 0, 0, 0, GetHoveredId() == 1 ? 1 : 0.5f, Color.Blue, staticViewProjection, gizmoMode); //z 1
-            DrawArrow(position, rotation, -Math.PI / 2, 0, 0, GetHoveredId() == 2 ? 1 : 0.5f, Color.Green, staticViewProjection, gizmoMode); //y 2
-            DrawArrow(position, rotation, 0, Math.PI / 2, 0, GetHoveredId() == 3 ? 1 : 0.5f, Color.Red, staticViewProjection, gizmoMode); //x 3
+            DrawArrow(position, rotation, 0, 0, 0, GetHoveredId() == 1 ? 1 : 0.5f, Color.Blue, matrices.StaticViewProjection, gizmoMode); //z 1
+            DrawArrow(position, rotation, -Math.PI / 2, 0, 0, GetHoveredId() == 2 ? 1 : 0.5f, Color.Green, matrices.StaticViewProjection, gizmoMode); //y 2
+            DrawArrow(position, rotation, 0, Math.PI / 2, 0, GetHoveredId() == 3 ? 1 : 0.5f, Color.Red, matrices.StaticViewProjection, gizmoMode); //x 3
 
-            DrawArrow(position, rotation, Math.PI, 0, 0, GetHoveredId() == 1 ? 1 : 0.5f, Color.Blue, staticViewProjection, gizmoMode); //z 1
-            DrawArrow(position, rotation, Math.PI / 2, 0, 0, GetHoveredId() == 2 ? 1 : 0.5f, Color.Green, staticViewProjection, gizmoMode); //y 2
-            DrawArrow(position, rotation, 0, -Math.PI / 2, 0, GetHoveredId() == 3 ? 1 : 0.5f, Color.Red, staticViewProjection, gizmoMode); //x 3
+            DrawArrow(position, rotation, Math.PI, 0, 0, GetHoveredId() == 1 ? 1 : 0.5f, Color.Blue, matrices.StaticViewProjection, gizmoMode); //z 1
+            DrawArrow(position, rotation, Math.PI / 2, 0, 0, GetHoveredId() == 2 ? 1 : 0.5f, Color.Green, matrices.StaticViewProjection, gizmoMode); //y 2
+            DrawArrow(position, rotation, 0, -Math.PI / 2, 0, GetHoveredId() == 3 ? 1 : 0.5f, Color.Red, matrices.StaticViewProjection, gizmoMode); //x 3
             //DrawArrowRound(position, rotation, Math.PI, 0, 0, GetHoveredId() == 1 ? 1 : 0.5f, Color.Blue, staticViewProjection); //z 1
             //DrawArrowRound(position, rotation,-Math.PI / 2, 0, 0, GetHoveredId() == 2 ? 1 : 0.5f, Color.Green, staticViewProjection); //y 2
             //DrawArrowRound(position, rotation,0, Math.PI / 2, 0, GetHoveredId() == 3 ? 1 : 0.5f, Color.Red, staticViewProjection); //x 3
@@ -202,14 +187,9 @@ namespace DeferredEngine.Renderer.RenderModules
         {
             Matrix rotation;
             if (direction != null)
-            {
                 rotation = Matrix.CreateLookAt(Vector3.Zero, (Vector3)direction, Vector3.UnitX);
-            }
             else
-            {
-                rotation = Matrix.CreateRotationX((float)angleX) * Matrix.CreateRotationY((float)angleY) *
-                                   Matrix.CreateRotationZ((float)angleZ);
-            }
+                rotation = Matrix.CreateRotationX((float)angleX) * Matrix.CreateRotationY((float)angleY) * Matrix.CreateRotationZ((float)angleZ);
 
             Matrix scaleMatrix = Matrix.CreateScale(0.75f, 0.75f, scale * 1.5f);
             Matrix worldViewProj = scaleMatrix * rotation * rotationObject * Matrix.CreateTranslation(position) * staticViewProjection;
@@ -217,11 +197,7 @@ namespace DeferredEngine.Renderer.RenderModules
             Shaders.IdRender.Param_WorldViewProj.SetValue(worldViewProj);
             Shaders.IdRender.Param_ColorId.SetValue(color.ToVector4());
 
-            Model model = gizmoMode == GizmoModes.Translation
-                ? StaticAssets.Instance.EditorArrow3D
-                : StaticAssets.Instance.EditorArrow3DRound;
-
-
+            Model model = gizmoMode == GizmoModes.Translation ? StaticAssets.Instance.EditorArrow3D : StaticAssets.Instance.EditorArrow3DRound;
             ModelMeshPart meshpart = model.Meshes[0].MeshParts[0];
 
             Shaders.IdRender.Technique_Id.Apply();
@@ -237,10 +213,6 @@ namespace DeferredEngine.Renderer.RenderModules
         }
 
 
-        public RenderTarget2D GetOutlines()
-        {
-            return _idAndOutlineRenderer.GetRt();
-        }
 
         /// <summary>
         /// Returns the id of the currently hovered object
