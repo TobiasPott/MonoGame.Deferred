@@ -115,14 +115,14 @@ namespace DeferredEngine.Renderer
             _lightAccumulationModule = new LightAccumulationModule() { PointLightRenderModule = _pointLightRenderModule };
             _environmentModule = new EnvironmentPipelineModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
 
-            _bloomFx = new BloomFx(content);
-            _taaFx = new TemporalAAFx() { Matrices = _matrices };
-            _colorGradingFx = new ColorGradingFx(content);
-
             _decalRenderModule = new DecalRenderModule();
             _helperGeometryRenderModule = new HelperGeometryRenderModule();
             _distanceFieldRenderModule = new DistanceFieldRenderModule()
             { EnvironmentProbeRenderModule = _environmentModule, PointLightRenderModule = _pointLightRenderModule };
+
+            _bloomFx = new BloomFx(content);
+            _taaFx = new TemporalAAFx() { Matrices = _matrices };
+            _colorGradingFx = new ColorGradingFx(content);
 
         }
 
@@ -247,6 +247,7 @@ namespace DeferredEngine.Renderer
             DrawBilateralBlur();
 
             //Light the scene
+            _lightAccumulationModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
             _lightAccumulationModule.DrawLights(scene, camera.Position, gameTime, _lightingBufferTarget.Bindings, _lightingBufferTarget.Diffuse);
 
             //Draw the environment cube map as a fullscreen effect on all meshes
@@ -393,7 +394,6 @@ namespace DeferredEngine.Renderer
                 _boundingFrustum.Matrix = _matrices.ViewProjection;
                 ComputeFrustumCorners(_boundingFrustum, camera);
 
-                _lightAccumulationModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
 
                 //Base stuff, for description look in Draw()
                 meshBatcher.FrustumCulling(_boundingFrustum, true, origin);
@@ -402,6 +402,7 @@ namespace DeferredEngine.Renderer
 
                 bool volumeEnabled = RenderingSettings.g_VolumetricLights;
                 RenderingSettings.g_VolumetricLights = false;
+                _lightAccumulationModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
                 _lightAccumulationModule.DrawLights(scene, origin, gameTime, _lightingBufferTarget.Bindings, _lightingBufferTarget.Diffuse);
 
                 _environmentModule.DrawSky();
@@ -602,8 +603,6 @@ namespace DeferredEngine.Renderer
 
             //We need to update whether or not entities are in our boundingFrustum and then cull them or not!
             meshBatcher.FrustumCulling(_boundingFrustum, _viewProjectionHasChanged, camera.Position);
-
-            _lightAccumulationModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)

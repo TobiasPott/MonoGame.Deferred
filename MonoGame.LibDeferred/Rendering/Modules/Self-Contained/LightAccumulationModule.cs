@@ -14,17 +14,11 @@ namespace DeferredEngine.Renderer.RenderModules
         private FullscreenTriangleBuffer _fullscreenTarget;
 
         private bool _g_UseDepthStencilLightCulling;
+        private PipelineMatrices _matrices;
         private BlendState _lightBlendState;
         private BoundingFrustum _boundingFrustum;
 
         private bool _viewProjectionHasChanged;
-
-        private Matrix _view;
-        private Matrix _inverseView;
-        private Matrix _viewIT;
-        private Matrix _projection;
-        private Matrix _viewProjection;
-        private Matrix _inverseViewProjection;
 
         public PointLightRenderModule PointLightRenderModule;
 
@@ -58,18 +52,15 @@ namespace DeferredEngine.Renderer.RenderModules
         {
             _boundingFrustum = boundingFrustum;
             _viewProjectionHasChanged = viewProjHasChanged;
-            _view = matrices.View;
-            _inverseView = matrices.InverseView;
-            _viewIT = matrices.ViewIT;
-            _projection = matrices.Projection;
-            _viewProjection = matrices.ViewProjection;
-            _inverseViewProjection = matrices.InverseViewProjection;
+            _matrices = matrices;
         }
 
         /// <summary>
         /// Draw our lights to the diffuse/specular/volume buffer
         /// </summary>
-        public void DrawLights(EntitySceneGroup scene, Vector3 cameraOrigin, GameTime gameTime, RenderTargetBinding[] renderTargetLightBinding, RenderTarget2D renderTargetDiffuse)
+        public void DrawLights(EntitySceneGroup scene, Vector3 cameraOrigin, GameTime gameTime, 
+            RenderTargetBinding[] renderTargetLightBinding, 
+            RenderTarget2D renderTargetDiffuse)
         {
             List<DeferredPointLight> pointLights = scene.PointLights;
             List<DeferredDirectionalLight> dirLights = scene.DirectionalLights;
@@ -106,14 +97,14 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.Clear(ClearOptions.Target, new Color(0, 0, 0, 0.0f), 1, 0);
             _graphicsDevice.BlendState = _lightBlendState;
 
-            PointLightRenderModule.Draw(pointLights, cameraOrigin, gameTime, _boundingFrustum, _viewProjectionHasChanged, _view, _viewProjection);
+            PointLightRenderModule.Draw(pointLights, cameraOrigin, gameTime, _boundingFrustum, _viewProjectionHasChanged, _matrices.View, _matrices.ViewProjection);
             DrawDirectionalLights(dirLights, cameraOrigin);
 
         }
         private void ReconstructDepth()
         {
             if (_viewProjectionHasChanged)
-                Shaders.ReconstructDepth.Param_Projection.SetValue(_projection);
+                Shaders.ReconstructDepth.Param_Projection.SetValue(_matrices.Projection);
 
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             Shaders.ReconstructDepth.Effect.CurrentTechnique.Passes[0].Apply();
@@ -136,9 +127,9 @@ namespace DeferredEngine.Renderer.RenderModules
             //If nothing has changed we don't need to update
             if (_viewProjectionHasChanged)
             {
-                Shaders.DeferredDirectionalLight.Param_ViewProjection.SetValue(_viewProjection);
+                Shaders.DeferredDirectionalLight.Param_ViewProjection.SetValue(_matrices.ViewProjection);
                 Shaders.DeferredDirectionalLight.Param_CameraPosition.SetValue(cameraOrigin);
-                Shaders.DeferredDirectionalLight.Param_InverseViewProjection.SetValue(_inverseViewProjection);
+                Shaders.DeferredDirectionalLight.Param_InverseViewProjection.SetValue(_matrices.InverseViewProjection);
             }
 
             _graphicsDevice.DepthStencilState = DepthStencilState.None;
@@ -160,9 +151,9 @@ namespace DeferredEngine.Renderer.RenderModules
 
             if (_viewProjectionHasChanged)
             {
-                light.DirectionViewSpace = Vector3.Transform(light.Direction, _viewIT);
-                light.LightViewProjection_ViewSpace = _inverseView * light.LightViewProjection;
-                light.LightView_ViewSpace = _inverseView * light.LightView;
+                light.DirectionViewSpace = Vector3.Transform(light.Direction, _matrices.ViewIT);
+                light.LightViewProjection_ViewSpace = _matrices.InverseView * light.LightViewProjection;
+                light.LightView_ViewSpace = _matrices.InverseView * light.LightView;
             }
 
             Shaders.DeferredDirectionalLight.Param_LightColor.SetValue(light.ColorV3);
