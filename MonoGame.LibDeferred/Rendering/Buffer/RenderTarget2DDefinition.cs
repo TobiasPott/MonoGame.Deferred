@@ -1,6 +1,6 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
-using WinRT;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //    MAIN RENDER FUNCTIONS, TheKosmonaut 2016
@@ -68,6 +68,7 @@ namespace DeferredEngine.Renderer
             this.Resampling = resModifier;
         }
 
+        public RenderTarget2D CreateRenderTarget(GraphicsDevice graphicsDevice, Vector2 resolution) => CreateRenderTarget(graphicsDevice, (int)resolution.X, (int)resolution.Y);
         public RenderTarget2D CreateRenderTarget(GraphicsDevice graphicsDevice, int width, int height)
         {
             if (this.Resampling != ResamplingModes.Original)
@@ -81,7 +82,7 @@ namespace DeferredEngine.Renderer
         {
             if (resampling < 0)
             {
-                int downsample = Math.Abs((int)resampling); 
+                int downsample = Math.Abs((int)resampling);
                 width /= downsample; height /= downsample;
             }
             else if (resampling > 0)

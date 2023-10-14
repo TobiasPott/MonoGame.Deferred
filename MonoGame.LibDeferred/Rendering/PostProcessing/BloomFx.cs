@@ -58,13 +58,17 @@ namespace DeferredEngine.Renderer.PostProcessing
         private static readonly float[] Cheap_Radius = new float[] { 2.0f, 2.0f, 0, 0, 0 };
 
 
+        private static readonly RenderTarget2DDefinition Mip0_Definition = new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+        private static readonly RenderTarget2DDefinition Mip1_Definition = new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x1);
+        private static readonly RenderTarget2DDefinition Mip2_Definition = new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x2);
+        private static readonly RenderTarget2DDefinition Mip3_Definition = new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x3);
+        private static readonly RenderTarget2DDefinition Mip4_Definition = new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x4);
+        private static readonly RenderTarget2DDefinition Mip5_Definition = new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x5);
+
+
         //RenderTargets
-        private RenderTarget2D _bloomRenderTarget2DMip0;
-        private RenderTarget2D _bloomRenderTarget2DMip1;
-        private RenderTarget2D _bloomRenderTarget2DMip2;
-        private RenderTarget2D _bloomRenderTarget2DMip3;
-        private RenderTarget2D _bloomRenderTarget2DMip4;
-        private RenderTarget2D _bloomRenderTarget2DMip5;
+        private DynamicMultiRenderTarget _mipMaps;
+
 
         //resolution
         private Vector2 _resolution;
@@ -120,11 +124,12 @@ namespace DeferredEngine.Renderer.PostProcessing
         //Initialize graphicsDevice
         public void Initialize(GraphicsDevice graphicsDevice, Vector2 resolution)
         {
+            _resolution = resolution;
+
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
-
             _graphicsDevice = graphicsDevice;
-            UpdateResolution(resolution);
 
+            _mipMaps = new DynamicMultiRenderTarget(_graphicsDevice, (int)resolution.X, (int)resolution.Y, new[] { Mip0_Definition, Mip1_Definition, Mip2_Definition, Mip3_Definition, Mip4_Definition, Mip5_Definition });
         }
 
         /// <summary>
@@ -144,8 +149,6 @@ namespace DeferredEngine.Renderer.PostProcessing
             BloomThreshold = 0.8f;
             //Setup the default preset values.
             SetBloomPreset(BloomPresets.SuperWide);
-
-            //BloomDownsamplePasses = 5;
         }
 
         /// <summary>
@@ -219,7 +222,7 @@ namespace DeferredEngine.Renderer.PostProcessing
 
             //EXTRACT  //Note: Is setRenderTargets(binding better?)
             //We extract the bright values which are above the Threshold and save them to Mip0
-            _graphicsDevice.SetRenderTarget(_bloomRenderTarget2DMip0);
+            _graphicsDevice.SetRenderTarget(_mipMaps[0]);
 
             BloomScreenTexture = inputTexture;
             BloomInverseResolution = Vector2.One / _resolution;
@@ -233,9 +236,9 @@ namespace DeferredEngine.Renderer.PostProcessing
             {
                 BloomInverseResolution *= 2;
                 //DOWNSAMPLE TO MIP1
-                _graphicsDevice.SetRenderTarget(_bloomRenderTarget2DMip1);
+                _graphicsDevice.SetRenderTarget(_mipMaps[1]);
 
-                BloomScreenTexture = _bloomRenderTarget2DMip0;
+                BloomScreenTexture = _mipMaps[0];
                 //Pass
                 _effectSetup.Pass_Downsample.Apply();
                 _fullscreenTarget.Draw(_graphicsDevice);
@@ -246,9 +249,9 @@ namespace DeferredEngine.Renderer.PostProcessing
                     BloomInverseResolution *= 2;
 
                     //DOWNSAMPLE TO MIP2
-                    _graphicsDevice.SetRenderTarget(_bloomRenderTarget2DMip2);
+                    _graphicsDevice.SetRenderTarget(_mipMaps[2]);
 
-                    BloomScreenTexture = _bloomRenderTarget2DMip1;
+                    BloomScreenTexture = _mipMaps[1];
                     //Pass
                     _effectSetup.Pass_Downsample.Apply();
                     _fullscreenTarget.Draw(_graphicsDevice);
@@ -258,9 +261,9 @@ namespace DeferredEngine.Renderer.PostProcessing
                         BloomInverseResolution *= 2;
 
                         //DOWNSAMPLE TO MIP3
-                        _graphicsDevice.SetRenderTarget(_bloomRenderTarget2DMip3);
+                        _graphicsDevice.SetRenderTarget(_mipMaps[3]);
 
-                        BloomScreenTexture = _bloomRenderTarget2DMip2;
+                        BloomScreenTexture = _mipMaps[2];
                         //Pass
                         _effectSetup.Pass_Downsample.Apply();
                         _fullscreenTarget.Draw(_graphicsDevice);
@@ -270,9 +273,9 @@ namespace DeferredEngine.Renderer.PostProcessing
                             BloomInverseResolution *= 2;
 
                             //DOWNSAMPLE TO MIP4
-                            _graphicsDevice.SetRenderTarget(_bloomRenderTarget2DMip4);
+                            _graphicsDevice.SetRenderTarget(_mipMaps[4]);
 
-                            BloomScreenTexture = _bloomRenderTarget2DMip3;
+                            BloomScreenTexture = _mipMaps[3];
                             //Pass
                             _effectSetup.Pass_Downsample.Apply();
                             _fullscreenTarget.Draw(_graphicsDevice);
@@ -282,9 +285,9 @@ namespace DeferredEngine.Renderer.PostProcessing
                                 BloomInverseResolution *= 2;
 
                                 //DOWNSAMPLE TO MIP5
-                                _graphicsDevice.SetRenderTarget(_bloomRenderTarget2DMip5);
+                                _graphicsDevice.SetRenderTarget(_mipMaps[5]);
 
-                                BloomScreenTexture = _bloomRenderTarget2DMip4;
+                                BloomScreenTexture = _mipMaps[4];
                                 //Pass
                                 _effectSetup.Pass_Downsample.Apply();
                                 _fullscreenTarget.Draw(_graphicsDevice);
@@ -292,8 +295,8 @@ namespace DeferredEngine.Renderer.PostProcessing
                                 ChangeBlendState();
 
                                 //UPSAMPLE TO MIP4
-                                _graphicsDevice.SetRenderTarget(_bloomRenderTarget2DMip4);
-                                BloomScreenTexture = _bloomRenderTarget2DMip5;
+                                _graphicsDevice.SetRenderTarget(_mipMaps[4]);
+                                BloomScreenTexture = _mipMaps[5];
 
                                 BloomStrength = _strength[4];
                                 BloomRadius = _radius[4];
@@ -306,8 +309,8 @@ namespace DeferredEngine.Renderer.PostProcessing
                             ChangeBlendState();
 
                             //UPSAMPLE TO MIP3
-                            _graphicsDevice.SetRenderTarget(_bloomRenderTarget2DMip3);
-                            BloomScreenTexture = _bloomRenderTarget2DMip4;
+                            _graphicsDevice.SetRenderTarget(_mipMaps[3]);
+                            BloomScreenTexture = _mipMaps[4];
 
                             BloomStrength = _strength[3];
                             BloomRadius = _radius[3];
@@ -321,8 +324,8 @@ namespace DeferredEngine.Renderer.PostProcessing
                         ChangeBlendState();
 
                         //UPSAMPLE TO MIP2
-                        _graphicsDevice.SetRenderTarget(_bloomRenderTarget2DMip2);
-                        BloomScreenTexture = _bloomRenderTarget2DMip3;
+                        _graphicsDevice.SetRenderTarget(_mipMaps[2]);
+                        BloomScreenTexture = _mipMaps[3];
 
                         BloomStrength = _strength[2];
                         BloomRadius = _radius[2];
@@ -336,8 +339,8 @@ namespace DeferredEngine.Renderer.PostProcessing
                     ChangeBlendState();
 
                     //UPSAMPLE TO MIP1
-                    _graphicsDevice.SetRenderTarget(_bloomRenderTarget2DMip1);
-                    BloomScreenTexture = _bloomRenderTarget2DMip2;
+                    _graphicsDevice.SetRenderTarget(_mipMaps[1]);
+                    BloomScreenTexture = _mipMaps[2];
 
                     BloomStrength = _strength[1];
                     BloomRadius = _radius[1];
@@ -350,8 +353,8 @@ namespace DeferredEngine.Renderer.PostProcessing
                 ChangeBlendState();
 
                 //UPSAMPLE TO MIP0
-                _graphicsDevice.SetRenderTarget(_bloomRenderTarget2DMip0);
-                BloomScreenTexture = _bloomRenderTarget2DMip1;
+                _graphicsDevice.SetRenderTarget(_mipMaps[0]);
+                BloomScreenTexture = _mipMaps[1];
 
                 BloomStrength = _strength[0];
                 BloomRadius = _radius[0];
@@ -362,7 +365,7 @@ namespace DeferredEngine.Renderer.PostProcessing
 
             //Note the final step could be done as a blend to the final texture.
 
-            return _bloomRenderTarget2DMip0;
+            return _mipMaps[0];
         }
 
         private void ApplyGameSettings()
@@ -378,52 +381,13 @@ namespace DeferredEngine.Renderer.PostProcessing
             _graphicsDevice.BlendState = BlendState.AlphaBlend;
         }
 
-        /// <summary>
-        /// Update the InverseResolution of the used rendertargets. This should be the InverseResolution of the processed image
-        /// We use SurfaceFormat.Color, but you can use higher precision buffers obviously.
-        /// </summary>
-        /// <param name="width">width of the image</param>
-        /// <param name="height">height of the image</param>
-        public void UpdateResolution(Vector2 resolution)
-        {
-            _resolution = resolution;
-
-            if (_bloomRenderTarget2DMip0 != null)
-            {
-                Dispose();
-            }
-
-            _bloomRenderTarget2DMip0 = new RenderTarget2D(_graphicsDevice,
-                (int)(resolution.X),
-                (int)(resolution.Y), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
-            _bloomRenderTarget2DMip1 = new RenderTarget2D(_graphicsDevice,
-                (int)(resolution.X / 2),
-                (int)(resolution.Y / 2), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
-            _bloomRenderTarget2DMip2 = new RenderTarget2D(_graphicsDevice,
-                (int)(resolution.X / 4),
-                (int)(resolution.Y / 4), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
-            _bloomRenderTarget2DMip3 = new RenderTarget2D(_graphicsDevice,
-                (int)(resolution.X / 8),
-                (int)(resolution.Y / 8), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
-            _bloomRenderTarget2DMip4 = new RenderTarget2D(_graphicsDevice,
-                (int)(resolution.X / 16),
-                (int)(resolution.Y / 16), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
-            _bloomRenderTarget2DMip5 = new RenderTarget2D(_graphicsDevice,
-                (int)(resolution.X / 32),
-                (int)(resolution.Y / 32), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
-        }
 
         /// <summary>
         //Dispose our RenderTargets. This is not covered by the Garbage Collector so we have to do it manually
         /// </summary>
         public void Dispose()
         {
-            _bloomRenderTarget2DMip0?.Dispose();
-            _bloomRenderTarget2DMip1?.Dispose();
-            _bloomRenderTarget2DMip2?.Dispose();
-            _bloomRenderTarget2DMip3?.Dispose();
-            _bloomRenderTarget2DMip4?.Dispose();
-            _bloomRenderTarget2DMip5?.Dispose();
+            _mipMaps?.Dispose();
             _graphicsDevice?.Dispose();
             _effectSetup?.Dispose();
         }
