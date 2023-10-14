@@ -79,13 +79,8 @@ namespace DeferredEngine.Recources
             public static readonly EffectTechnique Technique_Base = Effect.Techniques["Base"];
         }
 
-        //Hologram Effect
-        public static class Hologram
-        {
-            public static readonly Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/Hologram/HologramEffect");
-            public static readonly EffectParameter Param_World = Effect.Parameters["World"];
-            public static readonly EffectParameter Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
-        }
+
+
         //ScreenSpaceReflection Effect
         public static class SSR
         {
@@ -141,14 +136,6 @@ namespace DeferredEngine.Recources
                 Shaders.SSAO.Param_CameraPosition.SetValue(cameraPosition);
             }
 
-        }
-
-        //Gaussian Blur
-        public static class GaussianBlur
-        {
-            public static readonly Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/ScreenSpace/GaussianBlur");
-            public static readonly EffectParameter Param_InverseResolution = Effect.Parameters["InverseResolution"];
-            public static readonly EffectParameter Param_TargetMap = Effect.Parameters["TargetMap"];
         }
 
         //DeferredCompose
