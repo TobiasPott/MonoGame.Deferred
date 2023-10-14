@@ -61,15 +61,7 @@ namespace DeferredEngine.Renderer
         private const int HaltonSequenceLength = 16;
 
         //Projection Matrices and derivates used in shaders
-        private Matrix _view;
-        private Matrix _inverseView;
-        private Matrix _viewIT;
-        private Matrix _projection;
-        private Matrix _viewProjection;
-        private Matrix _staticViewProjection;
-        private Matrix _inverseViewProjection;
-        private Matrix _previousViewProjection;
-        private Matrix _currentViewToPreviousViewProjection;
+        private PipelineMatrices _matrices = new PipelineMatrices();
 
         //Bounding Frusta of our view projection, to calculate which objects are inside the view
         private BoundingFrustum _boundingFrustum;
@@ -283,7 +275,7 @@ namespace DeferredEngine.Renderer
 
             //Draw the elements that we are hovering over with outlines
             if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
-                _editorRender.DrawIds(meshMaterialLibrary, scene, envProbe, _staticViewProjection, _view, gizmoContext);
+                _editorRender.DrawIds(meshMaterialLibrary, scene, envProbe, _matrices.StaticViewProjection, _matrices.View, gizmoContext);
 
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
             RenderMode(_currentOutput);
@@ -312,8 +304,8 @@ namespace DeferredEngine.Renderer
             return new EditorLogic.EditorReceivedData
             {
                 HoveredId = _editorRender.GetHoveredId(),
-                ViewMatrix = _view,
-                ProjectionMatrix = _projection
+                ViewMatrix = _matrices.View,
+                ProjectionMatrix = _matrices.Projection
             };
 
         }
@@ -336,14 +328,14 @@ namespace DeferredEngine.Renderer
             {
                 if (RenderingSettings.e_drawoutlines) DrawTextureToScreenToFullScreen(_editorRender.GetOutlines(), BlendState.Additive);
 
-                _editorRender.DrawEditorElements(meshMaterialLibrary, scene, envSample, _staticViewProjection, _view, gizmoContext);
+                _editorRender.DrawEditorElements(meshMaterialLibrary, scene, envSample, _matrices.StaticViewProjection, _matrices.View, gizmoContext);
 
 
                 if (gizmoContext.SelectedObject != null)
                 {
                     if (gizmoContext.SelectedObject is Decal)
                     {
-                        _decalRenderModule.DrawOutlines(gizmoContext.SelectedObject as Decal, _staticViewProjection, _view);
+                        _decalRenderModule.DrawOutlines(gizmoContext.SelectedObject as Decal, _matrices.StaticViewProjection, _matrices.View);
                     }
 
                     if (RenderingSettings.e_drawboundingbox)
@@ -365,20 +357,13 @@ namespace DeferredEngine.Renderer
 
         private void RenderHelperGeometry()
         {
-            _helperGeometryRenderModule.ViewProjection = _staticViewProjection;
+            _helperGeometryRenderModule.ViewProjection = _matrices.StaticViewProjection;
             _helperGeometryRenderModule.Draw();
         }
         /// <summary>
         /// Another draw function, but this time for cubemaps. Doesn't need all the stuff we have in the main draw function
         /// </summary>
         /// <param name="origin">from where do we render the cubemap</param>
-        /// <param name="meshMaterialLibrary"></param>
-        /// <param name="entities"></param>
-        /// <param name="pointLights"></param>
-        /// <param name="dirLights"></param>
-        /// <param name="farPlane"></param>
-        /// <param name="gameTime"></param>
-        /// <param name="camera"></param>
         private void DrawCubeMap(Vector3 origin, DynamicMeshBatcher meshMaterialLibrary, EntitySceneGroup scene, float farPlane, GameTime gameTime, Camera camera)
         {
             //If our cubemap is not yet initialized, create a new one
@@ -399,65 +384,29 @@ namespace DeferredEngine.Renderer
             Shaders.DeferredCompose.Param_UseSSAO.SetValue(false);
 
             //Create our projection, which is a basic pyramid
-            _projection = Matrix.CreatePerspectiveFieldOfView((float)(Math.PI / 2), 1, 1, farPlane);
+            _matrices.Projection = Matrix.CreatePerspectiveFieldOfView((float)(Math.PI / 2), 1, 1, farPlane);
 
             //Now we need to actually render for each cubemapface (6 direcetions)
             for (int i = 0; i < 6; i++)
             {
                 // render the scene to all cubemap faces
-                CubeMapFace cubeMapFace = (CubeMapFace)i;
-                switch (cubeMapFace)
-                {
-                    case CubeMapFace.NegativeX:
-                        {
-                            _view = Matrix.CreateLookAt(origin, origin + Vector3.Left, Vector3.Up);
-                            break;
-                        }
-                    case CubeMapFace.NegativeY:
-                        {
-                            _view = Matrix.CreateLookAt(origin, origin + Vector3.Down, Vector3.Forward);
-                            break;
-                        }
-                    case CubeMapFace.NegativeZ:
-                        {
-                            _view = Matrix.CreateLookAt(origin, origin + Vector3.Backward, Vector3.Up);
-                            break;
-                        }
-                    case CubeMapFace.PositiveX:
-                        {
-                            _view = Matrix.CreateLookAt(origin, origin + Vector3.Right, Vector3.Up);
-                            break;
-                        }
-                    case CubeMapFace.PositiveY:
-                        {
-                            _view = Matrix.CreateLookAt(origin, origin + Vector3.Up, Vector3.Backward);
-                            break;
-                        }
-                    case CubeMapFace.PositiveZ:
-                        {
-                            _view = Matrix.CreateLookAt(origin, origin + Vector3.Forward, Vector3.Up);
-                            break;
-                        }
-                }
-
-                //Create our projection matrices
-                _inverseView = Matrix.Invert(_view);
-                _viewProjection = _view * _projection;
-                _inverseViewProjection = Matrix.Invert(_viewProjection);
-                _viewIT = Matrix.Transpose(_inverseView);
+                _matrices.SetFromCubeMapFace(origin, (CubeMapFace)i);
+                // update our projection matrices
+                _matrices.UpdateFromView();
 
                 //Pass these values to our shader
-                Shaders.SSAO.Param_InverseViewProjection.SetValue(_inverseView);
-                Shaders.DeferredPointLight.Param_InverseView.SetValue(_inverseView);
+                Shaders.SSAO.Param_InverseViewProjection.SetValue(_matrices.InverseView);
+                Shaders.DeferredPointLight.Param_InverseView.SetValue(_matrices.InverseView);
 
                 //yep we changed
                 _viewProjectionHasChanged = true;
 
-                if (_boundingFrustum == null) _boundingFrustum = new BoundingFrustum(_viewProjection);
-                else _boundingFrustum.Matrix = _viewProjection;
+                if (_boundingFrustum == null) _boundingFrustum = new BoundingFrustum(_matrices.ViewProjection);
+                else _boundingFrustum.Matrix = _matrices.ViewProjection;
                 ComputeFrustumCorners(_boundingFrustum, camera);
 
-                _lightAccumulationModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _view, _inverseView, _viewIT, _projection, _viewProjection, _inverseViewProjection);
+                _lightAccumulationModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices.View, _matrices.InverseView,
+                    _matrices.ViewIT, _matrices.Projection, _matrices.ViewProjection, _matrices.InverseViewProjection);
 
                 //Base stuff, for description look in Draw()
                 meshMaterialLibrary.FrustumCulling(_boundingFrustum, true, origin);
@@ -646,23 +595,23 @@ namespace DeferredEngine.Renderer
             if (_viewProjectionHasChanged)
             {
                 //View matrix
-                _view = Matrix.CreateLookAt(camera.Position, camera.Lookat, camera.Up);
-                _inverseView = Matrix.Invert(_view);
+                _matrices.View = Matrix.CreateLookAt(camera.Position, camera.Lookat, camera.Up);
+                _matrices.InverseView = Matrix.Invert(_matrices.View);
 
-                _viewIT = Matrix.Transpose(_inverseView);
-                Shaders.DeferredPointLight.Param_InverseView.SetValue(_inverseView);
+                _matrices.ViewIT = Matrix.Transpose(_matrices.InverseView);
+                Shaders.DeferredPointLight.Param_InverseView.SetValue(_matrices.InverseView);
 
-                _projection = Matrix.CreatePerspectiveFieldOfView(camera.FieldOfView, RenderingSettings.g_ScreenAspect, 1, RenderingSettings.g_farplane);
+                _matrices.Projection = Matrix.CreatePerspectiveFieldOfView(camera.FieldOfView, RenderingSettings.g_ScreenAspect, 1, RenderingSettings.g_farplane);
 
                 _gBufferModule.Camera = camera.Position;
 
-                _viewProjection = _view * _projection;
+                _matrices.ViewProjection = _matrices.View * _matrices.Projection;
 
                 //this is the unjittered viewProjection. For some effects we don't want the jittered one
-                _staticViewProjection = _viewProjection;
+                _matrices.StaticViewProjection = _matrices.ViewProjection;
 
                 //Transformation for TAA - from current view back to the old view projection
-                _currentViewToPreviousViewProjection = Matrix.Invert(_view) * _previousViewProjection;
+                _matrices.CurrentViewToPreviousViewProjection = Matrix.Invert(_matrices.View) * _matrices.PreviousViewProjection;
 
                 //Temporal AA
                 if (RenderingSettings.g_taa)
@@ -672,31 +621,31 @@ namespace DeferredEngine.Renderer
                         case 0: //2 frames, just basic translation. Worst taa implementation. Not good with the continous integration used
                             {
                                 Vector2 translation = Vector2.One * (_isTaaOffFrame ? 0.5f : -0.5f);
-                                _viewProjection *= (translation / RenderingSettings.g_ScreenResolution).ToMatrixTranslationXY();
+                                _matrices.ViewProjection *= (translation / RenderingSettings.g_ScreenResolution).ToMatrixTranslationXY();
                             }
                             break;
                         case 1: // Just random translation
                             {
                                 float randomAngle = FastRand.NextAngle();
                                 Vector2 translation = (new Vector2((float)Math.Sin(randomAngle), (float)Math.Cos(randomAngle)) / RenderingSettings.g_ScreenResolution) * 0.5f; ;
-                                _viewProjection *= translation.ToMatrixTranslationXY();
+                                _matrices.ViewProjection *= translation.ToMatrixTranslationXY();
 
                             }
                             break;
                         case 2: // Halton sequence, default
                             {
                                 Vector3 translation = GetHaltonSequence();
-                                _viewProjection *= Matrix.CreateTranslation(translation);
+                                _matrices.ViewProjection *= Matrix.CreateTranslation(translation);
                             }
                             break;
                     }
                 }
 
-                _previousViewProjection = _viewProjection;
-                _inverseViewProjection = Matrix.Invert(_viewProjection);
+                _matrices.PreviousViewProjection = _matrices.ViewProjection;
+                _matrices.InverseViewProjection = Matrix.Invert(_matrices.ViewProjection);
 
-                if (_boundingFrustum == null) _boundingFrustum = new BoundingFrustum(_staticViewProjection);
-                else _boundingFrustum.Matrix = _staticViewProjection;
+                if (_boundingFrustum == null) _boundingFrustum = new BoundingFrustum(_matrices.StaticViewProjection);
+                else _boundingFrustum.Matrix = _matrices.StaticViewProjection;
 
                 // Compute the frustum corners for cheap view direction computation in shaders
                 ComputeFrustumCorners(_boundingFrustum, camera);
@@ -705,7 +654,8 @@ namespace DeferredEngine.Renderer
             //We need to update whether or not entities are in our boundingFrustum and then cull them or not!
             meshMaterialLibrary.FrustumCulling(_boundingFrustum, _viewProjectionHasChanged, camera.Position);
 
-            _lightAccumulationModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _view, _inverseView, _viewIT, _projection, _viewProjection, _inverseViewProjection);
+            _lightAccumulationModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices.View, _matrices.InverseView,
+                _matrices.ViewIT, _matrices.Projection, _matrices.ViewProjection, _matrices.InverseViewProjection);
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)
@@ -783,7 +733,7 @@ namespace DeferredEngine.Renderer
 
             //View Space Corners
             //this is the inverse of our camera transform
-            Vector3.Transform(_cornersWorldSpace, ref _view, _cornersViewSpace); //put the frustum into view space
+            Vector3.Transform(_cornersWorldSpace, ref _matrices.View, _cornersViewSpace); //put the frustum into view space
             for (int i = 0; i < 4; i++) //take only the 4 farthest points
             {
                 _currentFrustumCorners[i] = _cornersViewSpace[i + 4];
@@ -805,7 +755,7 @@ namespace DeferredEngine.Renderer
         /// <param name="meshMaterialLibrary"></param>
         private void DrawGBuffer(DynamicMeshBatcher meshMaterialLibrary)
         {
-            _gBufferModule.Draw(meshMaterialLibrary, _viewProjection, _view);
+            _gBufferModule.Draw(meshMaterialLibrary, _matrices.ViewProjection, _matrices.View);
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)
@@ -830,7 +780,7 @@ namespace DeferredEngine.Renderer
 
             DrawTextureToScreenToFullScreen(_auxTargets[MRT.AUX_DECAL], BlendState.Opaque, _gBufferTarget.Albedo);
 
-            _decalRenderModule.Draw(decals, _view, _viewProjection, _inverseView);
+            _decalRenderModule.Draw(decals, _matrices.View, _matrices.ViewProjection, _matrices.InverseView);
         }
 
         /// <summary>
@@ -860,7 +810,7 @@ namespace DeferredEngine.Renderer
             if (RenderingSettings.g_SSReflectionNoise)
                 Shaders.SSR.Param_Time.SetValue((float)gameTime.TotalGameTime.TotalSeconds % 1000);
 
-            Shaders.SSR.Param_Projection.SetValue(_projection);
+            Shaders.SSR.Param_Projection.SetValue(_matrices.Projection);
 
             Shaders.SSR.Effect.CurrentTechnique.Passes[0].Apply();
             FullscreenTarget.Draw(_graphicsDevice);
@@ -888,9 +838,9 @@ namespace DeferredEngine.Renderer
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
-            Shaders.SSAO.Param_InverseViewProjection.SetValue(_inverseViewProjection);
-            Shaders.SSAO.Param_Projection.SetValue(_projection);
-            Shaders.SSAO.Param_ViewProjection.SetValue(_viewProjection);
+            Shaders.SSAO.Param_InverseViewProjection.SetValue(_matrices.InverseViewProjection);
+            Shaders.SSAO.Param_Projection.SetValue(_matrices.Projection);
+            Shaders.SSAO.Param_ViewProjection.SetValue(_matrices.ViewProjection);
             Shaders.SSAO.Param_CameraPosition.SetValue(camera.Position);
 
             Shaders.SSAO.Effect.CurrentTechnique = Shaders.SSAO.Technique_SSAO;
@@ -915,8 +865,8 @@ namespace DeferredEngine.Renderer
         {
             if (_viewProjectionHasChanged)
             {
-                Shaders.DeferredDirectionalLight.Param_ViewProjection.SetValue(_viewProjection);
-                Shaders.DeferredDirectionalLight.Param_InverseViewProjection.SetValue(_inverseViewProjection);
+                Shaders.DeferredDirectionalLight.Param_ViewProjection.SetValue(_matrices.ViewProjection);
+                Shaders.DeferredDirectionalLight.Param_InverseViewProjection.SetValue(_matrices.InverseViewProjection);
 
             }
             for (var index = 0; index < dirLights.Count; index++)
@@ -1026,7 +976,7 @@ namespace DeferredEngine.Renderer
             if (!RenderingSettings.g_environmentmapping) return;
 
             _environmentModule.SetEnvironmentProbe(envProbe);
-            _environmentModule.DrawEnvironmentMap(camera, _view, gameTime);
+            _environmentModule.DrawEnvironmentMap(camera, _matrices.View, gameTime);
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)
@@ -1067,7 +1017,7 @@ namespace DeferredEngine.Renderer
         private void ReconstructDepth()
         {
             if (_viewProjectionHasChanged)
-                Shaders.ReconstructDepth.Param_Projection.SetValue(_projection);
+                Shaders.ReconstructDepth.Param_Projection.SetValue(_matrices.Projection);
 
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             Shaders.ReconstructDepth.Effect.CurrentTechnique.Passes[0].Apply();
@@ -1082,7 +1032,7 @@ namespace DeferredEngine.Renderer
             ReconstructDepth();
 
             _forwardModule.PrepareDraw(camera, pointLights, _boundingFrustum);
-            return _forwardModule.Draw(meshMaterialLibrary, input, _viewProjection);
+            return _forwardModule.Draw(meshMaterialLibrary, input, _matrices.ViewProjection);
         }
 
         private RenderTarget2D DrawBloom(RenderTarget2D input)
@@ -1117,7 +1067,7 @@ namespace DeferredEngine.Renderer
 
             RenderTarget2D output = !_isTaaOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2];
             _taaFx.UseTonemap = RenderingSettings.g_taa_tonemapped;
-            _taaFx.CurrentViewToPreviousViewProjection = _currentViewToPreviousViewProjection;
+            _taaFx.CurrentViewToPreviousViewProjection = _matrices.CurrentViewToPreviousViewProjection;
             _taaFx.Draw(currentFrame: input, previousFrames: _isTaaOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2], output: output);
 
             //Performance Profiler
