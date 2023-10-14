@@ -87,11 +87,6 @@ namespace DeferredEngine.Renderer
         private bool _ssr = true;
         private bool _g_SSReflectionNoise;
 
-        //SDF
-        // ToDo: @tpott: Move out of the pipeline as some sort of extension as it is only touched by the generator and the module
-        private List<SignedDistanceField> _sdfDefinitions;
-
-
         //Render targets
         private GBufferTarget _gBufferTarget;
         private LightingBufferTarget _lightingBufferTarget;
@@ -198,7 +193,7 @@ namespace DeferredEngine.Renderer
             if (!isActive)
                 return;
             _editorRender.Update(gameTime);
-            _distanceFieldRenderModule.UpdateSdfGenerator(entities, ref _sdfDefinitions);
+            _distanceFieldRenderModule.UpdateSdfGenerator(entities);
 
         }
 
@@ -238,7 +233,7 @@ namespace DeferredEngine.Renderer
             //Update SDFs
             if (IsSDFUsed(scene.PointLights))
             {
-                _distanceFieldRenderModule.UpdateDistanceFieldTransformations(scene.Entities, _sdfDefinitions);
+                _distanceFieldRenderModule.UpdateDistanceFieldTransformations(scene.Entities);
             }
             //Render EnvironmentMaps
             //We do this either when pressing C or at the start of the program (_renderTargetCube == null) or when the game settings want us to do it every frame

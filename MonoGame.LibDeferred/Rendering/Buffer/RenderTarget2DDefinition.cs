@@ -65,7 +65,6 @@ namespace DeferredEngine.Renderer
         {
             if (this.Resampling != ResamplingModes.Original)
                 this.Resample(this.Resampling, ref width, ref height);
-            Debug.WriteLine($"{width}x{height}");
             return new RenderTarget2D(graphicsDevice, width, height, MipMap, Format, DepthFormat, MultiSampleCount, Usage);
         }
 

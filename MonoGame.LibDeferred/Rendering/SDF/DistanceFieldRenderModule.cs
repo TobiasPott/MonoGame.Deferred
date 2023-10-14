@@ -19,6 +19,11 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
         public PointLightRenderModule PointLightRenderModule;
         public EnvironmentPipelineModule EnvironmentProbeRenderModule;
 
+        private GraphicsDevice _graphicsDevice;
+        private SpriteBatch _spriteBatch;
+        private RenderTarget2D _atlasRenderTarget2D;
+
+
         private const int InstanceMaxCount = 40;
 
         private Matrix[] _instanceInverseMatrixArray = new Matrix[InstanceMaxCount];
@@ -29,12 +34,11 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
         private Vector3[] _volumeTexSizeArray = new Vector3[40];
         private Vector4[] _volumeTexResolutionArray = new Vector4[40];
 
+        // ToDo: @tpott: Move out of the pipeline as some sort of extension as it is only touched by the generator and the module
+        private List<SignedDistanceField> _sdfDefinitions;
         private SignedDistanceField[] _signedDistanceFieldDefinitions = new SignedDistanceField[40];
         private int _signedDistanceFieldDefinitionsCount = 0;
 
-        private GraphicsDevice _graphicsDevice;
-        private SpriteBatch _spriteBatch;
-        private RenderTarget2D _atlasRenderTarget2D;
 
         public Vector3[] FrustumCornersWorldSpace { set { _effectSetup.Param_FrustumCorners.SetValue(value); } }
         public Vector3 CameraPosition { set { _effectSetup.Param_CameraPositon.SetValue(value); } }
@@ -87,12 +91,12 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
             FullscreenTriangleBuffer.Instance.Draw(_graphicsDevice);
         }
 
-        public void UpdateDistanceFieldTransformations(List<ModelEntity> entities, List<SignedDistanceField> sdfDefinitions)
+        public void UpdateDistanceFieldTransformations(List<ModelEntity> entities)
         {
             if (!RenderingSettings.sdf_draw) return;
 
             //First of all let's build the atlas
-            UpdateAtlas(sdfDefinitions);
+            UpdateAtlas(_sdfDefinitions);
 
             int i = 0;
             for (var index = 0; index < entities.Count; index++)
@@ -143,8 +147,6 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
                         {
                             found = true;
                             break;
-
-                            if (sdfDefinitionsPassed[i].NeedsToBeGenerated) throw new Exception("test");
                         }
                     }
 
@@ -225,9 +227,9 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
             return output;
         }
 
-        public void UpdateSdfGenerator(List<ModelEntity> entities, ref List<SignedDistanceField> sdfDefinitionsOut)
+        public void UpdateSdfGenerator(List<ModelEntity> entities)
         {
-            _sdfGenerator.Update(entities, _graphicsDevice, this, ref sdfDefinitionsOut);
+            _sdfGenerator.Update(_graphicsDevice, entities, this, ref _sdfDefinitions);
         }
 
         public void Dispose()

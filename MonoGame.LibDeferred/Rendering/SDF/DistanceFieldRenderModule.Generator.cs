@@ -189,8 +189,8 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
             }
 
 
-            // ToDo: @tpott: temporarily extract to static method to move SDFGenerator to LibDeferred (due to DistanceFieldRenderModule use)
-            internal void Update(List<ModelEntity> entities, GraphicsDevice graphics, DistanceFieldRenderModule distanceFieldRenderModule, ref List<SignedDistanceField> sdfDefinitionsOut)
+            internal void Update(GraphicsDevice graphics, List<ModelEntity> entities,
+                DistanceFieldRenderModule distanceFieldRenderModule, ref List<SignedDistanceField> sdfDefinitionsOut)
             {
                 //First let's check which entities need building, if at all!
                 sdfDefinitions.Clear();
