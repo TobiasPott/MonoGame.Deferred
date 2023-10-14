@@ -381,9 +381,6 @@ namespace DeferredEngine.Renderer.Helper
         /// <summary>
         /// Checks whether or not anything has moved, if no then we ignore the frame
         /// </summary>
-        /// <param name="lightViewPointChanged"></param>
-        /// <param name="hasAnyObjectMoved"></param>
-        /// <returns></returns>
         private bool CheckShadowMapUpdateNeeds(bool lightViewPointChanged, bool hasAnyObjectMoved)
         {
             if (lightViewPointChanged || hasAnyObjectMoved)
@@ -424,7 +421,10 @@ namespace DeferredEngine.Renderer.Helper
                 if (discardFrame) return false;
 
                 _graphicsDevice.DepthStencilState = _depthWrite;
-                ClearFrame(_graphicsDevice);
+
+                Shaders.DeferredClear.Effect.CurrentTechnique.Passes[0].Apply();
+                _fullscreenTarget.Draw(_graphicsDevice);
+
                 _graphicsDevice.DepthStencilState = DepthStencilState.Default;
 
             }
@@ -533,18 +533,6 @@ namespace DeferredEngine.Renderer.Helper
             {
                 ((GBufferPipelineModule)renderModule).SetMaterialSettings(material);
             }
-        }
-
-        private void ClearFrame(GraphicsDevice graphicsDevice)
-        {
-            Shaders.DeferredClear.Effect.CurrentTechnique.Passes[0].Apply();
-            _fullscreenTarget.Draw(graphicsDevice);
-        }
-
-        //I don't want to fill up the main Draw as much! Not used right  now
-        public void DrawEmissive(GraphicsDevice graphicsDevice, Camera camera, Matrix viewProjection, Matrix transformedViewProjection, Matrix inverseViewProjection, RenderTarget2D renderTargetEmissive, RenderTarget2D renderTargetDiffuse, RenderTarget2D renderTargetSpecular, BlendState lightBlendState, IEnumerable<ModelMesh> sphereModel, GameTime gameTime)
-        {
-            throw new NotImplementedException();
         }
 
     }
