@@ -8,7 +8,6 @@
         public static class TAA
         {
             public static bool Enabled = true;
-            public static int JitterMode = 2;
             public static bool UseTonemapping = true;
 
         }

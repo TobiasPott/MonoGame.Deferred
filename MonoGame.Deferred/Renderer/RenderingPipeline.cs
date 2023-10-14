@@ -409,12 +409,12 @@ namespace DeferredEngine.Renderer
                 RenderingSettings.g_VolumetricLights = volumeEnabled;
 
                 //We don't use temporal AA obviously for the cubemap
-                bool tempAa = RenderingSettings.TAA.Enabled;
-                RenderingSettings.TAA.Enabled = false;
+                bool tempAa = _taaFx.Enabled;
+                _taaFx.Enabled = false;
 
                 Compose();
 
-                RenderingSettings.TAA.Enabled = tempAa;
+                _taaFx.Enabled = tempAa;
                 DrawTextureToScreenToCube(_auxTargets[MRT.AUX_COMPOSE], _renderTargetCubeMap, (CubeMapFace?)i);
             }
             Shaders.DeferredCompose.Param_UseSSAO.SetValue(RenderingSettings.g_ssao_draw);
@@ -571,7 +571,7 @@ namespace DeferredEngine.Renderer
             _viewProjectionHasChanged = camera.HasChanged;
 
             //alternate frames with temporal aa
-            if (RenderingSettings.TAA.Enabled)
+            if (_taaFx.Enabled)
             {
                 _viewProjectionHasChanged = true;
                 _taaFx.SwapOffFrame();
@@ -585,7 +585,7 @@ namespace DeferredEngine.Renderer
 
                 Shaders.DeferredPointLight.Param_InverseView.SetValue(_matrices.InverseView);
                 //Temporal AA
-                if (RenderingSettings.TAA.Enabled)
+                if (_taaFx.Enabled)
                 {
                     _taaFx?.UpdateViewProjection(_matrices);
                 }
@@ -707,7 +707,7 @@ namespace DeferredEngine.Renderer
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
-            if (RenderingSettings.TAA.Enabled)
+            if (_taaFx.Enabled)
             {
                 Shaders.SSR.Param_TargetMap.SetValue(_taaFx.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2]);
             }
@@ -913,10 +913,10 @@ namespace DeferredEngine.Renderer
         /// </summary>
         private RenderTarget2D TonemapAndCombineTemporalAntialiasing(RenderTarget2D input)
         {
-            if (!RenderingSettings.TAA.Enabled) return input;
+            if (!_taaFx.Enabled) return input;
 
             RenderTarget2D output = !_taaFx.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2];
-            _taaFx.UseTonemap = RenderingSettings.TAA.UseTonemapping;
+            //_taaFx.UseTonemap = RenderingSettings.TAA.UseTonemapping;
             _taaFx.Draw(input, _taaFx.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2], output);
 
             //Performance Profiler
