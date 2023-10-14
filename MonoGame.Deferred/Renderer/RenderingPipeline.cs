@@ -243,9 +243,6 @@ namespace DeferredEngine.Renderer
             //SSAO
             DrawScreenSpaceAmbientOcclusion(camera);
 
-            //Screen space shadows for directional lights to an offscreen render target
-            DrawScreenSpaceDirectionalShadow(scene.DirectionalLights);
-
             //Upsample/blur our SSAO / screen space shadows
             DrawBilateralBlur();
 
@@ -761,62 +758,6 @@ namespace DeferredEngine.Renderer
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
                 RenderingStats.d_profileDrawScreenSpaceEffect = performanceCurrentTime - _performancePreviousTime;
-
-                _performancePreviousTime = performanceCurrentTime;
-            }
-        }
-
-        /// <summary>
-        /// Screen space blur for directional lights
-        /// </summary>
-        /// <param name="dirLights"></param>
-        private void DrawScreenSpaceDirectionalShadow(List<DeferredDirectionalLight> dirLights)
-        {
-            if (_viewProjectionHasChanged)
-            {
-                Shaders.DeferredDirectionalLight.Param_ViewProjection.SetValue(_matrices.ViewProjection);
-                Shaders.DeferredDirectionalLight.Param_InverseViewProjection.SetValue(_matrices.InverseViewProjection);
-
-            }
-            for (var index = 0; index < dirLights.Count; index++)
-            {
-                DeferredDirectionalLight light = dirLights[index];
-                if (light.CastShadows && light.ScreenSpaceShadowBlur)
-                {
-                    throw new NotImplementedException();
-
-                    /*
-                    //Draw our map!
-                    _graphicsDevice.SetRenderTarget(_renderTargetScreenSpaceEffectUpsampleBlurVertical);
-
-                    Shaders.deferredDirectionalLightParameter_LightDirection.SetValue(light.Direction);
-
-                    if (_viewProjectionHasChanged)
-                    {
-                        light.DirectionViewSpace = Vector3.Transform(light.Direction, _viewIT);
-                        light.LightViewProjection_ViewSpace = _inverseView * light.LightViewProjection;
-                        light.LightView_ViewSpace = _inverseView * light.LightView;
-                    }
-
-                    Shaders.deferredDirectionalLightParameterLightViewProjection.SetValue(light
-                        .LightViewProjection_ViewSpace);
-                    Shaders.deferredDirectionalLightParameterLightView.SetValue(light.LightViewProjection_ViewSpace);
-                    Shaders.deferredDirectionalLightParameter_ShadowMap.SetValue(light.ShadowMap);
-                    Shaders.deferredDirectionalLightParameter_ShadowFiltering.SetValue((int) light.ShadowFiltering);
-                    Shaders.deferredDirectionalLightParameter_ShadowMapSize.SetValue((float) light.ShadowResolution);
-
-                    Shaders.deferredDirectionalLightShadowOnly.Passes[0].Apply();
-
-                    _quadRenderer.RenderQuad(_graphicsDevice, Vector2.One * -1, Vector2.One);
-                    */
-                }
-            }
-
-            //Performance Profiler
-            if (RenderingSettings.d_IsProfileEnabled)
-            {
-                long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                RenderingStats.d_profileDrawScreenSpaceDirectionalShadow = performanceCurrentTime - _performancePreviousTime;
 
                 _performancePreviousTime = performanceCurrentTime;
             }
