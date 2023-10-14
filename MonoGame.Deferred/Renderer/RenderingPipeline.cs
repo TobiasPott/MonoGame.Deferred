@@ -223,7 +223,7 @@ namespace DeferredEngine.Renderer
             }
             //Render EnvironmentMaps
             //We do this either when pressing C or at the start of the program (_renderTargetCube == null) or when the game settings want us to do it every frame
-            if (RenderingSettings.g_envmapupdateeveryframe)
+            if (RenderingSettings.EnvironmentMapping.MapUpdateOnEveryFrame)
             {
                 DrawCubeMap(envProbe.Position, meshBatcher, scene, 300, gameTime, camera);
             }
@@ -359,7 +359,7 @@ namespace DeferredEngine.Renderer
             if (_renderTargetCubeMap == null)
             {
                 //Create a new cube map
-                _renderTargetCubeMap = new RenderTargetCube(_graphicsDevice, RenderingSettings.g_envmapresolution, true, SurfaceFormat.HalfVector4,
+                _renderTargetCubeMap = new RenderTargetCube(_graphicsDevice, RenderingSettings.EnvironmentMapping.MapResolution, true, SurfaceFormat.HalfVector4,
                     DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
 
                 //Set this cubemap in the shader of the environment map
@@ -367,7 +367,7 @@ namespace DeferredEngine.Renderer
             }
 
             //Set up all the base rendertargets with the resolution of our cubemap
-            SetUpRenderTargets(RenderingSettings.g_envmapresolution, RenderingSettings.g_envmapresolution, true);
+            SetUpRenderTargets(RenderingSettings.EnvironmentMapping.MapResolution, RenderingSettings.EnvironmentMapping.MapResolution, true);
 
             //We don't want to use SSAO in this cubemap
             Shaders.DeferredCompose.Param_UseSSAO.SetValue(false);
@@ -823,7 +823,7 @@ namespace DeferredEngine.Renderer
         /// </summary>
         private void DrawEnvironmentMap(EnvironmentProbe envProbe, Camera camera, GameTime gameTime)
         {
-            if (!RenderingSettings.g_environmentmapping) return;
+            if (!RenderingSettings.EnvironmentMapping.Enabled) return;
 
             _environmentModule.SetEnvironmentProbe(envProbe);
             _environmentModule.DrawEnvironmentMap(camera, _matrices.View, gameTime);

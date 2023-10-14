@@ -73,7 +73,7 @@ namespace DeferredEngine.Recources
 
             ApplyDefaultsTAA();
 
-            ApplyDefaultsEnvironmentMap();
+            EnvironmentMapping.ApplyDefaultsEnvironmentMap();
 
             ApplyDefaultsSSR();
 
