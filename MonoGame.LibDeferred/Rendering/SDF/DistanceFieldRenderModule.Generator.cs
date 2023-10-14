@@ -65,7 +65,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
 
                     Texture2D output;
 
-                    if (!RenderingSettings.sdf_cpu)
+                    if (!RenderingSettings.SDF.UseCpu)
                     {
                         Stopwatch stopwatch = Stopwatch.StartNew();
 
@@ -118,8 +118,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
 
                             Stopwatch stopwatch = Stopwatch.StartNew();
 
-                            int numberOfThreads = RenderingSettings.sdf_threads;
-
+                            int numberOfThreads = RenderingSettings.SDF.NumOfCpuThreads;
                             if (numberOfThreads > 1)
                             {
                                 Task[] threads = new Task[numberOfThreads - 1];
@@ -173,8 +172,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
 
                             stopwatch.Stop();
 
-                            Debug.Write("\nSDF generated in " + stopwatch.ElapsedMilliseconds + "ms with " +
-                                        RenderingSettings.sdf_threads + " thread(s)");
+                            Debug.Write("\nSDF generated in " + stopwatch.ElapsedMilliseconds + "ms with " + numberOfThreads + " thread(s)");
 
                             string path = uncomputedSdf.TexturePath;
                             DataStream.SaveImageData(data, xsteps, ysteps, zsteps, path);
@@ -226,13 +224,13 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
                 //Now for the model definitions
                 for (var i = 0; i < sdfDefinitions.Count; i++)
                 {
-                    if (RenderingSettings.sdf_regenerate)
+                    if (RenderingSettings.SDF.Regenerate)
                     {
                         sdfDefinitions[i].NeedsToBeGenerated = true;
                     }
                 }
 
-                RenderingSettings.sdf_regenerate = false;
+                RenderingSettings.SDF.Regenerate = false;
 
                 sdfDefinitionsOut = sdfDefinitions;
             }

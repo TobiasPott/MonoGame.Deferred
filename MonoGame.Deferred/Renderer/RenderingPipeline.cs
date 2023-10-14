@@ -335,7 +335,7 @@ namespace DeferredEngine.Renderer
                 }
             }
 
-            if (RenderingSettings.sdf_debug && _distanceFieldRenderModule.GetAtlas() != null)
+            if (RenderingSettings.SDF.DrawDebug && _distanceFieldRenderModule.GetAtlas() != null)
             {
                 _spriteBatch.Begin(0, BlendState.Opaque, SamplerState.PointClamp);
                 _spriteBatch.Draw(_distanceFieldRenderModule.GetAtlas(), new Rectangle(0, RenderingSettings.g_ScreenHeight - 200, RenderingSettings.g_ScreenWidth, 200), Color.White);
@@ -933,7 +933,8 @@ namespace DeferredEngine.Renderer
 
         private void DrawSignedDistanceFieldFunctions(Camera camera)
         {
-            if (!RenderingSettings.sdf_drawdistance) return;
+            if (!RenderingSettings.SDF.DrawDistance) 
+                return;
             _distanceFieldRenderModule.Draw(camera);
         }
 

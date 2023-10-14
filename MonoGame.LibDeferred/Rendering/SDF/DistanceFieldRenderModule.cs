@@ -84,7 +84,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
         {
             CameraPosition = camera.Position;
 
-            if (RenderingSettings.sdf_drawvolume)
+            if (RenderingSettings.SDF.DrawVolume)
                 _effectSetup.Pass_Volume.Apply();
             else
                 _effectSetup.Pass_Distance.Apply();
@@ -93,7 +93,8 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
 
         public void UpdateDistanceFieldTransformations(List<ModelEntity> entities)
         {
-            if (!RenderingSettings.sdf_draw) return;
+            if (!RenderingSettings.SDF.Draw)
+                return;
 
             //First of all let's build the atlas
             UpdateAtlas(_sdfDefinitions);

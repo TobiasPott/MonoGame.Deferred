@@ -183,14 +183,14 @@ namespace DeferredEngine.Logic
 
             sdfList.AddElement(new GUITextBlockToggle(defaultStyle, "Draw SDF")
             {
-                ToggleField = typeof(RenderingSettings).GetField("sdf_drawdistance"),
-                Toggle = RenderingSettings.sdf_drawdistance
+                ToggleField = typeof(RenderingSettings.SDF).GetField("DrawDistance"),
+                Toggle = RenderingSettings.SDF.DrawDistance
             });
 
             sdfList.AddElement(new GUITextBlockToggle(defaultStyle, "Draw SDF volume")
             {
-                ToggleField = typeof(RenderingSettings).GetField("sdf_drawvolume"),
-                Toggle = RenderingSettings.sdf_drawvolume
+                ToggleField = typeof(RenderingSettings.SDF).GetField("DrawVolume"),
+                Toggle = RenderingSettings.SDF.DrawVolume
             });
 
             /////////////////////////////////////////////////////////////////
