@@ -70,11 +70,12 @@ namespace DeferredEngine.Renderer.PostProcessing
         private DynamicMultiRenderTarget _mipMaps;
 
 
-        //resolution
+        private bool _enabled = true;
         private Vector2 _resolution;
         //Preset variables for different mip levels
         private readonly float[] _radius = new float[5];
         private readonly float[] _strength = new float[5];
+
 
         private float _radiusMultiplier = 1.0f;
 
@@ -88,7 +89,7 @@ namespace DeferredEngine.Renderer.PostProcessing
         private FullscreenTriangleBuffer _fullscreenTarget;
 
 
-        #region properties
+        public bool Enabled { get => _enabled && RenderingSettings.Bloom.Enabled; set { _enabled = value; } }
         public BloomPresets BloomPreset { set { SetBloomPreset(value); } }
 
 
@@ -113,7 +114,6 @@ namespace DeferredEngine.Renderer.PostProcessing
         public float BloomStreakLength { set { _effectSetup.Param_StreakLength.SetValue(value); } }
         public float BloomThreshold { set { _effectSetup.Param_Threshold.SetValue(value); } }
 
-        #endregion
 
 
 
@@ -149,6 +149,8 @@ namespace DeferredEngine.Renderer.PostProcessing
             BloomThreshold = 0.8f;
             //Setup the default preset values.
             SetBloomPreset(BloomPresets.SuperWide);
+
+            ApplyGameSettings();
         }
 
         /// <summary>
@@ -208,14 +210,11 @@ namespace DeferredEngine.Renderer.PostProcessing
         /// Main draw function
         /// </summary>
         /// <param name="inputTexture">the image from which we want to extract bright parts and blur these</param>
-        /// <returns></returns>
-        public Texture2D Draw(Texture2D inputTexture)
+        public RenderTarget2D Draw(Texture2D inputTexture)
         {
             //Check if we are initialized
             if (_graphicsDevice == null)
                 throw new Exception("Module not yet Loaded / Initialized. Use Load() first");
-
-            ApplyGameSettings();
 
             _graphicsDevice.RasterizerState = RasterizerState.CullNone;
             _graphicsDevice.BlendState = BlendState.Opaque;

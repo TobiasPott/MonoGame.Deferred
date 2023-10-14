@@ -887,12 +887,11 @@ namespace DeferredEngine.Renderer
 
         private RenderTarget2D DrawBloom(RenderTarget2D input)
         {
-            if (RenderingSettings.Bloom.Enabled)
+            if (_bloomFx.Enabled)
             {
                 Texture2D bloom = _bloomFx.Draw(input);
 
                 _graphicsDevice.SetRenderTargets(_auxTargets[MRT.AUX_BLOOM]);
-
                 _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
 
                 _spriteBatch.Draw(input, RenderingSettings.g_ScreenRect, Color.White);

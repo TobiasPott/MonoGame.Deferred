@@ -125,7 +125,7 @@ namespace DeferredEngine.Renderer.PostProcessing
         /// <param name="graphics"></param>
         /// <param name="lutsize">32 or 16. 32 will result in a larger LUT which results in better images but worse performance</param>
         /// <param name="relativeFilePath">for example "Lut16.png". The base directory is where the .exe is started from</param>
-        public void CreateLUT(LUTSizes lutsize, string relativeFilePath)
+        protected void CreateLUT(LUTSizes lutsize, string relativeFilePath)
         {
             _renderTarget?.Dispose();
 

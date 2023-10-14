@@ -34,12 +34,12 @@ namespace DeferredEngine.Renderer.PostProcessing
             _rt20482.Dispose();
         }
 
-        public RenderTarget2D DrawGaussianBlur(RenderTarget2D renderTargetOutput)
+        public RenderTarget2D Draw(RenderTarget2D output)
         {
-            this.EnsureRenderTargetFormat(renderTargetOutput, SurfaceFormat.Vector2);
+            this.EnsureRenderTargetFormat(output, SurfaceFormat.Vector2);
 
             //Only square expected
-            int size = renderTargetOutput.Width;
+            int size = output.Width;
             //select rendertarget
             RenderTarget2D renderTargetBlur = GetRenderTarget2D(size);
             this.EnsureRenderTargetReference(renderTargetBlur, null);
@@ -48,23 +48,23 @@ namespace DeferredEngine.Renderer.PostProcessing
 
             Vector2 invRes = new Vector2(1.0f / size, 1.0f / size);
             _effectSetup.Param_InverseResolution.SetValue(invRes);
-            _effectSetup.Param_TargetMap.SetValue(renderTargetOutput);
+            _effectSetup.Param_TargetMap.SetValue(output);
 
             this.Draw(_effectSetup.Pass_Horizontal);
 
-            _graphicsDevice.SetRenderTarget(renderTargetOutput);
+            _graphicsDevice.SetRenderTarget(output);
             _effectSetup.Param_TargetMap.SetValue(renderTargetBlur);
             this.Draw(_effectSetup.Pass_Vertical);
 
-            return renderTargetOutput;
+            return output;
         }
 
-        public RenderTargetCube DrawGaussianBlur(RenderTargetCube renderTargetOutput, CubeMapFace cubeFace)
+        public RenderTargetCube Draw(RenderTargetCube outputCube, CubeMapFace cubeFace)
         {
-            this.EnsureRenderTargetFormat(renderTargetOutput, SurfaceFormat.Vector2);
+            this.EnsureRenderTargetFormat(outputCube, SurfaceFormat.Vector2);
 
             //Only square expected
-            int size = renderTargetOutput.Size;
+            int size = outputCube.Size;
             //select rendertarget
             RenderTarget2D renderTargetBlur = GetRenderTarget2D(size);
             this.EnsureRenderTargetReference(renderTargetBlur, null);
@@ -73,14 +73,14 @@ namespace DeferredEngine.Renderer.PostProcessing
 
             Vector2 invRes = new Vector2(1.0f / size, 1.0f / size);
             _effectSetup.Param_InverseResolution.SetValue(invRes);
-            _effectSetup.Param_TargetMap.SetValue(renderTargetOutput);
+            _effectSetup.Param_TargetMap.SetValue(outputCube);
             this.Draw(_effectSetup.Pass_Horizontal);
 
-            _graphicsDevice.SetRenderTarget(renderTargetOutput, cubeFace);
+            _graphicsDevice.SetRenderTarget(outputCube, cubeFace);
             _effectSetup.Param_TargetMap.SetValue(renderTargetBlur);
             this.Draw(_effectSetup.Pass_Vertical);
 
-            return renderTargetOutput;
+            return outputCube;
         }
 
         protected RenderTarget2D GetRenderTarget2D(int size)

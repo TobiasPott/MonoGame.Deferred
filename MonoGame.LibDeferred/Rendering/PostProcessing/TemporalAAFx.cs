@@ -37,13 +37,14 @@ namespace DeferredEngine.Renderer.PostProcessing
 
         public void SwapOffFrame()
         { IsOffFrame = !IsOffFrame; }
-        public void Draw(RenderTarget2D currentFrame, RenderTarget2D previousFrames, RenderTarget2D output)
+
+        public void Draw(RenderTarget2D currentFrame, RenderTarget2D lastFrame, RenderTarget2D output)
         {
             _graphicsDevice.SetRenderTarget(output);
             _graphicsDevice.BlendState = BlendState.Opaque;
 
-            _effectSetup.Param_AccumulationMap.SetValue(previousFrames);
             _effectSetup.Param_UpdateMap.SetValue(currentFrame);
+            _effectSetup.Param_AccumulationMap.SetValue(lastFrame);
             _effectSetup.Param_CurrentToPrevious.SetValue(Matrices.CurrentViewToPreviousViewProjection);
 
             this.Draw(_effectSetup.Pass_TemporalAA);
