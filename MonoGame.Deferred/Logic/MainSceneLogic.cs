@@ -55,6 +55,7 @@ namespace DeferredEngine.Logic
             _assets = assets;
 
             MeshMaterialLibrary = new DynamicMeshBatcher(graphicsDevice);
+            MeshMaterialLibrary.BatchByMaterial = false;
 
             SetUpEditorScene(graphicsDevice);
         }

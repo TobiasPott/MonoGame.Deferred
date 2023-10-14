@@ -15,16 +15,16 @@ namespace DeferredEngine.Renderer.Helper
         private const int InitialLibrarySize = 64;
         private List<MaterialBatch> MaterialBatch = new List<MaterialBatch>(InitialLibrarySize);
 
-        public int[] MaterialLibPointer = new int[InitialLibrarySize];
-
-
         private bool _previousMode = RenderingSettings.g_CpuCulling;
+
         private readonly BoundingSphere _defaultBoundingSphere;
         private readonly RasterizerState _shadowGenerationRasterizerState = new RasterizerState() { CullMode = CullMode.CullCounterClockwiseFace, ScissorTestEnable = true };
         private readonly DepthStencilState _depthWrite = new DepthStencilState() { DepthBufferEnable = true, DepthBufferWriteEnable = true, DepthBufferFunction = CompareFunction.Always };
 
         private readonly FullscreenTriangleBuffer _fullscreenTarget;
         private readonly GraphicsDevice _graphicsDevice;
+
+        public bool BatchByMaterial { get; set; } = false;
 
 
         public DynamicMeshBatcher(GraphicsDevice graphics)
@@ -77,7 +77,7 @@ namespace DeferredEngine.Renderer.Helper
             for (var i = 0; i < MaterialBatch.Count; i++)
             {
                 MaterialBatch matLib = MaterialBatch[i];
-                if (matLib.HasMaterial(mat))
+                if (this.BatchByMaterial && matLib.HasMaterial(mat))
                 {
                     matLib.Register(mesh, transform, boundingSphere);
                     found = true;
@@ -96,6 +96,7 @@ namespace DeferredEngine.Renderer.Helper
             }
 
         }
+
 
         public void DeleteFromRegistry(ModelEntity entity)
         {

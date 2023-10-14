@@ -30,7 +30,6 @@ namespace DeferredEngine.Recources
         public static RenderModes g_RenderMode = RenderModes.Deferred;
         public static float g_FarPlane = 500;
         public static bool g_CpuCulling = true;
-        public static bool g_BatchByMaterial = false; //Note this must be activated before the application is started.
 
         //Deferred Decals
         public static bool g_EnableDecals = true;
