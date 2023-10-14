@@ -138,30 +138,25 @@ namespace DeferredEngine.Recources
 
         }
 
-        //DeferredCompose
-        public static class DeferredCompose
+        //Deferred Compose & Clear
+        public static class Deferred
         {
-            public static readonly Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/Deferred/DeferredCompose");
+            public static readonly Effect Effect_Clear = ShaderGlobals.content.Load<Effect>("Shaders/Deferred/DeferredClear");
+            public static readonly Effect Effect_Compose = ShaderGlobals.content.Load<Effect>("Shaders/Deferred/DeferredCompose");
 
-            public static readonly EffectParameter Param_ColorMap = Effect.Parameters["colorMap"];
-            public static readonly EffectParameter Param_NormalMap = Effect.Parameters["normalMap"];
-            public static readonly EffectParameter Param_diffuseLightMap = Effect.Parameters["diffuseLightMap"];
-            public static readonly EffectParameter Param_specularLightMap = Effect.Parameters["specularLightMap"];
-            public static readonly EffectParameter Param_volumeLightMap = Effect.Parameters["volumeLightMap"];
-            public static readonly EffectParameter Param_HologramMap = Effect.Parameters["HologramMap"];
-            public static readonly EffectParameter Param_SSAOMap = Effect.Parameters["SSAOMap"];
-            public static readonly EffectParameter Param_LinearMap = Effect.Parameters["LinearMap"];
-            public static readonly EffectParameter Param_SSRMap = Effect.Parameters["SSRMap"];
-            public static readonly EffectParameter Param_UseSSAO = Effect.Parameters["useSSAO"];
+            public static readonly EffectParameter Param_ColorMap = Effect_Compose.Parameters["colorMap"];
+            public static readonly EffectParameter Param_NormalMap = Effect_Compose.Parameters["normalMap"];
+            public static readonly EffectParameter Param_diffuseLightMap = Effect_Compose.Parameters["diffuseLightMap"];
+            public static readonly EffectParameter Param_specularLightMap = Effect_Compose.Parameters["specularLightMap"];
+            public static readonly EffectParameter Param_volumeLightMap = Effect_Compose.Parameters["volumeLightMap"];
+            public static readonly EffectParameter Param_HologramMap = Effect_Compose.Parameters["HologramMap"];
+            public static readonly EffectParameter Param_SSAOMap = Effect_Compose.Parameters["SSAOMap"];
+            public static readonly EffectParameter Param_LinearMap = Effect_Compose.Parameters["LinearMap"];
+            public static readonly EffectParameter Param_SSRMap = Effect_Compose.Parameters["SSRMap"];
+            public static readonly EffectParameter Param_UseSSAO = Effect_Compose.Parameters["useSSAO"];
 
-            public static readonly EffectTechnique Technique_NonLinear = Effect.Techniques["TechniqueNonLinear"];
-            public static readonly EffectTechnique Technique_Linear = Effect.Techniques["TechniqueLinear"];
-        }
-
-        //Deferred Clear
-        public static class DeferredClear
-        {
-            public static readonly Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/Deferred/DeferredClear");
+            public static readonly EffectTechnique Technique_NonLinear = Effect_Compose.Techniques["TechniqueNonLinear"];
+            public static readonly EffectTechnique Technique_Linear = Effect_Compose.Techniques["TechniqueLinear"];
         }
 
         //Directional light

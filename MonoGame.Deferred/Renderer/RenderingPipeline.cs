@@ -370,7 +370,7 @@ namespace DeferredEngine.Renderer
             SetUpRenderTargets(RenderingSettings.EnvironmentMapping.MapResolution, RenderingSettings.EnvironmentMapping.MapResolution, true);
 
             //We don't want to use SSAO in this cubemap
-            Shaders.DeferredCompose.Param_UseSSAO.SetValue(false);
+            Shaders.Deferred.Param_UseSSAO.SetValue(false);
 
             //Create our projection, which is a basic pyramid
             _matrices.Projection = Matrix.CreatePerspectiveFieldOfView((float)(Math.PI / 2), 1, 1, farPlane);
@@ -417,7 +417,7 @@ namespace DeferredEngine.Renderer
                 _taaFx.Enabled = tempAa;
                 DrawTextureToScreenToCube(_auxTargets[MRT.AUX_COMPOSE], _renderTargetCubeMap, (CubeMapFace?)i);
             }
-            Shaders.DeferredCompose.Param_UseSSAO.SetValue(RenderingSettings.g_ssao_draw);
+            Shaders.Deferred.Param_UseSSAO.SetValue(RenderingSettings.g_ssao_draw);
 
             //Change RTs back to normal
             SetUpRenderTargets(RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight, true);
@@ -849,7 +849,7 @@ namespace DeferredEngine.Renderer
             _graphicsDevice.BlendState = BlendState.Opaque;
 
             //combine!
-            Shaders.DeferredCompose.Effect.CurrentTechnique.Passes[0].Apply();
+            Shaders.Deferred.Effect_Compose.CurrentTechnique.Passes[0].Apply();
             FullscreenTarget.Draw(_graphicsDevice);
 
             //Performance Profiler
@@ -916,8 +916,9 @@ namespace DeferredEngine.Renderer
             if (!_taaFx.Enabled) return input;
 
             RenderTarget2D output = !_taaFx.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2];
-            //_taaFx.UseTonemap = RenderingSettings.TAA.UseTonemapping;
-            _taaFx.Draw(input, _taaFx.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2], output);
+            _taaFx.Draw(input,
+                    _taaFx.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2],
+                output);
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)
@@ -1101,12 +1102,12 @@ namespace DeferredEngine.Renderer
             _distanceFieldRenderModule.DepthMap = _gBufferTarget.Depth;
 
 
-            Shaders.DeferredCompose.Param_ColorMap.SetValue(_gBufferTarget.Albedo);
-            Shaders.DeferredCompose.Param_NormalMap.SetValue(_gBufferTarget.Normal);
-            Shaders.DeferredCompose.Param_diffuseLightMap.SetValue(_lightingBufferTarget.Diffuse);
-            Shaders.DeferredCompose.Param_specularLightMap.SetValue(_lightingBufferTarget.Specular);
-            Shaders.DeferredCompose.Param_volumeLightMap.SetValue(_lightingBufferTarget.Volume);
-            Shaders.DeferredCompose.Param_SSAOMap.SetValue(_auxTargets[MRT.SSFX_BLUR_FINAL]);
+            Shaders.Deferred.Param_ColorMap.SetValue(_gBufferTarget.Albedo);
+            Shaders.Deferred.Param_NormalMap.SetValue(_gBufferTarget.Normal);
+            Shaders.Deferred.Param_diffuseLightMap.SetValue(_lightingBufferTarget.Diffuse);
+            Shaders.Deferred.Param_specularLightMap.SetValue(_lightingBufferTarget.Specular);
+            Shaders.Deferred.Param_volumeLightMap.SetValue(_lightingBufferTarget.Volume);
+            Shaders.Deferred.Param_SSAOMap.SetValue(_auxTargets[MRT.SSFX_BLUR_FINAL]);
 
             Shaders.SSAO.Param_NormalMap.SetValue(_gBufferTarget.Normal);
             Shaders.SSAO.Param_DepthMap.SetValue(_gBufferTarget.Depth);

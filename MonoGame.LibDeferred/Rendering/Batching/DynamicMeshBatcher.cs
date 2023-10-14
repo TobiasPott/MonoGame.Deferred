@@ -372,7 +372,7 @@ namespace DeferredEngine.Renderer.Helper
 
                 _graphicsDevice.DepthStencilState = _depthWrite;
 
-                Shaders.DeferredClear.Effect.CurrentTechnique.Passes[0].Apply();
+                Shaders.Deferred.Effect_Clear.CurrentTechnique.Passes[0].Apply();
                 _fullscreenTarget.Draw(_graphicsDevice);
 
                 _graphicsDevice.DepthStencilState = DepthStencilState.Default;
