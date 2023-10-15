@@ -63,8 +63,8 @@ namespace DeferredEngine.Renderer
 
                 bool volumeEnabled = RenderingSettings.g_VolumetricLights;
                 RenderingSettings.g_VolumetricLights = false;
-                _lightAccumulationModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
-                _lightAccumulationModule.DrawLights(scene, origin, gameTime, _lightingBufferTarget.Bindings, _lightingBufferTarget.Diffuse);
+                _lightingModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
+                _lightingModule.DrawLights(scene, origin, gameTime, _lightingBufferTarget.Bindings, _lightingBufferTarget.Diffuse);
 
                 _environmentModule.DrawSky();
 

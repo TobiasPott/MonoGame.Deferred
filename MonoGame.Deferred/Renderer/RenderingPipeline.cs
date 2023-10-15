@@ -39,7 +39,7 @@ namespace DeferredEngine.Renderer
         private ShadowMapPipelineModule _shadowMapModule;
 
         private PointLightRenderModule _pointLightRenderModule;
-        private LightingPipelineModule _lightAccumulationModule;
+        private LightingPipelineModule _lightingModule;
         private EnvironmentPipelineModule _environmentModule;
         private DecalRenderModule _decalRenderModule;
         private HelperGeometryRenderModule _helperGeometryRenderModule;
@@ -112,7 +112,7 @@ namespace DeferredEngine.Renderer
             _shadowMapModule = new ShadowMapPipelineModule(content, "Shaders/Shadow/ShadowMap");
 
             _pointLightRenderModule = new PointLightRenderModule(content, "Shaders/Deferred/DeferredPointLight");
-            _lightAccumulationModule = new LightingPipelineModule() { PointLightRenderModule = _pointLightRenderModule };
+            _lightingModule = new LightingPipelineModule() { PointLightRenderModule = _pointLightRenderModule };
             _environmentModule = new EnvironmentPipelineModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
 
             _decalRenderModule = new DecalRenderModule();
@@ -153,7 +153,7 @@ namespace DeferredEngine.Renderer
             _environmentModule.Initialize(graphicsDevice, _spriteBatch);
             _distanceFieldRenderModule.Initialize(graphicsDevice, _spriteBatch);
 
-            _lightAccumulationModule.Initialize(graphicsDevice);
+            _lightingModule.Initialize(graphicsDevice);
             _decalRenderModule.Initialize(graphicsDevice);
             _helperGeometryRenderModule.Initialize(graphicsDevice);
 
@@ -241,8 +241,8 @@ namespace DeferredEngine.Renderer
             DrawBilateralBlur();
 
             //Light the scene
-            _lightAccumulationModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
-            _lightAccumulationModule.DrawLights(scene, camera.Position, gameTime, _lightingBufferTarget.Bindings, _lightingBufferTarget.Diffuse);
+            _lightingModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
+            _lightingModule.DrawLights(scene, camera.Position, gameTime, _lightingBufferTarget.Bindings, _lightingBufferTarget.Diffuse);
 
             //Draw the environment cube map as a fullscreen effect on all meshes
             DrawEnvironmentMap(envProbe, camera, gameTime);
@@ -841,7 +841,7 @@ namespace DeferredEngine.Renderer
 
         private void DrawSDFs(Camera camera)
         {
-            if (!RenderingSettings.SDF.DrawDistance) 
+            if (!RenderingSettings.SDF.DrawDistance)
                 return;
             _distanceFieldRenderModule.Draw(camera);
         }
@@ -854,10 +854,7 @@ namespace DeferredEngine.Renderer
         {
             if (!RenderingSettings.g_PostProcessing) return;
 
-            RenderTarget2D destinationRenderTarget;
-
-            //destinationRenderTarget = _renderTargetOutput;
-            destinationRenderTarget = _auxTargets[MRT.AUX_OUTPUT];
+            RenderTarget2D destinationRenderTarget = _auxTargets[MRT.AUX_OUTPUT];
 
             Shaders.PostProcssing.Param_ScreenTexture.SetValue(currentInput);
             _graphicsDevice.SetRenderTarget(destinationRenderTarget);
@@ -928,7 +925,7 @@ namespace DeferredEngine.Renderer
                 _performancePreviousTime = performanceCurrentTime;
             }
         }
-        
+
         #endregion
 
         #endregion
@@ -989,7 +986,7 @@ namespace DeferredEngine.Renderer
 
             Shaders.ReconstructDepth.Param_DepthMap.SetValue(_gBufferTarget.Depth);
 
-            _lightAccumulationModule.PointLightRenderModule.SetGBufferParams(_gBufferTarget);
+            _lightingModule.PointLightRenderModule.SetGBufferParams(_gBufferTarget);
 
             Shaders.DeferredDirectionalLight.SetGBufferParams(_gBufferTarget);
 
@@ -1005,9 +1002,9 @@ namespace DeferredEngine.Renderer
 
             Shaders.Deferred.Param_ColorMap.SetValue(_gBufferTarget.Albedo);
             Shaders.Deferred.Param_NormalMap.SetValue(_gBufferTarget.Normal);
-            Shaders.Deferred.Param_diffuseLightMap.SetValue(_lightingBufferTarget.Diffuse);
-            Shaders.Deferred.Param_specularLightMap.SetValue(_lightingBufferTarget.Specular);
-            Shaders.Deferred.Param_volumeLightMap.SetValue(_lightingBufferTarget.Volume);
+            Shaders.Deferred.Param_DiffuseLightMap.SetValue(_lightingBufferTarget.Diffuse);
+            Shaders.Deferred.Param_SpecularLightMap.SetValue(_lightingBufferTarget.Specular);
+            Shaders.Deferred.Param_VolumeLightMap.SetValue(_lightingBufferTarget.Volume);
             Shaders.Deferred.Param_SSAOMap.SetValue(_auxTargets[MRT.SSFX_BLUR_FINAL]);
 
             Shaders.SSAO.Param_NormalMap.SetValue(_gBufferTarget.Normal);
@@ -1061,7 +1058,7 @@ namespace DeferredEngine.Renderer
             _taaFx?.Dispose();
             _colorGradingFx?.Dispose();
 
-            _lightAccumulationModule?.Dispose();
+            _lightingModule?.Dispose();
             _environmentModule?.Dispose();
             _gBufferModule?.Dispose();
             _decalRenderModule?.Dispose();

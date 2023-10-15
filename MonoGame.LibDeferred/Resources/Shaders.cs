@@ -1,4 +1,5 @@
 ﻿using DeferredEngine.Renderer;
+using DeferredEngine.Renderer.RenderModules;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -128,7 +129,7 @@ namespace DeferredEngine.Recources
             }
 
         }
-
+ 
         //Deferred Compose & Clear
         public static class Deferred
         {
@@ -137,14 +138,14 @@ namespace DeferredEngine.Recources
 
             public static readonly EffectParameter Param_ColorMap = Effect_Compose.Parameters["colorMap"];
             public static readonly EffectParameter Param_NormalMap = Effect_Compose.Parameters["normalMap"];
-            public static readonly EffectParameter Param_diffuseLightMap = Effect_Compose.Parameters["diffuseLightMap"];
-            public static readonly EffectParameter Param_specularLightMap = Effect_Compose.Parameters["specularLightMap"];
-            public static readonly EffectParameter Param_volumeLightMap = Effect_Compose.Parameters["volumeLightMap"];
-            public static readonly EffectParameter Param_HologramMap = Effect_Compose.Parameters["HologramMap"];
+            public static readonly EffectParameter Param_DiffuseLightMap = Effect_Compose.Parameters["diffuseLightMap"];
+            public static readonly EffectParameter Param_SpecularLightMap = Effect_Compose.Parameters["specularLightMap"];
+            public static readonly EffectParameter Param_VolumeLightMap = Effect_Compose.Parameters["volumeLightMap"];
             public static readonly EffectParameter Param_SSAOMap = Effect_Compose.Parameters["SSAOMap"];
-            public static readonly EffectParameter Param_LinearMap = Effect_Compose.Parameters["LinearMap"];
-            public static readonly EffectParameter Param_SSRMap = Effect_Compose.Parameters["SSRMap"];
             public static readonly EffectParameter Param_UseSSAO = Effect_Compose.Parameters["useSSAO"];
+            // public static readonly EffectParameter Param_HologramMap = Effect_Compose.Parameters["HologramMap"]; // Unused
+            // public static readonly EffectParameter Param_LinearMap = Effect_Compose.Parameters["LinearMap"]; // Unused
+            // public static readonly EffectParameter Param_SSRMap = Effect_Compose.Parameters["SSRMap"]; // Unused
 
             public static readonly EffectTechnique Technique_NonLinear = Effect_Compose.Techniques["TechniqueNonLinear"];
             public static readonly EffectTechnique Technique_Linear = Effect_Compose.Techniques["TechniqueLinear"];
