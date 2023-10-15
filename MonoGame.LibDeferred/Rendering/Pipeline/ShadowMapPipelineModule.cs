@@ -110,8 +110,6 @@ namespace DeferredEngine.Renderer.RenderModules
                 Matrix lightProjection = Matrix.CreatePerspectiveFieldOfView((float)(Math.PI / 2), 1, 1, light.Radius);
                 Matrix lightView; // = identity
 
-                //Reset the blur array
-                light.faceBlurCount = new int[6];
 
                 _graphicsDevice.SetRenderTarget(light.ShadowMap);
                 _graphicsDevice.Clear(Color.Black);
@@ -252,13 +250,12 @@ namespace DeferredEngine.Renderer.RenderModules
 
             if (light.HasChanged)
             {
-                Matrix lightProjection = Matrix.CreateOrthographic(light.ShadowSize, light.ShadowSize, -light.ShadowFarClip, light.ShadowFarClip);
-                Matrix lightView = Matrix.CreateLookAt(light.Position, light.Position + light.Direction, Vector3.Down);
-
-                light.LightView = lightView;
-                light.LightViewProjection = lightView * lightProjection;
-
-                _boundingFrustumShadow = new BoundingFrustum(light.LightViewProjection);
+                // update light view projection from itself (position, direction, size and far clip)
+                light.UpdateViewProjection();
+                if (_boundingFrustumShadow == null)
+                    _boundingFrustumShadow = new BoundingFrustum(light.LightViewProjection);
+                else
+                    _boundingFrustumShadow.Matrix = light.LightViewProjection;
 
                 _graphicsDevice.SetRenderTarget(light.ShadowMap);
                 _graphicsDevice.Clear(ClearOptions.DepthBuffer, Color.White, 1, 0);
@@ -269,8 +266,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 Shaders.ShadowMap.Param_FarClip.SetValue(light.ShadowFarClip);
                 Shaders.ShadowMap.Param_SizeBias.SetValue(RenderingSettings.ShadowBias * 2048 / light.ShadowResolution);
 
-                meshMaterialLibrary.Draw(DynamicMeshBatcher.RenderType.ShadowLinear,
-                    light.LightViewProjection, light.LightView, light.HasChanged, false, false, 0, renderModule: this);
+                meshMaterialLibrary.Draw(DynamicMeshBatcher.RenderType.ShadowLinear, light.LightViewProjection, light.LightView, light.HasChanged, false, false, 0, renderModule: this);
             }
             else
             {

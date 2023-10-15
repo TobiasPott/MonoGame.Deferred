@@ -3,6 +3,7 @@ using DeferredEngine.Renderer.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using SharpDX.Direct3D9;
 
 namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
 {
@@ -58,7 +59,10 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
             for (int index = 0; index < dirLights.Count; index++)
             {
                 DeferredDirectionalLight light = dirLights[index];
-                this.DrawDirectionalLight(light, matrices, viewProjectionHasChanged);
+                if (viewProjectionHasChanged)
+                    light.UpdateViewSpaceProjection(matrices);
+
+                this.DrawDirectionalLight(light);
             }
         }
 
@@ -66,16 +70,9 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
         /// Draw the individual light, full screen effect
         /// </summary>
         /// <param name="light"></param>
-        private void DrawDirectionalLight(DeferredDirectionalLight light, PipelineMatrices matrices, bool viewProjectionHasChanged)
+        private void DrawDirectionalLight(DeferredDirectionalLight light)
         {
             if (!light.IsEnabled) return;
-
-            if (viewProjectionHasChanged)
-            {
-                light.DirectionViewSpace = Vector3.Transform(light.Direction, matrices.ViewIT);
-                light.LightViewProjection_ViewSpace = matrices.InverseView * light.LightViewProjection;
-                light.LightView_ViewSpace = matrices.InverseView * light.LightView;
-            }
 
             this.ApplyShader(light);
             _fullscreenTarget.Draw(_graphicsDevice);

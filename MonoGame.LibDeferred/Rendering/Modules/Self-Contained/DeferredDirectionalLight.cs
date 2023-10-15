@@ -1,4 +1,5 @@
 ﻿using DeferredEngine.Recources.Helper;
+using DeferredEngine.Renderer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
@@ -7,23 +8,23 @@ namespace DeferredEngine.Entities
 {
     public sealed class DeferredDirectionalLight : TransformableObject
     {
+        public bool HasChanged;
+
         public float Intensity;
         private Vector3 _direction;
         private Vector3 _initialDirection;
-        public bool HasChanged;
 
         public Vector3 DirectionViewSpace;
 
         private Color _color;
         public Vector3 ColorV3;
 
-        public readonly bool CastShadows;
-        public readonly float ShadowSize;
-        public readonly float ShadowFarClip;
-        public readonly int ShadowResolution;
+        public bool CastShadows;
+        public float ShadowSize;
+        public float ShadowFarClip;
+        public int ShadowResolution;
 
         public RenderTarget2D ShadowMap;
-        public Matrix ShadowViewProjection;
 
         public ShadowFilteringTypes ShadowFiltering;
 
@@ -40,8 +41,8 @@ namespace DeferredEngine.Entities
         /// <summary>
         /// Create a Directional light, shadows are optional
         /// </summary>
-        public DeferredDirectionalLight(Color color, float intensity, Vector3 direction, Vector3 position = default(Vector3), 
-            bool castShadows = false, float shadowSize = 100, float shadowFarClip = 100, int shadowMapResolution = 512, 
+        public DeferredDirectionalLight(Color color, float intensity, Vector3 direction, Vector3 position = default(Vector3),
+            bool castShadows = false, float shadowSize = 100, float shadowFarClip = 100, int shadowMapResolution = 512,
             ShadowFilteringTypes shadowFiltering = ShadowFilteringTypes.Poisson)
         {
             Id = IdGenerator.GetNewId();
@@ -90,7 +91,7 @@ namespace DeferredEngine.Entities
 
         public override Vector3 Position
         {
-            get { return _position; }
+            get { return base.Position; }
             set
             {
                 base.Position = value;
@@ -106,6 +107,18 @@ namespace DeferredEngine.Entities
                 base.RotationMatrix = value;
                 Direction = Vector3.Transform(_initialDirection, RotationMatrix);
             }
+        }
+
+        public void UpdateViewProjection()
+        {
+            LightView = Matrix.CreateLookAt(Position, Position + Direction, Vector3.Down);
+            LightViewProjection = LightView * Matrix.CreateOrthographic(ShadowSize, ShadowSize, -ShadowFarClip, ShadowFarClip);
+        }
+        public void UpdateViewSpaceProjection(PipelineMatrices matrices)
+        {
+            DirectionViewSpace = Vector3.Transform(Direction, matrices.ViewIT);
+            LightViewProjection_ViewSpace = matrices.InverseView * LightViewProjection;
+            LightView_ViewSpace = matrices.InverseView * LightView;
         }
 
     }

@@ -105,13 +105,16 @@ namespace DeferredEngine.Renderer.RenderModules
                 DeferredDirectionalLight light = dirLights[index];
                 DrawBillboard(light, staticViewProjection, view, gizmoContext);
 
-                helperManager.AddLineStartDir(light.Position, light.Direction * 10, 1, Color.Black, light.Color);
-                helperManager.AddLineStartDir(light.Position + Vector3.UnitX * 10, light.Direction * 10, 1, Color.Black, light.Color);
-                helperManager.AddLineStartDir(light.Position - Vector3.UnitX * 10, light.Direction * 10, 1, Color.Black, light.Color);
-                helperManager.AddLineStartDir(light.Position + Vector3.UnitY * 10, light.Direction * 10, 1, Color.Black, light.Color);
-                helperManager.AddLineStartDir(light.Position - Vector3.UnitY * 10, light.Direction * 10, 1, Color.Black, light.Color);
-                helperManager.AddLineStartDir(light.Position + Vector3.UnitZ * 10, light.Direction * 10, 1, Color.Black, light.Color);
-                helperManager.AddLineStartDir(light.Position - Vector3.UnitZ * 10, light.Direction * 10, 1, Color.Black, light.Color);
+                Vector3 lPosition = light.Position;
+                Vector3 lDirection = light.Direction * 10;
+                Color lColor = light.Color;
+                helperManager.AddLineStartDir(lPosition, lDirection, 1, Color.Black, lColor);
+                helperManager.AddLineStartDir(lPosition + Vector3.UnitX * 10, lDirection, 1, Color.Black, lColor);
+                helperManager.AddLineStartDir(lPosition - Vector3.UnitX * 10, lDirection, 1, Color.Black, lColor);
+                helperManager.AddLineStartDir(lPosition + Vector3.UnitY * 10, lDirection, 1, Color.Black, lColor);
+                helperManager.AddLineStartDir(lPosition - Vector3.UnitY * 10, lDirection, 1, Color.Black, lColor);
+                helperManager.AddLineStartDir(lPosition + Vector3.UnitZ * 10, lDirection, 1, Color.Black, lColor);
+                helperManager.AddLineStartDir(lPosition - Vector3.UnitZ * 10, lDirection, 1, Color.Black, lColor);
 
                 if (light.CastShadows)
                 {

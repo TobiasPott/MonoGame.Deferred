@@ -28,8 +28,6 @@ namespace DeferredEngine.Entities
         public Matrix LightViewProjectionPositiveZ;
         public Matrix LightViewProjectionNegativeZ;
 
-        public int[] faceBlurCount = { 0, 0, 0, 0, 0, 0 };
-
         public Matrix LightViewSpace;
         public Matrix LightWorldViewProj;
 
