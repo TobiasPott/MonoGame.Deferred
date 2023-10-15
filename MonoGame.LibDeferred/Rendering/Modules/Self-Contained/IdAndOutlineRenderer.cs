@@ -9,7 +9,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Ext;
-using System.Windows.Forms;
 
 namespace DeferredEngine.Renderer.RenderModules
 {

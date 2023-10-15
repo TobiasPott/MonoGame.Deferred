@@ -9,8 +9,16 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
     public class PointLightRenderModule : PipelineModule
     {
 
+        private PointLightEffectSetup _effectSetup = new PointLightEffectSetup();
+
         private DepthStencilState _stencilCullPass1;
         private DepthStencilState _stencilCullPass2;
+
+
+        public float FarClip { set { _effectSetup.Param_FarClip.SetValue(value); } }
+        public Matrix InverseView { set { _effectSetup.Param_InverseView.SetValue(value); } }
+        public Vector2 Resolution { set { _effectSetup.Param_Resolution.SetValue(value); } }
+
 
         public PointLightRenderModule(ContentManager content, string shaderPath)
             : base(content, shaderPath)
@@ -59,22 +67,22 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
 
         public void SetGBufferParams(GBufferTarget gBufferTarget)
         {
-            Shaders.DeferredPointLight.Param_AlbedoMap.SetValue(gBufferTarget.Albedo);
-            Shaders.DeferredPointLight.Param_NormalMap.SetValue(gBufferTarget.Normal);
-            Shaders.DeferredPointLight.Param_DepthMap.SetValue(gBufferTarget.Depth);
+            _effectSetup.Param_AlbedoMap.SetValue(gBufferTarget.Albedo);
+            _effectSetup.Param_NormalMap.SetValue(gBufferTarget.Normal);
+            _effectSetup.Param_DepthMap.SetValue(gBufferTarget.Depth);
         }
         public void SetInstanceData(Matrix[] inverseMatrices, Vector3[] scales, float[] sdfIndices, int count)
         {
-            Shaders.DeferredPointLight.Param_InstanceInverseMatrix.SetValue(inverseMatrices);
-            Shaders.DeferredPointLight.Param_InstanceScale.SetValue(scales);
-            Shaders.DeferredPointLight.Param_InstanceSDFIndex.SetValue(sdfIndices);
-            Shaders.DeferredPointLight.Param_InstancesCount.SetValue((float)count);
+            _effectSetup.Param_InstanceInverseMatrix.SetValue(inverseMatrices);
+            _effectSetup.Param_InstanceScale.SetValue(scales);
+            _effectSetup.Param_InstanceSDFIndex.SetValue(sdfIndices);
+            _effectSetup.Param_InstancesCount.SetValue((float)count);
         }
         public void SetVolumeTexParams(Texture atlas, Vector3[] texSizes, Vector4[] texResolutions)
         {
-            Shaders.DeferredPointLight.Param_VolumeTex.SetValue(atlas);
-            Shaders.DeferredPointLight.Param_VolumeTexSize.SetValue(texSizes);
-            Shaders.DeferredPointLight.Param_VolumeTexResolution.SetValue(texResolutions);
+            _effectSetup.Param_VolumeTex.SetValue(atlas);
+            _effectSetup.Param_VolumeTexSize.SetValue(texSizes);
+            _effectSetup.Param_VolumeTexResolution.SetValue(texResolutions);
         }
 
 
@@ -96,7 +104,7 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
             int startIndex = meshpart.StartIndex;
 
             if (RenderingSettings.g_VolumetricLights)
-                Shaders.DeferredPointLight.Param_Time.SetValue((float)gameTime.TotalGameTime.TotalSeconds % 1000);
+                _effectSetup.Param_Time.SetValue((float)gameTime.TotalGameTime.TotalSeconds % 1000);
 
             for (int index = 0; index < pointLights.Count; index++)
             {
@@ -127,24 +135,24 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
                 light.LightWorldViewProj = light.WorldMatrix * _viewProjection;
             }
 
-            Shaders.DeferredPointLight.Param_WorldView.SetValue(light.LightViewSpace);
-            Shaders.DeferredPointLight.Param_WorldViewProjection.SetValue(light.LightWorldViewProj);
-            Shaders.DeferredPointLight.Param_LightPosition.SetValue(light.LightViewSpace.Translation);
-            Shaders.DeferredPointLight.Param_LightColor.SetValue(light.ColorV3);
-            Shaders.DeferredPointLight.Param_LightRadius.SetValue(light.Radius);
-            Shaders.DeferredPointLight.Param_LightIntensity.SetValue(light.Intensity);
+            _effectSetup.Param_WorldView.SetValue(light.LightViewSpace);
+            _effectSetup.Param_WorldViewProjection.SetValue(light.LightWorldViewProj);
+            _effectSetup.Param_LightPosition.SetValue(light.LightViewSpace.Translation);
+            _effectSetup.Param_LightColor.SetValue(light.ColorV3);
+            _effectSetup.Param_LightRadius.SetValue(light.Radius);
+            _effectSetup.Param_LightIntensity.SetValue(light.Intensity);
 
             //Compute whether we are inside or outside and use 
             float cameraToCenter = Vector3.Distance(cameraOrigin, light.Position);
             int inside = cameraToCenter < light.Radius * 1.2f ? 1 : -1;
-            Shaders.DeferredPointLight.Param_Inside.SetValue(inside);
+            _effectSetup.Param_Inside.SetValue(inside);
 
             if (RenderingSettings.g_UseDepthStencilLightCulling == 2)
             {
                 _graphicsDevice.DepthStencilState = _stencilCullPass1;
                 //draw front faces
                 _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-                Shaders.DeferredPointLight.Technique_WriteStencil.Passes[0].Apply();
+                _effectSetup.Technique_WriteStencil.Passes[0].Apply();
 
                 _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, vertexOffset, startIndex, primitiveCount);
 
@@ -178,36 +186,36 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
             // Experimental
             if (light.CastSDFShadows)
             {
-                Shaders.DeferredPointLight.Technique_ShadowedSDF.Passes[0].Apply();
+                _effectSetup.Technique_ShadowedSDF.Passes[0].Apply();
             }
             else if (light.ShadowMap != null && light.CastShadows)
             {
-                Shaders.DeferredPointLight.Param_ShadowMap.SetValue(light.ShadowMap);
-                Shaders.DeferredPointLight.Param_ShadowMapRadius.SetValue((float)light.ShadowMapRadius);
-                Shaders.DeferredPointLight.Param_ShadowMapSize.SetValue((float)light.ShadowResolution);
+                _effectSetup.Param_ShadowMap.SetValue(light.ShadowMap);
+                _effectSetup.Param_ShadowMapRadius.SetValue((float)light.ShadowMapRadius);
+                _effectSetup.Param_ShadowMapSize.SetValue((float)light.ShadowResolution);
 
                 if (light.IsVolumetric && RenderingSettings.g_VolumetricLights)
                 {
-                    Shaders.DeferredPointLight.Param_LightVolumeDensity.SetValue(light.LightVolumeDensity);
-                    Shaders.DeferredPointLight.Technique_ShadowedVolumetric.Passes[0].Apply();
+                    _effectSetup.Param_LightVolumeDensity.SetValue(light.LightVolumeDensity);
+                    _effectSetup.Technique_ShadowedVolumetric.Passes[0].Apply();
                 }
                 else
                 {
-                    Shaders.DeferredPointLight.Technique_Shadowed.Passes[0].Apply();
+                    _effectSetup.Technique_Shadowed.Passes[0].Apply();
                 }
             }
             else
             {
-                Shaders.DeferredPointLight.Param_ShadowMapRadius.SetValue((float)light.ShadowMapRadius);
+                _effectSetup.Param_ShadowMapRadius.SetValue((float)light.ShadowMapRadius);
 
                 if (light.IsVolumetric && RenderingSettings.g_VolumetricLights)
                 {
-                    Shaders.DeferredPointLight.Param_LightVolumeDensity.SetValue(light.LightVolumeDensity);
-                    Shaders.DeferredPointLight.Technique_UnshadowedVolumetric.Passes[0].Apply();
+                    _effectSetup.Param_LightVolumeDensity.SetValue(light.LightVolumeDensity);
+                    _effectSetup.Technique_UnshadowedVolumetric.Passes[0].Apply();
                 }
                 else
                 {
-                    Shaders.DeferredPointLight.Technique_Unshadowed.Passes[0].Apply();
+                    _effectSetup.Technique_Unshadowed.Passes[0].Apply();
                 }
             }
         }

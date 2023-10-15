@@ -41,7 +41,6 @@ namespace DeferredEngine.Renderer.PostProcessing
             Param_InputTexture = Effect.Parameters["InputTexture"];
             Param_LUT = Effect.Parameters["LUT"];
 
-
         }
 
         public override void Dispose()

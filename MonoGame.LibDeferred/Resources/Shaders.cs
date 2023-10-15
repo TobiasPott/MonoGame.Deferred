@@ -1,5 +1,4 @@
 ﻿using DeferredEngine.Renderer;
-using DeferredEngine.Renderer.RenderModules;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -129,7 +128,7 @@ namespace DeferredEngine.Recources
             }
 
         }
- 
+
         //Directional light
         public static class DeferredDirectionalLight
         {
@@ -167,52 +166,6 @@ namespace DeferredEngine.Recources
                 Param_NormalMap.SetValue(gBufferTarget.Normal);
                 Param_DepthMap.SetValue(gBufferTarget.Depth);
             }
-
-        }
-
-
-        //Point light
-        public static class DeferredPointLight
-        {
-            public static Effect Effect = Globals.content.Load<Effect>("Shaders/Deferred/DeferredPointLight");
-
-            public static EffectTechnique Technique_Unshadowed = Effect.Techniques["Unshadowed"];
-            public static EffectTechnique Technique_UnshadowedVolumetric = Effect.Techniques["UnshadowedVolume"];
-            public static EffectTechnique Technique_Shadowed = Effect.Techniques["Shadowed"];
-            public static EffectTechnique Technique_ShadowedSDF = Effect.Techniques["ShadowedSDF"];
-            public static EffectTechnique Technique_ShadowedVolumetric = Effect.Techniques["ShadowedVolume"];
-            public static EffectTechnique Technique_WriteStencil = Effect.Techniques["WriteStencilMask"];
-
-            public static EffectParameter Param_ShadowMap = Effect.Parameters["ShadowMap"];
-
-            public static EffectParameter Param_Resolution = Effect.Parameters["Resolution"];
-            public static EffectParameter Param_WorldView = Effect.Parameters["WorldView"];
-            public static EffectParameter Param_WorldViewProjection = Effect.Parameters["WorldViewProj"];
-            public static EffectParameter Param_InverseView = Effect.Parameters["InverseView"];
-
-            public static EffectParameter Param_LightPosition = Effect.Parameters["lightPosition"];
-            public static EffectParameter Param_LightColor = Effect.Parameters["lightColor"];
-            public static EffectParameter Param_LightRadius = Effect.Parameters["lightRadius"];
-            public static EffectParameter Param_LightIntensity = Effect.Parameters["lightIntensity"];
-            public static EffectParameter Param_ShadowMapSize = Effect.Parameters["ShadowMapSize"];
-            public static EffectParameter Param_ShadowMapRadius = Effect.Parameters["ShadowMapRadius"];
-            public static EffectParameter Param_Inside = Effect.Parameters["inside"];
-            public static EffectParameter Param_Time = Effect.Parameters["Time"];
-            public static EffectParameter Param_FarClip = Effect.Parameters["FarClip"];
-            public static EffectParameter Param_LightVolumeDensity = Effect.Parameters["lightVolumeDensity"];
-
-            public static EffectParameter Param_VolumeTex = Effect.Parameters["VolumeTex"];
-            public static EffectParameter Param_VolumeTexSize = Effect.Parameters["VolumeTexSize"];
-            public static EffectParameter Param_VolumeTexResolution = Effect.Parameters["VolumeTexResolution"];
-
-            public static EffectParameter Param_InstanceInverseMatrix = Effect.Parameters["InstanceInverseMatrix"];
-            public static EffectParameter Param_InstanceScale = Effect.Parameters["InstanceScale"];
-            public static EffectParameter Param_InstanceSDFIndex = Effect.Parameters["InstanceSDFIndex"];
-            public static EffectParameter Param_InstancesCount = Effect.Parameters["InstancesCount"];
-
-            public static EffectParameter Param_AlbedoMap = Effect.Parameters["AlbedoMap"];
-            public static EffectParameter Param_NormalMap = Effect.Parameters["NormalMap"];
-            public static EffectParameter Param_DepthMap = Effect.Parameters["DepthMap"];
 
         }
 

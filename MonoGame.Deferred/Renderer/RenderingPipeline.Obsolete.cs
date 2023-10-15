@@ -48,7 +48,7 @@ namespace DeferredEngine.Renderer
 
                 //Pass these values to our shader
                 Shaders.SSAO.Param_InverseViewProjection.SetValue(_matrices.InverseView);
-                Shaders.DeferredPointLight.Param_InverseView.SetValue(_matrices.InverseView);
+                _pointLightRenderModule.InverseView = _matrices.InverseView;
 
                 //yep we changed
                 _viewProjectionHasChanged = true;

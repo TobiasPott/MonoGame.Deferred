@@ -112,7 +112,6 @@ namespace DeferredEngine.Renderer
             _forwardModule = new ForwardPipelineModule(content, "Shaders/forward/forward");
             _shadowMapModule = new ShadowMapPipelineModule(content, "Shaders/Shadow/ShadowMap");
             _deferredModule = new DeferredPipelineModule(content, "Shaders/Deferred/DeferredCompose");
-            _deferredModule.UseSSAOMap = true;
 
             _pointLightRenderModule = new PointLightRenderModule(content, "Shaders/Deferred/DeferredPointLight");
             _lightingModule = new LightingPipelineModule() { PointLightRenderModule = _pointLightRenderModule };
@@ -391,7 +390,7 @@ namespace DeferredEngine.Renderer
                 _g_FarClip = RenderingSettings.g_FarPlane;
                 _gBufferModule.FarClip = _g_FarClip;
                 _decalRenderModule.FarClip = _g_FarClip;
-                Shaders.DeferredPointLight.Param_FarClip.SetValue(_g_FarClip);
+                _pointLightRenderModule.FarClip = _g_FarClip;
                 Shaders.Billboard.Param_FarClip.SetValue(_g_FarClip);
                 Shaders.SSR.Param_FarClip.SetValue(_g_FarClip);
                 Shaders.ReconstructDepth.Param_FarClip.SetValue(_g_FarClip);
@@ -496,7 +495,7 @@ namespace DeferredEngine.Renderer
                 //View matrix
                 _matrices.SetFromCamera(camera);
 
-                Shaders.DeferredPointLight.Param_InverseView.SetValue(_matrices.InverseView);
+                _pointLightRenderModule.InverseView = _matrices.InverseView;
                 //Temporal AA
                 if (_taaFx.Enabled)
                 {
@@ -947,7 +946,7 @@ namespace DeferredEngine.Renderer
             _lightingBufferTarget.Resize(targetWidth, targetHeight);
             _auxTargets.Resize(targetWidth, targetHeight);
 
-            Shaders.DeferredPointLight.Param_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
+            _pointLightRenderModule.Resolution = new Vector2(targetWidth, targetHeight);
 
             if (!onlyEssentials)
             {
