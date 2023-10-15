@@ -114,7 +114,7 @@ namespace DeferredEngine.Renderer
 
             _directionalLightRenderModule = new DirectionalLightPipelineModule(content, "Shaders/Deferred/DeferredDirectionalLight");
             _pointLightRenderModule = new PointLightPipelineModule(content, "Shaders/Deferred/DeferredPointLight");
-            _lightingModule = new LightingPipelineModule() { PointLightRenderModule = _pointLightRenderModule, DirectionalLightRenderModule = _directionalLightRenderModule };
+            _lightingModule = new LightingPipelineModule(content) { PointLightRenderModule = _pointLightRenderModule, DirectionalLightRenderModule = _directionalLightRenderModule };
             _environmentModule = new EnvironmentPipelineModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
 
             _decalRenderModule = new DecalRenderModule();
@@ -153,10 +153,11 @@ namespace DeferredEngine.Renderer
 
             _directionalLightRenderModule.Initialize(graphicsDevice, _spriteBatch);
             _pointLightRenderModule.Initialize(graphicsDevice, _spriteBatch);
+            _lightingModule.Initialize(graphicsDevice, _spriteBatch);
+
             _environmentModule.Initialize(graphicsDevice, _spriteBatch);
             _distanceFieldRenderModule.Initialize(graphicsDevice, _spriteBatch);
 
-            _lightingModule.Initialize(graphicsDevice);
             _decalRenderModule.Initialize(graphicsDevice);
             _helperGeometryRenderModule.Initialize(graphicsDevice);
 

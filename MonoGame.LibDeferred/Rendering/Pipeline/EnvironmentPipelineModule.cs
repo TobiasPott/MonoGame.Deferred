@@ -132,6 +132,7 @@ namespace DeferredEngine.Recources
 {
     public static partial class Shaders
     {
+        // ToDo: Transform to EffectSetup type
         // Deferred Environment
         public static class Environment
         {

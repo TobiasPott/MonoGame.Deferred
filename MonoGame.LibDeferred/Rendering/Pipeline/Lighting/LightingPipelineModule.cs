@@ -2,15 +2,15 @@
 using DeferredEngine.Recources;
 using DeferredEngine.Renderer;
 using DeferredEngine.Renderer.Helper;
+using DeferredEngine.Renderer.RenderModules;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Pipeline.Lighting
 {
-    public class LightingPipelineModule : IDisposable
+    public class LightingPipelineModule : PipelineModule
     {
-        private GraphicsDevice _graphicsDevice;
         private FullscreenTriangleBuffer _fullscreenTarget;
 
         private bool _useDepthStencilLightCulling;
@@ -23,16 +23,9 @@ namespace DeferredEngine.Pipeline.Lighting
         public DirectionalLightPipelineModule DirectionalLightRenderModule;
 
 
-        public LightingPipelineModule()
-        { }
-
-        public void Load(ContentManager content, string shaderPath = "")
+        public LightingPipelineModule(ContentManager content, string shaderPath = "")
+            : base(content, shaderPath)
         {
-
-        }
-        public void Initialize(GraphicsDevice graphicsDevice)
-        {
-            _graphicsDevice = graphicsDevice;
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
 
             _lightBlendState = new BlendState
@@ -42,6 +35,10 @@ namespace DeferredEngine.Pipeline.Lighting
                 ColorDestinationBlend = Blend.One,
                 AlphaDestinationBlend = Blend.One
             };
+        }
+
+        protected override void Load(ContentManager content, string shaderPath)
+        {
 
         }
 
@@ -113,12 +110,10 @@ namespace DeferredEngine.Pipeline.Lighting
             _fullscreenTarget.Draw(_graphicsDevice);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
-            _graphicsDevice?.Dispose();
             _lightBlendState?.Dispose();
-
-            PointLightRenderModule.Dispose();
         }
+
     }
 }
