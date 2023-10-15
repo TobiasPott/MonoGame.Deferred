@@ -1,4 +1,6 @@
-﻿namespace DeferredEngine.Entities
+﻿using DeferredEngine.Pipeline.Lighting;
+
+namespace DeferredEngine.Entities
 {
     /// <summary>
     /// primitive stuct to group entities (basic & model), directional & point lights, decals and potential other entity type lists for easier access inside the pipeline

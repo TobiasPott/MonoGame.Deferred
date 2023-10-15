@@ -1,6 +1,7 @@
 ﻿//#define SHOWTILES
 
 using DeferredEngine.Entities;
+using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper;
 using DeferredEngine.Renderer.RenderModules.Default;

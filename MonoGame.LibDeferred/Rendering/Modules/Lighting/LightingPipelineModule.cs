@@ -1,12 +1,13 @@
 ﻿using DeferredEngine.Entities;
 using DeferredEngine.Recources;
+using DeferredEngine.Renderer;
 using DeferredEngine.Renderer.Helper;
 using DeferredEngine.Renderer.RenderModules.DeferredLighting;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Renderer.RenderModules
+namespace DeferredEngine.Pipeline.Lighting
 {
     public class LightingPipelineModule : IDisposable
     {
@@ -14,10 +15,10 @@ namespace DeferredEngine.Renderer.RenderModules
         private FullscreenTriangleBuffer _fullscreenTarget;
 
         private bool _useDepthStencilLightCulling;
+        private bool _viewProjectionHasChanged;
+
         private PipelineMatrices _matrices;
         private BlendState _lightBlendState;
-
-        private bool _viewProjectionHasChanged;
 
         public PointLightRenderModule PointLightRenderModule;
         public DirectionalLightRenderModule DirectionalLightRenderModule;

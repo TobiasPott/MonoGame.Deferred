@@ -1,5 +1,6 @@
 ﻿using DeferredEngine.Entities;
 using DeferredEngine.Logic;
+using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper;
 using DeferredEngine.Renderer.Helper.HelperGeometry;
@@ -68,8 +69,6 @@ namespace DeferredEngine.Renderer
         //Checkvariables to see which console variables have changed from the frame before
         private float _g_FarClip;
         private float _supersampling = 1;
-        private int _forceShadowFiltering;
-        private bool _forceShadowSS;
         private bool _ssr = true;
         private bool _g_SSReflectionNoise;
 

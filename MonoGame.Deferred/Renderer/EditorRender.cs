@@ -1,5 +1,6 @@
 ﻿using DeferredEngine.Entities;
 using DeferredEngine.Logic;
+using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper;
 using DeferredEngine.Renderer.Helper.Editor;

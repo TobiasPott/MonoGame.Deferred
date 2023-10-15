@@ -1,9 +1,10 @@
-﻿using DeferredEngine.Recources.Helper;
+﻿using DeferredEngine.Entities;
+using DeferredEngine.Recources.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 
-namespace DeferredEngine.Entities
+namespace DeferredEngine.Pipeline.Lighting
 {
     public class DeferredPointLight : TransformableObject
     {

@@ -1,9 +1,8 @@
-﻿using DeferredEngine.Entities;
+﻿using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Renderer.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using SharpDX.Direct3D9;
 
 namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
 {

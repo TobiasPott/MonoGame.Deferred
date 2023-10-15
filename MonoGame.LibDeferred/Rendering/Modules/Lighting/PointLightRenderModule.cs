@@ -1,10 +1,11 @@
-﻿using DeferredEngine.Entities;
-using DeferredEngine.Recources;
+﻿using DeferredEngine.Recources;
+using DeferredEngine.Renderer;
+using DeferredEngine.Renderer.RenderModules;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
+namespace DeferredEngine.Pipeline.Lighting
 {
     public class PointLightRenderModule : PipelineModule
     {

@@ -1,4 +1,5 @@
 ﻿using DeferredEngine.Entities;
+using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Recources;
 using HelperSuite.GUI;
 using HelperSuite.GUIHelper;

@@ -1,4 +1,5 @@
 ﻿using DeferredEngine.Entities;
+using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper;
 using Microsoft.Xna.Framework;
@@ -241,7 +242,9 @@ namespace DeferredEngine.Logic
         /// <param name="shadowResolution"></param>
         /// <param name="shadowFilteringFiltering"></param>
         /// <returns></returns>
-        private DeferredDirectionalLight AddDirectionalLight(Vector3 direction, int intensity, Color color, Vector3 position = default(Vector3), bool drawShadows = false, float shadowWorldSize = 100, float shadowDepth = 100, int shadowResolution = 512, DeferredDirectionalLight.ShadowFilteringTypes shadowFilteringFiltering = DeferredDirectionalLight.ShadowFilteringTypes.Poisson)
+        private DeferredDirectionalLight AddDirectionalLight(Vector3 direction, int intensity, Color color, Vector3 position = default(Vector3),
+            bool drawShadows = false, float shadowWorldSize = 100, float shadowDepth = 100, int shadowResolution = 512, 
+            DeferredDirectionalLight.ShadowFilteringTypes shadowFilteringFiltering = DeferredDirectionalLight.ShadowFilteringTypes.Poisson)
         {
             DeferredDirectionalLight light = new DeferredDirectionalLight(color: color,
                 intensity: intensity,

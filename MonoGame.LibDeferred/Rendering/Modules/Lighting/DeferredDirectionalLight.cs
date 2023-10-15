@@ -1,10 +1,11 @@
-﻿using DeferredEngine.Recources.Helper;
+﻿using DeferredEngine.Entities;
+using DeferredEngine.Recources.Helper;
 using DeferredEngine.Renderer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 
-namespace DeferredEngine.Entities
+namespace DeferredEngine.Pipeline.Lighting
 {
     public sealed class DeferredDirectionalLight : TransformableObject
     {

@@ -1,7 +1,8 @@
 ﻿using DeferredEngine.Recources;
+using DeferredEngine.Renderer.RenderModules;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
+namespace DeferredEngine.Pipeline.Lighting
 {
 
     public class PointLightEffectSetup : EffectSetupBase
