@@ -130,27 +130,6 @@ namespace DeferredEngine.Recources
 
         }
  
-        //Deferred Compose & Clear
-        public static class Deferred
-        {
-            public static readonly Effect Effect_Clear = Globals.content.Load<Effect>("Shaders/Deferred/DeferredClear");
-            public static readonly Effect Effect_Compose = Globals.content.Load<Effect>("Shaders/Deferred/DeferredCompose");
-
-            public static readonly EffectParameter Param_ColorMap = Effect_Compose.Parameters["colorMap"];
-            public static readonly EffectParameter Param_NormalMap = Effect_Compose.Parameters["normalMap"];
-            public static readonly EffectParameter Param_DiffuseLightMap = Effect_Compose.Parameters["diffuseLightMap"];
-            public static readonly EffectParameter Param_SpecularLightMap = Effect_Compose.Parameters["specularLightMap"];
-            public static readonly EffectParameter Param_VolumeLightMap = Effect_Compose.Parameters["volumeLightMap"];
-            public static readonly EffectParameter Param_SSAOMap = Effect_Compose.Parameters["SSAOMap"];
-            public static readonly EffectParameter Param_UseSSAO = Effect_Compose.Parameters["useSSAO"];
-            // public static readonly EffectParameter Param_HologramMap = Effect_Compose.Parameters["HologramMap"]; // Unused
-            // public static readonly EffectParameter Param_LinearMap = Effect_Compose.Parameters["LinearMap"]; // Unused
-            // public static readonly EffectParameter Param_SSRMap = Effect_Compose.Parameters["SSRMap"]; // Unused
-
-            public static readonly EffectTechnique Technique_NonLinear = Effect_Compose.Techniques["TechniqueNonLinear"];
-            public static readonly EffectTechnique Technique_Linear = Effect_Compose.Techniques["TechniqueLinear"];
-        }
-
         //Directional light
         public static class DeferredDirectionalLight
         {

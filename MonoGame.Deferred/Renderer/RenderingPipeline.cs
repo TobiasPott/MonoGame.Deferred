@@ -35,6 +35,7 @@ namespace DeferredEngine.Renderer
         private EditorRender _editorRender;
 
         private GBufferPipelineModule _gBufferModule;
+        private DeferredPipelineModule _deferredModule;
         private ForwardPipelineModule _forwardModule;
         private ShadowMapPipelineModule _shadowMapModule;
 
@@ -110,6 +111,8 @@ namespace DeferredEngine.Renderer
             _gBufferModule = new GBufferPipelineModule(content, "Shaders/GbufferSetup/GBuffer");
             _forwardModule = new ForwardPipelineModule(content, "Shaders/forward/forward");
             _shadowMapModule = new ShadowMapPipelineModule(content, "Shaders/Shadow/ShadowMap");
+            _deferredModule = new DeferredPipelineModule(content, "Shaders/Deferred/DeferredCompose");
+            _deferredModule.UseSSAOMap = true;
 
             _pointLightRenderModule = new PointLightRenderModule(content, "Shaders/Deferred/DeferredPointLight");
             _lightingModule = new LightingPipelineModule() { PointLightRenderModule = _pointLightRenderModule };
@@ -143,9 +146,9 @@ namespace DeferredEngine.Renderer
             _editorRender = new EditorRender();
             _editorRender.Initialize(graphicsDevice);
 
-
             _gBufferModule.Initialize(graphicsDevice, _spriteBatch);
             _gBufferModule.GBufferTarget = _gBufferTarget;
+            _deferredModule.Initialize(graphicsDevice, _spriteBatch);
             _forwardModule.Initialize(graphicsDevice, _spriteBatch);
             _shadowMapModule.Initialize(graphicsDevice, _spriteBatch);
 
@@ -248,16 +251,16 @@ namespace DeferredEngine.Renderer
             DrawEnvironmentMap(envProbe, camera, gameTime);
 
             //Compose the scene by combining our lighting data with the gbuffer data
-            _currentOutput = Compose(); //-> output _renderTargetComposed
+            _currentOutput = Compose(_auxTargets[MRT.AUX_COMPOSE]);
 
             //Forward
             _currentOutput = DrawForward(_currentOutput, meshBatcher, camera, scene.PointLights);
 
             //Compose the image and add information from previous frames to apply temporal super sampling
-            _currentOutput = TonemapAndCombineTemporalAntialiasing(_currentOutput); // -> output: _temporalAAOffFrame ? _renderTargetTAA_2 : _renderTargetTAA_1
+            _currentOutput = TonemapAndCombineTemporalAntialiasing(_currentOutput);
 
             //Do Bloom
-            _currentOutput = DrawBloom(_currentOutput); // -> output: _renderTargetBloom
+            _currentOutput = DrawBloom(_currentOutput);
 
             //Draw the elements that we are hovering over with outlines
             if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
@@ -749,17 +752,11 @@ namespace DeferredEngine.Renderer
         /// <summary>
         /// Compose the render by combining the albedo channel with the light channels
         /// </summary>
-        private RenderTarget2D Compose()
+        private RenderTarget2D Compose(RenderTarget2D destination)
         {
-            _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-
-            _graphicsDevice.SetRenderTarget(_auxTargets[MRT.AUX_COMPOSE]);
-            _graphicsDevice.BlendState = BlendState.Opaque;
-
-            //combine!
-            Shaders.Deferred.Effect_Compose.CurrentTechnique.Passes[0].Apply();
-            FullscreenTarget.Draw(_graphicsDevice);
-
+            // ToDo: @tpott: hacky way to disable ssao when disabled on global scale (GUI is insufficient here)
+            _deferredModule.UseSSAOMap = RenderingSettings.g_ssao_draw;
+            _deferredModule.Draw(destination);
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)
             {
@@ -769,7 +766,7 @@ namespace DeferredEngine.Renderer
                 _performancePreviousTime = performanceCurrentTime;
             }
 
-            return _auxTargets[MRT.AUX_COMPOSE];
+            return destination;
         }
 
         private void ReconstructDepth()
@@ -999,13 +996,14 @@ namespace DeferredEngine.Renderer
 
             _distanceFieldRenderModule.DepthMap = _gBufferTarget.Depth;
 
+            _deferredModule.SetRenderTargets(_gBufferTarget, _lightingBufferTarget, _auxTargets[MRT.SSFX_BLUR_FINAL]);
 
-            Shaders.Deferred.Param_ColorMap.SetValue(_gBufferTarget.Albedo);
-            Shaders.Deferred.Param_NormalMap.SetValue(_gBufferTarget.Normal);
-            Shaders.Deferred.Param_DiffuseLightMap.SetValue(_lightingBufferTarget.Diffuse);
-            Shaders.Deferred.Param_SpecularLightMap.SetValue(_lightingBufferTarget.Specular);
-            Shaders.Deferred.Param_VolumeLightMap.SetValue(_lightingBufferTarget.Volume);
-            Shaders.Deferred.Param_SSAOMap.SetValue(_auxTargets[MRT.SSFX_BLUR_FINAL]);
+            //Shaders.Deferred.Param_ColorMap.SetValue(_gBufferTarget.Albedo);
+            //Shaders.Deferred.Param_NormalMap.SetValue(_gBufferTarget.Normal);
+            //Shaders.Deferred.Param_DiffuseLightMap.SetValue(_lightingBufferTarget.Diffuse);
+            //Shaders.Deferred.Param_SpecularLightMap.SetValue(_lightingBufferTarget.Specular);
+            //Shaders.Deferred.Param_VolumeLightMap.SetValue(_lightingBufferTarget.Volume);
+            //Shaders.Deferred.Param_SSAOMap.SetValue(_auxTargets[MRT.SSFX_BLUR_FINAL]);
 
             Shaders.SSAO.Param_NormalMap.SetValue(_gBufferTarget.Normal);
             Shaders.SSAO.Param_DepthMap.SetValue(_gBufferTarget.Depth);

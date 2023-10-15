@@ -32,7 +32,8 @@ namespace DeferredEngine.Renderer
             SetUpRenderTargets(RenderingSettings.EnvironmentMapping.MapResolution, RenderingSettings.EnvironmentMapping.MapResolution, true);
 
             //We don't want to use SSAO in this cubemap
-            Shaders.Deferred.Param_UseSSAO.SetValue(false);
+            bool prevUseSSAO = _deferredModule.UseSSAOMap;
+            _deferredModule.UseSSAOMap = false;
 
             //Create our projection, which is a basic pyramid
             _matrices.Projection = Matrix.CreatePerspectiveFieldOfView((float)(Math.PI / 2), 1, 1, farPlane);
@@ -74,12 +75,12 @@ namespace DeferredEngine.Renderer
                 bool tempAa = _taaFx.Enabled;
                 _taaFx.Enabled = false;
 
-                Compose();
+                Compose(_auxTargets[MRT.AUX_COMPOSE]);
 
                 _taaFx.Enabled = tempAa;
                 DrawTextureToScreenToCube(_auxTargets[MRT.AUX_COMPOSE], _renderTargetCubeMap, (CubeMapFace?)i);
             }
-            Shaders.Deferred.Param_UseSSAO.SetValue(RenderingSettings.g_ssao_draw);
+            _deferredModule.UseSSAOMap = prevUseSSAO;
 
             //Change RTs back to normal
             SetUpRenderTargets(RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight, true);

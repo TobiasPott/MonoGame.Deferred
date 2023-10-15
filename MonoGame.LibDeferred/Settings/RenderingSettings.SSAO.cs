@@ -27,7 +27,6 @@
             set
             {
                 _g_ssao_draw = value;
-                Shaders.Deferred.Effect_Compose.Parameters["useSSAO"].SetValue(_g_ssao_draw);
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using DeferredEngine.Renderer.Helper;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Runtime.CompilerServices;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
@@ -28,6 +29,9 @@ namespace DeferredEngine.Renderer.RenderModules
         {
 
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public virtual RenderTarget2D Draw(RenderTarget2D destination) => destination;
 
         //public RenderTarget2D Draw(RenderTarget2D output, MeshMaterialLibrary meshMat, Matrix viewProjection, Camera camera, List<DeferredPointLight> pointLights, BoundingFrustum frustum)
         //public void Draw(MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<DeferredPointLight> pointLights, List<DeferredDirectionalLight> dirLights, Camera camera)
