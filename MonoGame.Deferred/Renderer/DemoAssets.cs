@@ -17,24 +17,13 @@ namespace DeferredEngine.Recources
         //Default Meshes + Editor
         public ModelDefinition Plane;
 
-        public ModelDefinition Cube;
-
-        //https://sketchfab.com/models/95c4008c4c764c078f679d4c320e7b18
-        public ModelDefinition Tiger;
-
-        public ModelDefinition HumanModel;
 
         //Default Materials
-
         public MaterialEffect BaseMaterial;
         public MaterialEffect BaseMaterialGray;
         public MaterialEffect GoldMaterial;
-        public MaterialEffect EmissiveMaterial;
-        public MaterialEffect EmissiveMaterial2;
-        public MaterialEffect EmissiveMaterial3;
-        public MaterialEffect EmissiveMaterial4;
+
         public MaterialEffect SilverMaterial;
-        public MaterialEffect HologramMaterial;
         public MaterialEffect MetalRough03Material;
         public MaterialEffect AlphaBlendRim;
         public MaterialEffect MirrorMaterial;
@@ -43,10 +32,6 @@ namespace DeferredEngine.Recources
 
         public static Texture2D BaseTex;
 
-        //Meshes and Materials
-
-        //public Model Trabant;
-        //public MaterialEffect TrabantBigParts;
 
         public ModelDefinition SponzaModel;
         private readonly List<Texture2D> _sponzaTextures = new List<Texture2D>();
@@ -54,14 +39,10 @@ namespace DeferredEngine.Recources
         private Texture2D sponza_fabric_spec;
         private Texture2D sponza_curtain_metallic;
 
-        public Model SkullModel;
-
         public Model HelmetModel;
 
         public ModelDefinition StanfordDragon;
         public ModelDefinition StanfordDragonLowpoly;
-
-        public MaterialEffect RockMaterial;
 
 
         public SpriteFont DefaultFont;
@@ -78,11 +59,6 @@ namespace DeferredEngine.Recources
             //Default Meshes + Editor
             Plane = new SdfModelDefinition(content, "Art/Plane", graphicsDevice);
 
-            Cube = new SdfModelDefinition(content, "Art/test/cube", graphicsDevice, true);
-
-            Tiger = new SdfModelDefinition(content, "Art/Tiger/Tiger", graphicsDevice, true);
-            HumanModel = new SdfModelDefinition(content, "Art/Human/human", graphicsDevice, true);
-
             //Default Materials
 
             BaseMaterial = CreateMaterialEffect(Color.Red, 0.5f, 0, type: MaterialEffect.MaterialTypes.Basic);
@@ -92,14 +68,6 @@ namespace DeferredEngine.Recources
             MetalRough03Material = CreateMaterialEffect(Color.Silver, 0.2f, 1);
             AlphaBlendRim = CreateMaterialEffect(Color.Silver, 0.05f, 1, type: MaterialEffect.MaterialTypes.ForwardShaded);
             MirrorMaterial = CreateMaterialEffect(Color.White, 0.05f, 1);
-
-            HologramMaterial = CreateMaterialEffect(Color.White, 0.2f, 1, null, null, null, null, null, null, MaterialEffect.MaterialTypes.Hologram, 1);
-
-            EmissiveMaterial = CreateMaterialEffect(Color.White, 0.2f, 1, null, null, null, null, null, null, MaterialEffect.MaterialTypes.Emissive, 1.5f);
-
-            EmissiveMaterial2 = CreateMaterialEffect(Color.MonoGameOrange, 0.2f, 1, null, null, null, null, null, null, MaterialEffect.MaterialTypes.Emissive, 1.8f);
-            EmissiveMaterial3 = CreateMaterialEffect(Color.Violet, 0.2f, 1, null, null, null, null, null, null, MaterialEffect.MaterialTypes.Emissive, 1.8f);
-            EmissiveMaterial4 = CreateMaterialEffect(Color.LimeGreen, 0.2f, 1, null, null, null, null, null, null, MaterialEffect.MaterialTypes.Emissive, 1.8f);
 
             GoldMaterial = CreateMaterialEffect(Color.Gold, 0.2f, 1);
 
@@ -117,8 +85,6 @@ namespace DeferredEngine.Recources
             DragonLowPolyMaterial = CreateMaterialEffect(Color.Red, 0.5f, 0, type: MaterialEffect.MaterialTypes.Basic, normalMap: content.Load<Texture2D>("Art/default/dragon_normal"));
 
             HelmetModel = content.Load<Model>("Art/default/daft_helmets");
-            SkullModel = content.Load<Model>("Art/default/skull");
-
             //
 
             SponzaModel = new SdfModelDefinition(content, "Sponza/Sponza", graphicsDevice, false);
@@ -162,15 +128,6 @@ namespace DeferredEngine.Recources
             ProcessSponza();
 
             ProcessHelmets();
-
-            RockMaterial = CreateMaterialEffect(Color.White, roughness: 1, metallic: 0,
-                albedoMap: content.Load<Texture2D>("Art/test/squarebricks-diffuse"),
-                normalMap: content.Load<Texture2D>("Art/test/squarebricks-normal"),
-                roughnessMap: null,
-                metallicMap: null,
-                mask: null,
-                displacementMap: content.Load<Texture2D>("Art/test/squarebricks-depth")
-            );
 
             //Fonts
 
@@ -289,26 +246,6 @@ namespace DeferredEngine.Recources
                             matEffect.Metallic = 0.5f;
                         }
 
-                        //Make the vases emissive!
-
-                        //if (compare.Contains("vase_hanging"))
-                        //{
-                        //    matEffect.EmissiveStrength = 2;
-                        //    matEffect.Type = MaterialEffect.MaterialTypes.Emissive;
-                        //    matEffect.DiffuseColor = Color.Gold.ToVector3();
-
-                        //    matEffect.AlbedoMap = null;
-                        //    matEffect.HasDiffuse = false;
-                        //}
-
-                        //if (compare.Contains("floor"))
-                        //{
-                        //    matEffect.Roughness = 0.2f;
-                        //    matEffect.Metallic = 1;
-                        //    //matEffect.HasDiffuse = false;
-                        //}
-
-
                         if (compare.Contains("chain"))
                         {
                             matEffect.Roughness = 0.5f;
@@ -383,19 +320,14 @@ namespace DeferredEngine.Recources
         {
             BaseMaterial?.Dispose();
             GoldMaterial?.Dispose();
-            EmissiveMaterial?.Dispose();
-            EmissiveMaterial2?.Dispose();
-            EmissiveMaterial3?.Dispose();
-            EmissiveMaterial4?.Dispose();
+
             SilverMaterial?.Dispose();
-            HologramMaterial?.Dispose();
             MetalRough03Material?.Dispose();
             AlphaBlendRim?.Dispose();
             MirrorMaterial?.Dispose();
             sponza_fabric_metallic?.Dispose();
             sponza_fabric_spec?.Dispose();
             sponza_curtain_metallic?.Dispose();
-            RockMaterial?.Dispose();
         }
     }
 

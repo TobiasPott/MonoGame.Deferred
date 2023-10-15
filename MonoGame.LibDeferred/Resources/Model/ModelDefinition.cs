@@ -17,7 +17,7 @@ namespace DeferredEngine.Recources
             Model = content.Load<Model>(assetpath);
 
 
-            // ToDo: Implement method without indices output to reduce garbage consumption
+            // ToDo: @tpott: Implement method without indices output to reduce garbage consumption (not saving increased GC memory quite alot)
             GeometryDataExtractor.GetVerticesAndIndicesFromModel(Model, out Vector3[] vertices, out _);
             BoundingBox = BoundingBox.CreateFromPoints(vertices);
 
