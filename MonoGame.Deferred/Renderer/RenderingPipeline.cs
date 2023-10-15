@@ -407,35 +407,6 @@ namespace DeferredEngine.Renderer
                 if (!_g_SSReflectionNoise) Shaders.SSR.Param_Time.SetValue(0.0f);
             }
 
-            if (_forceShadowFiltering != RenderingSettings.g_ShadowForceFiltering)
-            {
-                _forceShadowFiltering = RenderingSettings.g_ShadowForceFiltering;
-
-                for (var index = 0; index < dirLights.Count; index++)
-                {
-                    DeferredDirectionalLight light = dirLights[index];
-                    light.ShadowMap?.Dispose();
-                    light.ShadowMap = null;
-
-                    light.ShadowFiltering = (DeferredDirectionalLight.ShadowFilteringTypes)(_forceShadowFiltering - 1);
-
-                    light.HasChanged = true;
-                }
-            }
-
-            if (_forceShadowSS != RenderingSettings.g_ShadowForceScreenSpace)
-            {
-                _forceShadowSS = RenderingSettings.g_ShadowForceScreenSpace;
-
-                for (var index = 0; index < dirLights.Count; index++)
-                {
-                    DeferredDirectionalLight light = dirLights[index];
-                    light.ScreenSpaceShadowBlur = _forceShadowSS;
-
-                    light.HasChanged = true;
-                }
-            }
-
             if (_ssr != RenderingSettings.g_SSReflection)
             {
                 _graphicsDevice.SetRenderTarget(_auxTargets[MRT.SSFX_REFLECTION]);
@@ -968,8 +939,7 @@ namespace DeferredEngine.Renderer
                 targetWidth /= 2;
                 targetHeight /= 2;
 
-                Shaders.SSAO.Param_InverseResolution.SetValue(new Vector2(1.0f / targetWidth,
-                    1.0f / targetHeight));
+                Shaders.SSAO.Param_InverseResolution.SetValue(new Vector2(1.0f / targetWidth, 1.0f / targetHeight));
 
 
                 Vector2 aspectRatio = new Vector2(Math.Min(1.0f, targetWidth / (float)targetHeight), Math.Min(1.0f, targetHeight / (float)targetWidth));
@@ -987,8 +957,9 @@ namespace DeferredEngine.Renderer
 
             Shaders.ReconstructDepth.Param_DepthMap.SetValue(_gBufferTarget.Depth);
 
-            _lightingModule.PointLightRenderModule.SetGBufferParams(_gBufferTarget);
-
+            // update point light module
+            _pointLightRenderModule.SetGBufferParams(_gBufferTarget);
+            // update directional light module
             _directionalLightRenderModule.SetGBufferParams(_gBufferTarget);
             _directionalLightRenderModule.SetScreenSpaceShadowMap(onlyEssentials ? _auxTargets[MRT.SSFX_BLUR_VERTICAL] : _auxTargets[MRT.SSFX_BLUR_FINAL]);
 
@@ -1000,13 +971,6 @@ namespace DeferredEngine.Renderer
             _distanceFieldRenderModule.DepthMap = _gBufferTarget.Depth;
 
             _deferredModule.SetRenderTargets(_gBufferTarget, _lightingBufferTarget, _auxTargets[MRT.SSFX_BLUR_FINAL]);
-
-            //Shaders.Deferred.Param_ColorMap.SetValue(_gBufferTarget.Albedo);
-            //Shaders.Deferred.Param_NormalMap.SetValue(_gBufferTarget.Normal);
-            //Shaders.Deferred.Param_DiffuseLightMap.SetValue(_lightingBufferTarget.Diffuse);
-            //Shaders.Deferred.Param_SpecularLightMap.SetValue(_lightingBufferTarget.Specular);
-            //Shaders.Deferred.Param_VolumeLightMap.SetValue(_lightingBufferTarget.Volume);
-            //Shaders.Deferred.Param_SSAOMap.SetValue(_auxTargets[MRT.SSFX_BLUR_FINAL]);
 
             Shaders.SSAO.Param_NormalMap.SetValue(_gBufferTarget.Normal);
             Shaders.SSAO.Param_DepthMap.SetValue(_gBufferTarget.Depth);

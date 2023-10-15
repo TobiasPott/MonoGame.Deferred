@@ -167,8 +167,7 @@ namespace DeferredEngine.Logic
                 shadowWorldSize: 450,
                 shadowDepth: 180,
                 shadowResolution: 1024,
-                shadowFilteringFiltering: DeferredDirectionalLight.ShadowFilteringTypes.SoftPCF3x,
-                screenspaceShadowBlur: false);
+                shadowFilteringFiltering: DeferredDirectionalLight.ShadowFilteringTypes.SoftPCF3x);
         }
 
 
@@ -241,10 +240,8 @@ namespace DeferredEngine.Logic
         /// <param name="shadowDepth">FarClip for shadow mapping</param>
         /// <param name="shadowResolution"></param>
         /// <param name="shadowFilteringFiltering"></param>
-        /// <param name="screenspaceShadowBlur"></param>
-        /// <param name="staticshadows">These shadows will not be updated once they are created, moving objects will be shadowed incorrectly</param>
         /// <returns></returns>
-        private DeferredDirectionalLight AddDirectionalLight(Vector3 direction, int intensity, Color color, Vector3 position = default(Vector3), bool drawShadows = false, float shadowWorldSize = 100, float shadowDepth = 100, int shadowResolution = 512, DeferredDirectionalLight.ShadowFilteringTypes shadowFilteringFiltering = DeferredDirectionalLight.ShadowFilteringTypes.Poisson, bool screenspaceShadowBlur = false, bool staticshadows = false)
+        private DeferredDirectionalLight AddDirectionalLight(Vector3 direction, int intensity, Color color, Vector3 position = default(Vector3), bool drawShadows = false, float shadowWorldSize = 100, float shadowDepth = 100, int shadowResolution = 512, DeferredDirectionalLight.ShadowFilteringTypes shadowFilteringFiltering = DeferredDirectionalLight.ShadowFilteringTypes.Poisson)
         {
             DeferredDirectionalLight light = new DeferredDirectionalLight(color: color,
                 intensity: intensity,
@@ -252,10 +249,9 @@ namespace DeferredEngine.Logic
                 position: position,
                 castShadows: drawShadows,
                 shadowSize: shadowWorldSize,
-                shadowDepth: shadowDepth,
-                shadowResolution: shadowResolution,
-                shadowFiltering: shadowFilteringFiltering,
-                screenspaceshadowblur: screenspaceShadowBlur);
+                shadowFarClip: shadowDepth,
+                shadowMapResolution: shadowResolution,
+                shadowFiltering: shadowFilteringFiltering);
             DirectionalLights.Add(light);
             return light;
         }

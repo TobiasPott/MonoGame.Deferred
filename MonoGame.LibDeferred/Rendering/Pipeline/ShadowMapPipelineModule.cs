@@ -72,7 +72,6 @@ namespace DeferredEngine.Renderer.RenderModules
 
             _pass = ShadowPasses.Directional;
 
-            int dirLightShadowedWithSSBlur = 0;
             for (int index = 0; index < dirLights.Count; index++)
             {
                 DeferredDirectionalLight light = dirLights[index];
@@ -86,14 +85,8 @@ namespace DeferredEngine.Renderer.RenderModules
 
                     light.HasChanged = false;
 
-                    if (light.ScreenSpaceShadowBlur) dirLightShadowedWithSSBlur++;
                 }
 
-                if (dirLightShadowedWithSSBlur > 1)
-                {
-                    throw new NotImplementedException(
-                        "Only one shadowed DirectionalLight with screen space blur is supported right now");
-                }
             }
         }
 
@@ -259,8 +252,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
             if (light.HasChanged)
             {
-                Matrix lightProjection = Matrix.CreateOrthographic(light.ShadowSize, light.ShadowSize,
-                    -light.ShadowDepth, light.ShadowDepth);
+                Matrix lightProjection = Matrix.CreateOrthographic(light.ShadowSize, light.ShadowSize, -light.ShadowFarClip, light.ShadowFarClip);
                 Matrix lightView = Matrix.CreateLookAt(light.Position, light.Position + light.Direction, Vector3.Down);
 
                 light.LightView = lightView;
@@ -274,7 +266,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 meshMaterialLibrary.FrustumCulling(_boundingFrustumShadow, true, light.Position);
 
                 // Rendering!
-                Shaders.ShadowMap.Param_FarClip.SetValue(light.ShadowDepth);
+                Shaders.ShadowMap.Param_FarClip.SetValue(light.ShadowFarClip);
                 Shaders.ShadowMap.Param_SizeBias.SetValue(RenderingSettings.ShadowBias * 2048 / light.ShadowResolution);
 
                 meshMaterialLibrary.Draw(DynamicMeshBatcher.RenderType.ShadowLinear,
@@ -292,11 +284,11 @@ namespace DeferredEngine.Renderer.RenderModules
 
                 _graphicsDevice.SetRenderTarget(light.ShadowMap);
                 _graphicsDevice.Clear(ClearOptions.DepthBuffer, Color.White, 1, 0);
-                Shaders.ShadowMap.Param_FarClip.SetValue(light.ShadowDepth);
+                Shaders.ShadowMap.Param_FarClip.SetValue(light.ShadowFarClip);
                 Shaders.ShadowMap.Param_SizeBias.SetValue(RenderingSettings.ShadowBias * 2048 / light.ShadowResolution);
 
                 meshMaterialLibrary.Draw(DynamicMeshBatcher.RenderType.ShadowLinear,
-                    light.LightViewProjection, light.LightView, false, true, false, 0,  renderModule: this);
+                    light.LightViewProjection, light.LightView, false, true, false, 0, renderModule: this);
             }
 
             //Blur!

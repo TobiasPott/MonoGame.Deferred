@@ -3,7 +3,6 @@ using DeferredEngine.Renderer.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using static DeferredEngine.Recources.Shaders;
 
 namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
 {
@@ -89,20 +88,13 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
 
             if (light.CastShadows)
             {
-                if (light.ScreenSpaceShadowBlur)
-                {
-                    throw new NotImplementedException();
-                }
-                else
-                {
-                    _effectSetup.Param_LightView.SetValue(light.LightView_ViewSpace);
-                    _effectSetup.Param_LightViewProjection.SetValue(light.LightViewProjection_ViewSpace);
-                    _effectSetup.Param_LightFarClip.SetValue(light.ShadowDepth);
-                    _effectSetup.Param_ShadowMap.SetValue(light.ShadowMap);
-                    _effectSetup.Param_ShadowFiltering.SetValue((int)light.ShadowFiltering);
-                    _effectSetup.Param_ShadowMapSize.SetValue((float)light.ShadowResolution);
-                    _effectSetup.Technique_Shadowed.Passes[0].Apply();
-                }
+                _effectSetup.Param_LightView.SetValue(light.LightView_ViewSpace);
+                _effectSetup.Param_LightViewProjection.SetValue(light.LightViewProjection_ViewSpace);
+                _effectSetup.Param_LightFarClip.SetValue(light.ShadowFarClip);
+                _effectSetup.Param_ShadowMap.SetValue(light.ShadowMap);
+                _effectSetup.Param_ShadowFiltering.SetValue((int)light.ShadowFiltering);
+                _effectSetup.Param_ShadowMapSize.SetValue((float)light.ShadowResolution);
+                _effectSetup.Technique_Shadowed.Passes[0].Apply();
             }
             else
             {

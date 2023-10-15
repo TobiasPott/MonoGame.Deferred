@@ -1,11 +1,7 @@
-﻿using DeferredEngine.Recources;
-using DeferredEngine.Recources.Helper;
-using DeferredEngine.Renderer;
-using DeferredEngine.Renderer.RenderModules.DeferredLighting;
+﻿using DeferredEngine.Recources.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
-using SharpDX.Direct3D9;
 
 namespace DeferredEngine.Entities
 {
@@ -23,14 +19,13 @@ namespace DeferredEngine.Entities
 
         public readonly bool CastShadows;
         public readonly float ShadowSize;
-        public readonly float ShadowDepth;
+        public readonly float ShadowFarClip;
         public readonly int ShadowResolution;
 
         public RenderTarget2D ShadowMap;
         public Matrix ShadowViewProjection;
 
         public ShadowFilteringTypes ShadowFiltering;
-        public bool ScreenSpaceShadowBlur;
 
         public Matrix LightViewProjection;
         public Matrix LightView;
@@ -45,7 +40,9 @@ namespace DeferredEngine.Entities
         /// <summary>
         /// Create a Directional light, shadows are optional
         /// </summary>
-        public DeferredDirectionalLight(Color color, float intensity, Vector3 direction, Vector3 position = default(Vector3), bool castShadows = false, float shadowSize = 100, float shadowDepth = 100, int shadowResolution = 512, ShadowFilteringTypes shadowFiltering = ShadowFilteringTypes.Poisson, bool screenspaceshadowblur = false)
+        public DeferredDirectionalLight(Color color, float intensity, Vector3 direction, Vector3 position = default(Vector3), 
+            bool castShadows = false, float shadowSize = 100, float shadowFarClip = 100, int shadowMapResolution = 512, 
+            ShadowFilteringTypes shadowFiltering = ShadowFilteringTypes.Poisson)
         {
             Id = IdGenerator.GetNewId();
 
@@ -59,17 +56,12 @@ namespace DeferredEngine.Entities
 
             CastShadows = castShadows;
             ShadowSize = shadowSize;
-            ShadowDepth = shadowDepth;
-            ShadowResolution = shadowResolution;
-
-            ScreenSpaceShadowBlur = screenspaceshadowblur;
+            ShadowFarClip = shadowFarClip;
+            ShadowResolution = shadowMapResolution;
 
             ShadowFiltering = shadowFiltering;
 
             Position = position;
-
-
-            IsEnabled = true;
 
             _rotationMatrix = Matrix.Identity;
 
@@ -82,7 +74,7 @@ namespace DeferredEngine.Entities
             set
             {
                 _color = value;
-                ColorV3 = (_color.ToVector3().Pow(2.2f));
+                ColorV3 = (_color.ToVector3().Pow(2.2f)); // applies sRGB gamma correction
             }
         }
 
@@ -112,13 +104,8 @@ namespace DeferredEngine.Entities
             set
             {
                 base.RotationMatrix = value;
-                TransformAnglesToDirection();
+                Direction = Vector3.Transform(_initialDirection, RotationMatrix);
             }
-        }
-
-        private void TransformAnglesToDirection()
-        {
-            Direction = Vector3.Transform(_initialDirection, RotationMatrix);
         }
 
     }

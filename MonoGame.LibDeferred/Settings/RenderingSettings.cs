@@ -37,11 +37,6 @@ namespace DeferredEngine.Recources
         public static bool g_EnableForward = true;
 
         //Shadow Settings
-        public static int g_ShadowForceFiltering = 0; //1 = PCF, 2 3 better PCF  4 = Poisson, 5 = VSM;
-        public static bool g_ShadowForceScreenSpace = false;
-
-
-
         public static bool g_VolumetricLights = true;
 
         public static int g_UseDepthStencilLightCulling = 1; //None, Depth, Depth+Stencil
