@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Pipeline.Lighting
 {
-    public class PointLightRenderModule : PipelineModule
+    public class PointLightPipelineModule : PipelineModule
     {
 
         private PointLightEffectSetup _effectSetup = new PointLightEffectSetup();
@@ -26,7 +26,7 @@ namespace DeferredEngine.Pipeline.Lighting
         public Vector2 Resolution { set { _effectSetup.Param_Resolution.SetValue(value); } }
 
 
-        public PointLightRenderModule(ContentManager content, string shaderPath)
+        public PointLightPipelineModule(ContentManager content, string shaderPath)
             : base(content, shaderPath)
         {
             _stencilCullPass1 = new DepthStencilState()

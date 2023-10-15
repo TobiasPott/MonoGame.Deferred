@@ -2,7 +2,6 @@
 using DeferredEngine.Recources;
 using DeferredEngine.Renderer;
 using DeferredEngine.Renderer.Helper;
-using DeferredEngine.Renderer.RenderModules.DeferredLighting;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,8 +19,8 @@ namespace DeferredEngine.Pipeline.Lighting
         private PipelineMatrices _matrices;
         private BlendState _lightBlendState;
 
-        public PointLightRenderModule PointLightRenderModule;
-        public DirectionalLightRenderModule DirectionalLightRenderModule;
+        public PointLightPipelineModule PointLightRenderModule;
+        public DirectionalLightPipelineModule DirectionalLightRenderModule;
 
 
         public LightingPipelineModule()

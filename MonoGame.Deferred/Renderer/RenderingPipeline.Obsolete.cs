@@ -75,10 +75,10 @@ namespace DeferredEngine.Renderer
                 bool tempAa = _taaFx.Enabled;
                 _taaFx.Enabled = false;
 
-                Compose(_auxTargets[MRT.AUX_COMPOSE]);
+                Compose(_auxTargets[MRT.COMPOSE]);
 
                 _taaFx.Enabled = tempAa;
-                DrawTextureToScreenToCube(_auxTargets[MRT.AUX_COMPOSE], _renderTargetCubeMap, (CubeMapFace?)i);
+                DrawTextureToScreenToCube(_auxTargets[MRT.COMPOSE], _renderTargetCubeMap, (CubeMapFace?)i);
             }
             _deferredModule.UseSSAOMap = prevUseSSAO;
 

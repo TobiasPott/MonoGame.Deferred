@@ -6,7 +6,6 @@ using DeferredEngine.Renderer.Helper;
 using DeferredEngine.Renderer.Helper.HelperGeometry;
 using DeferredEngine.Renderer.PostProcessing;
 using DeferredEngine.Renderer.RenderModules;
-using DeferredEngine.Renderer.RenderModules.DeferredLighting;
 using DeferredEngine.Renderer.RenderModules.SDF;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -40,8 +39,8 @@ namespace DeferredEngine.Renderer
         private ForwardPipelineModule _forwardModule;
         private ShadowMapPipelineModule _shadowMapModule;
 
-        private DirectionalLightRenderModule _directionalLightRenderModule;
-        private PointLightRenderModule _pointLightRenderModule;
+        private DirectionalLightPipelineModule _directionalLightRenderModule;
+        private PointLightPipelineModule _pointLightRenderModule;
         private LightingPipelineModule _lightingModule;
         private EnvironmentPipelineModule _environmentModule;
         private DecalRenderModule _decalRenderModule;
@@ -113,8 +112,8 @@ namespace DeferredEngine.Renderer
             _shadowMapModule = new ShadowMapPipelineModule(content, "Shaders/Shadow/ShadowMap");
             _deferredModule = new DeferredPipelineModule(content, "Shaders/Deferred/DeferredCompose");
 
-            _directionalLightRenderModule = new DirectionalLightRenderModule(content, "Shaders/Deferred/DeferredDirectionalLight");
-            _pointLightRenderModule = new PointLightRenderModule(content, "Shaders/Deferred/DeferredPointLight");
+            _directionalLightRenderModule = new DirectionalLightPipelineModule(content, "Shaders/Deferred/DeferredDirectionalLight");
+            _pointLightRenderModule = new PointLightPipelineModule(content, "Shaders/Deferred/DeferredPointLight");
             _lightingModule = new LightingPipelineModule() { PointLightRenderModule = _pointLightRenderModule, DirectionalLightRenderModule = _directionalLightRenderModule };
             _environmentModule = new EnvironmentPipelineModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
 
@@ -254,7 +253,7 @@ namespace DeferredEngine.Renderer
             DrawEnvironmentMap(envProbe, camera, gameTime);
 
             //Compose the scene by combining our lighting data with the gbuffer data
-            _currentOutput = Compose(_auxTargets[MRT.AUX_COMPOSE]);
+            _currentOutput = Compose(_auxTargets[MRT.COMPOSE]);
 
             //Forward
             _currentOutput = DrawForward(_currentOutput, meshBatcher, camera, scene.PointLights);
@@ -570,9 +569,9 @@ namespace DeferredEngine.Renderer
             if (!RenderingSettings.g_EnableDecals) return;
 
             //First copy albedo to decal offtarget
-            DrawTextureToScreenToFullScreen(_gBufferTarget.Albedo, BlendState.Opaque, _auxTargets[MRT.AUX_DECAL]);
+            DrawTextureToScreenToFullScreen(_gBufferTarget.Albedo, BlendState.Opaque, _auxTargets[MRT.DECAL]);
 
-            DrawTextureToScreenToFullScreen(_auxTargets[MRT.AUX_DECAL], BlendState.Opaque, _gBufferTarget.Albedo);
+            DrawTextureToScreenToFullScreen(_auxTargets[MRT.DECAL], BlendState.Opaque, _gBufferTarget.Albedo);
 
             _decalRenderModule.Draw(decals, _matrices);
         }
@@ -598,7 +597,7 @@ namespace DeferredEngine.Renderer
             }
             else
             {
-                Shaders.SSR.Param_TargetMap.SetValue(_auxTargets[MRT.AUX_COMPOSE]);
+                Shaders.SSR.Param_TargetMap.SetValue(_auxTargets[MRT.COMPOSE]);
             }
 
             if (RenderingSettings.g_SSReflectionNoise)
@@ -770,7 +769,7 @@ namespace DeferredEngine.Renderer
             {
                 Texture2D bloom = _bloomFx.Draw(input);
 
-                _graphicsDevice.SetRenderTargets(_auxTargets[MRT.AUX_BLOOM]);
+                _graphicsDevice.SetRenderTargets(_auxTargets[MRT.BLOOM]);
                 _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
 
                 _spriteBatch.Draw(input, RenderingSettings.g_ScreenRect, Color.White);
@@ -778,7 +777,7 @@ namespace DeferredEngine.Renderer
 
                 _spriteBatch.End();
 
-                return _auxTargets[MRT.AUX_BLOOM];
+                return _auxTargets[MRT.BLOOM];
             }
             else
             {
@@ -825,7 +824,7 @@ namespace DeferredEngine.Renderer
         {
             if (!RenderingSettings.g_PostProcessing) return;
 
-            RenderTarget2D destinationRenderTarget = _auxTargets[MRT.AUX_OUTPUT];
+            RenderTarget2D destinationRenderTarget = _auxTargets[MRT.OUTPUT];
 
             Shaders.PostProcssing.Param_ScreenTexture.SetValue(currentInput);
             _graphicsDevice.SetRenderTarget(destinationRenderTarget);

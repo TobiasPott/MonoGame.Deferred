@@ -8,19 +8,19 @@ namespace DeferredEngine.Renderer
         /// <summary>
         /// Index to the output render target
         /// </summary>
-        public const int AUX_OUTPUT = 0;
+        public const int OUTPUT = 0;
         /// <summary>
         /// Index to the composition render target
         /// </summary>
-        public const int AUX_COMPOSE = 1;
+        public const int COMPOSE = 1;
         /// <summary>
         /// Index to the decal render target
         /// </summary>
-        public const int AUX_DECAL = 2;
+        public const int DECAL = 2;
         /// <summary>
         /// Index to the bloom render target
         /// </summary>
-        public const int AUX_BLOOM = 3;
+        public const int BLOOM = 3;
 
         /// <summary>
         /// Index to the first temporal anti-aliasing render target

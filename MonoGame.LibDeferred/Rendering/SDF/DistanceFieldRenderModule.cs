@@ -16,7 +16,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
         private DistanceFieldEffectSetup _effectSetup = new DistanceFieldEffectSetup();
 
         public Generator _sdfGenerator;
-        public PointLightRenderModule PointLightRenderModule;
+        public PointLightPipelineModule PointLightRenderModule;
         public EnvironmentPipelineModule EnvironmentProbeRenderModule;
 
         private GraphicsDevice _graphicsDevice;

@@ -1,19 +1,20 @@
-﻿using DeferredEngine.Pipeline.Lighting;
+﻿using DeferredEngine.Renderer;
 using DeferredEngine.Renderer.Helper;
+using DeferredEngine.Renderer.RenderModules;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
+namespace DeferredEngine.Pipeline.Lighting
 {
-    public class DirectionalLightRenderModule : PipelineModule
+    public class DirectionalLightPipelineModule : PipelineModule
     {
 
         private FullscreenTriangleBuffer _fullscreenTarget;
         private DirectionalLightEffectSetup _effectSetup = new DirectionalLightEffectSetup();
 
 
-        public DirectionalLightRenderModule(ContentManager content, string shaderPath = "Shaders/Deferred/DeferredDirectionalLight")
+        public DirectionalLightPipelineModule(ContentManager content, string shaderPath = "Shaders/Deferred/DeferredDirectionalLight")
             : base(content, shaderPath)
         {
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
