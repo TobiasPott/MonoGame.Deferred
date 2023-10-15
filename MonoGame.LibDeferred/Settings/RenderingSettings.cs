@@ -42,16 +42,6 @@ namespace DeferredEngine.Recources
 
 
 
-        private static bool _g_Linear = true;
-        public static bool g_Linear
-        {
-            get { return _g_Linear; }
-            set
-            {
-                _g_Linear = value;
-            }
-        }
-
         public static bool g_VolumetricLights = true;
 
         public static int g_UseDepthStencilLightCulling = 1; //None, Depth, Depth+Stencil
@@ -69,8 +59,6 @@ namespace DeferredEngine.Recources
             EnvironmentMapping.ApplyDefaultsEnvironmentMap();
 
             ApplyDefaultsSSR();
-
-            g_Linear = _g_Linear;
 
             d_DefaultMaterial = false;
             SCurveStrength = _sCurveStrength;
