@@ -125,9 +125,11 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
             AdjustTempVertsPoolSize();
         }
 
+        private Vector3[] _frustumCorners = new Vector3[8];
         public void CreateBoundingBoxLines(BoundingFrustum boundingFrustumExShadow)
         {
-            Vector3[] vertices = boundingFrustumExShadow.GetCorners();
+            boundingFrustumExShadow.GetCorners(_frustumCorners);
+            Vector3[] vertices = _frustumCorners;
             AddLineStartEnd(vertices[0], vertices[1], 1);
             AddLineStartEnd(vertices[1], vertices[2], 1);
             AddLineStartEnd(vertices[2], vertices[3], 1);
