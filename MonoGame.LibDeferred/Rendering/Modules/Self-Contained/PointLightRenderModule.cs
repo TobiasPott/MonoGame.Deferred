@@ -10,10 +10,15 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
     {
 
         private PointLightEffectSetup _effectSetup = new PointLightEffectSetup();
+        private BoundingFrustum _frustum;
+        private GameTime _gameTime;
 
         private DepthStencilState _stencilCullPass1;
         private DepthStencilState _stencilCullPass2;
 
+
+        public BoundingFrustum Frustum { set { _frustum = value; } }
+        public GameTime GameTime { set { _gameTime = value; } }
 
         public float FarClip { set { _effectSetup.Param_FarClip.SetValue(value); } }
         public Matrix InverseView { set { _effectSetup.Param_InverseView.SetValue(value); } }
@@ -89,10 +94,7 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
         /// <summary>
         /// Draw the point lights, set up some stuff first
         /// </summary>
-        /// <param name="pointLights"></param>
-        /// <param name="cameraOrigin"></param>
-        /// <param name="gameTime"></param>
-        public void Draw(List<DeferredPointLight> pointLights, Vector3 cameraOrigin, GameTime gameTime, BoundingFrustum _boundingFrustum, bool _viewProjectionHasChanged, Matrix _view, Matrix _viewProjection)
+        public void Draw(List<DeferredPointLight> pointLights, Vector3 cameraOrigin, PipelineMatrices matrices, bool viewProjectionHasChanged)
         {
             if (pointLights.Count < 1) return;
 
@@ -103,36 +105,34 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
             int vertexOffset = meshpart.VertexOffset;
             int startIndex = meshpart.StartIndex;
 
-            if (RenderingSettings.g_VolumetricLights)
-                _effectSetup.Param_Time.SetValue((float)gameTime.TotalGameTime.TotalSeconds % 1000);
+            if (RenderingSettings.g_VolumetricLights && _gameTime != null)
+                _effectSetup.Param_Time.SetValue((float)_gameTime.TotalGameTime.TotalSeconds % 1000);
 
             for (int index = 0; index < pointLights.Count; index++)
             {
-                DeferredPointLight light = pointLights[index];
-                DrawPointLight(light, cameraOrigin, vertexOffset, startIndex, primitiveCount, _boundingFrustum, _viewProjectionHasChanged, _view, _viewProjection);
+                DrawPointLight(pointLights[index], cameraOrigin, vertexOffset, startIndex, primitiveCount, viewProjectionHasChanged, matrices.View, matrices.ViewProjection);
             }
         }
 
         /// <summary>
         /// Draw each individual point lights
         /// </summary>
-        private void DrawPointLight(DeferredPointLight light, Vector3 cameraOrigin, int vertexOffset, int startIndex, int primitiveCount, BoundingFrustum _boundingFrustum, bool _viewProjectionHasChanged, Matrix _view, Matrix _viewProjection)
+        private void DrawPointLight(DeferredPointLight light, Vector3 cameraOrigin, int vertexOffset, int startIndex, int primitiveCount, bool viewProjectionHasChanged, Matrix view, Matrix viewProjection)
         {
             if (!light.IsEnabled) return;
 
             //first let's check if the light is even in bounds
-            if (_boundingFrustum.Contains(light.BoundingSphere) == ContainmentType.Disjoint ||
-                !_boundingFrustum.Intersects(light.BoundingSphere))
+            if (_frustum.Contains(light.BoundingSphere) == ContainmentType.Disjoint || !_frustum.Intersects(light.BoundingSphere))
                 return;
 
             //For our stats
             RenderingStats.LightsDrawn++;
 
             //Send the light parameters to the shader
-            if (_viewProjectionHasChanged)
+            if (viewProjectionHasChanged)
             {
-                light.LightViewSpace = light.WorldMatrix * _view;
-                light.LightWorldViewProj = light.WorldMatrix * _viewProjection;
+                light.LightViewSpace = light.WorldMatrix * view;
+                light.LightWorldViewProj = light.WorldMatrix * viewProjection;
             }
 
             _effectSetup.Param_WorldView.SetValue(light.LightViewSpace);
@@ -224,6 +224,7 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
         {
             _stencilCullPass1?.Dispose();
             _stencilCullPass2?.Dispose();
+            _effectSetup?.Dispose();
         }
     }
 }

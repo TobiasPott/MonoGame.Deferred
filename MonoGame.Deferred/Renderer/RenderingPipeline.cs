@@ -39,6 +39,7 @@ namespace DeferredEngine.Renderer
         private ForwardPipelineModule _forwardModule;
         private ShadowMapPipelineModule _shadowMapModule;
 
+        private DirectionalLightRenderModule _directionalLightRenderModule;
         private PointLightRenderModule _pointLightRenderModule;
         private LightingPipelineModule _lightingModule;
         private EnvironmentPipelineModule _environmentModule;
@@ -113,8 +114,9 @@ namespace DeferredEngine.Renderer
             _shadowMapModule = new ShadowMapPipelineModule(content, "Shaders/Shadow/ShadowMap");
             _deferredModule = new DeferredPipelineModule(content, "Shaders/Deferred/DeferredCompose");
 
+            _directionalLightRenderModule = new DirectionalLightRenderModule(content, "Shaders/Deferred/DeferredDirectionalLight");
             _pointLightRenderModule = new PointLightRenderModule(content, "Shaders/Deferred/DeferredPointLight");
-            _lightingModule = new LightingPipelineModule() { PointLightRenderModule = _pointLightRenderModule };
+            _lightingModule = new LightingPipelineModule() { PointLightRenderModule = _pointLightRenderModule, DirectionalLightRenderModule = _directionalLightRenderModule };
             _environmentModule = new EnvironmentPipelineModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
 
             _decalRenderModule = new DecalRenderModule();
@@ -151,6 +153,7 @@ namespace DeferredEngine.Renderer
             _forwardModule.Initialize(graphicsDevice, _spriteBatch);
             _shadowMapModule.Initialize(graphicsDevice, _spriteBatch);
 
+            _directionalLightRenderModule.Initialize(graphicsDevice, _spriteBatch);
             _pointLightRenderModule.Initialize(graphicsDevice, _spriteBatch);
             _environmentModule.Initialize(graphicsDevice, _spriteBatch);
             _distanceFieldRenderModule.Initialize(graphicsDevice, _spriteBatch);
@@ -183,6 +186,8 @@ namespace DeferredEngine.Renderer
                 return;
             _editorRender.Update(gameTime);
             _distanceFieldRenderModule.UpdateSdfGenerator(entities);
+
+            _lightingModule.UpdateGameTime(gameTime);
         }
 
         #region RENDER FUNCTIONS
@@ -244,7 +249,7 @@ namespace DeferredEngine.Renderer
 
             //Light the scene
             _lightingModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
-            _lightingModule.DrawLights(scene, camera.Position, gameTime, _lightingBufferTarget.Bindings, _lightingBufferTarget.Diffuse);
+            _lightingModule.DrawLights(scene, camera.Position, _lightingBufferTarget.Bindings, _lightingBufferTarget.Diffuse);
 
             //Draw the environment cube map as a fullscreen effect on all meshes
             DrawEnvironmentMap(envProbe, camera, gameTime);
@@ -565,7 +570,7 @@ namespace DeferredEngine.Renderer
             Shaders.SSAO.Param_FrustumCorners.SetValue(_currentFrustumCorners);
             _taaFx.FrustumCorners = _currentFrustumCorners;
             Shaders.ReconstructDepth.Param_FrustumCorners.SetValue(_currentFrustumCorners);
-            Shaders.DeferredDirectionalLight.Param_FrustumCorners.SetValue(_currentFrustumCorners);
+            _directionalLightRenderModule.SetFrustumCorners(_currentFrustumCorners);
         }
 
         /// <summary>
@@ -984,9 +989,8 @@ namespace DeferredEngine.Renderer
 
             _lightingModule.PointLightRenderModule.SetGBufferParams(_gBufferTarget);
 
-            Shaders.DeferredDirectionalLight.SetGBufferParams(_gBufferTarget);
-
-            Shaders.DeferredDirectionalLight.Param_SSShadowMap.SetValue(onlyEssentials ? _auxTargets[MRT.SSFX_BLUR_VERTICAL] : _auxTargets[MRT.SSFX_BLUR_FINAL]);
+            _directionalLightRenderModule.SetGBufferParams(_gBufferTarget);
+            _directionalLightRenderModule.SetScreenSpaceShadowMap(onlyEssentials ? _auxTargets[MRT.SSFX_BLUR_VERTICAL] : _auxTargets[MRT.SSFX_BLUR_FINAL]);
 
             _environmentModule.SetGBufferParams(_gBufferTarget);
             _environmentModule.SSRMap = _auxTargets[MRT.SSFX_REFLECTION];

@@ -129,46 +129,6 @@ namespace DeferredEngine.Recources
 
         }
 
-        //Directional light
-        public static class DeferredDirectionalLight
-        {
-            public static readonly Effect Effect = Globals.content.Load<Effect>("Shaders/Deferred/DeferredDirectionalLight");
-
-            public static readonly EffectTechnique Technique_Unshadowed = Effect.Techniques["Unshadowed"];
-            public static readonly EffectTechnique Technique_SSShadowed = Effect.Techniques["SSShadowed"];
-            public static readonly EffectTechnique Technique_Shadowed = Effect.Techniques["Shadowed"];
-            public static readonly EffectTechnique Technique_ShadowOnly = Effect.Techniques["ShadowOnly"];
-
-            public static readonly EffectParameter Param_ViewProjection = Effect.Parameters["ViewProjection"];
-            public static readonly EffectParameter Param_FrustumCorners = Effect.Parameters["FrustumCorners"];
-            public static readonly EffectParameter Param_CameraPosition = Effect.Parameters["cameraPosition"];
-            public static readonly EffectParameter Param_InverseViewProjection = Effect.Parameters["InvertViewProjection"];
-            public static readonly EffectParameter Param_LightViewProjection = Effect.Parameters["LightViewProjection"];
-            public static readonly EffectParameter Param_LightView = Effect.Parameters["LightView"];
-            public static readonly EffectParameter Param_LightFarClip = Effect.Parameters["LightFarClip"];
-
-            public static readonly EffectParameter Param_LightColor = Effect.Parameters["lightColor"];
-            public static readonly EffectParameter Param_LightIntensity = Effect.Parameters["lightIntensity"];
-            public static readonly EffectParameter Param_LightDirection = Effect.Parameters["LightVector"];
-            public static readonly EffectParameter Param_ShadowFiltering = Effect.Parameters["ShadowFiltering"];
-            public static readonly EffectParameter Param_ShadowMapSize = Effect.Parameters["ShadowMapSize"];
-
-            public static readonly EffectParameter Param_AlbedoMap = Effect.Parameters["AlbedoMap"];
-            public static readonly EffectParameter Param_NormalMap = Effect.Parameters["NormalMap"];
-            public static readonly EffectParameter Param_DepthMap = Effect.Parameters["DepthMap"];
-
-            public static readonly EffectParameter Param_ShadowMap = Effect.Parameters["ShadowMap"];
-            public static readonly EffectParameter Param_SSShadowMap = Effect.Parameters["SSShadowMap"];
-
-            public static void SetGBufferParams(GBufferTarget gBufferTarget)
-            {
-                Param_AlbedoMap.SetValue(gBufferTarget.Albedo);
-                Param_NormalMap.SetValue(gBufferTarget.Normal);
-                Param_DepthMap.SetValue(gBufferTarget.Depth);
-            }
-
-        }
-
     }
 
 }

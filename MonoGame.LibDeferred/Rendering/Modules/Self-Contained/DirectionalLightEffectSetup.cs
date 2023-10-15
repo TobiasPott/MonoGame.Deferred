@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using DeferredEngine.Recources;
+using Microsoft.Xna.Framework.Graphics;
 
 
 namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
@@ -36,9 +37,9 @@ namespace DeferredEngine.Renderer.RenderModules.DeferredLighting
         public EffectParameter Param_DepthMap { get; protected set; }
 
 
-        public DirectionalLightEffectSetup(string shaderPath) : base(shaderPath)
+        public DirectionalLightEffectSetup(string shaderPath = "Shaders/Deferred/DeferredDirectionalLight") : base(shaderPath)
         {
-            Effect = Globals.content.Load<Effect>("Shaders/Deferred/DeferredDirectionalLight");
+            Effect = Globals.content.Load<Effect>(shaderPath);
 
             Technique_Unshadowed = Effect.Techniques["Unshadowed"];
             Technique_SSShadowed = Effect.Techniques["SSShadowed"];

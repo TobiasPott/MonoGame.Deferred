@@ -255,8 +255,7 @@ namespace DeferredEngine.Logic
                 shadowDepth: shadowDepth,
                 shadowResolution: shadowResolution,
                 shadowFiltering: shadowFilteringFiltering,
-                screenspaceshadowblur: screenspaceShadowBlur,
-                staticshadows: staticshadows);
+                screenspaceshadowblur: screenspaceShadowBlur);
             DirectionalLights.Add(light);
             return light;
         }

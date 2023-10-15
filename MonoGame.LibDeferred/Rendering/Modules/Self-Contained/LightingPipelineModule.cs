@@ -16,11 +16,11 @@ namespace DeferredEngine.Renderer.RenderModules
         private bool _useDepthStencilLightCulling;
         private PipelineMatrices _matrices;
         private BlendState _lightBlendState;
-        private BoundingFrustum _boundingFrustum;
 
         private bool _viewProjectionHasChanged;
 
         public PointLightRenderModule PointLightRenderModule;
+        public DirectionalLightRenderModule DirectionalLightRenderModule;
 
 
         public LightingPipelineModule()
@@ -46,12 +46,17 @@ namespace DeferredEngine.Renderer.RenderModules
         }
 
 
+        public void UpdateGameTime(GameTime gameTime)
+        {
+            PointLightRenderModule.GameTime = gameTime;
+        }
         /// <summary>
         /// Needs to be called before draw
         /// </summary>
         public void UpdateViewProjection(BoundingFrustum boundingFrustum, bool viewProjHasChanged, PipelineMatrices matrices)
         {
-            _boundingFrustum = boundingFrustum;
+            PointLightRenderModule.Frustum = boundingFrustum;
+
             _viewProjectionHasChanged = viewProjHasChanged;
             _matrices = matrices;
         }
@@ -59,8 +64,7 @@ namespace DeferredEngine.Renderer.RenderModules
         /// <summary>
         /// Draw our lights to the diffuse/specular/volume buffer
         /// </summary>
-        public void DrawLights(EntitySceneGroup scene, Vector3 cameraOrigin, GameTime gameTime, 
-            RenderTargetBinding[] renderTargetLightBinding, 
+        public void DrawLights(EntitySceneGroup scene, Vector3 cameraOrigin, RenderTargetBinding[] renderTargetLightBinding,
             RenderTarget2D renderTargetDiffuse)
         {
             //Reconstruct Depth
@@ -95,8 +99,8 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.Clear(ClearOptions.Target, new Color(0, 0, 0, 0.0f), 1, 0);
             _graphicsDevice.BlendState = _lightBlendState;
 
-            PointLightRenderModule.Draw(scene.PointLights, cameraOrigin, gameTime, _boundingFrustum, _viewProjectionHasChanged, _matrices.View, _matrices.ViewProjection);
-            DrawDirectionalLights(scene.DirectionalLights, cameraOrigin);
+            PointLightRenderModule.Draw(scene.PointLights, cameraOrigin, _matrices, _viewProjectionHasChanged);
+            DirectionalLightRenderModule.DrawDirectionalLights(scene.DirectionalLights, cameraOrigin, _matrices, _viewProjectionHasChanged);
 
         }
         private void ReconstructDepth()
@@ -106,58 +110,6 @@ namespace DeferredEngine.Renderer.RenderModules
 
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             Shaders.ReconstructDepth.Effect.CurrentTechnique.Passes[0].Apply();
-            _fullscreenTarget.Draw(_graphicsDevice);
-        }
-
-
-        /// <summary>
-        /// Draw all directional lights, set up some shader variables first
-        /// </summary>
-        /// <param name="dirLights"></param>
-        /// <param name="cameraOrigin"></param>
-        private void DrawDirectionalLights(List<DeferredDirectionalLight> dirLights, Vector3 cameraOrigin)
-        {
-            if (dirLights.Count < 1) return;
-
-            _graphicsDevice.DepthStencilState = DepthStencilState.Default;
-            _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-
-            //If nothing has changed we don't need to update
-            if (_viewProjectionHasChanged)
-            {
-                Shaders.DeferredDirectionalLight.Param_ViewProjection.SetValue(_matrices.ViewProjection);
-                Shaders.DeferredDirectionalLight.Param_CameraPosition.SetValue(cameraOrigin);
-                Shaders.DeferredDirectionalLight.Param_InverseViewProjection.SetValue(_matrices.InverseViewProjection);
-            }
-
-            _graphicsDevice.DepthStencilState = DepthStencilState.None;
-
-            for (int index = 0; index < dirLights.Count; index++)
-            {
-                DeferredDirectionalLight light = dirLights[index];
-                DrawDirectionalLight(light);
-            }
-        }
-
-        /// <summary>
-        /// Draw the individual light, full screen effect
-        /// </summary>
-        /// <param name="light"></param>
-        private void DrawDirectionalLight(DeferredDirectionalLight light)
-        {
-            if (!light.IsEnabled) return;
-
-            if (_viewProjectionHasChanged)
-            {
-                light.DirectionViewSpace = Vector3.Transform(light.Direction, _matrices.ViewIT);
-                light.LightViewProjection_ViewSpace = _matrices.InverseView * light.LightViewProjection;
-                light.LightView_ViewSpace = _matrices.InverseView * light.LightView;
-            }
-
-            Shaders.DeferredDirectionalLight.Param_LightColor.SetValue(light.ColorV3);
-            Shaders.DeferredDirectionalLight.Param_LightDirection.SetValue(light.DirectionViewSpace);
-            Shaders.DeferredDirectionalLight.Param_LightIntensity.SetValue(light.Intensity);
-            light.ApplyShader();
             _fullscreenTarget.Draw(_graphicsDevice);
         }
 
