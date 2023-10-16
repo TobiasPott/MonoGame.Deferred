@@ -195,16 +195,17 @@ namespace DeferredEngine.Renderer.RenderModules
 
                 IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(SelectedColor);
                 meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, false, outlined: true, outlineId: selectedId);
+
+                if (selectedId != hoveredId && hoveredId != 0 && mouseMoved)
+                {
+                    if (!drawAll)
+                        meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, false, false, hoveredId);
+
+                    IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(HoveredColor);
+                    meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, false, outlined: true, outlineId: hoveredId);
+                }
             }
 
-            if (selectedId != hoveredId && hoveredId != 0 && mouseMoved)
-            {
-                if (!drawAll)
-                    meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, false, false, hoveredId);
-
-                IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(HoveredColor);
-                meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, false, outlined: true, outlineId: hoveredId);
-            }
         }
 
     }
