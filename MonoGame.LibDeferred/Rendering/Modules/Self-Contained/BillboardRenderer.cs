@@ -41,9 +41,6 @@ namespace DeferredEngine.Renderer.RenderModules
             _effectSetup.Param_Texture.SetValue(StaticAssets.Instance.IconLight);
             _effectSetup.Effect.CurrentTechnique = _effectSetup.Technique_Id;
 
-            Matrix staticViewProjection = matrices.StaticViewProjection;
-            Matrix view = matrices.View;
-
             List<Decal> decals = scene.Decals;
             List<DeferredPointLight> pointLights = scene.PointLights;
             List<DeferredDirectionalLight> dirLights = scene.DirectionalLights;
@@ -51,29 +48,29 @@ namespace DeferredEngine.Renderer.RenderModules
             for (int index = 0; index < decals.Count; index++)
             {
                 var decal = decals[index];
-                DrawSceneBillboard(decal.World, view, staticViewProjection, decal.Id);
+                DrawSceneBillboard(decal.World, matrices, decal.Id);
             }
 
             for (int index = 0; index < pointLights.Count; index++)
             {
                 var light = pointLights[index];
-                DrawSceneBillboard(light.World, view, staticViewProjection, light.Id);
+                DrawSceneBillboard(light.World, matrices, light.Id);
             }
 
             for (int index = 0; index < dirLights.Count; index++)
             {
                 var light = dirLights[index];
-                DrawSceneBillboard(light.World, view, staticViewProjection, light.Id);
+                DrawSceneBillboard(light.World, matrices, light.Id);
             }
 
             _effectSetup.Param_Texture.SetValue(StaticAssets.Instance.IconEnvmap);
-            DrawSceneBillboard(scene.EnvProbe.World, view, staticViewProjection, scene.EnvProbe.Id);
+            DrawSceneBillboard(scene.EnvProbe.World, matrices, scene.EnvProbe.Id);
 
         }
-        private void DrawSceneBillboard(Matrix world, Matrix view, Matrix staticViewProjection, int id)
+        private void DrawSceneBillboard(Matrix world, PipelineMatrices matrices, int id)
         {
-            _effectSetup.Param_WorldViewProj.SetValue(world * staticViewProjection);
-            _effectSetup.Param_WorldView.SetValue(world * view);
+            _effectSetup.Param_WorldViewProj.SetValue(world * matrices.StaticViewProjection);
+            _effectSetup.Param_WorldView.SetValue(world * matrices.View);
             _effectSetup.Param_IdColor.SetValue(IdGenerator.GetColorFromId(id).ToVector3());
             _effectSetup.Effect.CurrentTechnique.Passes[0].Apply();
             _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 2);
@@ -83,40 +80,33 @@ namespace DeferredEngine.Renderer.RenderModules
 
         public void DrawEditorBillboards(EntitySceneGroup scene, PipelineMatrices matrices, GizmoDrawContext gizmoContext)
         {
-            List<Decal> decals = scene.Decals;
-            List<DeferredPointLight> pointLights = scene.PointLights;
-            List<DeferredDirectionalLight> dirLights = scene.DirectionalLights;
-
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             _graphicsDevice.SetVertexBuffer(_billboardBuffer.VBuffer);
             _graphicsDevice.Indices = (_billboardBuffer.IBuffer);
 
             _effectSetup.Effect.CurrentTechnique = _effectSetup.Technique_Billboard;
-
             _effectSetup.Param_IdColor.SetValue(Color.Gray.ToVector3());
 
-            //Decals
+            List<Decal> decals = scene.Decals;
+
+            // Decals
             _effectSetup.Param_Texture.SetValue(StaticAssets.Instance.IconDecal);
-            for (int index = 0; index < decals.Count; index++)
-            {
-                var decal = decals[index];
-                DrawEditorBillboard(decal, matrices.StaticViewProjection, matrices.View, gizmoContext);
-            }
+            for (int i = 0; i < decals.Count; i++)
+                DrawEditorBillboard(decals[i], matrices, gizmoContext);
 
-            //Lights
+            // Point Lights
+            List<DeferredPointLight> pointLights = scene.PointLights;
             _effectSetup.Param_Texture.SetValue(StaticAssets.Instance.IconLight);
-            for (int index = 0; index < pointLights.Count; index++)
-            {
-                var light = pointLights[index];
-                DrawEditorBillboard(light, matrices.StaticViewProjection, matrices.View, gizmoContext);
-            }
-
-            HelperGeometryManager helperManager = HelperGeometryManager.GetInstance();
+            for (int i = 0; i < pointLights.Count; i++)
+                DrawEditorBillboard(pointLights[i], matrices, gizmoContext);
+            
             //DirectionalLights
-            for (var index = 0; index < dirLights.Count; index++)
+            List<DeferredDirectionalLight> dirLights = scene.DirectionalLights;
+            HelperGeometryManager helperManager = HelperGeometryManager.GetInstance();
+            for (int i = 0; i < dirLights.Count; i++)
             {
-                DeferredDirectionalLight light = dirLights[index];
-                DrawEditorBillboard(light, matrices.StaticViewProjection, matrices.View, gizmoContext);
+                DeferredDirectionalLight light = dirLights[i];
+                DrawEditorBillboard(light, matrices, gizmoContext);
 
                 Vector3 lPosition = light.Position;
                 Vector3 lDirection = light.Direction * 10;
@@ -140,14 +130,14 @@ namespace DeferredEngine.Renderer.RenderModules
             if (scene.EnvProbe != null)
             {
                 _effectSetup.Param_Texture.SetValue(StaticAssets.Instance.IconEnvmap);
-                DrawEditorBillboard(scene.EnvProbe, matrices.StaticViewProjection, matrices.View, gizmoContext);
+                DrawEditorBillboard(scene.EnvProbe, matrices, gizmoContext);
             }
         }
-        private void DrawEditorBillboard(TransformableObject billboardObject, Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
+        private void DrawEditorBillboard(TransformableObject billboardObject, PipelineMatrices matrices, GizmoDrawContext gizmoContext)
         {
             Matrix world = Matrix.CreateTranslation(billboardObject.Position);
-            _effectSetup.Param_WorldViewProj.SetValue(world * staticViewProjection);
-            _effectSetup.Param_WorldView.SetValue(world * view);
+            _effectSetup.Param_WorldViewProj.SetValue(world * matrices.StaticViewProjection);
+            _effectSetup.Param_WorldView.SetValue(world * matrices.View);
 
             if (billboardObject.Id == IdAndOutlineRenderer.HoveredId)
                 _effectSetup.Param_IdColor.SetValue(Color.White.ToVector3());
