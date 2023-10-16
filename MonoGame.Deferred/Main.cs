@@ -145,6 +145,8 @@ namespace DeferredEngine
             // TODO: Add your initialization logic here
             _screenManager.Initialize(GraphicsDevice);
 
+            // collect garbage upfront after everything is initialized
+            GC.Collect();
             base.Initialize();
         }
 

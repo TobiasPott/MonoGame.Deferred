@@ -34,8 +34,6 @@ namespace DeferredEngine.Renderer.Helper
         //returns the mean distance of all objects iwth that material
         public void UpdatePositionAndCheckRender(bool cameraHasChanged, BoundingFrustum viewFrustumEx, Vector3 cameraPosition, BoundingSphere sphere)
         {
-            bool hasAnythingChanged = false;
-
             for (var i = 0; i < _transforms.Count; i++)
             {
                 TransformableObject transform = _transforms[i];
@@ -56,8 +54,6 @@ namespace DeferredEngine.Renderer.Helper
                         _rendered[i] = true;
                     }
 
-                    //we just register that something has changed
-                    hasAnythingChanged = true;
                 }
 
             }

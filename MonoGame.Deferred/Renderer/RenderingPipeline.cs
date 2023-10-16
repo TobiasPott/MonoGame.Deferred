@@ -442,13 +442,6 @@ namespace DeferredEngine.Renderer
         {
             _viewProjectionHasChanged = camera.HasChanged;
 
-            //alternate frames with temporal aa
-            if (_taaFx.Enabled)
-            {
-                _viewProjectionHasChanged = true;
-                _taaFx.SwapOffFrame();
-            }
-
             //If the camera didn't do anything we don't need to update this stuff
             if (_viewProjectionHasChanged)
             {
@@ -456,11 +449,15 @@ namespace DeferredEngine.Renderer
                 _matrices.SetFromCamera(camera);
 
                 _pointLightRenderModule.InverseView = _matrices.InverseView;
-                //Temporal AA
-                if (_taaFx.Enabled)
+
+                //Temporal AA - alternate frames for temporal anti-aliasing
+                if (_taaFx?.Enabled ?? false)
                 {
-                    _taaFx?.UpdateViewProjection(_matrices);
+                    _viewProjectionHasChanged = true;
+                    _taaFx.SwapOffFrame();
+                    _taaFx.UpdateViewProjection(_matrices);
                 }
+
 
                 _matrices.PreviousViewProjection = _matrices.ViewProjection;
                 _matrices.InverseViewProjection = Matrix.Invert(_matrices.ViewProjection);
