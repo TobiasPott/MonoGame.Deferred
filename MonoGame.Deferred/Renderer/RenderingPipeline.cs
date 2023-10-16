@@ -276,7 +276,7 @@ namespace DeferredEngine.Renderer
                 if (IdAndOutlineRenderModule.e_DrawOutlines)
                     DrawTextureToScreenToFullScreen(_moduleStack.IdAndOutline.GetRenderTarget2D(), BlendState.Additive);
 
-                this.DrawEditorModules(scene, _matrices, gizmoContext, EditorPasses.Billboard | EditorPasses.IdAndOutline);
+                this.DrawEditorPasses(scene, _matrices, gizmoContext, EditorPasses.Billboard | EditorPasses.IdAndOutline);
 
                 if (gizmoContext.SelectedObject != null)
                 {
@@ -301,7 +301,7 @@ namespace DeferredEngine.Renderer
 
         }
 
-        public void DrawEditorModules(EntitySceneGroup scene, PipelineMatrices matrices, GizmoDrawContext gizmoContext,
+        public void DrawEditorPasses(EntitySceneGroup scene, PipelineMatrices matrices, GizmoDrawContext gizmoContext,
             EditorPasses passes = EditorPasses.Billboard | EditorPasses.IdAndOutline)
         {
             // render directly to the output buffer
@@ -379,8 +379,6 @@ namespace DeferredEngine.Renderer
             if (RenderingSettings.d_IsProfileEnabled)
             {
                 long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                RenderingStats.d_profileRenderChanges = performanceCurrentTime - _performancePreviousTime;
-
                 _performancePreviousTime = performanceCurrentTime;
             }
         }
@@ -697,7 +695,8 @@ namespace DeferredEngine.Renderer
 
         private RenderTarget2D DrawForward(RenderTarget2D input, DynamicMeshBatcher meshBatcher, Camera camera, List<DeferredPointLight> pointLights)
         {
-            if (!ForwardPipelineModule.g_EnableForward) return input;
+            if (!ForwardPipelineModule.g_EnableForward)
+                return input;
 
             _graphicsDevice.SetRenderTarget(input);
             ReconstructDepth();
