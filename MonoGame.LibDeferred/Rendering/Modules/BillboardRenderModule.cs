@@ -110,7 +110,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
                 if (light.CastShadows)
                 {
-                    BoundingFrustum boundingFrustumShadow = new BoundingFrustum(light.LightViewProjection);
+                    BoundingFrustum boundingFrustumShadow = new BoundingFrustum(light.ViewProjection);
                     helperManager.CreateBoundingBoxLines(boundingFrustumShadow);
                 }
             }

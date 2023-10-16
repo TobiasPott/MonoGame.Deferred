@@ -134,13 +134,13 @@ namespace DeferredEngine.Pipeline.Lighting
             //Send the light parameters to the shader
             if (viewProjectionHasChanged)
             {
-                light.LightViewSpace = light.WorldMatrix * view;
-                light.LightWorldViewProj = light.WorldMatrix * viewProjection;
+                light.ViewSpace = light.WorldMatrix * view;
+                light.WorldViewProj = light.WorldMatrix * viewProjection;
             }
 
-            _effectSetup.Param_WorldView.SetValue(light.LightViewSpace);
-            _effectSetup.Param_WorldViewProjection.SetValue(light.LightWorldViewProj);
-            _effectSetup.Param_LightPosition.SetValue(light.LightViewSpace.Translation);
+            _effectSetup.Param_WorldView.SetValue(light.ViewSpace);
+            _effectSetup.Param_WorldViewProjection.SetValue(light.WorldViewProj);
+            _effectSetup.Param_LightPosition.SetValue(light.ViewSpace.Translation);
             _effectSetup.Param_LightColor.SetValue(light.ColorV3);
             _effectSetup.Param_LightRadius.SetValue(light.Radius);
             _effectSetup.Param_LightIntensity.SetValue(light.Intensity);

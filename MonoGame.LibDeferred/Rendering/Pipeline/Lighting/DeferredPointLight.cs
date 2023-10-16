@@ -8,6 +8,19 @@ namespace DeferredEngine.Pipeline.Lighting
 {
     public class DeferredPointLight : TransformableObject
     {
+        public class Matrices
+        {
+            public Matrix LightViewProjectionPositiveX;
+            public Matrix LightViewProjectionNegativeX;
+            public Matrix LightViewProjectionPositiveY;
+            public Matrix LightViewProjectionNegativeY;
+            public Matrix LightViewProjectionPositiveZ;
+            public Matrix LightViewProjectionNegativeZ;
+
+            public Matrix LightViewSpace;
+            public Matrix LightWorldViewProj;
+        }
+
         public Matrix WorldMatrix;
         private float _radius;
         private Color _color;
@@ -22,15 +35,15 @@ namespace DeferredEngine.Pipeline.Lighting
 
         public RenderTarget2D ShadowMap;
 
-        public Matrix LightViewProjectionPositiveX;
-        public Matrix LightViewProjectionNegativeX;
-        public Matrix LightViewProjectionPositiveY;
-        public Matrix LightViewProjectionNegativeY;
-        public Matrix LightViewProjectionPositiveZ;
-        public Matrix LightViewProjectionNegativeZ;
+        public Matrix ViewProjectionPositiveX;
+        public Matrix ViewProjectionNegativeX;
+        public Matrix ViewProjectionPositiveY;
+        public Matrix ViewProjectionNegativeY;
+        public Matrix ViewProjectionPositiveZ;
+        public Matrix ViewProjectionNegativeZ;
 
-        public Matrix LightViewSpace;
-        public Matrix LightWorldViewProj;
+        public Matrix ViewSpace;
+        public Matrix WorldViewProj;
 
         public BoundingSphere BoundingSphere;
 
@@ -45,16 +58,6 @@ namespace DeferredEngine.Pipeline.Lighting
         /// <summary>
         /// A point light is a light that shines in all directions
         /// </summary>
-        /// <param name="position"></param>
-        /// <param name="radius"></param>
-        /// <param name="color"></param>
-        /// <param name="intensity"></param>
-        /// <param name="isVolumetric"></param>
-        /// <param name="shadowResolution">shadow map resolution per face. Optional</param>
-        /// <param name="staticShadow">if set to true the shadows will not update at all. Dynamic shadows in contrast update only when needed.</param>
-        /// <param name="castShadows"></param>
-        /// <param name="volumeDensity"></param>
-        /// <returns></returns>
         public DeferredPointLight(Vector3 position, float radius, Color color, float intensity, bool castShadows, bool isVolumetric, int shadowResolution, int softShadowBlurAmount, bool staticShadow, float volumeDensity = 1, bool isEnabled = true)
         {
             BoundingSphere = new BoundingSphere(position, radius);
@@ -117,12 +120,12 @@ namespace DeferredEngine.Pipeline.Lighting
         {
             return face switch
             {
-                CubeMapFace.NegativeX => this.LightViewProjectionNegativeX,
-                CubeMapFace.NegativeY => this.LightViewProjectionNegativeY,
-                CubeMapFace.NegativeZ => this.LightViewProjectionNegativeZ,
-                CubeMapFace.PositiveX => this.LightViewProjectionPositiveX,
-                CubeMapFace.PositiveY => this.LightViewProjectionPositiveY,
-                CubeMapFace.PositiveZ => this.LightViewProjectionPositiveZ,
+                CubeMapFace.NegativeX => this.ViewProjectionNegativeX,
+                CubeMapFace.NegativeY => this.ViewProjectionNegativeY,
+                CubeMapFace.NegativeZ => this.ViewProjectionNegativeZ,
+                CubeMapFace.PositiveX => this.ViewProjectionPositiveX,
+                CubeMapFace.PositiveY => this.ViewProjectionPositiveY,
+                CubeMapFace.PositiveZ => this.ViewProjectionPositiveZ,
                 _ => Matrix.Identity,
             };
         }

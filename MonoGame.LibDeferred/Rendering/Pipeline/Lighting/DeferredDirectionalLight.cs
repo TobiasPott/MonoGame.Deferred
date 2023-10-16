@@ -7,8 +7,18 @@ using MonoGame.Ext;
 
 namespace DeferredEngine.Pipeline.Lighting
 {
+
     public sealed class DeferredDirectionalLight : TransformableObject
     {
+        public class Matrices
+        {
+            public Matrix View;
+            public Matrix ViewProjection;
+            public Matrix ViewProjection_ViewSpace;
+            public Matrix View_ViewSpace;
+        }
+
+
         public bool HasChanged;
 
         public float Intensity;
@@ -29,10 +39,10 @@ namespace DeferredEngine.Pipeline.Lighting
 
         public ShadowFilteringTypes ShadowFiltering;
 
-        public Matrix LightViewProjection;
-        public Matrix LightView;
-        public Matrix LightViewProjection_ViewSpace;
-        public Matrix LightView_ViewSpace;
+        public Matrix ViewProjection;
+        public Matrix View;
+        public Matrix ViewProjection_ViewSpace;
+        public Matrix View_ViewSpace;
 
         public enum ShadowFilteringTypes
         {
@@ -112,14 +122,14 @@ namespace DeferredEngine.Pipeline.Lighting
 
         public void UpdateViewProjection()
         {
-            LightView = Matrix.CreateLookAt(Position, Position + Direction, Vector3.Down);
-            LightViewProjection = LightView * Matrix.CreateOrthographic(ShadowSize, ShadowSize, -ShadowFarClip, ShadowFarClip);
+            View = Matrix.CreateLookAt(Position, Position + Direction, Vector3.Down);
+            ViewProjection = View * Matrix.CreateOrthographic(ShadowSize, ShadowSize, -ShadowFarClip, ShadowFarClip);
         }
         public void UpdateViewSpaceProjection(PipelineMatrices matrices)
         {
             DirectionViewSpace = Vector3.Transform(Direction, matrices.ViewIT);
-            LightViewProjection_ViewSpace = matrices.InverseView * LightViewProjection;
-            LightView_ViewSpace = matrices.InverseView * LightView;
+            ViewProjection_ViewSpace = matrices.InverseView * ViewProjection;
+            View_ViewSpace = matrices.InverseView * View;
         }
 
     }

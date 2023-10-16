@@ -130,42 +130,42 @@ namespace DeferredEngine.Renderer.RenderModules
                             {
                                 lightView = Matrix.CreateLookAt(light.Position, light.Position + Vector3.UnitX, Vector3.UnitZ);
                                 lightViewProjection = lightView * lightProjection;
-                                light.LightViewProjectionPositiveX = lightViewProjection;
+                                light.ViewProjectionPositiveX = lightViewProjection;
                                 break;
                             }
                         case CubeMapFace.NegativeX:
                             {
                                 lightView = Matrix.CreateLookAt(light.Position, light.Position - Vector3.UnitX, Vector3.UnitZ);
                                 lightViewProjection = lightView * lightProjection;
-                                light.LightViewProjectionNegativeX = lightViewProjection;
+                                light.ViewProjectionNegativeX = lightViewProjection;
                                 break;
                             }
                         case CubeMapFace.PositiveY:
                             {
                                 lightView = Matrix.CreateLookAt(light.Position, light.Position + Vector3.UnitY, Vector3.UnitZ);
                                 lightViewProjection = lightView * lightProjection;
-                                light.LightViewProjectionPositiveY = lightViewProjection;
+                                light.ViewProjectionPositiveY = lightViewProjection;
                                 break;
                             }
                         case CubeMapFace.NegativeY:
                             {
                                 lightView = Matrix.CreateLookAt(light.Position, light.Position - Vector3.UnitY, Vector3.UnitZ);
                                 lightViewProjection = lightView * lightProjection;
-                                light.LightViewProjectionNegativeY = lightViewProjection;
+                                light.ViewProjectionNegativeY = lightViewProjection;
                                 break;
                             }
                         case CubeMapFace.PositiveZ:
                             {
                                 lightView = Matrix.CreateLookAt(light.Position, light.Position + Vector3.UnitZ, Vector3.UnitX);
                                 lightViewProjection = lightView * lightProjection;
-                                light.LightViewProjectionPositiveZ = lightViewProjection;
+                                light.ViewProjectionPositiveZ = lightViewProjection;
                                 break;
                             }
                         case CubeMapFace.NegativeZ:
                             {
                                 lightView = Matrix.CreateLookAt(light.Position, light.Position - Vector3.UnitZ, Vector3.UnitX);
                                 lightViewProjection = lightView * lightProjection;
-                                light.LightViewProjectionNegativeZ = lightViewProjection;
+                                light.ViewProjectionNegativeZ = lightViewProjection;
                                 break;
                             }
                     }
@@ -259,9 +259,9 @@ namespace DeferredEngine.Renderer.RenderModules
                 // update light view projection from itself (position, direction, size and far clip)
                 light.UpdateViewProjection();
                 if (_boundingFrustumShadow == null)
-                    _boundingFrustumShadow = new BoundingFrustum(light.LightViewProjection);
+                    _boundingFrustumShadow = new BoundingFrustum(light.ViewProjection);
                 else
-                    _boundingFrustumShadow.Matrix = light.LightViewProjection;
+                    _boundingFrustumShadow.Matrix = light.ViewProjection;
 
                 _graphicsDevice.SetRenderTarget(light.ShadowMap);
                 _graphicsDevice.Clear(ClearOptions.DepthBuffer, Color.White, 1, 0);
@@ -272,11 +272,11 @@ namespace DeferredEngine.Renderer.RenderModules
                 _effectSetup.Param_FarClip.SetValue(light.ShadowFarClip);
                 _effectSetup.Param_SizeBias.SetValue(ShadowMapPipelineModule.ShadowBias * 2048 / light.ShadowResolution);
 
-                meshMaterialLibrary.Draw(DynamicMeshBatcher.RenderType.ShadowLinear, light.LightViewProjection, light.LightView, light.HasChanged, false, false, 0, renderModule: this);
+                meshMaterialLibrary.Draw(DynamicMeshBatcher.RenderType.ShadowLinear, light.ViewProjection, light.View, light.HasChanged, false, false, 0, renderModule: this);
             }
             else
             {
-                _boundingFrustumShadow = new BoundingFrustum(light.LightViewProjection);
+                _boundingFrustumShadow = new BoundingFrustum(light.ViewProjection);
 
                 bool hasAnyObjectMoved = meshMaterialLibrary.FrustumCulling(boundingFrustrum: _boundingFrustumShadow, hasCameraChanged: false, cameraPosition: light.Position);
 
@@ -291,7 +291,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 _effectSetup.Param_SizeBias.SetValue(ShadowMapPipelineModule.ShadowBias * 2048 / light.ShadowResolution);
 
                 meshMaterialLibrary.Draw(DynamicMeshBatcher.RenderType.ShadowLinear,
-                    light.LightViewProjection, light.LightView, false, true, false, 0, renderModule: this);
+                    light.ViewProjection, light.View, false, true, false, 0, renderModule: this);
             }
 
             //Blur!
