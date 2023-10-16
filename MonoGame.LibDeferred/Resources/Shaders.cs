@@ -1,19 +1,11 @@
 ﻿using DeferredEngine.Renderer;
-using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Recources
 {
-    //As suggested here http://community.monogame.net/t/deferred-engine-playground-download/8180/283?u=kosmonautgames
-    //the whole global shaders is shortened to load early without the need for a seperate load function
-    // by bettina4you
 
-    public static class ShaderGlobals
-    {
-        public static ContentManager content;
-    }
-
-    public static class Shaders
+    public static partial class Shaders
     {
         //A static file which contains all shaders
         //Born out of need for quick thoughtless shader building
@@ -23,7 +15,7 @@ namespace DeferredEngine.Recources
         //Depth Reconstruction
         public static class ReconstructDepth
         {
-            public static readonly Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/ScreenSpace/ReconstructDepth");
+            public static readonly Effect Effect = Globals.content.Load<Effect>("Shaders/ScreenSpace/ReconstructDepth");
 
             public static readonly EffectParameter Param_DepthMap = Effect.Parameters["DepthMap"];
             public static readonly EffectParameter Param_Projection = Effect.Parameters["Projection"];
@@ -31,43 +23,13 @@ namespace DeferredEngine.Recources
             public static readonly EffectParameter Param_FrustumCorners = Effect.Parameters["FrustumCorners"];
         }
 
-        //Id Generator
-        public static class IdRender
-        {
-            public static readonly Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/Editor/IdRender");
-            public static readonly EffectParameter Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
-            public static readonly EffectParameter Param_ColorId = Effect.Parameters["ColorId"];
-            public static readonly EffectParameter Param_OutlineSize = Effect.Parameters["OutlineSize"];
-            public static readonly EffectParameter Param_World = Effect.Parameters["World"];
 
-            public static readonly EffectPass Technique_Id = Effect.Techniques["DrawId"].Passes[0];
-            public static readonly EffectPass Technique_Outline = Effect.Techniques["DrawOutline"].Passes[0];
-        }
-
-        //Billboard Renderert
-        public static class Billboard
-        {
-            public static readonly Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/Editor/BillboardEffect");
-
-            public static readonly EffectParameter Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
-            public static readonly EffectParameter Param_WorldView = Effect.Parameters["WorldView"];
-            public static readonly EffectParameter Param_AspectRatio = Effect.Parameters["AspectRatio"];
-            public static readonly EffectParameter Param_FarClip = Effect.Parameters["FarClip"];
-            public static readonly EffectParameter Param_Texture = Effect.Parameters["Texture"];
-            public static readonly EffectParameter Param_DepthMap = Effect.Parameters["DepthMap"];
-            public static readonly EffectParameter Param_IdColor = Effect.Parameters["IdColor"];
-
-            public static readonly EffectTechnique Technique_Billboard = Effect.Techniques["Billboard"];
-            public static readonly EffectTechnique Technique_Id = Effect.Techniques["Id"];
-        }
-
-        //Temporal AntiAliasing
-
+        // PostProcessing
 
         public static class PostProcssing
         {
             //Vignette and CA
-            public static readonly Effect Effect = ShaderGlobals.content.Load<Effect>("shaders/postprocessing/postprocessing");
+            public static readonly Effect Effect = Globals.content.Load<Effect>("shaders/postprocessing/postprocessing");
             public static readonly EffectParameter Param_ScreenTexture = Effect.Parameters["ScreenTexture"];
             public static readonly EffectParameter Param_ChromaticAbberationStrength = Effect.Parameters["ChromaticAbberationStrength"];
             public static readonly EffectParameter Param_SCurveStrength = Effect.Parameters["SCurveStrength"];
@@ -78,17 +40,12 @@ namespace DeferredEngine.Recources
             public static readonly EffectTechnique Technique_Base = Effect.Techniques["Base"];
         }
 
-        //Hologram Effect
-        public static class Hologram
-        {
-            public static readonly Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/Hologram/HologramEffect");
-            public static readonly EffectParameter Param_World = Effect.Parameters["World"];
-            public static readonly EffectParameter Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
-        }
+
+
         //ScreenSpaceReflection Effect
         public static class SSR
         {
-            public static readonly Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/ScreenSpace/ScreenSpaceReflections");
+            public static readonly Effect Effect = Globals.content.Load<Effect>("Shaders/ScreenSpace/ScreenSpaceReflections");
 
             public static readonly EffectParameter Param_DepthMap = Effect.Parameters["DepthMap"];
             public static readonly EffectParameter Param_NormalMap = Effect.Parameters["NormalMap"];
@@ -105,10 +62,9 @@ namespace DeferredEngine.Recources
         }
 
         //Screen Space Ambient Occlusion Effect
-
         public static class SSAO
         {
-            public static readonly Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/ScreenSpace/ScreenSpaceAO");
+            public static readonly Effect Effect = Globals.content.Load<Effect>("Shaders/ScreenSpace/ScreenSpaceAO");
 
             public static readonly EffectParameter Param_SSAOMap = Effect.Parameters["SSAOMap"];
             public static readonly EffectParameter Param_NormalMap = Effect.Parameters["NormalMap"];
@@ -130,78 +86,14 @@ namespace DeferredEngine.Recources
             public static readonly EffectTechnique Technique_SSAO = Effect.Techniques["SSAO"];
             public static readonly EffectTechnique Technique_BlurHorizontal = Effect.Techniques["BilateralHorizontal"];
             public static readonly EffectTechnique Technique_BlurVertical = Effect.Techniques["BilateralVertical"];
-        }
 
-        //Gaussian Blur
-        public static class GaussianBlur
-        {
-            public static readonly Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/ScreenSpace/GaussianBlur");
-            public static readonly EffectParameter Param_InverseResolution = Effect.Parameters["InverseResolution"];
-            public static readonly EffectParameter Param_TargetMap = Effect.Parameters["TargetMap"];
-        }
-
-        //DeferredCompose
-        public static class DeferredCompose
-        {
-            public static readonly Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/Deferred/DeferredCompose");
-
-            public static readonly EffectParameter Param_ColorMap = Effect.Parameters["colorMap"];
-            public static readonly EffectParameter Param_NormalMap = Effect.Parameters["normalMap"];
-            public static readonly EffectParameter Param_diffuseLightMap = Effect.Parameters["diffuseLightMap"];
-            public static readonly EffectParameter Param_specularLightMap = Effect.Parameters["specularLightMap"];
-            public static readonly EffectParameter Param_volumeLightMap = Effect.Parameters["volumeLightMap"];
-            public static readonly EffectParameter Param_HologramMap = Effect.Parameters["HologramMap"];
-            public static readonly EffectParameter Param_SSAOMap = Effect.Parameters["SSAOMap"];
-            public static readonly EffectParameter Param_LinearMap = Effect.Parameters["LinearMap"];
-            public static readonly EffectParameter Param_SSRMap = Effect.Parameters["SSRMap"];
-            public static readonly EffectParameter Param_UseSSAO = Effect.Parameters["useSSAO"];
-
-            public static readonly EffectTechnique Technique_NonLinear = Effect.Techniques["TechniqueNonLinear"];
-            public static readonly EffectTechnique Technique_Linear = Effect.Techniques["TechniqueLinear"];
-        }
-
-        //Deferred Clear
-        public static class DeferredClear
-        {
-            public static readonly Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/Deferred/DeferredClear");
-        }
-
-        //Directional light
-        public static class DeferredDirectionalLight
-        {
-            public static readonly Effect Effect = ShaderGlobals.content.Load<Effect>("Shaders/Deferred/DeferredDirectionalLight");
-
-            public static readonly EffectTechnique Technique_Unshadowed = Effect.Techniques["Unshadowed"];
-            public static readonly EffectTechnique Technique_SSShadowed = Effect.Techniques["SSShadowed"];
-            public static readonly EffectTechnique Technique_Shadowed = Effect.Techniques["Shadowed"];
-            public static readonly EffectTechnique Technique_ShadowOnly = Effect.Techniques["ShadowOnly"];
-
-            public static readonly EffectParameter Param_ViewProjection = Effect.Parameters["ViewProjection"];
-            public static readonly EffectParameter Param_FrustumCorners = Effect.Parameters["FrustumCorners"];
-            public static readonly EffectParameter Param_CameraPosition = Effect.Parameters["cameraPosition"];
-            public static readonly EffectParameter Param_InverseViewProjection = Effect.Parameters["InvertViewProjection"];
-            public static readonly EffectParameter Param_LightViewProjection = Effect.Parameters["LightViewProjection"];
-            public static readonly EffectParameter Param_LightView = Effect.Parameters["LightView"];
-            public static readonly EffectParameter Param_LightFarClip = Effect.Parameters["LightFarClip"];
-
-            public static readonly EffectParameter Param_LightColor = Effect.Parameters["lightColor"];
-            public static readonly EffectParameter Param_LightIntensity = Effect.Parameters["lightIntensity"];
-            public static readonly EffectParameter Param_LightDirection = Effect.Parameters["LightVector"];
-            public static readonly EffectParameter Param_ShadowFiltering = Effect.Parameters["ShadowFiltering"];
-            public static readonly EffectParameter Param_ShadowMapSize = Effect.Parameters["ShadowMapSize"];
-
-            public static readonly EffectParameter Param_AlbedoMap = Effect.Parameters["AlbedoMap"];
-            public static readonly EffectParameter Param_NormalMap = Effect.Parameters["NormalMap"];
-            public static readonly EffectParameter Param_DepthMap = Effect.Parameters["DepthMap"];
-
-            public static readonly EffectParameter Param_ShadowMap = Effect.Parameters["ShadowMap"];
-            public static readonly EffectParameter Param_SSShadowMap = Effect.Parameters["SSShadowMap"];
-
-            public static void SetGBufferParams(GBufferTarget gBufferTarget)
+            public static void SetCameraAndMatrices(Vector3 cameraPosition, PipelineMatrices matrices)
             {
-                Param_AlbedoMap.SetValue(gBufferTarget.Albedo);
-                Param_NormalMap.SetValue(gBufferTarget.Normal);
-                Param_DepthMap.SetValue(gBufferTarget.Depth);
+                Shaders.SSAO.Param_InverseViewProjection.SetValue(matrices.InverseViewProjection);
+                Shaders.SSAO.Param_Projection.SetValue(matrices.Projection);
+                Shaders.SSAO.Param_ViewProjection.SetValue(matrices.ViewProjection);
+
+                Shaders.SSAO.Param_CameraPosition.SetValue(cameraPosition);
             }
 
         }

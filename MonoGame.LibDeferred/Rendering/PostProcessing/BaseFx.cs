@@ -15,8 +15,7 @@ namespace DeferredEngine.Renderer.PostProcessing
         }
         protected void Draw(EffectPass pass)
         {
-            if (pass != null)
-                pass.Apply();
+            pass?.Apply();
             this.Draw();
         }
         protected void Draw()

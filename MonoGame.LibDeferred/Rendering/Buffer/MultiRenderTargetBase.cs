@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using System;
 
 namespace DeferredEngine.Renderer
 {
+
     public abstract class MultiRenderTargetBase : IDisposable
     {
         protected GraphicsDevice _graphicsDevice;
@@ -13,6 +13,8 @@ namespace DeferredEngine.Renderer
 
         public RenderTargetBinding[] Bindings => _bindings;
         public RenderTarget2D[] RenderTargets => _renderTargets;
+
+        public RenderTarget2D this[int index] => _renderTargets[index];
 
         public MultiRenderTargetBase(GraphicsDevice graphicsDevice, int width, int height, int numberOfTargets)
         {

@@ -1,5 +1,4 @@
 ﻿using DeferredEngine.Entities;
-using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -14,9 +13,9 @@ namespace DeferredEngine.Renderer.Helper
         private ModelMeshPart _mesh;
         private BoundingSphere _meshBoundingSphere;
 
-        private List<TransformableObject> _transforms = new List<TransformableObject>(InitialLibrarySize);
-        private List<Vector3> _worldBoundingCenters = new List<Vector3>(InitialLibrarySize);
-        private List<bool> _rendered = new List<bool>(InitialLibrarySize);
+        private readonly List<TransformableObject> _transforms = new List<TransformableObject>(InitialLibrarySize);
+        private readonly List<Vector3> _worldBoundingCenters = new List<Vector3>(InitialLibrarySize);
+        private readonly List<bool> _rendered = new(InitialLibrarySize);
 
         public int Count => _transforms.Count;
 
@@ -49,7 +48,7 @@ namespace DeferredEngine.Renderer.Helper
                 if (cameraHasChanged)
                 {
                     sphere.Center = _worldBoundingCenters[i];
-                    sphere.Radius = _meshBoundingSphere.Radius * transform.Scale.X;
+                    sphere.Radius = _meshBoundingSphere.Radius * transform.World.M11; // previously .Scale.X;
                     if (viewFrustumEx.Contains(sphere) == ContainmentType.Disjoint)
                     {
                         _rendered[i] = false;
@@ -66,11 +65,10 @@ namespace DeferredEngine.Renderer.Helper
             }
 
             //We need to calcualte a new average distance
-            if (hasAnythingChanged && RenderingSettings.g_cpusort)
+            if (hasAnythingChanged)
             {
                 distance = 0;
-
-                for (var i = 0; i < _worldBoundingCenters.Count; i++)
+                for (int i = 0; i < _worldBoundingCenters.Count; i++)
                 {
                     distance += Vector3.DistanceSquared(cameraPosition, _worldBoundingCenters[i]);
                 }

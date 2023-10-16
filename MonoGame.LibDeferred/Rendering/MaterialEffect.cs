@@ -20,12 +20,12 @@ namespace DeferredEngine.Recources
 
         public bool HasShadow = true;
 
-        public bool HasDiffuse;
+        public bool HasAlbedoMap;
         public bool HasRoughnessMap;
         public bool HasMask;
         public bool HasNormalMap;
-        public bool HasMetallic;
-        public bool HasDisplacement;
+        public bool HasMetallicMap;
+        public bool HasDisplacementMap;
 
 
         public Vector3 DiffuseColor = Color.Gray.ToVector3();
@@ -44,7 +44,7 @@ namespace DeferredEngine.Recources
             {
                 if (value == null) return;
                 _albedoMap = value;
-                HasDiffuse = true;
+                HasAlbedoMap = true;
             }
         }
 
@@ -66,7 +66,7 @@ namespace DeferredEngine.Recources
             {
                 if (value == null) return;
                 _metallicMap = value;
-                HasMetallic = true;
+                HasMetallicMap = true;
             }
         }
 
@@ -88,7 +88,7 @@ namespace DeferredEngine.Recources
             {
                 if (value == null) return;
                 _displacementMap = value;
-                HasDisplacement = true;
+                HasDisplacementMap = true;
             }
         }
 
@@ -113,7 +113,6 @@ namespace DeferredEngine.Recources
             Emissive = 3,
             Hologram = 1,
             ProjectHologram = 2,
-            SubsurfaceScattering = 4,
             ForwardShaded = 5,
         }
 
@@ -174,7 +173,7 @@ namespace DeferredEngine.Recources
         {
             if (b == null) return false;
 
-            if (HasDiffuse != b.HasDiffuse) return false;
+            if (HasAlbedoMap != b.HasAlbedoMap) return false;
 
             if (HasRoughnessMap != b.HasRoughnessMap) return false;
 
@@ -186,7 +185,7 @@ namespace DeferredEngine.Recources
 
             if (HasShadow != b.HasShadow) return false;
 
-            if (HasDisplacement != b.HasDisplacement) return false;
+            if (HasDisplacementMap != b.HasDisplacementMap) return false;
 
             if (Vector3.DistanceSquared(DiffuseColor, b.DiffuseColor) > 0.01f) return false;
 

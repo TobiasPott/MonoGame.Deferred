@@ -32,5 +32,10 @@ namespace MonoGame.Ext
             return new Vector3((float)Math.Pow(vec3.X, power), (float)Math.Pow(vec3.Y, power), (float)Math.Pow(vec3.Z, power));
         }
 
+        public static float Dot2(this Vector3 v)
+        {
+            return Vector3.Dot(v, v);
+        }
+
     }
 }

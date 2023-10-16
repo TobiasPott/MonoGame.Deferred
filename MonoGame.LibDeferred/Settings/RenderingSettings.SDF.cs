@@ -1,20 +1,20 @@
-﻿using DeferredEngine.Renderer;
-
-namespace DeferredEngine.Recources
+﻿namespace DeferredEngine.Recources
 {
-
 
     public static partial class RenderingSettings
     {
+        public static class SDF
+        {
 
-        public static int sdf_threads = 4;
-        public static bool sdf_cpu = false;
-        public static bool sdf_draw = true;
-        public static bool sdf_drawdistance = false;
-        public static bool sdf_debug = false;
-        public static bool sdf_subsurface = true;
-        public static bool sdf_drawvolume = false;
-        public static bool sdf_regenerate;
+            public static int NumOfCpuThreads = 4;
+            public static bool UseCpu = false;
+            public static bool Draw = true;
+            public static bool DrawDistance = false;
+            public static bool DrawDebug = false;
+            public static bool DrawVolume = false;
+            public static bool Regenerate;
+
+        }
 
     }
 }

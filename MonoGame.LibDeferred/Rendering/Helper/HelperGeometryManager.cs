@@ -1,4 +1,5 @@
 ﻿using DeferredEngine.Entities;
+using DeferredEngine.Renderer.RenderModules;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -9,8 +10,8 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
     {
         private static HelperGeometryManager _instance;
 
-        private LineHelperManager _lineHelperManager;
-        private OctahedronHelperManager _octahedronHelperManager;
+        private readonly LineHelperManager _lineHelperManager;
+        private readonly OctahedronHelperManager _octahedronHelperManager;
 
         public HelperGeometryManager()
         {
@@ -25,10 +26,10 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
             return _instance;
         }
 
-        public void Draw(GraphicsDevice graphics, Matrix viewProjection, EffectParameter worldViewProjParam, EffectParameter globalColorParam, EffectPass vertexColorPass, EffectPass globalColorPass)
+        public void Draw(GraphicsDevice graphics, Matrix viewProjection, HelperGeometryEffectSetup effectSetup)
         {
-            _lineHelperManager.Draw(graphics, viewProjection, worldViewProjParam, vertexColorPass);
-            _octahedronHelperManager.Draw(graphics, viewProjection, worldViewProjParam, globalColorParam, globalColorPass);
+            _lineHelperManager.Draw(graphics, viewProjection, effectSetup.Param_WorldViewProj, effectSetup.Pass_VertexColor);
+            _octahedronHelperManager.Draw(graphics, viewProjection, effectSetup.Param_WorldViewProj, effectSetup.Param_GlobalColor, effectSetup.Pass_GlobalColor);
         }
 
         public void AddLineStartDir(Vector3 start, Vector3 dir, short timer, Color startColor, Color endColor)
@@ -56,7 +57,7 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
             _octahedronHelperManager.AddOctahedron(position, color);
         }
 
-        public void AddBoundingBox(EntityBase entity)
+        public void AddBoundingBox(ModelEntity entity)
         {
             _lineHelperManager.AddBoundingBox(entity);
         }

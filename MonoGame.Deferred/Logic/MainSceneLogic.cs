@@ -1,7 +1,7 @@
 ﻿using DeferredEngine.Entities;
+using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper;
-using DeferredEngine.Renderer.RenderModules.SDF;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -26,19 +26,18 @@ namespace DeferredEngine.Logic
 
 
         //mesh library, holds all the meshes and their materials
-        public MeshMaterialLibrary MeshMaterialLibrary;
+        public DynamicMeshBatcher MeshMaterialLibrary;
 
         public readonly List<ModelEntity> BasicEntities = new List<ModelEntity>();
         public readonly List<Decal> Decals = new List<Decal>();
         public readonly List<DeferredPointLight> PointLights = new List<DeferredPointLight>();
         public readonly List<DeferredDirectionalLight> DirectionalLights = new List<DeferredDirectionalLight>();
-        public EnvironmentProbe EnvironmentSample;
+        public EnvironmentProbe EnvProbe;
 
         //Which render target are we currently displaying?
         private int _renderModeCycle;
 
         //SDF
-        public SdfGenerator _sdfGenerator;
 
         #endregion
 
@@ -55,7 +54,8 @@ namespace DeferredEngine.Logic
         {
             _assets = assets;
 
-            MeshMaterialLibrary = new MeshMaterialLibrary(graphicsDevice);
+            MeshMaterialLibrary = new DynamicMeshBatcher(graphicsDevice);
+            MeshMaterialLibrary.BatchByMaterial = false;
 
             SetUpEditorScene(graphicsDevice);
         }
@@ -73,9 +73,7 @@ namespace DeferredEngine.Logic
 
             Camera = new Camera(position: new Vector3(-88, -11f, 4), lookat: new Vector3(38, 8, 32));
 
-            EnvironmentSample = new EnvironmentProbe(new Vector3(-45, -5, 5));
-
-            _sdfGenerator = new SdfGenerator();
+            EnvProbe = new EnvironmentProbe(new Vector3(-45, -5, 5));
 
             ////////////////////////////////////////////////////////////////////////
             // Static geometry
@@ -170,8 +168,7 @@ namespace DeferredEngine.Logic
                 shadowWorldSize: 450,
                 shadowDepth: 180,
                 shadowResolution: 1024,
-                shadowFilteringFiltering: DeferredDirectionalLight.ShadowFilteringTypes.SoftPCF3x,
-                screenspaceShadowBlur: false);
+                shadowFilteringFiltering: DeferredDirectionalLight.ShadowFilteringTypes.SoftPCF3x);
         }
 
 
@@ -216,7 +213,7 @@ namespace DeferredEngine.Logic
                 _renderModeCycle++;
                 if (_renderModeCycle > Enum.GetNames(typeof(Renderer.RenderModes)).Length - 1) _renderModeCycle = 0;
 
-                RenderingSettings.g_rendermode = (Renderer.RenderModes)_renderModeCycle;
+                RenderingSettings.g_RenderMode = (Renderer.RenderModes)_renderModeCycle;
             }
         }
 
@@ -244,10 +241,10 @@ namespace DeferredEngine.Logic
         /// <param name="shadowDepth">FarClip for shadow mapping</param>
         /// <param name="shadowResolution"></param>
         /// <param name="shadowFilteringFiltering"></param>
-        /// <param name="screenspaceShadowBlur"></param>
-        /// <param name="staticshadows">These shadows will not be updated once they are created, moving objects will be shadowed incorrectly</param>
         /// <returns></returns>
-        private DeferredDirectionalLight AddDirectionalLight(Vector3 direction, int intensity, Color color, Vector3 position = default(Vector3), bool drawShadows = false, float shadowWorldSize = 100, float shadowDepth = 100, int shadowResolution = 512, DeferredDirectionalLight.ShadowFilteringTypes shadowFilteringFiltering = DeferredDirectionalLight.ShadowFilteringTypes.Poisson, bool screenspaceShadowBlur = false, bool staticshadows = false)
+        private DeferredDirectionalLight AddDirectionalLight(Vector3 direction, int intensity, Color color, Vector3 position = default(Vector3),
+            bool drawShadows = false, float shadowWorldSize = 100, float shadowDepth = 100, int shadowResolution = 512, 
+            DeferredDirectionalLight.ShadowFilteringTypes shadowFilteringFiltering = DeferredDirectionalLight.ShadowFilteringTypes.Poisson)
         {
             DeferredDirectionalLight light = new DeferredDirectionalLight(color: color,
                 intensity: intensity,
@@ -255,11 +252,9 @@ namespace DeferredEngine.Logic
                 position: position,
                 castShadows: drawShadows,
                 shadowSize: shadowWorldSize,
-                shadowDepth: shadowDepth,
-                shadowResolution: shadowResolution,
-                shadowFiltering: shadowFilteringFiltering,
-                screenspaceshadowblur: screenspaceShadowBlur,
-                staticshadows: staticshadows);
+                shadowFarClip: shadowDepth,
+                shadowMapResolution: shadowResolution,
+                shadowFiltering: shadowFilteringFiltering);
             DirectionalLights.Add(light);
             return light;
         }
@@ -302,7 +297,7 @@ namespace DeferredEngine.Logic
             ModelEntity entity = new ModelEntity(model,
                 null,
                 position: position,
-                rotationAngles: new Vector3((float)angleX, (float)angleY, (float)angleZ),
+                eulerAngles: new Vector3((float)angleX, (float)angleY, (float)angleZ),
                 scale: Vector3.One * scale,
                 library: MeshMaterialLibrary);
             BasicEntities.Add(entity);
@@ -326,7 +321,7 @@ namespace DeferredEngine.Logic
             ModelEntity entity = new ModelEntity(model,
                 materialEffect,
                 position: position,
-                rotationAngles: new Vector3((float)angleX, (float)angleY, (float)angleZ),
+                eulerAngles: new Vector3((float)angleX, (float)angleY, (float)angleZ),
                 scale: Vector3.One * scale,
                 library: MeshMaterialLibrary);
             BasicEntities.Add(entity);

@@ -28,7 +28,6 @@ namespace DeferredEngine.Renderer.Helper
         public void SetMaterial(MaterialEffect mat) => _material = mat;
         public bool HasMaterial(MaterialEffect mat)
         {
-            if (!RenderingSettings.g_batchbymaterial) return false;
             return mat.Equals(_material);
         }
         public MaterialEffect GetMaterial() => _material;

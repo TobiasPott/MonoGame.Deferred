@@ -8,9 +8,7 @@ namespace DeferredEngine.Renderer.PostProcessing
     [Obsolete($"{nameof(GaussianBlurFx)} is unused and needs refactoring when the rendering pipeline is modularized.")]
     public class GaussianBlurFx : BaseFx
     {
-        private Effect _gaussEffect;
-        private EffectPass _horizontalPass;
-        private EffectPass _verticalPass;
+        private GaussianBlurFxEffectSetup _effectSetup = new GaussianBlurFxEffectSetup();
 
         private RenderTarget2D _rt2562;
         private RenderTarget2D _rt5122;
@@ -21,10 +19,6 @@ namespace DeferredEngine.Renderer.PostProcessing
         public override void Initialize(GraphicsDevice graphicsDevice, FullscreenTriangleBuffer fullScreenTarget)
         {
             base.Initialize(graphicsDevice, fullScreenTarget);
-            _gaussEffect = Shaders.GaussianBlur.Effect;
-
-            _horizontalPass = _gaussEffect.Techniques["GaussianBlur"].Passes["Horizontal"];
-            _verticalPass = _gaussEffect.Techniques["GaussianBlur"].Passes["Vertical"];
 
             _rt2562 = new RenderTarget2D(graphicsDevice, 256, 256, false, SurfaceFormat.Vector2, DepthFormat.None);
             _rt5122 = new RenderTarget2D(graphicsDevice, 512, 512, false, SurfaceFormat.Vector2, DepthFormat.None);
@@ -40,12 +34,12 @@ namespace DeferredEngine.Renderer.PostProcessing
             _rt20482.Dispose();
         }
 
-        public RenderTarget2D DrawGaussianBlur(RenderTarget2D renderTargetOutput)
+        public RenderTarget2D Draw(RenderTarget2D output)
         {
-            this.EnsureRenderTargetFormat(renderTargetOutput, SurfaceFormat.Vector2);
+            this.EnsureRenderTargetFormat(output, SurfaceFormat.Vector2);
 
             //Only square expected
-            int size = renderTargetOutput.Width;
+            int size = output.Width;
             //select rendertarget
             RenderTarget2D renderTargetBlur = GetRenderTarget2D(size);
             this.EnsureRenderTargetReference(renderTargetBlur, null);
@@ -53,24 +47,24 @@ namespace DeferredEngine.Renderer.PostProcessing
             _graphicsDevice.SetRenderTarget(renderTargetBlur);
 
             Vector2 invRes = new Vector2(1.0f / size, 1.0f / size);
-            Shaders.GaussianBlur.Param_InverseResolution.SetValue(invRes);
-            Shaders.GaussianBlur.Param_TargetMap.SetValue(renderTargetOutput);
+            _effectSetup.Param_InverseResolution.SetValue(invRes);
+            _effectSetup.Param_TargetMap.SetValue(output);
 
-            this.Draw(_horizontalPass);
+            this.Draw(_effectSetup.Pass_Horizontal);
 
-            _graphicsDevice.SetRenderTarget(renderTargetOutput);
-            Shaders.GaussianBlur.Param_TargetMap.SetValue(renderTargetBlur);
-            this.Draw(_verticalPass);
+            _graphicsDevice.SetRenderTarget(output);
+            _effectSetup.Param_TargetMap.SetValue(renderTargetBlur);
+            this.Draw(_effectSetup.Pass_Vertical);
 
-            return renderTargetOutput;
+            return output;
         }
 
-        public RenderTargetCube DrawGaussianBlur(RenderTargetCube renderTargetOutput, CubeMapFace cubeFace)
+        public RenderTargetCube Draw(RenderTargetCube outputCube, CubeMapFace cubeFace)
         {
-            this.EnsureRenderTargetFormat(renderTargetOutput, SurfaceFormat.Vector2);
+            this.EnsureRenderTargetFormat(outputCube, SurfaceFormat.Vector2);
 
             //Only square expected
-            int size = renderTargetOutput.Size;
+            int size = outputCube.Size;
             //select rendertarget
             RenderTarget2D renderTargetBlur = GetRenderTarget2D(size);
             this.EnsureRenderTargetReference(renderTargetBlur, null);
@@ -78,15 +72,15 @@ namespace DeferredEngine.Renderer.PostProcessing
             _graphicsDevice.SetRenderTarget(renderTargetBlur);
 
             Vector2 invRes = new Vector2(1.0f / size, 1.0f / size);
-            Shaders.GaussianBlur.Param_InverseResolution.SetValue(invRes);
-            Shaders.GaussianBlur.Param_TargetMap.SetValue(renderTargetOutput);
-            this.Draw(_horizontalPass);
+            _effectSetup.Param_InverseResolution.SetValue(invRes);
+            _effectSetup.Param_TargetMap.SetValue(outputCube);
+            this.Draw(_effectSetup.Pass_Horizontal);
 
-            _graphicsDevice.SetRenderTarget(renderTargetOutput, cubeFace);
-            Shaders.GaussianBlur.Param_TargetMap.SetValue(renderTargetBlur);
-            this.Draw(_verticalPass);
+            _graphicsDevice.SetRenderTarget(outputCube, cubeFace);
+            _effectSetup.Param_TargetMap.SetValue(renderTargetBlur);
+            this.Draw(_effectSetup.Pass_Vertical);
 
-            return renderTargetOutput;
+            return outputCube;
         }
 
         protected RenderTarget2D GetRenderTarget2D(int size)

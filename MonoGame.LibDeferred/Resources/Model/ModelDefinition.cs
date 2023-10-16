@@ -14,21 +14,12 @@ namespace DeferredEngine.Recources
 
         public ModelDefinition(ContentManager content, string assetpath)
         {
-            
             Model = content.Load<Model>(assetpath);
 
-            string bbxpath = content.RootDirectory + "/" + assetpath + ".bbox";
-            //Look if there is a bounding box already created, otherwise create a new one
-            if (!File.Exists(bbxpath) || !DataStream.LoadBoundingBox(bbxpath, out BoundingBox))
-            {
-                CreateBoundingBox(Model);
 
-                //Optionally save that new one
-                if (RenderingSettings.e_saveBoundingBoxes)
-                {
-                    DataStream.SaveBoundingBoxData(BoundingBox, bbxpath);
-                }
-            }
+            // ToDo: @tpott: Implement method without indices output to reduce garbage consumption (not saving increased GC memory quite alot)
+            GeometryDataExtractor.GetVerticesAndIndicesFromModel(Model, out Vector3[] vertices, out _);
+            BoundingBox = BoundingBox.CreateFromPoints(vertices);
 
             //Find the middle
             BoundingBoxOffset = (BoundingBox.Max + BoundingBox.Min) / 2.0f;
@@ -40,15 +31,6 @@ namespace DeferredEngine.Recources
             Model = model;
             BoundingBox = box;
             BoundingBoxOffset = (BoundingBox.Max + BoundingBox.Min) / 2.0f;
-        }
-        
-        protected void CreateBoundingBox(Model model)
-        {
-            Vector3[] vertices;
-            int[] indices;
-            GeometryDataExtractor.GetVerticesAndIndicesFromModel(model, out vertices, out indices);
-
-            BoundingBox = BoundingBox.CreateFromPoints(vertices);
         }
 
     }

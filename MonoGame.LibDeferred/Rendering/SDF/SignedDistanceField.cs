@@ -36,8 +36,7 @@ namespace DeferredEngine.Recources
             Offset = offset;
 
             //Check if our file is available
-            int zdepth;
-            if (File.Exists(texturepath) && DataStream.LoadFromFile(graphics, texturepath, out zdepth, out SdfTexture))
+            if (File.Exists(texturepath) && DataStream.LoadFromFile(graphics, texturepath, out int zdepth, out SdfTexture))
             {
                 TextureResolution.Y = SdfTexture.Height;
                 TextureResolution.Z = zdepth;

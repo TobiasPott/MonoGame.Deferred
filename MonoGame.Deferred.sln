@@ -5,9 +5,9 @@ VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGame.Deferred", "MonoGame.Deferred\MonoGame.Deferred.csproj", "{C6295792-D1EF-4650-942F-C648D1FAD640}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGame.HelperSuite", "MonoGame.HelperSuite\MonoGame.HelperSuite.csproj", "{062C6625-A99A-4367-9CEE-C13F06A51480}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGame.GUI", "MonoGame.GUI\MonoGame.GUI.csproj", "{062C6625-A99A-4367-9CEE-C13F06A51480}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoGame.LibDeferred", "MonoGame.LibDeferred\MonoGame.LibDeferred.csproj", "{CBCDF959-CE80-48AE-8BE1-426EC2606EFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGame.LibDeferred", "MonoGame.LibDeferred\MonoGame.LibDeferred.csproj", "{CBCDF959-CE80-48AE-8BE1-426EC2606EFA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
