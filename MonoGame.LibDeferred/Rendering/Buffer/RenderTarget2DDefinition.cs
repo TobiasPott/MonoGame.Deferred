@@ -49,6 +49,10 @@ namespace DeferredEngine.Renderer
         public static readonly RenderTarget2DDefinition SSFx_AmbientOcclusion = new RenderTarget2DDefinition(false, SurfaceFormat.HalfSingle, DepthFormat.None, 0, RenderTargetUsage.DiscardContents, ResamplingModes.Downsample_x1);
 
 
+        public static readonly RenderTarget2DDefinition Aux_Id = new RenderTarget2DDefinition(false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
+
+
+
 
         public readonly bool MipMap;
         public readonly SurfaceFormat Format;

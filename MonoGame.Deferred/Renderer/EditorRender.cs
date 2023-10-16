@@ -34,7 +34,6 @@ namespace DeferredEngine.Renderer.RenderModules
 
             BillboardRenderer.IdAndOutlineRenderer = IdAndOutlineRenderer;
             IdAndOutlineRenderer.BillboardRenderer = BillboardRenderer;
-
         }
 
         public void Update(GameTime gameTime)
@@ -78,7 +77,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             _graphicsDevice.BlendState = BlendState.Opaque;
 
-            IdAndOutlineRenderer.DrawGizmos(matrices, gizmoContext);
+            IdAndOutlineRenderer.DrawTransformGizmos(matrices, gizmoContext);
             BillboardRenderer.DrawEditorBillboards(scene, envSample, matrices.StaticViewProjection, matrices.View, gizmoContext);
         }
 

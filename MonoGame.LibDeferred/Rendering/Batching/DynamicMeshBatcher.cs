@@ -268,8 +268,8 @@ namespace DeferredEngine.Renderer.Helper
                 MaterialEffect material = matLib.GetMaterial();
 
                 //Check if alpha or opaque!
-                if (renderType == RenderType.Opaque && material.IsTransparent 
-                    || renderType == RenderType.Opaque && material.Type == MaterialEffect.MaterialTypes.ForwardShaded) 
+                if (renderType == RenderType.Opaque && material.IsTransparent
+                    || renderType == RenderType.Opaque && material.Type == MaterialEffect.MaterialTypes.ForwardShaded)
                     continue;
                 if (renderType == RenderType.Hologram && material.Type != MaterialEffect.MaterialTypes.Hologram)
                     continue;
@@ -277,11 +277,11 @@ namespace DeferredEngine.Renderer.Helper
                     continue;
 
                 if (renderType == RenderType.Forward &&
-                    material.Type != MaterialEffect.MaterialTypes.ForwardShaded) 
+                    material.Type != MaterialEffect.MaterialTypes.ForwardShaded)
                     continue;
 
                 //Set the appropriate Shader for the material
-                if ((renderType == RenderType.ShadowOmnidirectional || renderType == RenderType.ShadowLinear) 
+                if ((renderType == RenderType.ShadowOmnidirectional || renderType == RenderType.ShadowLinear)
                     && !material.HasShadow)
                     continue;
 
@@ -307,12 +307,12 @@ namespace DeferredEngine.Renderer.Helper
                     for (int index = 0; index < meshLib.Count; index++)
                     {
                         //If it's set to "not rendered" skip
-                        if (!meshLib.Rendered[index]) 
+                        if (!meshLib.Rendered[index])
                             continue;
 
                         Matrix localWorldMatrix = meshLib.GetTransforms()[index].World;
 
-                        if (!ApplyShaders(renderType, renderModule, localWorldMatrix, view, viewProjection, meshLib, index, outlineId, outlined)) 
+                        if (!ApplyShaders(renderType, renderModule, localWorldMatrix, view, viewProjection, meshLib, index, outlineId, outlined))
                             continue;
                         RenderingStats.MeshDraws++;
 
@@ -410,54 +410,66 @@ namespace DeferredEngine.Renderer.Helper
 
         private bool ApplyShaders(RenderType renderType, IRenderModule renderModule, Matrix localToWorldMatrix, Matrix? view, Matrix viewProjection, MeshBatch meshLib, int index, int outlineId, bool outlined)
         {
-            if (renderType == RenderType.Opaque
-                || renderType == RenderType.ShadowLinear
-                || renderType == RenderType.ShadowOmnidirectional
-                || renderType == RenderType.Forward)
+            switch (renderType)
             {
-                renderModule.Apply(localToWorldMatrix, view, viewProjection);
-            }
-            else if (renderType == RenderType.Hologram)
-            {
-                HologramEffectSetup.Instance.Param_World.SetValue(localToWorldMatrix);
-                HologramEffectSetup.Instance.Param_WorldViewProj.SetValue(localToWorldMatrix * viewProjection);
-                HologramEffectSetup.Instance.Effect.CurrentTechnique.Passes[0].Apply();
-            }
-            else if (renderType == RenderType.IdRender || renderType == RenderType.IdOutline)
-            {
-                // ToDo: @tpott: Extract IdRender and Bilboard Shaders members
-                IdAndOutlineEffectSetup.Instance.Param_WorldViewProj.SetValue(localToWorldMatrix * viewProjection);
-
-                int id = meshLib.GetTransforms()[index].Id;
-
-                if (renderType == RenderType.IdRender)
-                {
-                    IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(IdGenerator.GetColorFromId(id).ToVector4());
-                    IdAndOutlineEffectSetup.Instance.Pass_Id.Apply();
-                }
-                if (renderType == RenderType.IdOutline)
-                {
-
-                    //Is this the Id we want to outline?
-                    if (id == outlineId)
-                    {
-                        _graphicsDevice.RasterizerState = RasterizerState.CullNone;
-
-                        IdAndOutlineEffectSetup.Instance.Param_World.SetValue(localToWorldMatrix);
-
-                        if (outlined)
-                            IdAndOutlineEffectSetup.Instance.Pass_Outline.Apply();
-                        else
-                            IdAndOutlineEffectSetup.Instance.Pass_Id.Apply();
-                    }
-                    else
+                case RenderType.Opaque:
+                case RenderType.ShadowLinear:
+                case RenderType.ShadowOmnidirectional:
+                case RenderType.Forward:
+                    renderModule.Apply(localToWorldMatrix, view, viewProjection);
+                    break;
+                case RenderType.Hologram:
+                    ApplyHologramShaders(localToWorldMatrix, viewProjection);
+                    break;
+                case RenderType.IdRender:
+                case RenderType.IdOutline:
+                    if (!ApplyIdAndOutlineShaders(renderType, localToWorldMatrix, viewProjection, meshLib, index, outlineId, outlined))
                         return false;
-                }
-
+                    break;
             }
-
             return true;
         }
+
+        private void ApplyHologramShaders(Matrix localToWorldMatrix, Matrix viewProjection)
+        {
+            HologramEffectSetup.Instance.Param_World.SetValue(localToWorldMatrix);
+            HologramEffectSetup.Instance.Param_WorldViewProj.SetValue(localToWorldMatrix * viewProjection);
+            HologramEffectSetup.Instance.Effect.CurrentTechnique.Passes[0].Apply();
+        }
+
+        private bool ApplyIdAndOutlineShaders(RenderType renderType, Matrix localToWorldMatrix, Matrix viewProjection, MeshBatch meshBatch, int index, int outlineId, bool outlined)
+        {
+            // ToDo: @tpott: Extract IdRender and Bilboard Shaders members
+            IdAndOutlineEffectSetup.Instance.Param_WorldViewProj.SetValue(localToWorldMatrix * viewProjection);
+
+            int id = meshBatch.GetTransforms()[index].Id;
+
+            if (renderType == RenderType.IdRender)
+            {
+                IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(IdGenerator.GetColorFromId(id).ToVector4());
+                IdAndOutlineEffectSetup.Instance.Pass_Id.Apply();
+            }
+            if (renderType == RenderType.IdOutline)
+            {
+
+                //Is this the Id we want to outline?
+                if (id == outlineId)
+                {
+                    _graphicsDevice.RasterizerState = RasterizerState.CullNone;
+
+                    IdAndOutlineEffectSetup.Instance.Param_World.SetValue(localToWorldMatrix);
+
+                    if (outlined)
+                        IdAndOutlineEffectSetup.Instance.Pass_Outline.Apply();
+                    else
+                        IdAndOutlineEffectSetup.Instance.Pass_Id.Apply();
+                }
+                else
+                    return false;
+            }
+            return true;
+        }
+
 
         private void PerMaterialSettings(RenderType renderType, MaterialEffect material, IRenderModule renderModule)
         {

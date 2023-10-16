@@ -29,7 +29,20 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice = graphicsDevice;
         }
 
-        public void Draw(DynamicMeshBatcher meshMat, EntitySceneGroup scene, EnvironmentProbe envSample,
+        public RenderTarget2D GetRenderTarget2D()
+        {
+            return _idAndOutlineRenderTarget2D;
+        }
+
+
+        public void SetUpRenderTarget(int width, int height)
+        {
+            if (_idAndOutlineRenderTarget2D != null) _idAndOutlineRenderTarget2D.Dispose();
+
+            _idAndOutlineRenderTarget2D = RenderTarget2DDefinition.Aux_Id.CreateRenderTarget(_graphicsDevice, width, height);
+        }
+
+        public void Draw(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, EnvironmentProbe envSample,
             PipelineMatrices matrices, GizmoDrawContext drawContext, bool mouseMoved)
         {
             if (drawContext.GizmoTransformationMode)
@@ -40,15 +53,15 @@ namespace DeferredEngine.Renderer.RenderModules
             }
 
             if (mouseMoved)
-                DrawIds(meshMat, scene, matrices, envSample, drawContext);
+                DrawIds(meshBatcher, scene, matrices, envSample, drawContext);
 
             if (RenderingSettings.e_DrawOutlines)
-                DrawOutlines(meshMat, matrices, mouseMoved, HoveredId, drawContext, mouseMoved);
+                DrawOutlines(meshBatcher, matrices, mouseMoved, HoveredId, drawContext, mouseMoved);
         }
 
         public BillboardRenderer BillboardRenderer;
 
-        public void DrawIds(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, PipelineMatrices matrices, EnvironmentProbe envSample, GizmoDrawContext gizmoContext)
+        private void DrawIds(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, PipelineMatrices matrices, EnvironmentProbe envSample, GizmoDrawContext gizmoContext)
         {
 
             _graphicsDevice.SetRenderTarget(_idAndOutlineRenderTarget2D);
@@ -63,7 +76,7 @@ namespace DeferredEngine.Renderer.RenderModules
             BillboardRenderer?.DrawSceneBillboards(scene, envSample, matrices);
 
             //Now onto the gizmos
-            DrawGizmos(matrices.ViewProjection, gizmoContext);
+            DrawTransformGizmo(matrices.ViewProjection, gizmoContext);
 
             Rectangle sourceRectangle =
             new Rectangle(Mouse.GetState().X, Mouse.GetState().Y, 1, 1);
@@ -82,7 +95,7 @@ namespace DeferredEngine.Renderer.RenderModules
         }
 
 
-        public void DrawGizmos(PipelineMatrices matrices, GizmoDrawContext gizmoContext)
+        public void DrawTransformGizmos(PipelineMatrices matrices, GizmoDrawContext gizmoContext)
         {
             if (gizmoContext.SelectedObjectId == 0) return;
 
@@ -90,15 +103,15 @@ namespace DeferredEngine.Renderer.RenderModules
             GizmoModes gizmoMode = gizmoContext.GizmoMode;
             Matrix rotation = (RenderingStats.e_LocalTransformation || gizmoMode == GizmoModes.Scale) ? gizmoContext.SelectedObject.RotationMatrix : Matrix.Identity;
 
-            DrawArrow(_graphicsDevice, position, rotation, new Vector3(0, 0, 0), this.HoveredId == 1 ? 1 : 0.5f, Color.Blue, matrices.StaticViewProjection, gizmoMode); //z 1
-            DrawArrow(_graphicsDevice, position, rotation, new Vector3((float)-Math.PI / 2, 0, 0), this.HoveredId == 2 ? 1 : 0.5f, Color.Green, matrices.StaticViewProjection, gizmoMode); //y 2
-            DrawArrow(_graphicsDevice, position, rotation, new Vector3(0, (float)Math.PI / 2, 0), this.HoveredId == 3 ? 1 : 0.5f, Color.Red, matrices.StaticViewProjection, gizmoMode); //x 3
+            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, new Vector3(0, 0, 0), this.HoveredId == 1 ? 1 : 0.5f, Color.Blue, matrices.StaticViewProjection, gizmoMode); //z 1
+            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, new Vector3((float)-Math.PI / 2, 0, 0), this.HoveredId == 2 ? 1 : 0.5f, Color.Green, matrices.StaticViewProjection, gizmoMode); //y 2
+            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, new Vector3(0, (float)Math.PI / 2, 0), this.HoveredId == 3 ? 1 : 0.5f, Color.Red, matrices.StaticViewProjection, gizmoMode); //x 3
 
-            DrawArrow(_graphicsDevice, position, rotation, new Vector3((float)Math.PI, 0, 0), this.HoveredId == 1 ? 1 : 0.5f, Color.Blue, matrices.StaticViewProjection, gizmoMode); //z 1
-            DrawArrow(_graphicsDevice, position, rotation, new Vector3((float)Math.PI / 2, 0, 0), this.HoveredId == 2 ? 1 : 0.5f, Color.Green, matrices.StaticViewProjection, gizmoMode); //y 2
-            DrawArrow(_graphicsDevice, position, rotation, new Vector3(0, (float)-Math.PI / 2, 0), this.HoveredId == 3 ? 1 : 0.5f, Color.Red, matrices.StaticViewProjection, gizmoMode); //x 3
+            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, new Vector3((float)Math.PI, 0, 0), this.HoveredId == 1 ? 1 : 0.5f, Color.Blue, matrices.StaticViewProjection, gizmoMode); //z 1
+            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, new Vector3((float)Math.PI / 2, 0, 0), this.HoveredId == 2 ? 1 : 0.5f, Color.Green, matrices.StaticViewProjection, gizmoMode); //y 2
+            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, new Vector3(0, (float)-Math.PI / 2, 0), this.HoveredId == 3 ? 1 : 0.5f, Color.Red, matrices.StaticViewProjection, gizmoMode); //x 3
         }
-        public void DrawGizmos(Matrix staticViewProjection, GizmoDrawContext gizmoContext)
+        private void DrawTransformGizmo(Matrix staticViewProjection, GizmoDrawContext gizmoContext)
         {
             if (gizmoContext.SelectedObjectId == 0) return;
 
@@ -106,17 +119,16 @@ namespace DeferredEngine.Renderer.RenderModules
             GizmoModes gizmoMode = gizmoContext.GizmoMode;
             Matrix rotation = (RenderingStats.e_LocalTransformation || gizmoContext.GizmoMode == GizmoModes.Scale) ? gizmoContext.SelectedObject.RotationMatrix : Matrix.Identity;
 
-            //Z
-            DrawArrow(_graphicsDevice, position, rotation, new Vector3(0, 0, 0), this.HoveredId == 1 ? 1 : 0.5f, new Color(1, 0, 0), staticViewProjection, gizmoMode);
-            DrawArrow(_graphicsDevice, position, rotation, new Vector3((float)-Math.PI / 2.0f, 0, 0), this.HoveredId == 2 ? 1 : 0.5f, new Color(2, 0, 0), staticViewProjection, gizmoMode);
-            DrawArrow(_graphicsDevice, position, rotation, new Vector3(0, (float)Math.PI / 2.0f, 0), this.HoveredId == 3 ? 1 : 0.5f, new Color(3, 0, 0), staticViewProjection, gizmoMode);
+            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, new Vector3(0, 0, 0), this.HoveredId == 1 ? 1 : 0.5f, new Color(1, 0, 0), staticViewProjection, gizmoMode);
+            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, new Vector3((float)-Math.PI / 2.0f, 0, 0), this.HoveredId == 2 ? 1 : 0.5f, new Color(2, 0, 0), staticViewProjection, gizmoMode);
+            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, new Vector3(0, (float)Math.PI / 2.0f, 0), this.HoveredId == 3 ? 1 : 0.5f, new Color(3, 0, 0), staticViewProjection, gizmoMode);
 
-            DrawArrow(_graphicsDevice, position, rotation, new Vector3((float)Math.PI, 0, 0), this.HoveredId == 1 ? 1 : 0.5f, new Color(1, 0, 0), staticViewProjection, gizmoMode);
-            DrawArrow(_graphicsDevice, position, rotation, new Vector3((float)Math.PI / 2.0f, 0, 0), this.HoveredId == 2 ? 1 : 0.5f, new Color(2, 0, 0), staticViewProjection, gizmoMode);
-            DrawArrow(_graphicsDevice, position, rotation, new Vector3(0, (float)-Math.PI / 2.0f, 0), this.HoveredId == 3 ? 1 : 0.5f, new Color(3, 0, 0), staticViewProjection, gizmoMode);
+            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, new Vector3((float)Math.PI, 0, 0), this.HoveredId == 1 ? 1 : 0.5f, new Color(1, 0, 0), staticViewProjection, gizmoMode);
+            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, new Vector3((float)Math.PI / 2.0f, 0, 0), this.HoveredId == 2 ? 1 : 0.5f, new Color(2, 0, 0), staticViewProjection, gizmoMode);
+            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, new Vector3(0, (float)-Math.PI / 2.0f, 0), this.HoveredId == 3 ? 1 : 0.5f, new Color(3, 0, 0), staticViewProjection, gizmoMode);
 
         }
-        public static void DrawArrow(GraphicsDevice graphicsDevice, Vector3 position, Matrix rotationObject, Vector3 angles, float scale,
+        private static void DrawTransformGizmoAxis(GraphicsDevice graphicsDevice, Vector3 position, Matrix rotationObject, Vector3 angles, float scale,
             Color color, Matrix staticViewProjection, GizmoModes gizmoMode = GizmoModes.Translation, Vector3? direction = null)
         {
             Matrix rotation = (direction != null) ? Matrix.CreateLookAt(Vector3.Zero, (Vector3)direction, Vector3.UnitX) : angles.ToMatrixRotationXYZ();
@@ -136,8 +148,7 @@ namespace DeferredEngine.Renderer.RenderModules
             graphicsDevice.Indices = (meshpart.IndexBuffer);
             graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, vertexOffset, startIndex, primitiveCount);
         }
-
-        public void DrawOutlines(DynamicMeshBatcher meshMat, PipelineMatrices matrices, bool drawAll, int hoveredId, GizmoDrawContext gizmoContext, bool mouseMoved)
+        private void DrawOutlines(DynamicMeshBatcher meshMat, PipelineMatrices matrices, bool drawAll, int hoveredId, GizmoDrawContext gizmoContext, bool mouseMoved)
         {
             _graphicsDevice.SetRenderTarget(_idAndOutlineRenderTarget2D);
 
@@ -173,18 +184,6 @@ namespace DeferredEngine.Renderer.RenderModules
             }
         }
 
-        public RenderTarget2D GetRenderTarget2D()
-        {
-            return _idAndOutlineRenderTarget2D;
-        }
-
-
-        public void SetUpRenderTarget(int width, int height)
-        {
-            if (_idAndOutlineRenderTarget2D != null) _idAndOutlineRenderTarget2D.Dispose();
-
-            _idAndOutlineRenderTarget2D = new RenderTarget2D(_graphicsDevice, width, height, false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
-        }
 
         public bool ApplyShaders(DynamicMeshBatcher.RenderType renderType, Matrix localToWorldMatrix, Matrix viewProjection, MeshBatch meshLib, int index, int outlineId, bool outlined)
         {

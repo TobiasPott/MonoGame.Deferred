@@ -62,7 +62,6 @@ namespace DeferredEngine.Recources
         }
 
         //Screen Space Ambient Occlusion Effect
-
         public static class SSAO
         {
             public static readonly Effect Effect = Globals.content.Load<Effect>("Shaders/ScreenSpace/ScreenSpaceAO");
