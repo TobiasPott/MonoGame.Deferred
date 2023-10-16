@@ -10,11 +10,6 @@
             //public static bool MapUpdateOnEveryFrame = true;
             public static int MapResolution = 1024;
 
-            public static void ApplyDefaultsEnvironmentMap()
-            {
-                Enabled = true;
-            }
-
         }
 
     }

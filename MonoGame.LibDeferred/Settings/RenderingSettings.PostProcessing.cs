@@ -3,11 +3,6 @@
 
     public static partial class RenderingSettings
     {
-        public static void ApplyDefaultsPostProcessing()
-        {
-            g_PostProcessing = true;
-        }
-
 
         public static bool g_PostProcessing = true;
 

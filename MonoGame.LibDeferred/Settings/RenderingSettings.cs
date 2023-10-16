@@ -31,14 +31,8 @@ namespace DeferredEngine.Recources
         public static void ApplySettings()
         {
             ApplyDefaultsSSAO();
-
-            ApplyDefaultsPostProcessing();
-
-            EnvironmentMapping.ApplyDefaultsEnvironmentMap();
-
             ApplyDefaultsSSR();
 
-            d_DefaultMaterial = false;
             SCurveStrength = _sCurveStrength;
             Exposure = _exposure;
             ChromaticAbberationStrength = _chromaticAbberationStrength;
