@@ -31,6 +31,16 @@ namespace DeferredEngine.Renderer
         public readonly IdAndOutlineRenderModule IdAndOutline;
 
 
+        public float FarClip
+        {
+            set
+            {
+                GBuffer.FarClip = value;
+                Decal.FarClip = value;
+                PointLight.FarClip = value;
+                Billboard.FarClip = value;
+            }
+        }
 
         public PipelineModuleStack(ContentManager content)
         {

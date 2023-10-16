@@ -355,11 +355,7 @@ namespace DeferredEngine.Renderer
             if (Math.Abs(_g_FarClip - RenderingSettings.g_FarPlane) > 0.0001f)
             {
                 _g_FarClip = RenderingSettings.g_FarPlane;
-                _moduleStack.GBuffer.FarClip = _g_FarClip;
-                _moduleStack.Decal.FarClip = _g_FarClip;
-                _moduleStack.PointLight.FarClip = _g_FarClip;
-
-                _moduleStack.Billboard.FarClip = _g_FarClip;
+                _moduleStack.FarClip = _g_FarClip;
 
                 Shaders.SSR.Param_FarClip.SetValue(_g_FarClip);
                 Shaders.ReconstructDepth.Param_FarClip.SetValue(_g_FarClip);
