@@ -25,6 +25,10 @@ namespace DeferredEngine.Renderer.Helper
         public List<TransformableObject> GetTransforms() => _transforms;
         public List<bool> Rendered => _rendered;
 
+
+        public bool IsAnyRendered => _rendered.Any(x => x);
+
+
         public Vector3 GetBoundingCenterWorld(int index)
         {
             return _worldBoundingCenters[index];

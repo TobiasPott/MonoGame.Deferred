@@ -12,7 +12,7 @@ namespace DeferredEngine.Renderer.Helper
     {
         private const int InitialLibrarySize = 2;
 
-        private MaterialEffect _material;
+        public MaterialEffect Material { get; protected set; }
 
         //Determines how many different meshes we have per texture. 
         private List<MeshBatch> _batches = new List<MeshBatch>(InitialLibrarySize);
@@ -25,12 +25,11 @@ namespace DeferredEngine.Renderer.Helper
         public int Count => _batches.Count;
 
 
-        public void SetMaterial(MaterialEffect mat) => _material = mat;
+        public void SetMaterial(MaterialEffect mat) => Material = mat;
         public bool HasMaterial(MaterialEffect mat)
         {
-            return mat.Equals(_material);
+            return mat.Equals(Material);
         }
-        public MaterialEffect GetMaterial() => _material;
         public List<MeshBatch> GetMeshLibrary() => _batches;
 
 

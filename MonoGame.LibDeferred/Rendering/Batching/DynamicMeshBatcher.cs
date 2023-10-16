@@ -248,25 +248,18 @@ namespace DeferredEngine.Renderer.Helper
                 for (int i = 0; i < matLib.Count; i++)
                 {
                     MeshBatch meshLib = matLib.GetMeshLibrary()[i];
-
-                    //If it's set to "not rendered" skip
-                    for (int j = 0; j < meshLib.Rendered.Count; j++)
+                    if(meshLib.IsAnyRendered)
                     {
-                        if (meshLib.Rendered[j])
-                            isUsed = true;
-
-                        if (isUsed)// && hasAnyObjectMoved)
-                            break;
-
+                        isUsed = true;
+                        break;
                     }
-                }
 
+                }
                 if (!isUsed) continue;
 
                 //Count the draws of different materials!
 
-                MaterialEffect material = matLib.GetMaterial();
-
+                MaterialEffect material = matLib.Material;
                 //Check if alpha or opaque!
                 if (renderType == RenderType.Opaque && material.IsTransparent
                     || renderType == RenderType.Opaque && material.Type == MaterialEffect.MaterialTypes.ForwardShaded)
@@ -349,17 +342,11 @@ namespace DeferredEngine.Renderer.Helper
                             MeshBatch meshLib = matLib.GetMeshLibrary()[i];
                             for (int index = 0; index < meshLib.Count; index++)
                             {
-                                //If it's set to "not rendered" skip
-                                for (int j = 0; j < meshLib.Rendered.Count; j++)
+                                if(meshLib.IsAnyRendered)
                                 {
-                                    if (meshLib.Rendered[j])
-                                    {
-                                        discardFrame = false;
-                                        break;
-                                    }
+                                    discardFrame = false;
+                                    break;
                                 }
-
-                                if (!discardFrame) break;
 
                             }
                         }
