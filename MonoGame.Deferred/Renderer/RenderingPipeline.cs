@@ -6,7 +6,6 @@ using DeferredEngine.Renderer.Helper;
 using DeferredEngine.Renderer.Helper.HelperGeometry;
 using DeferredEngine.Renderer.PostProcessing;
 using DeferredEngine.Renderer.RenderModules;
-using DeferredEngine.Renderer.RenderModules.SDF;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -21,6 +20,13 @@ using System.Diagnostics;
 namespace DeferredEngine.Renderer
 {
 
+
+    [Flags()]
+    public enum EditorPasses
+    {
+        Billboard = 1,
+        IdAndOutline = 2,
+    }
 
     public partial class RenderingPipeline : IDisposable
     {
@@ -115,7 +121,6 @@ namespace DeferredEngine.Renderer
             _auxTargets = new MRT.PipelineTargets(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
 
             _editorRender = new EditorRender();
-            _editorRender.Initialize(graphicsDevice);
 
             _moduleStack.Initialize(graphicsDevice, _spriteBatch);
             _moduleStack.GBuffer.GBufferTarget = _gBufferTarget;
@@ -216,7 +221,7 @@ namespace DeferredEngine.Renderer
 
             //Draw the elements that we are hovering over with outlines
             if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
-                _editorRender.IdAndOutlineRenderer.Draw(meshBatcher, scene, _matrices, gizmoContext, _editorRender.HasMouseMovement);
+                _moduleStack.IdAndOutline.Draw(meshBatcher, scene, _matrices, gizmoContext, _editorRender.HasMouseMovement);
 
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
             RenderMode(_currentOutput);
@@ -245,7 +250,7 @@ namespace DeferredEngine.Renderer
             //return data we have recovered from the editor id, so we know what entity gets hovered/clicked on and can manipulate in the update function
             return new EditorLogic.EditorReceivedData
             {
-                HoveredId = _editorRender.IdAndOutlineRenderer.HoveredId,
+                HoveredId = _moduleStack.IdAndOutline.HoveredId,
                 ViewMatrix = _matrices.View,
                 ProjectionMatrix = _matrices.Projection
             };
@@ -269,9 +274,9 @@ namespace DeferredEngine.Renderer
             if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
             {
                 if (IdAndOutlineRenderModule.e_DrawOutlines)
-                    DrawTextureToScreenToFullScreen(_editorRender.IdAndOutlineRenderer.GetRenderTarget2D(), BlendState.Additive);
+                    DrawTextureToScreenToFullScreen(_moduleStack.IdAndOutline.GetRenderTarget2D(), BlendState.Additive);
 
-                _editorRender.DrawEditor(scene, _matrices, gizmoContext);
+                this.DrawEditorModules(scene, _matrices, gizmoContext, EditorPasses.Billboard | EditorPasses.IdAndOutline);
 
                 if (gizmoContext.SelectedObject != null)
                 {
@@ -294,6 +299,21 @@ namespace DeferredEngine.Renderer
                 _spriteBatch.End();
             }
 
+        }
+
+        public void DrawEditorModules(EntitySceneGroup scene, PipelineMatrices matrices, GizmoDrawContext gizmoContext,
+            EditorPasses passes = EditorPasses.Billboard | EditorPasses.IdAndOutline)
+        {
+            // render directly to the output buffer
+            _graphicsDevice.SetRenderTarget(null);
+            _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+            _graphicsDevice.DepthStencilState = DepthStencilState.Default;
+            _graphicsDevice.BlendState = BlendState.Opaque;
+
+            if (passes.HasFlag(EditorPasses.Billboard))
+                _moduleStack.Billboard.DrawEditorBillboards(scene, matrices, gizmoContext);
+            if (passes.HasFlag(EditorPasses.IdAndOutline))
+                _moduleStack.IdAndOutline.DrawTransformGizmos(matrices, gizmoContext, IdAndOutlineRenderModule.Pass.Color);
         }
 
 
@@ -339,7 +359,7 @@ namespace DeferredEngine.Renderer
                 _moduleStack.Decal.FarClip = _g_FarClip;
                 _moduleStack.PointLight.FarClip = _g_FarClip;
 
-                _editorRender.BillboardRenderer.FarClip = _g_FarClip;
+                _moduleStack.Billboard.FarClip = _g_FarClip;
 
                 Shaders.SSR.Param_FarClip.SetValue(_g_FarClip);
                 Shaders.ReconstructDepth.Param_FarClip.SetValue(_g_FarClip);
@@ -845,8 +865,8 @@ namespace DeferredEngine.Renderer
 
             if (!onlyEssentials)
             {
-                _editorRender.BillboardRenderer.AspectRatio = (float)targetWidth / targetHeight;
-                _editorRender.IdAndOutlineRenderer.SetUpRenderTarget(width, height);
+                _moduleStack.Billboard.AspectRatio = (float)targetWidth / targetHeight;
+                _moduleStack.IdAndOutline.SetUpRenderTarget(width, height);
 
                 _taaFx.Resolution = new Vector2(targetWidth, targetHeight);
 
@@ -873,7 +893,7 @@ namespace DeferredEngine.Renderer
 
         private void UpdateRenderMapBindings(bool onlyEssentials)
         {
-            _editorRender.BillboardRenderer.DepthMap = _gBufferTarget.Depth;
+            _moduleStack.Billboard.DepthMap = _gBufferTarget.Depth;
 
             Shaders.ReconstructDepth.Param_DepthMap.SetValue(_gBufferTarget.Depth);
 

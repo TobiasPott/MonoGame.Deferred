@@ -1,7 +1,4 @@
 ﻿using DeferredEngine.Pipeline.Lighting;
-using DeferredEngine.Recources;
-using DeferredEngine.Renderer.Helper;
-using DeferredEngine.Renderer.PostProcessing;
 using DeferredEngine.Renderer.RenderModules;
 using DeferredEngine.Renderer.RenderModules.SDF;
 using Microsoft.Xna.Framework.Content;
@@ -30,6 +27,8 @@ namespace DeferredEngine.Renderer
         public readonly DecalRenderModule Decal;
         public readonly HelperRenderModule Helper;
 
+        public readonly BillboardRenderModule Billboard;
+        public readonly IdAndOutlineRenderModule IdAndOutline;
 
 
 
@@ -49,6 +48,11 @@ namespace DeferredEngine.Renderer
             Helper = new HelperRenderModule();
             DistanceField = new DistanceFieldRenderModule() { EnvironmentProbeRenderModule = Environment, PointLightRenderModule = PointLight };
 
+            Billboard = new BillboardRenderModule();
+            IdAndOutline = new IdAndOutlineRenderModule();
+
+            Billboard.IdAndOutlineRenderer = IdAndOutline;
+            IdAndOutline.BillboardRenderer = Billboard;
         }
         public void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         {
@@ -66,11 +70,14 @@ namespace DeferredEngine.Renderer
             Helper.Initialize(graphicsDevice);
             DistanceField.Initialize(graphicsDevice, spriteBatch);
 
+            Billboard.Initialize(graphicsDevice);
+            IdAndOutline.Initialize(graphicsDevice);
+
         }
 
         public void SetGBufferParams(GBufferTarget gBufferTarget)
         {
-            //_editorRender.BillboardRenderer.DepthMap = gBufferTarget.Depth;
+            Billboard.DepthMap = gBufferTarget.Depth;
 
             PointLight.SetGBufferParams(gBufferTarget);
             DirectionalLight.SetGBufferParams(gBufferTarget);
