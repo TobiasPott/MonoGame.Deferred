@@ -1,6 +1,4 @@
-﻿//#define SHOWTILES
-
-using DeferredEngine.Entities;
+﻿using DeferredEngine.Entities;
 using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper;
@@ -18,17 +16,12 @@ namespace DeferredEngine.Renderer.RenderModules
 
 
         private const int MAXLIGHTS = 40;
-        private const int MAXLIGHTSPERTILE = 40;
 
         private Vector3[] LightPositionWS;
         private float[] LightRadius;
         private float[] LightIntensity;
         private Vector3[] LightColor;
 
-        private int[][] TiledList;
-        private float[] TiledListLength;
-        private BoundingFrustumEx _tileFrustum;
-        private Vector3[] _tileFrustumCorners = new Vector3[8];
 
 
         public ForwardPipelineModule(ContentManager content, string shaderPath = "Shaders/forward/forward")
@@ -58,106 +51,8 @@ namespace DeferredEngine.Renderer.RenderModules
         {
             SetupLighting(camera, pointLights, frustum);
 
-            //TiledLighting(frustum, pointLights, 20, 10);
         }
 
-        private void TiledLighting(BoundingFrustum frustum, List<DeferredPointLight> pointLights, int cols, int rows)
-        {
-            if (TiledList == null || TiledList.Length != cols * rows)
-            {
-                TiledList = new int[cols * rows][];
-                TiledListLength = new float[cols * rows];
-
-                for (var index = 0; index < TiledList.Length; index++)
-                {
-                    TiledList[index] = new int[MAXLIGHTSPERTILE];
-                }
-            }
-
-            if (_tileFrustum == null)
-                _tileFrustum = new BoundingFrustumEx(frustum.Matrix);
-
-            Vector3[] mainfrustumCorners = frustum.GetCorners();
-
-            for (float col = 0; col < cols; col++)
-            {
-                for (float row = 0; row < rows; row++)
-                {
-
-                    //top left
-                    _tileFrustumCorners[0] = mainfrustumCorners[0]
-                        + (mainfrustumCorners[1] - mainfrustumCorners[0]) * col / cols
-                        + (mainfrustumCorners[3] - mainfrustumCorners[0]) * row / rows;
-
-                    //top right
-                    _tileFrustumCorners[1] = mainfrustumCorners[0]
-                        + (mainfrustumCorners[1] - mainfrustumCorners[0]) * (col + 1) / cols
-                        + (mainfrustumCorners[3] - mainfrustumCorners[0]) * row / rows;
-
-
-                    //bot right
-                    _tileFrustumCorners[2] = mainfrustumCorners[0]
-                        + (mainfrustumCorners[1] - mainfrustumCorners[0]) * (col + 1) / cols
-                        + (mainfrustumCorners[2] - mainfrustumCorners[1]) * (row + 1) / rows;
-
-                    //bot left
-                    _tileFrustumCorners[3] = mainfrustumCorners[0]
-                        + (mainfrustumCorners[1] - mainfrustumCorners[0]) * (col) / cols
-                        + (mainfrustumCorners[2] - mainfrustumCorners[1]) * (row + 1) / rows;
-
-                    _tileFrustumCorners[4] = mainfrustumCorners[4]
-                                             + (mainfrustumCorners[5] - mainfrustumCorners[4]) * col / cols
-                                             + (mainfrustumCorners[7] - mainfrustumCorners[4]) * row / rows;
-
-                    _tileFrustumCorners[5] = mainfrustumCorners[4]
-                                             + (mainfrustumCorners[5] - mainfrustumCorners[4]) * (col + 1) / cols
-                                             + (mainfrustumCorners[7] - mainfrustumCorners[4]) * row / rows;
-
-
-                    _tileFrustumCorners[6] = mainfrustumCorners[4]
-                                             + (mainfrustumCorners[5] - mainfrustumCorners[4]) * (col + 1) / cols
-                                             + (mainfrustumCorners[6] - mainfrustumCorners[5]) * (row + 1) / rows;
-
-                    _tileFrustumCorners[7] = mainfrustumCorners[4]
-                                             + (mainfrustumCorners[5] - mainfrustumCorners[4]) * (col) / cols
-                                             + (mainfrustumCorners[6] - mainfrustumCorners[5]) * (row + 1) / rows;
-
-                    _tileFrustum.SetCorners(ref _tileFrustumCorners);
-                    _tileFrustum.CreatePlanesFromCorners();
-
-                    //Now we are ready to frustum cull... phew
-
-                    int index = (int)(row * cols + col);
-
-                    int numberOfLightsInTile = 0;
-
-                    for (var i = 0; i < pointLights.Count; i++)
-                    {
-                        var pointLight = pointLights[i];
-                        ContainmentType containmentType = _tileFrustum.Contains(pointLight.BoundingSphere);
-
-                        if (containmentType == ContainmentType.Intersects ||
-                            containmentType == ContainmentType.Contains)
-                        {
-                            TiledList[index][numberOfLightsInTile] = i;
-                            numberOfLightsInTile++;
-                        }
-
-                        if (numberOfLightsInTile >= MAXLIGHTSPERTILE) break;
-                    }
-
-                    TiledListLength[index] = numberOfLightsInTile;
-
-#if SHOWTILES
-                    LineHelperManager.AddFrustum(_tileFrustum, 1,numberOfLightsInTile > 1 ? Color.Red : numberOfLightsInTile > 0 ? Color.Blue : Color.Green);
-#endif
-                }
-            }
-
-
-            //Note: This needs a custom monogame version, since the default doesn't like to pass int[];
-            Shaders.Forward.Param_TiledListLength.SetValue(TiledListLength);
-        }
         private void SetupLighting(Camera camera, List<DeferredPointLight> pointLights, BoundingFrustum frustum)
         {
             //Setup camera

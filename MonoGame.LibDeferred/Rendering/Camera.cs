@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
 namespace DeferredEngine.Entities
 {
@@ -8,7 +7,7 @@ namespace DeferredEngine.Entities
         private Vector3 _position;
         private Vector3 _up = Vector3.UnitZ;
         private Vector3 _forward = Vector3.Up;
-        private float _fieldOfView = (float) Math.PI/4;
+        private float _fieldOfView = (float)Math.PI / 4;
 
         public bool HasChanged = true;
         public bool HasMoved;
@@ -22,10 +21,7 @@ namespace DeferredEngine.Entities
 
         public Vector3 Position
         {
-            get
-            {
-                return _position;
-            }
+            get => _position;
             set
             {
                 if (_position != value)
@@ -36,13 +32,10 @@ namespace DeferredEngine.Entities
                 }
             }
         }
-        
+
         public Vector3 Up
         {
-            get
-            {
-                return _up;
-            }
+            get => _up;
             set
             {
                 if (_up != value)
@@ -55,10 +48,7 @@ namespace DeferredEngine.Entities
 
         public Vector3 Forward
         {
-            get
-            {
-                return _forward;
-            }
+            get => _forward;
             set
             {
                 if (_forward != value)
@@ -71,7 +61,7 @@ namespace DeferredEngine.Entities
 
         public float FieldOfView
         {
-            get { return _fieldOfView; }
+            get => _fieldOfView;
             set
             {
                 _fieldOfView = value;

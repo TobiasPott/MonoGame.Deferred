@@ -27,7 +27,6 @@ float3 LightColor[MAXLIGHTS];
 
 float cols = 20.0f;
 float rows = 10.0f;
-/*uint*/float TiledListLength[200];
 
 float3 CameraPositionWS;
 
@@ -173,11 +172,6 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR
     //finalValue = (normal + float3(1,1,1))*0.5f;
 
     float2 texCoord = input.Position.xy / Resolution;
-
-    //Tiled
-    /*float listLength = TiledListLength[GetTileIndex(texCoord)];
-
-    finalValue.rgb = listLength/4.0f;*/
 
     return float4(finalValue, 0.6f);
 }
