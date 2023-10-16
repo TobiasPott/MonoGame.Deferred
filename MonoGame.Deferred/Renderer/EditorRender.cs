@@ -175,48 +175,14 @@ namespace DeferredEngine.Renderer.RenderModules
             GizmoModes gizmoMode = gizmoContext.GizmoMode;
             Matrix rotation = (RenderingStats.e_LocalTransformation || gizmoMode == GizmoModes.Scale) ? gizmoContext.SelectedObject.RotationMatrix : Matrix.Identity;
 
-            //Z
-            DrawArrow(position, rotation, new Vector3(0, 0, 0), GetHoveredId() == 1 ? 1 : 0.5f, Color.Blue, matrices.StaticViewProjection, gizmoMode); //z 1
-            DrawArrow(position, rotation, new Vector3((float)-Math.PI / 2, 0, 0), GetHoveredId() == 2 ? 1 : 0.5f, Color.Green, matrices.StaticViewProjection, gizmoMode); //y 2
-            DrawArrow(position, rotation, new Vector3(0, (float)Math.PI / 2, 0), GetHoveredId() == 3 ? 1 : 0.5f, Color.Red, matrices.StaticViewProjection, gizmoMode); //x 3
+            IdAndOutlineRenderer.DrawArrow(_graphicsDevice, position, rotation, new Vector3(0, 0, 0), GetHoveredId() == 1 ? 1 : 0.5f, Color.Blue, matrices.StaticViewProjection, gizmoMode); //z 1
+            IdAndOutlineRenderer.DrawArrow(_graphicsDevice, position, rotation, new Vector3((float)-Math.PI / 2, 0, 0), GetHoveredId() == 2 ? 1 : 0.5f, Color.Green, matrices.StaticViewProjection, gizmoMode); //y 2
+            IdAndOutlineRenderer.DrawArrow(_graphicsDevice, position, rotation, new Vector3(0, (float)Math.PI / 2, 0), GetHoveredId() == 3 ? 1 : 0.5f, Color.Red, matrices.StaticViewProjection, gizmoMode); //x 3
 
-            DrawArrow(position, rotation, new Vector3((float)Math.PI, 0, 0), GetHoveredId() == 1 ? 1 : 0.5f, Color.Blue, matrices.StaticViewProjection, gizmoMode); //z 1
-            DrawArrow(position, rotation, new Vector3((float)Math.PI / 2, 0, 0), GetHoveredId() == 2 ? 1 : 0.5f, Color.Green, matrices.StaticViewProjection, gizmoMode); //y 2
-            DrawArrow(position, rotation, new Vector3(0, (float)-Math.PI / 2, 0), GetHoveredId() == 3 ? 1 : 0.5f, Color.Red, matrices.StaticViewProjection, gizmoMode); //x 3
-            //DrawArrowRound(position, rotation, Math.PI, 0, 0, GetHoveredId() == 1 ? 1 : 0.5f, Color.Blue, staticViewProjection); //z 1
-            //DrawArrowRound(position, rotation,-Math.PI / 2, 0, 0, GetHoveredId() == 2 ? 1 : 0.5f, Color.Green, staticViewProjection); //y 2
-            //DrawArrowRound(position, rotation,0, Math.PI / 2, 0, GetHoveredId() == 3 ? 1 : 0.5f, Color.Red, staticViewProjection); //x 3
+            IdAndOutlineRenderer.DrawArrow(_graphicsDevice, position, rotation, new Vector3((float)Math.PI, 0, 0), GetHoveredId() == 1 ? 1 : 0.5f, Color.Blue, matrices.StaticViewProjection, gizmoMode); //z 1
+            IdAndOutlineRenderer.DrawArrow(_graphicsDevice, position, rotation, new Vector3((float)Math.PI / 2, 0, 0), GetHoveredId() == 2 ? 1 : 0.5f, Color.Green, matrices.StaticViewProjection, gizmoMode); //y 2
+            IdAndOutlineRenderer.DrawArrow(_graphicsDevice, position, rotation, new Vector3(0, (float)-Math.PI / 2, 0), GetHoveredId() == 3 ? 1 : 0.5f, Color.Red, matrices.StaticViewProjection, gizmoMode); //x 3
         }
-
-        private void DrawArrow(Vector3 position, Matrix rotationObject, Vector3 angles, float scale, Color color, Matrix staticViewProjection, GizmoModes gizmoMode, Vector3? direction = null)
-        {
-            Matrix rotation;
-            if (direction != null)
-                rotation = Matrix.CreateLookAt(Vector3.Zero, (Vector3)direction, Vector3.UnitX);
-            else
-                rotation = angles.ToMatrixRotationXYZ();
-
-            Matrix scaleMatrix = Matrix.CreateScale(0.75f, 0.75f, scale * 1.5f);
-            Matrix worldViewProj = scaleMatrix * rotation * rotationObject * Matrix.CreateTranslation(position) * staticViewProjection;
-
-            IdAndOutlineEffectSetup.Instance.Param_WorldViewProj.SetValue(worldViewProj);
-            IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(color.ToVector4());
-            IdAndOutlineEffectSetup.Instance.Pass_Id.Apply();
-
-            Model model = gizmoMode == GizmoModes.Translation ? StaticAssets.Instance.EditorArrow3D : StaticAssets.Instance.EditorArrow3DRound;
-            ModelMeshPart meshpart = model.Meshes[0].MeshParts[0];
-
-            _graphicsDevice.SetVertexBuffer(meshpart.VertexBuffer);
-            _graphicsDevice.Indices = (meshpart.IndexBuffer);
-            int primitiveCount = meshpart.PrimitiveCount;
-            int vertexOffset = meshpart.VertexOffset;
-            //int vCount = meshpart.NumVertices;
-            int startIndex = meshpart.StartIndex;
-
-            _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, vertexOffset, startIndex, primitiveCount);
-        }
-
-
 
         /// <summary>
         /// Returns the id of the currently hovered object

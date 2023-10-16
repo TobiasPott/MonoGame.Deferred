@@ -156,11 +156,10 @@ namespace DeferredEngine.Renderer.RenderModules
             DrawArrow(_graphicsDevice, position, rotation, new Vector3(0, (float)-Math.PI / 2.0f, 0), 0.5f, new Color(3, 0, 0), staticViewProjection);
 
         }
-
-        // ToDo: @tpott: Extract IdRender and Bilboard Shaders members
-        public static void DrawArrow(GraphicsDevice graphicsDevice, Vector3 position, Matrix rotationObject, Vector3 angles, float scale, Color color, Matrix staticViewProjection, GizmoModes gizmoMode = GizmoModes.Translation)
+        public static void DrawArrow(GraphicsDevice graphicsDevice, Vector3 position, Matrix rotationObject, Vector3 angles, float scale,
+            Color color, Matrix staticViewProjection, GizmoModes gizmoMode = GizmoModes.Translation, Vector3? direction = null)
         {
-            Matrix rotation = angles.ToMatrixRotationXYZ();
+            Matrix rotation = (direction != null) ? Matrix.CreateLookAt(Vector3.Zero, (Vector3)direction, Vector3.UnitX) : angles.ToMatrixRotationXYZ();
             Matrix scaleMatrix = Matrix.CreateScale(0.75f, 0.75f, scale * 1.5f);
             Matrix worldViewProj = scaleMatrix * rotation * rotationObject * Matrix.CreateTranslation(position) * staticViewProjection;
 
