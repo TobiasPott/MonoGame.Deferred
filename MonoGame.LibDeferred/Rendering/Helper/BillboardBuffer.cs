@@ -5,13 +5,13 @@ namespace DeferredEngine.Renderer.Helper.Editor
 {
     public class BillboardBuffer : IDisposable
     {
-        public readonly VertexBuffer VBuffer;
-        public readonly IndexBuffer IBuffer;
+        public readonly VertexBuffer VertexBuffer;
+        public readonly IndexBuffer IndexBuffer;
 
         public BillboardBuffer(Color color, GraphicsDevice graphics)
         {
-            VBuffer = new VertexBuffer(graphics, VertexPositionColorTexture.VertexDeclaration, 4, BufferUsage.WriteOnly);
-            IBuffer = new IndexBuffer(graphics, IndexElementSize.SixteenBits, 6, BufferUsage.WriteOnly);
+            VertexBuffer = new VertexBuffer(graphics, VertexPositionColorTexture.VertexDeclaration, 4, BufferUsage.WriteOnly);
+            IndexBuffer = new IndexBuffer(graphics, IndexElementSize.SixteenBits, 6, BufferUsage.WriteOnly);
 
             var vBufferArray = new VertexPositionColorTexture[4];
             var iBufferArray = new ushort[6];
@@ -39,14 +39,14 @@ namespace DeferredEngine.Renderer.Helper.Editor
             iBufferArray[4] = 3;
             iBufferArray[5] = 0;
 
-            VBuffer.SetData(vBufferArray);
-            IBuffer.SetData(iBufferArray);
+            VertexBuffer.SetData(vBufferArray);
+            IndexBuffer.SetData(iBufferArray);
         }
 
         public void Dispose()
         {
-            VBuffer?.Dispose();
-            IBuffer?.Dispose();
+            VertexBuffer?.Dispose();
+            IndexBuffer?.Dispose();
         }
     }
 }

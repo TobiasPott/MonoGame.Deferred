@@ -1,5 +1,4 @@
-﻿
-namespace DeferredEngine.Logic
+﻿namespace Deferred.Utilities
 {
     public enum GizmoModes
     {

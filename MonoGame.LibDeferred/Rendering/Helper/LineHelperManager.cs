@@ -7,7 +7,7 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
 {
     public class LineHelperManager
     {
-        private readonly List<LineHelper> Lines = new List<LineHelper>();
+        private readonly List<LineBuffer> Lines = new List<LineBuffer>();
 
         private int _tempVertsPoolLength = 100;
 
@@ -25,6 +25,7 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
 
         public VertexPositionColor GetVertexPositionColor(Vector3 point, Color color)
         {
+            // ToDo: @tpott: change to use either list or 
             if (_tempVertsPoolIndex < _tempVertsPoolLength - 3) //Buffer
             {
                 _tempVertsPool[_tempVertsPoolIndex].Position = point;
@@ -49,54 +50,54 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
         }
 
         public void AddLineStartEnd(Vector3 start, Vector3 end, short timer) 
-            => Lines.Add(new LineHelper(start, end, timer, this));
+            => Lines.Add(new LineBuffer(start, end, timer, this));
 
         public void AddLineStartDir(Vector3 start, Vector3 dir, short timer)
             => AddLineStartEnd(start, start + dir, timer);
 
         public void AddLineStartEnd(Vector3 start, Vector3 end, short timer, Color startColor, Color endColor)
-            => Lines.Add(new LineHelper(start, end, timer, startColor, endColor, this));
+            => Lines.Add(new LineBuffer(start, end, timer, startColor, endColor, this));
 
         public void AddLineStartDir(Vector3 start, Vector3 dir, short timer, Color startColor, Color endColor)
-            => Lines.Add(new LineHelper(start, start + dir, timer, startColor, endColor, this));
+            => Lines.Add(new LineBuffer(start, start + dir, timer, startColor, endColor, this));
 
         public void AddFrustum(BoundingFrustumEx frustum, short timer, Color color)
         {
             Vector3[] corners = frustum.GetCornersNoCopy();
             //Front
-            Lines.Add(new LineHelper(corners[0], corners[1], 1, color, color, this));
-            Lines.Add(new LineHelper(corners[1], corners[2], 1, color, color, this));
-            Lines.Add(new LineHelper(corners[2], corners[3], 1, color, color, this));
-            Lines.Add(new LineHelper(corners[3], corners[0], 1, color, color, this));
+            Lines.Add(new LineBuffer(corners[0], corners[1], 1, color, color, this));
+            Lines.Add(new LineBuffer(corners[1], corners[2], 1, color, color, this));
+            Lines.Add(new LineBuffer(corners[2], corners[3], 1, color, color, this));
+            Lines.Add(new LineBuffer(corners[3], corners[0], 1, color, color, this));
             //Back
-            Lines.Add(new LineHelper(corners[4], corners[5], 1, color, color, this));
-            Lines.Add(new LineHelper(corners[5], corners[6], 1, color, color, this));
-            Lines.Add(new LineHelper(corners[6], corners[7], 1, color, color, this));
-            Lines.Add(new LineHelper(corners[7], corners[4], 1, color, color, this));
+            Lines.Add(new LineBuffer(corners[4], corners[5], 1, color, color, this));
+            Lines.Add(new LineBuffer(corners[5], corners[6], 1, color, color, this));
+            Lines.Add(new LineBuffer(corners[6], corners[7], 1, color, color, this));
+            Lines.Add(new LineBuffer(corners[7], corners[4], 1, color, color, this));
             //Between
-            Lines.Add(new LineHelper(corners[4], corners[0], 1, color, color, this));
-            Lines.Add(new LineHelper(corners[5], corners[1], 1, color, color, this));
-            Lines.Add(new LineHelper(corners[6], corners[2], 1, color, color, this));
-            Lines.Add(new LineHelper(corners[7], corners[3], 1, color, color, this));
+            Lines.Add(new LineBuffer(corners[4], corners[0], 1, color, color, this));
+            Lines.Add(new LineBuffer(corners[5], corners[1], 1, color, color, this));
+            Lines.Add(new LineBuffer(corners[6], corners[2], 1, color, color, this));
+            Lines.Add(new LineBuffer(corners[7], corners[3], 1, color, color, this));
         }
 
-        public void Draw(GraphicsDevice graphicsDevice, Matrix viewProjection, EffectParameter worldViewProjection, EffectPass vertexColorPass)
+        public void Draw(GraphicsDevice graphicsDevice, Matrix viewProjection, EffectParameter Param_WorldViewProjection, EffectPass Pass_VertexColor)
         {
             if (!RenderingSettings.d_Drawlines) return;
 
-            worldViewProjection.SetValue(viewProjection);
+            Param_WorldViewProjection.SetValue(viewProjection);
 
+            Pass_VertexColor.Apply();
             // ToDo: @tpott: Change rendering lines to build the vertex and index buffer when adding lines
             //          This should allow to remove the LineHelper type as overhead
             for (int i = 0; i < Lines.Count; i++)
             {
-                LineHelper line = Lines[i];
+                LineBuffer line = Lines[i];
                 if (line != null)
                 {
-                    vertexColorPass.Apply();
 
                     //Gather
-                    graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineList, line.Verts, 0, 2, LineHelper.Indices, 0, 1);
+                    graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineList, line.Verts, 0, 2, LineBuffer.Indices, 0, 1);
 
                     line.Timer--;
                     if (line.Timer <= 0)

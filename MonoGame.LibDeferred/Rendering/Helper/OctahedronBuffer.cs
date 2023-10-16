@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.Helper
 {
-    public class OctahedronHelper
+    public class OctahedronBuffer : IDisposable
     {
         private static short[] IndexBufferData = new short[] { 2, 0, 1, 1, 0, 4, 4, 0, 3, 3, 0, 2, 5, 2, 1, 5, 1, 4, 5, 4, 3, 5, 3, 2 };
         private static VertexPosition[] VertexBufferData = new VertexPosition[] {
@@ -18,7 +18,7 @@ namespace DeferredEngine.Renderer.Helper
         public VertexBuffer VertexBuffer { get; protected set; }
         public IndexBuffer IndexBuffer { get; protected set; }
 
-        public OctahedronHelper(GraphicsDevice graphics)
+        public OctahedronBuffer(GraphicsDevice graphics)
         {
             VertexBuffer = new VertexBuffer(graphics, VertexPosition.VertexDeclaration, 6, BufferUsage.WriteOnly);
             IndexBuffer = new IndexBuffer(graphics, IndexElementSize.SixteenBits, 24, BufferUsage.WriteOnly);
@@ -27,5 +27,10 @@ namespace DeferredEngine.Renderer.Helper
             IndexBuffer.SetData(IndexBufferData);
         }
 
+        public void Dispose()
+        {
+            VertexBuffer?.Dispose();
+            IndexBuffer?.Dispose();
+        }
     }
 }

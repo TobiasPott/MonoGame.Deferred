@@ -1,5 +1,5 @@
-﻿using DeferredEngine.Entities;
-using DeferredEngine.Logic;
+﻿using Deferred.Utilities;
+using DeferredEngine.Entities;
 using DeferredEngine.Recources;
 using DeferredEngine.Recources.Helper;
 using DeferredEngine.Renderer.Helper;

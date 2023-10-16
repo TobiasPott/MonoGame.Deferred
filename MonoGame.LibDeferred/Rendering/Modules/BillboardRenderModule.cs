@@ -34,8 +34,8 @@ namespace DeferredEngine.Renderer.RenderModules
         public void DrawSceneBillboards(EntitySceneGroup scene, PipelineMatrices matrices)
         {
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-            _graphicsDevice.SetVertexBuffer(_billboardBuffer.VBuffer);
-            _graphicsDevice.Indices = (_billboardBuffer.IBuffer);
+            _graphicsDevice.SetVertexBuffer(_billboardBuffer.VertexBuffer);
+            _graphicsDevice.Indices = (_billboardBuffer.IndexBuffer);
 
             _effectSetup.Param_Texture.SetValue(StaticAssets.Instance.IconLight);
             _effectSetup.Effect.CurrentTechnique = _effectSetup.Technique_Id;
@@ -80,8 +80,8 @@ namespace DeferredEngine.Renderer.RenderModules
         public void DrawEditorBillboards(EntitySceneGroup scene, PipelineMatrices matrices, GizmoDrawContext gizmoContext)
         {
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-            _graphicsDevice.SetVertexBuffer(_billboardBuffer.VBuffer);
-            _graphicsDevice.Indices = (_billboardBuffer.IBuffer);
+            _graphicsDevice.SetVertexBuffer(_billboardBuffer.VertexBuffer);
+            _graphicsDevice.Indices = (_billboardBuffer.IndexBuffer);
 
             _effectSetup.Effect.CurrentTechnique = _effectSetup.Technique_Billboard;
             _effectSetup.Param_IdColor.SetValue(Color.Gray.ToVector3());

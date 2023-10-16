@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.Helper
 {
     public class OctahedronHelperManager
     {
-        private OctahedronHelper _octahedronMesh;
+        private OctahedronBuffer _octahedronMesh;
+
         private List<Vector3> positions = new List<Vector3>();
         private List<Vector4> colors = new List<Vector4>();
         private Matrix scale = Matrix.CreateScale(.005f);
@@ -17,24 +17,24 @@ namespace DeferredEngine.Renderer.Helper
             colors.Add(color);
         }
 
-        public void Draw(GraphicsDevice graphics, Matrix viewProjection, EffectParameter worldViewProjection, EffectParameter globalColor, EffectPass globalColorPass)
+        public void Draw(GraphicsDevice graphicsDevice, Matrix viewProjection, EffectParameter Param_WorldViewProjection, EffectParameter Param_GlobalColor, EffectPass Pass_GlobalColor)
         {
-            if(_octahedronMesh ==  null) _octahedronMesh = new OctahedronHelper(graphics);
-            
-            graphics.SetVertexBuffer(_octahedronMesh.VertexBuffer);
-            graphics.Indices = _octahedronMesh.IndexBuffer;
+            if (_octahedronMesh == null) _octahedronMesh = new OctahedronBuffer(graphicsDevice);
 
-            for (var index = 0; index < positions.Count; index++)
+            graphicsDevice.SetVertexBuffer(_octahedronMesh.VertexBuffer);
+            graphicsDevice.Indices = _octahedronMesh.IndexBuffer;
+
+            for (int i = 0; i < positions.Count; i++)
             {
-                
-                Matrix wvp = scale * Matrix.CreateTranslation(positions[index]) * viewProjection;
 
-                worldViewProjection.SetValue(wvp);
-                globalColor.SetValue(colors[index]);
+                Matrix wvp = scale * Matrix.CreateTranslation(positions[i]) * viewProjection;
 
-                globalColorPass.Apply();
+                Param_WorldViewProjection.SetValue(wvp);
+                Param_GlobalColor.SetValue(colors[i]);
 
-                graphics.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 8);
+                Pass_GlobalColor.Apply();
+
+                graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 8);
             }
 
             //Clear

@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.Helper
 {
-    public class LineHelper
+    public class LineBuffer
     {
         public static short[] Indices = { 0, 1 };
         public VertexPositionColor[] Verts;
@@ -15,10 +15,10 @@ namespace DeferredEngine.Renderer.Helper
 
         public short Timer;
 
-        public LineHelper(Vector3 start, Vector3 end, short time, LineHelperManager lineHelperManager)
+        public LineBuffer(Vector3 start, Vector3 end, short time, LineHelperManager lineHelperManager)
             : this(start, end, time, new Color(Color.Red, 0.5f), new Color(Color.Green, 0.5f), lineHelperManager)
         { }
-        public LineHelper(Vector3 start, Vector3 end, short time, Color starColor, Color endColor, LineHelperManager lineHelperManager)
+        public LineBuffer(Vector3 start, Vector3 end, short time, Color starColor, Color endColor, LineHelperManager lineHelperManager)
         {
             if (!RenderingSettings.d_Drawlines) return;
 
