@@ -13,6 +13,10 @@ namespace DeferredEngine.Renderer.RenderModules
 {
     public class ForwardPipelineModule : PipelineModule, IRenderModule
     {
+        //Forward pass
+        public static bool g_EnableForward = true;
+
+
         private const int MAXLIGHTS = 40;
         private const int MAXLIGHTSPERTILE = 40;
 

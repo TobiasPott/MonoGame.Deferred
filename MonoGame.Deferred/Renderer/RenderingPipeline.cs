@@ -273,7 +273,7 @@ namespace DeferredEngine.Renderer
 
             //Draw debug geometry
             _helperGeometryRenderModule.ViewProjection = _matrices.StaticViewProjection;
-            _helperGeometryRenderModule.Draw(); 
+            _helperGeometryRenderModule.Draw();
 
             //Set up the frustum culling for the next frame
             meshBatcher.FrustumCullingFinalizeFrame();
@@ -311,7 +311,7 @@ namespace DeferredEngine.Renderer
         {
             if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
             {
-                if (RenderingSettings.e_DrawOutlines)
+                if (IdAndOutlineRenderModule.e_DrawOutlines)
                     DrawTextureToScreenToFullScreen(_editorRender.IdAndOutlineRenderer.GetRenderTarget2D(), BlendState.Additive);
 
                 _editorRender.DrawEditor(scene, _matrices, gizmoContext);
@@ -549,7 +549,7 @@ namespace DeferredEngine.Renderer
         /// </summary>
         private void DrawDecals(List<Decal> decals)
         {
-            if (!RenderingSettings.g_EnableDecals) return;
+            if (!DecalRenderModule.g_EnableDecals) return;
 
             //First copy albedo to decal offtarget
             DrawTextureToScreenToFullScreen(_gBufferTarget.Albedo, BlendState.Opaque, _auxTargets[MRT.DECAL]);
@@ -735,7 +735,7 @@ namespace DeferredEngine.Renderer
 
         private RenderTarget2D DrawForward(RenderTarget2D input, DynamicMeshBatcher meshBatcher, Camera camera, List<DeferredPointLight> pointLights)
         {
-            if (!RenderingSettings.g_EnableForward) return input;
+            if (!ForwardPipelineModule.g_EnableForward) return input;
 
             _graphicsDevice.SetRenderTarget(input);
             ReconstructDepth();

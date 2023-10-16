@@ -13,6 +13,9 @@ namespace DeferredEngine.Logic
 {
     public class DebugScreen : IDisposable
     {
+        public static int u_ShowDisplayInfo = 3;
+
+
         private SpriteBatch _spriteBatch;
         private SpriteFont _sprFont;
         private SpriteFont _monospaceFont;
@@ -218,7 +221,7 @@ namespace DeferredEngine.Logic
 
         public void Draw(GameTime gameTime)
         {
-            if (RenderingSettings.u_ShowDisplayInfo > 0 || ConsoleOpen)
+            if (DebugScreen.u_ShowDisplayInfo > 0 || ConsoleOpen)
             {
                 _fps = 0.9 * _fps + 0.1 * (1000 / gameTime.ElapsedGameTime.TotalMilliseconds);
 
@@ -294,14 +297,14 @@ namespace DeferredEngine.Logic
 
                 StringList.Clear();
 
-                if (RenderingSettings.u_ShowDisplayInfo == 1) //most basic, only show fps
+                if (DebugScreen.u_ShowDisplayInfo == 1) //most basic, only show fps
                 {
                     _spriteBatch.DrawString(_sprFont,
                     string.Format(Math.Round(_smoothfps).ToString()),
                     new Vector2(10.0f, 10.0f), Color.White);
                 }
 
-                if (RenderingSettings.u_ShowDisplayInfo <= 1)
+                if (DebugScreen.u_ShowDisplayInfo <= 1)
                 {
                     _spriteBatch.End();
                     StringList.Clear();

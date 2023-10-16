@@ -1,4 +1,5 @@
 ﻿using DeferredEngine.Entities;
+using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper;
 using Microsoft.Xna.Framework;
@@ -62,14 +63,14 @@ namespace DeferredEngine.Renderer
 
                 DrawGBuffer(meshBatcher);
 
-                bool volumeEnabled = RenderingSettings.g_VolumetricLights;
-                RenderingSettings.g_VolumetricLights = false;
+                bool volumeEnabled = PointLightPipelineModule.g_VolumetricLights;
+                PointLightPipelineModule.g_VolumetricLights = false;
                 _lightingModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
                 _lightingModule.DrawLights(scene, origin, _lightingBufferTarget.Bindings, _lightingBufferTarget.Diffuse);
 
                 _environmentModule.DrawSky();
 
-                RenderingSettings.g_VolumetricLights = volumeEnabled;
+                PointLightPipelineModule.g_VolumetricLights = volumeEnabled;
 
                 //We don't use temporal AA obviously for the cubemap
                 bool tempAa = _taaFx.Enabled;

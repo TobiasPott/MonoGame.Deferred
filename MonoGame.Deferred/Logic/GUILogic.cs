@@ -1,6 +1,7 @@
 ﻿using DeferredEngine.Entities;
 using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Recources;
+using DeferredEngine.Renderer.RenderModules;
 using HelperSuite.GUI;
 using HelperSuite.GUIHelper;
 using Microsoft.Xna.Framework;
@@ -114,10 +115,15 @@ namespace DeferredEngine.Logic
 
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Highlight Meshes")
             {
-                ToggleField = typeof(RenderingSettings).GetField("e_drawoutlines"),
-                Toggle = RenderingSettings.e_DrawOutlines
+                ToggleField = typeof(IdAndOutlineRenderModule).GetField("e_DrawOutlines"),
+                Toggle = IdAndOutlineRenderModule.e_DrawOutlines
             });
 
+            _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Decals")
+            {
+                ToggleField = typeof(DecalRenderModule).GetField("g_EnableDecals"),
+                Toggle = DecalRenderModule.g_EnableDecals
+            });
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Show Controls")
             {
                 ToggleProperty = typeof(GUITextBlock).GetProperty("IsVisible"),

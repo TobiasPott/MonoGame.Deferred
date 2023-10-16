@@ -6,12 +6,13 @@ using DeferredEngine.Renderer.RenderModules.Default;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Windows.UI.Composition;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
     public class ShadowMapPipelineModule : PipelineModule, IRenderModule
     {
+        public static float ShadowBias = 0.005f;
+
         private ShadowPasses _pass;
 
         private BoundingFrustum _boundingFrustumShadow;
@@ -265,7 +266,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
                 // Rendering!
                 Shaders.ShadowMap.Param_FarClip.SetValue(light.ShadowFarClip);
-                Shaders.ShadowMap.Param_SizeBias.SetValue(RenderingSettings.ShadowBias * 2048 / light.ShadowResolution);
+                Shaders.ShadowMap.Param_SizeBias.SetValue(ShadowMapPipelineModule.ShadowBias * 2048 / light.ShadowResolution);
 
                 meshMaterialLibrary.Draw(DynamicMeshBatcher.RenderType.ShadowLinear, light.LightViewProjection, light.LightView, light.HasChanged, false, false, 0, renderModule: this);
             }
@@ -282,7 +283,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 _graphicsDevice.SetRenderTarget(light.ShadowMap);
                 _graphicsDevice.Clear(ClearOptions.DepthBuffer, Color.White, 1, 0);
                 Shaders.ShadowMap.Param_FarClip.SetValue(light.ShadowFarClip);
-                Shaders.ShadowMap.Param_SizeBias.SetValue(RenderingSettings.ShadowBias * 2048 / light.ShadowResolution);
+                Shaders.ShadowMap.Param_SizeBias.SetValue(ShadowMapPipelineModule.ShadowBias * 2048 / light.ShadowResolution);
 
                 meshMaterialLibrary.Draw(DynamicMeshBatcher.RenderType.ShadowLinear,
                     light.LightViewProjection, light.LightView, false, true, false, 0, renderModule: this);

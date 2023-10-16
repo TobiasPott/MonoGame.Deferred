@@ -9,6 +9,8 @@ namespace DeferredEngine.Pipeline.Lighting
 {
     public class PointLightPipelineModule : PipelineModule
     {
+        public static bool g_VolumetricLights = true;
+
 
         private PointLightEffectSetup _effectSetup = new PointLightEffectSetup();
         private BoundingFrustum _frustum;
@@ -106,7 +108,7 @@ namespace DeferredEngine.Pipeline.Lighting
             int vertexOffset = meshpart.VertexOffset;
             int startIndex = meshpart.StartIndex;
 
-            if (RenderingSettings.g_VolumetricLights && _gameTime != null)
+            if (PointLightPipelineModule.g_VolumetricLights && _gameTime != null)
                 _effectSetup.Param_Time.SetValue((float)_gameTime.TotalGameTime.TotalSeconds % 1000);
 
             for (int index = 0; index < pointLights.Count; index++)
@@ -148,7 +150,7 @@ namespace DeferredEngine.Pipeline.Lighting
             int inside = cameraToCenter < light.Radius * 1.2f ? 1 : -1;
             _effectSetup.Param_Inside.SetValue(inside);
 
-            if (RenderingSettings.g_UseDepthStencilLightCulling == 2)
+            if (LightingPipelineModule.g_UseDepthStencilLightCulling == 2)
             {
                 _graphicsDevice.DepthStencilState = _stencilCullPass1;
                 //draw front faces
@@ -174,7 +176,7 @@ namespace DeferredEngine.Pipeline.Lighting
 
                 ApplyShader(light);
 
-                _graphicsDevice.DepthStencilState = RenderingSettings.g_UseDepthStencilLightCulling > 0 && !light.IsVolumetric && inside < 0 ? DepthStencilState.DepthRead : DepthStencilState.None;
+                _graphicsDevice.DepthStencilState = LightingPipelineModule.g_UseDepthStencilLightCulling > 0 && !light.IsVolumetric && inside < 0 ? DepthStencilState.DepthRead : DepthStencilState.None;
 
                 _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, vertexOffset, startIndex, primitiveCount);
             }
@@ -195,7 +197,7 @@ namespace DeferredEngine.Pipeline.Lighting
                 _effectSetup.Param_ShadowMapRadius.SetValue((float)light.ShadowMapRadius);
                 _effectSetup.Param_ShadowMapSize.SetValue((float)light.ShadowResolution);
 
-                if (light.IsVolumetric && RenderingSettings.g_VolumetricLights)
+                if (light.IsVolumetric && PointLightPipelineModule.g_VolumetricLights)
                 {
                     _effectSetup.Param_LightVolumeDensity.SetValue(light.LightVolumeDensity);
                     _effectSetup.Technique_ShadowedVolumetric.Passes[0].Apply();
@@ -209,7 +211,7 @@ namespace DeferredEngine.Pipeline.Lighting
             {
                 _effectSetup.Param_ShadowMapRadius.SetValue((float)light.ShadowMapRadius);
 
-                if (light.IsVolumetric && RenderingSettings.g_VolumetricLights)
+                if (light.IsVolumetric && PointLightPipelineModule.g_VolumetricLights)
                 {
                     _effectSetup.Param_LightVolumeDensity.SetValue(light.LightVolumeDensity);
                     _effectSetup.Technique_UnshadowedVolumetric.Passes[0].Apply();

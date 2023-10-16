@@ -6,6 +6,10 @@ namespace DeferredEngine.Renderer.RenderModules
 {
     public class DecalRenderModule : IDisposable
     {
+        //Deferred Decals
+        public static bool g_EnableDecals = true;
+
+
         private readonly DecalEffectSetup _effectSetup = new DecalEffectSetup();
 
         private BlendState _decalBlend;

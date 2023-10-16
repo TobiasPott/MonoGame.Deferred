@@ -11,6 +11,9 @@ namespace DeferredEngine.Pipeline.Lighting
 {
     public class LightingPipelineModule : PipelineModule
     {
+        public static int g_UseDepthStencilLightCulling = 1; //None, Depth, Depth+Stencil
+
+
         private FullscreenTriangleBuffer _fullscreenTarget;
 
         private bool _useDepthStencilLightCulling;
@@ -65,7 +68,7 @@ namespace DeferredEngine.Pipeline.Lighting
             RenderTarget2D renderTargetDiffuse)
         {
             //Reconstruct Depth
-            if (RenderingSettings.g_UseDepthStencilLightCulling > 0)
+            if (LightingPipelineModule.g_UseDepthStencilLightCulling > 0)
             {
                 _graphicsDevice.SetRenderTarget(renderTargetDiffuse);
                 _graphicsDevice.Clear(ClearOptions.DepthBuffer, new Color(0, 0, 0, 0.0f), 1, 0);

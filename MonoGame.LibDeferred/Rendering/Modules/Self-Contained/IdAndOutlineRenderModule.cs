@@ -13,6 +13,8 @@ namespace DeferredEngine.Renderer.RenderModules
 {
     public partial class IdAndOutlineRenderModule
     {
+        public static bool e_DrawOutlines = true;
+
         // ToDo: check if gizmo alignment matches ids and axis order
         public const int ID_AXIS_X = 1;
         public const int ID_AXIS_Y = 2;
@@ -85,7 +87,7 @@ namespace DeferredEngine.Renderer.RenderModules
             if (mouseMoved)
                 DrawIds(meshBatcher, scene, matrices, drawContext);
 
-            if (RenderingSettings.e_DrawOutlines)
+            if (IdAndOutlineRenderModule.e_DrawOutlines)
                 DrawOutlines(meshBatcher, matrices, drawContext, mouseMoved, HoveredId, mouseMoved);
         }
 
@@ -190,7 +192,7 @@ namespace DeferredEngine.Renderer.RenderModules
             {
                 //UPdate the size of our outlines!
 
-                if (!drawAll) 
+                if (!drawAll)
                     meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, false, false, selectedId);
 
                 IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(SelectedColor);
