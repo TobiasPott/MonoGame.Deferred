@@ -23,25 +23,8 @@ namespace DeferredEngine.Recources
             public static readonly EffectParameter Param_FrustumCorners = Effect.Parameters["FrustumCorners"];
         }
 
-        //Billboard Renderert
-        public static class Billboard
-        {
-            public static readonly Effect Effect = Globals.content.Load<Effect>("Shaders/Editor/BillboardEffect");
 
-            public static readonly EffectParameter Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
-            public static readonly EffectParameter Param_WorldView = Effect.Parameters["WorldView"];
-            public static readonly EffectParameter Param_AspectRatio = Effect.Parameters["AspectRatio"];
-            public static readonly EffectParameter Param_FarClip = Effect.Parameters["FarClip"];
-            public static readonly EffectParameter Param_Texture = Effect.Parameters["Texture"];
-            public static readonly EffectParameter Param_DepthMap = Effect.Parameters["DepthMap"];
-            public static readonly EffectParameter Param_IdColor = Effect.Parameters["IdColor"];
-
-            public static readonly EffectTechnique Technique_Billboard = Effect.Techniques["Billboard"];
-            public static readonly EffectTechnique Technique_Id = Effect.Techniques["Id"];
-        }
-
-        //Temporal AntiAliasing
-
+        // PostProcessing
 
         public static class PostProcssing
         {

@@ -30,7 +30,7 @@ namespace DeferredEngine.Recources
 
         public IdAndOutlineEffectSetup(string shaderPath = "Shaders/Editor/IdRender") : base(shaderPath)
         {
-            Effect = Globals.content.Load<Effect>("Shaders/Editor/IdRender");
+            Effect = Globals.content.Load<Effect>(shaderPath);
             Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
             Param_ColorId = Effect.Parameters["ColorId"];
             Param_OutlineSize = Effect.Parameters["OutlineSize"];

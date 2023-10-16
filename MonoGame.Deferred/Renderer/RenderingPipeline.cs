@@ -295,7 +295,7 @@ namespace DeferredEngine.Renderer
             //return data we have recovered from the editor id, so we know what entity gets hovered/clicked on and can manipulate in the update function
             return new EditorLogic.EditorReceivedData
             {
-                HoveredId = _editorRender.GetHoveredId(),
+                HoveredId = _editorRender.IdAndOutlineRenderer.HoveredId,
                 ViewMatrix = _matrices.View,
                 ProjectionMatrix = _matrices.Projection
             };
@@ -318,7 +318,8 @@ namespace DeferredEngine.Renderer
         {
             if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
             {
-                if (RenderingSettings.e_DrawOutlines) DrawTextureToScreenToFullScreen(_editorRender.GetOutlines(), BlendState.Additive);
+                if (RenderingSettings.e_DrawOutlines)
+                    DrawTextureToScreenToFullScreen(_editorRender.GetOutlinesRenderTarget(), BlendState.Additive);
 
                 _editorRender.DrawEditorElements(scene, envProbe, _matrices, gizmoContext);
 
@@ -395,7 +396,9 @@ namespace DeferredEngine.Renderer
                 _gBufferModule.FarClip = _g_FarClip;
                 _decalRenderModule.FarClip = _g_FarClip;
                 _pointLightRenderModule.FarClip = _g_FarClip;
-                Shaders.Billboard.Param_FarClip.SetValue(_g_FarClip);
+
+                _editorRender.BillboardRenderer.FarClip = _g_FarClip;
+
                 Shaders.SSR.Param_FarClip.SetValue(_g_FarClip);
                 Shaders.ReconstructDepth.Param_FarClip.SetValue(_g_FarClip);
             }
@@ -914,7 +917,7 @@ namespace DeferredEngine.Renderer
             int targetWidth = (int)(width * ssmultiplier);
             int targetHeight = (int)(height * ssmultiplier);
 
-            Shaders.Billboard.Param_AspectRatio.SetValue((float)targetWidth / targetHeight);
+            //Shaders.Billboard.Param_AspectRatio.SetValue((float)targetWidth / targetHeight);
 
             // Update multi render target size
             _gBufferTarget.Resize(targetWidth, targetHeight);
@@ -925,7 +928,8 @@ namespace DeferredEngine.Renderer
 
             if (!onlyEssentials)
             {
-                _editorRender.SetUpRenderTarget(width, height);
+                _editorRender.BillboardRenderer.AspectRatio = (float)targetWidth / targetHeight;
+                _editorRender.IdAndOutlineRenderer.SetUpRenderTarget(width, height);
 
                 _taaFx.Resolution = new Vector2(targetWidth, targetHeight);
 
@@ -952,7 +956,7 @@ namespace DeferredEngine.Renderer
 
         private void UpdateRenderMapBindings(bool onlyEssentials)
         {
-            Shaders.Billboard.Param_DepthMap.SetValue(_gBufferTarget.Depth);
+            _editorRender.BillboardRenderer.DepthMap = _gBufferTarget.Depth;
 
             Shaders.ReconstructDepth.Param_DepthMap.SetValue(_gBufferTarget.Depth);
 

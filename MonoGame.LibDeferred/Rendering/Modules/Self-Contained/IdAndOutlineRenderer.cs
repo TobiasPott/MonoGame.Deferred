@@ -1,16 +1,13 @@
 ﻿using DeferredEngine.Entities;
 using DeferredEngine.Logic;
-using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Recources;
 using DeferredEngine.Recources.Helper;
 using DeferredEngine.Renderer.Helper;
-using DeferredEngine.Renderer.Helper.Editor;
 using DeferredEngine.Renderer.PostProcessing;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Ext;
-using static DeferredEngine.Renderer.Helper.DynamicMeshBatcher;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
@@ -20,18 +17,16 @@ namespace DeferredEngine.Renderer.RenderModules
         private readonly Vector4 _selectedColor = new Vector4(1, 1, 0, 0.1f);
 
 
+        private Color[] _readbackIdColor = new Color[1];
         private GraphicsDevice _graphicsDevice;
 
-        private RenderTarget2D _idRenderTarget2D;
+        private RenderTarget2D _idAndOutlineRenderTarget2D;
 
         public int HoveredId;
 
-        private BillboardBuffer _billboardBuffer;
-
-        public void Initialize(GraphicsDevice graphicsDevice, BillboardBuffer billboardBuffer)
+        public void Initialize(GraphicsDevice graphicsDevice)
         {
             _graphicsDevice = graphicsDevice;
-            _billboardBuffer = billboardBuffer;
         }
 
         public void Draw(DynamicMeshBatcher meshMat, EntitySceneGroup scene, EnvironmentProbe envSample,
@@ -39,7 +34,7 @@ namespace DeferredEngine.Renderer.RenderModules
         {
             if (drawContext.GizmoTransformationMode)
             {
-                _graphicsDevice.SetRenderTarget(_idRenderTarget2D);
+                _graphicsDevice.SetRenderTarget(_idAndOutlineRenderTarget2D);
                 _graphicsDevice.Clear(Color.Black);
                 return;
             }
@@ -51,10 +46,12 @@ namespace DeferredEngine.Renderer.RenderModules
                 DrawOutlines(meshMat, matrices, mouseMoved, HoveredId, drawContext, mouseMoved);
         }
 
+        public BillboardRenderer BillboardRenderer;
+
         public void DrawIds(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, PipelineMatrices matrices, EnvironmentProbe envSample, GizmoDrawContext gizmoContext)
         {
 
-            _graphicsDevice.SetRenderTarget(_idRenderTarget2D);
+            _graphicsDevice.SetRenderTarget(_idAndOutlineRenderTarget2D);
             _graphicsDevice.BlendState = BlendState.Opaque;
 
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
@@ -63,7 +60,7 @@ namespace DeferredEngine.Renderer.RenderModules
             meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdRender, matrices);
 
             //Now onto the billboards
-            DrawBillboards(scene, envSample, matrices);
+            BillboardRenderer?.DrawSceneBillboards(scene, envSample, matrices);
 
             //Now onto the gizmos
             DrawGizmos(matrices.ViewProjection, gizmoContext);
@@ -71,68 +68,20 @@ namespace DeferredEngine.Renderer.RenderModules
             Rectangle sourceRectangle =
             new Rectangle(Mouse.GetState().X, Mouse.GetState().Y, 1, 1);
 
-            Color[] retrievedColor = new Color[1];
-
             try
             {
-                if (sourceRectangle.X >= 0 && sourceRectangle.Y >= 0 && sourceRectangle.X < _idRenderTarget2D.Width - 2 && sourceRectangle.Y < _idRenderTarget2D.Height - 2)
-                    _idRenderTarget2D.GetData(0, sourceRectangle, retrievedColor, 0, 1);
+                if (sourceRectangle.X >= 0 && sourceRectangle.Y >= 0 && sourceRectangle.X < _idAndOutlineRenderTarget2D.Width - 2 && sourceRectangle.Y < _idAndOutlineRenderTarget2D.Height - 2)
+                    _idAndOutlineRenderTarget2D.GetData(0, sourceRectangle, _readbackIdColor, 0, 1);
             }
             catch
             {
                 //nothing
             }
 
-            HoveredId = IdGenerator.GetIdFromColor(retrievedColor[0]);
+            HoveredId = IdGenerator.GetIdFromColor(_readbackIdColor[0]);
         }
 
-        private void DrawBillboard(Matrix world, Matrix view, Matrix staticViewProjection, int id)
-        {
-            Shaders.Billboard.Param_WorldViewProj.SetValue(world * staticViewProjection);
-            Shaders.Billboard.Param_WorldView.SetValue(world * view);
-            Shaders.Billboard.Param_IdColor.SetValue(IdGenerator.GetColorFromId(id).ToVector3());
-            Shaders.Billboard.Effect.CurrentTechnique.Passes[0].Apply();
-            _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 2);
-        }
 
-        public void DrawBillboards(EntitySceneGroup scene, EnvironmentProbe envSample, PipelineMatrices matrices)
-        {
-            _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-            _graphicsDevice.SetVertexBuffer(_billboardBuffer.VBuffer);
-            _graphicsDevice.Indices = (_billboardBuffer.IBuffer);
-
-            Shaders.Billboard.Param_Texture.SetValue(StaticAssets.Instance.IconLight);
-            Shaders.Billboard.Effect.CurrentTechnique = Shaders.Billboard.Technique_Id;
-
-            Matrix staticViewProjection = matrices.StaticViewProjection;
-            Matrix view = matrices.View;
-
-            List<Decal> decals = scene.Decals;
-            List<DeferredPointLight> pointLights = scene.PointLights;
-            List<DeferredDirectionalLight> dirLights = scene.DirectionalLights;
-
-            for (int index = 0; index < decals.Count; index++)
-            {
-                var decal = decals[index];
-                DrawBillboard(decal.World, view, staticViewProjection, decal.Id);
-            }
-
-            for (int index = 0; index < pointLights.Count; index++)
-            {
-                var light = pointLights[index];
-                DrawBillboard(light.World, view, staticViewProjection, light.Id);
-            }
-
-            for (int index = 0; index < dirLights.Count; index++)
-            {
-                var light = dirLights[index];
-                DrawBillboard(light.World, view, staticViewProjection, light.Id);
-            }
-
-            Shaders.Billboard.Param_Texture.SetValue(StaticAssets.Instance.IconEnvmap);
-            DrawBillboard(envSample.World, view, staticViewProjection, envSample.Id);
-
-        }
         public void DrawGizmos(PipelineMatrices matrices, GizmoDrawContext gizmoContext)
         {
             if (gizmoContext.SelectedObjectId == 0) return;
@@ -190,7 +139,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
         public void DrawOutlines(DynamicMeshBatcher meshMat, PipelineMatrices matrices, bool drawAll, int hoveredId, GizmoDrawContext gizmoContext, bool mouseMoved)
         {
-            _graphicsDevice.SetRenderTarget(_idRenderTarget2D);
+            _graphicsDevice.SetRenderTarget(_idAndOutlineRenderTarget2D);
 
             if (!mouseMoved)
                 _graphicsDevice.Clear(ClearOptions.Target, Color.Black, 0, 0);
@@ -226,32 +175,32 @@ namespace DeferredEngine.Renderer.RenderModules
 
         public RenderTarget2D GetRenderTarget2D()
         {
-            return _idRenderTarget2D;
+            return _idAndOutlineRenderTarget2D;
         }
 
 
         public void SetUpRenderTarget(int width, int height)
         {
-            if (_idRenderTarget2D != null) _idRenderTarget2D.Dispose();
+            if (_idAndOutlineRenderTarget2D != null) _idAndOutlineRenderTarget2D.Dispose();
 
-            _idRenderTarget2D = new RenderTarget2D(_graphicsDevice, width, height, false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
+            _idAndOutlineRenderTarget2D = new RenderTarget2D(_graphicsDevice, width, height, false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
         }
 
-        public bool ApplyShaders(RenderType renderType, Matrix localToWorldMatrix, Matrix viewProjection, MeshBatch meshLib, int index, int outlineId, bool outlined)
+        public bool ApplyShaders(DynamicMeshBatcher.RenderType renderType, Matrix localToWorldMatrix, Matrix viewProjection, MeshBatch meshLib, int index, int outlineId, bool outlined)
         {
-            if (renderType == RenderType.IdRender || renderType == RenderType.IdOutline)
+            if (renderType == DynamicMeshBatcher.RenderType.IdRender || renderType == DynamicMeshBatcher.RenderType.IdOutline)
             {
                 // ToDo: @tpott: Extract IdRender and Bilboard Shaders members
                 IdAndOutlineEffectSetup.Instance.Param_WorldViewProj.SetValue(localToWorldMatrix * viewProjection);
 
                 int id = meshLib.GetTransforms()[index].Id;
 
-                if (renderType == RenderType.IdRender)
+                if (renderType == DynamicMeshBatcher.RenderType.IdRender)
                 {
                     IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(IdGenerator.GetColorFromId(id).ToVector4());
                     IdAndOutlineEffectSetup.Instance.Pass_Id.Apply();
                 }
-                if (renderType == RenderType.IdOutline)
+                if (renderType == DynamicMeshBatcher.RenderType.IdOutline)
                 {
                     //Is this the Id we want to outline?
                     if (id == outlineId)
