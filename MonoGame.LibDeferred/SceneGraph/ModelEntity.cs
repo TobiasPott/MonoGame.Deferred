@@ -1,7 +1,6 @@
 ﻿using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper;
 using Microsoft.Xna.Framework;
-using Vector3 = Microsoft.Xna.Framework.Vector3;
 
 namespace DeferredEngine.Entities
 {
@@ -26,14 +25,9 @@ namespace DeferredEngine.Entities
             Material = material;
 
             if (library != null)
-                RegisterInLibrary(library);
+                library.Register(Material, ModelDefinition.Model, this);
 
             this.UpdateMatrices();
-        }
-
-        public void RegisterInLibrary(DynamicMeshBatcher library)
-        {
-            library.Register(Material, ModelDefinition.Model, this);
         }
 
         protected override void UpdateMatrices()
@@ -41,10 +35,6 @@ namespace DeferredEngine.Entities
             _world = Matrix.CreateScale(Scale) * RotationMatrix * Matrix.CreateTranslation(Position);
             _inverseWorld = Matrix.Invert(Matrix.CreateTranslation(BoundingBoxOffset * Scale) * RotationMatrix * Matrix.CreateTranslation(Position));
             _worldHasChanged = false;
-        }
-        public void Dispose(DynamicMeshBatcher library)
-        {
-            library.DeleteFromRegistry(this);
         }
 
     }

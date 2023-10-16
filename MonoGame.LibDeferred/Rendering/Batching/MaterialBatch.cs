@@ -23,6 +23,9 @@ namespace DeferredEngine.Renderer.Helper
         public bool HasChangedThisFrame = true;
 
         public int Count => _batches.Count;
+        public bool IsAnyRendered => _batches.Any(x => x.IsAnyRendered);
+        public MeshBatch this[int index] => _batches[index];
+
 
 
         public void SetMaterial(MaterialEffect mat) => Material = mat;
@@ -31,9 +34,6 @@ namespace DeferredEngine.Renderer.Helper
             return mat.Equals(Material);
         }
         public List<MeshBatch> GetMeshLibrary() => _batches;
-
-        public MeshBatch this[int index] => _batches[index];
-
 
         public void Register(ModelMeshPart mesh, TransformableObject transform, BoundingSphere boundingSphere)
         {

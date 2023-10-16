@@ -12,55 +12,59 @@ namespace DeferredEngine.Renderer.Helper
     // Controls all Materials and Meshes, so they are ordered at render time.
     public class DynamicMeshBatcher
     {
-        private const int InitialLibrarySize = 64;
-        private List<MaterialBatch> MaterialBatch = new List<MaterialBatch>(InitialLibrarySize);
+        public enum RenderType
+        {
+            Opaque,
+            ShadowOmnidirectional,
+            ShadowLinear,
+            Hologram,
+            Forward,
+            IdRender,
+            IdOutline,
+        }
 
-        private bool _cpuCulling = RenderingSettings.g_CpuCulling;
+        private const int InitialLibrarySize = 16;
 
-        private readonly BoundingSphere _defaultBoundingSphere;
-        private readonly RasterizerState _shadowGenerationRasterizerState = new RasterizerState() { CullMode = CullMode.CullCounterClockwiseFace, ScissorTestEnable = true };
-        private readonly DepthStencilState _depthWrite = new DepthStencilState() { DepthBufferEnable = true, DepthBufferWriteEnable = true, DepthBufferFunction = CompareFunction.Always };
+        private static readonly DepthStencilState DepthWriteState = new DepthStencilState() { DepthBufferEnable = true, DepthBufferWriteEnable = true, DepthBufferFunction = CompareFunction.Always };
+        private static readonly RasterizerState ShadowGenerationRasterizerState = new RasterizerState() { CullMode = CullMode.CullCounterClockwiseFace, ScissorTestEnable = true };
+
 
         private readonly FullscreenTriangleBuffer _fullscreenTarget;
         private readonly GraphicsDevice _graphicsDevice;
 
-        public IdAndOutlineRenderModule IdAndOutlineModule = null;
+        private List<MaterialBatch> _batches = new List<MaterialBatch>(InitialLibrarySize);
+
+        private bool _cpuCulling = RenderingSettings.g_CpuCulling;
+
+        private readonly BoundingSphere _defaultBoundingSphere = new BoundingSphere(Vector3.Zero, 0);
 
 
         public bool BatchByMaterial { get; set; } = false;
+        public bool IsAnyRendered => _batches.Any(x => x.IsAnyRendered);
 
 
         public DynamicMeshBatcher(GraphicsDevice graphics)
         {
             _graphicsDevice = graphics;
 
-            _defaultBoundingSphere = new BoundingSphere(Vector3.Zero, 0);
-
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="mat">if "null" it will be taken from the model!</param>
-        /// <param name="model"></param>
-        /// <param name="transform"></param>
         public void Register(MaterialEffect mat, Model model, TransformableObject transform)
         {
             if (model == null) return;
 
             for (int index = 0; index < model.Meshes.Count; index++)
             {
-                var mesh = model.Meshes[index];
+                ModelMesh mesh = model.Meshes[index];
                 for (int i = 0; i < mesh.MeshParts.Count; i++)
                 {
-                    ModelMeshPart meshPart = mesh.MeshParts[i];
-                    Register(mat, meshPart, transform, mesh.BoundingSphere);
+                    Register(mat, mesh.MeshParts[i], transform, mesh.BoundingSphere);
                 }
             }
         }
 
-        public void Register(MaterialEffect mat, ModelMeshPart mesh, TransformableObject transform, BoundingSphere boundingSphere) //These should be ordered by likeness, so I don't get opaque -> transparent -> opaque
+        private void Register(MaterialEffect mat, ModelMeshPart mesh, TransformableObject transform, BoundingSphere boundingSphere) //These should be ordered by likeness, so I don't get opaque -> transparent -> opaque
         {
             bool found = false;
 
@@ -77,9 +81,9 @@ namespace DeferredEngine.Renderer.Helper
             }
 
             //Check if we already have a material like that, if yes put it in there!
-            for (var i = 0; i < MaterialBatch.Count; i++)
+            for (var i = 0; i < _batches.Count; i++)
             {
-                MaterialBatch matLib = MaterialBatch[i];
+                MaterialBatch matLib = _batches[i];
                 if (this.BatchByMaterial && matLib.HasMaterial(mat))
                 {
                     matLib.Register(mesh, transform, boundingSphere);
@@ -94,7 +98,7 @@ namespace DeferredEngine.Renderer.Helper
                 MaterialBatch batch = new MaterialBatch();
                 batch.SetMaterial(mat);
                 batch.Register(mesh, transform, boundingSphere);
-                MaterialBatch.Add(batch);
+                _batches.Add(batch);
                 //Debug.WriteLine($"Created new material batch array (GC!): {MaterialBatch.Count}");
             }
 
@@ -121,14 +125,14 @@ namespace DeferredEngine.Renderer.Helper
         {
             // ToDo: @tpott: add index lookup of the mat argument to only delete from library of the correct material
             Debug.WriteLine($"DeleteFromRegistry: Unused {mat} argument.");
-            for (var i = 0; i < MaterialBatch.Count; i++)
+            for (var i = 0; i < _batches.Count; i++)
             {
-                MaterialBatch matLib = MaterialBatch[i];
+                MaterialBatch matLib = _batches[i];
                 //if (matLib.HasMaterial(mat))
                 //{
                 if (matLib.DeleteFromRegistry(mesh, transform))
                 {
-                    MaterialBatch.RemoveAt(i);
+                    _batches.RemoveAt(i);
                     break;
                 }
                 //}
@@ -146,9 +150,9 @@ namespace DeferredEngine.Renderer.Helper
                 if (_cpuCulling)
                 {
                     //If we previously did cull and now don't we need to set all the submeshes to render
-                    for (int matBatchIndex = 0; matBatchIndex < MaterialBatch.Count; matBatchIndex++)
+                    for (int matBatchIndex = 0; matBatchIndex < _batches.Count; matBatchIndex++)
                     {
-                        MaterialBatch matBatch = MaterialBatch[matBatchIndex];
+                        MaterialBatch matBatch = _batches[matBatchIndex];
                         for (int i = 0; i < matBatch.Count; i++)
                         {
                             matBatch[i].AllRendered = true;
@@ -165,14 +169,14 @@ namespace DeferredEngine.Renderer.Helper
             bool hasAnythingChanged = false;
             //Ok we applied the transformation to all the entities, now update the submesh boundingboxes!
             // Parallel.For(0, Index, index1 =>
-            for (int matBatchIndex = 0; matBatchIndex < MaterialBatch.Count; matBatchIndex++)
+            for (int matBatchIndex = 0; matBatchIndex < _batches.Count; matBatchIndex++)
             {
                 float distance = 0;
                 int counter = 0;
 
 
                 //MaterialBatch matLib = RenderingSettings.g_cpusort ? MaterialBatch[MaterialLibPointer[index1]] : MaterialBatch[index1];
-                MaterialBatch matLib = MaterialBatch[matBatchIndex];
+                MaterialBatch matLib = _batches[matBatchIndex];
                 for (int i = 0; i < matLib.Count; i++)
                 {
                     float? distanceSq = matLib[i].UpdatePositionAndCheckRender(hasCameraChanged, boundingFrustrum, cameraPosition, _defaultBoundingSphere);
@@ -202,22 +206,11 @@ namespace DeferredEngine.Renderer.Helper
         /// </summary>
         public void FrustumCullingFinalizeFrame()
         {
-            for (int i = 0; i < MaterialBatch.Count; i++)
+            for (int i = 0; i < _batches.Count; i++)
             {
-                MaterialBatch matLib = MaterialBatch[i];
+                MaterialBatch matLib = _batches[i];
                 matLib.HasChangedThisFrame = false;
             }
-        }
-
-        public enum RenderType
-        {
-            Opaque,
-            ShadowOmnidirectional,
-            ShadowLinear,
-            Hologram,
-            IdRender,
-            IdOutline,
-            Forward,
         }
 
         public void Draw(RenderType renderType, PipelineMatrices matrices, bool lightViewPointChanged = false, bool hasAnyObjectMoved = false, bool outlined = false, int outlineId = 0, IRenderModule renderModule = null)
@@ -233,9 +226,9 @@ namespace DeferredEngine.Renderer.Helper
                     return;
             }
 
-            for (int matBatchIndex = 0; matBatchIndex < MaterialBatch.Count; matBatchIndex++)
+            for (int matBatchIndex = 0; matBatchIndex < _batches.Count; matBatchIndex++)
             {
-                MaterialBatch matLib = MaterialBatch[matBatchIndex];
+                MaterialBatch matLib = _batches[matBatchIndex];
 
                 if (matLib.Count < 1) continue;
 
@@ -323,31 +316,9 @@ namespace DeferredEngine.Renderer.Helper
         {
             if (lightViewPointChanged || hasAnyObjectMoved)
             {
-                bool discardFrame = true;
+                if (!IsAnyRendered) return false;
 
-                for (int matBatchIndex = 0; matBatchIndex < MaterialBatch.Count; matBatchIndex++)
-                {
-                    MaterialBatch matLib = MaterialBatch[matBatchIndex];
-
-                    //We determined beforehand whether something changed this frame
-                    if (matLib.HasChangedThisFrame)
-                    {
-                        for (int i = 0; i < matLib.Count; i++)
-                        {
-                            //Now we have to check whether we have a rendered thing in here
-                            if (matLib[i].IsAnyRendered)
-                            {
-                                discardFrame = false;
-                                break;
-                            }
-                        }
-                        if (!discardFrame) break;
-                    }
-                }
-
-                if (discardFrame) return false;
-
-                _graphicsDevice.DepthStencilState = _depthWrite;
+                _graphicsDevice.DepthStencilState = DepthWriteState;
 
                 DeferredEffectSetup.Instance.Pass_Clear.Apply();
                 _fullscreenTarget.Draw(_graphicsDevice);
@@ -375,7 +346,7 @@ namespace DeferredEngine.Renderer.Helper
                 {
                     _graphicsDevice.DepthStencilState = DepthStencilState.Default;
                     _graphicsDevice.BlendState = BlendState.Opaque;
-                    _graphicsDevice.RasterizerState = _shadowGenerationRasterizerState;
+                    _graphicsDevice.RasterizerState = ShadowGenerationRasterizerState;
                 }
             }
             else //if (renderType == RenderType.alpha)
@@ -386,7 +357,8 @@ namespace DeferredEngine.Renderer.Helper
             }
         }
 
-        private bool ApplyShaders(RenderType renderType, IRenderModule renderModule, Matrix localToWorldMatrix, Matrix? view, Matrix viewProjection, MeshBatch meshLib, int index, int outlineId, bool outlined)
+        private bool ApplyShaders(RenderType renderType, IRenderModule renderModule, Matrix localToWorldMatrix, Matrix? view, Matrix viewProjection, MeshBatch meshBatch, 
+            int index, int outlineId, bool outlined)
         {
             switch (renderType)
             {
@@ -394,20 +366,24 @@ namespace DeferredEngine.Renderer.Helper
                 case RenderType.ShadowLinear:
                 case RenderType.ShadowOmnidirectional:
                 case RenderType.Forward:
-                    renderModule.Apply(localToWorldMatrix, view, viewProjection);
+                    ApplyRenderModuleShaders(renderModule, localToWorldMatrix, view, viewProjection);
                     break;
                 case RenderType.Hologram:
                     ApplyHologramShaders(localToWorldMatrix, viewProjection);
                     break;
                 case RenderType.IdRender:
                 case RenderType.IdOutline:
-                    if (!ApplyIdAndOutlineShaders(renderType, localToWorldMatrix, viewProjection, meshLib, index, outlineId, outlined))
+                    if (!ApplyIdAndOutlineShaders(renderType, localToWorldMatrix, viewProjection, meshBatch, index, outlineId, outlined))
                         return false;
                     break;
             }
             return true;
         }
 
+        private void ApplyRenderModuleShaders(IRenderModule renderModule, Matrix localToWorldMatrix, Matrix? view, Matrix viewProjection)
+        {
+            renderModule.Apply(localToWorldMatrix, view, viewProjection);
+        }
         private void ApplyHologramShaders(Matrix localToWorldMatrix, Matrix viewProjection)
         {
             HologramEffectSetup.Instance.Param_World.SetValue(localToWorldMatrix);
