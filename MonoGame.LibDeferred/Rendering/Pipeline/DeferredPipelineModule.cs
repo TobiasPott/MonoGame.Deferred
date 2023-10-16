@@ -73,15 +73,22 @@ namespace DeferredEngine.Renderer.RenderModules
         }
 
 
-        public void SetRenderTargets(GBufferTarget gBuffer, LightingBufferTarget lightBuffer, RenderTarget2D ssaoTarget)
+        public void SetGBufferParams(GBufferTarget gBuffer)
         {
             _effectSetup.Param_ColorMap.SetValue(gBuffer.Albedo);
             _effectSetup.Param_NormalMap.SetValue(gBuffer.Normal);
+        }
+        public void SetLightingParams(LightingBufferTarget lightBuffer)
+        {
             _effectSetup.Param_DiffuseLightMap.SetValue(lightBuffer.Diffuse);
             _effectSetup.Param_SpecularLightMap.SetValue(lightBuffer.Specular);
             _effectSetup.Param_VolumeLightMap.SetValue(lightBuffer.Volume);
+        }
+        public void SetSSAOMap(RenderTarget2D ssaoTarget)
+        {
             _effectSetup.Param_SSAOMap.SetValue(ssaoTarget);
         }
+
         public override void Dispose()
         {
             _effectSetup?.Dispose();

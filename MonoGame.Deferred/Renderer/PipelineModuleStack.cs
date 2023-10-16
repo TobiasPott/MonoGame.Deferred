@@ -30,6 +30,9 @@ namespace DeferredEngine.Renderer
         public readonly DecalRenderModule Decal;
         public readonly HelperRenderModule Helper;
 
+
+
+
         public PipelineModuleStack(ContentManager content)
         {
             GBuffer = new GBufferPipelineModule(content, "Shaders/GbufferSetup/GBuffer");
@@ -65,6 +68,20 @@ namespace DeferredEngine.Renderer
 
         }
 
+        public void SetGBufferParams(GBufferTarget gBufferTarget)
+        {
+            //_editorRender.BillboardRenderer.DepthMap = gBufferTarget.Depth;
+
+            PointLight.SetGBufferParams(gBufferTarget);
+            DirectionalLight.SetGBufferParams(gBufferTarget);
+            Environment.SetGBufferParams(gBufferTarget);
+
+            Decal.DepthMap = gBufferTarget.Depth;
+
+            DistanceField.DepthMap = gBufferTarget.Depth;
+
+            Deferred.SetGBufferParams(gBufferTarget);
+        }
 
         public void Dispose()
         {

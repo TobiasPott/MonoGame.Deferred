@@ -119,7 +119,7 @@ namespace DeferredEngine.Renderer
 
             _moduleStack.Initialize(graphicsDevice, _spriteBatch);
             _moduleStack.GBuffer.GBufferTarget = _gBufferTarget;
-           
+
 
             _bloomFx.Initialize(graphicsDevice, RenderingSettings.g_ScreenResolution);
             _taaFx.Initialize(graphicsDevice, FullscreenTriangleBuffer.Instance);
@@ -877,20 +877,14 @@ namespace DeferredEngine.Renderer
 
             Shaders.ReconstructDepth.Param_DepthMap.SetValue(_gBufferTarget.Depth);
 
-            // update point light module
-            _moduleStack.PointLight.SetGBufferParams(_gBufferTarget);
+            _moduleStack.SetGBufferParams(_gBufferTarget);
             // update directional light module
-            _moduleStack.DirectionalLight.SetGBufferParams(_gBufferTarget);
             _moduleStack.DirectionalLight.SetScreenSpaceShadowMap(onlyEssentials ? _auxTargets[MRT.SSFX_BLUR_VERTICAL] : _auxTargets[MRT.SSFX_BLUR_FINAL]);
 
-            _moduleStack.Environment.SetGBufferParams(_gBufferTarget);
             _moduleStack.Environment.SSRMap = _auxTargets[MRT.SSFX_REFLECTION];
 
-            _moduleStack.Decal.DepthMap = _gBufferTarget.Depth;
-
-            _moduleStack.DistanceField.DepthMap = _gBufferTarget.Depth;
-
-            _moduleStack.Deferred.SetRenderTargets(_gBufferTarget, _lightingBufferTarget, _auxTargets[MRT.SSFX_BLUR_FINAL]);
+            _moduleStack.Deferred.SetLightingParams(_lightingBufferTarget);
+            _moduleStack.Deferred.SetSSAOMap(_auxTargets[MRT.SSFX_BLUR_FINAL]);
 
             Shaders.SSAO.Param_NormalMap.SetValue(_gBufferTarget.Normal);
             Shaders.SSAO.Param_DepthMap.SetValue(_gBufferTarget.Depth);
