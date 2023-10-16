@@ -24,6 +24,9 @@ namespace DeferredEngine.Renderer.Helper
         private readonly FullscreenTriangleBuffer _fullscreenTarget;
         private readonly GraphicsDevice _graphicsDevice;
 
+        public IdAndOutlineRenderer IdAndOutlineModule = null;
+
+
         public bool BatchByMaterial { get; set; } = false;
 
 
@@ -423,14 +426,14 @@ namespace DeferredEngine.Renderer.Helper
             else if (renderType == RenderType.IdRender || renderType == RenderType.IdOutline)
             {
                 // ToDo: @tpott: Extract IdRender and Bilboard Shaders members
-                Shaders.IdRender.Param_WorldViewProj.SetValue(localToWorldMatrix * viewProjection);
+                IdAndOutlineEffectSetup.Instance.Param_WorldViewProj.SetValue(localToWorldMatrix * viewProjection);
 
                 int id = meshLib.GetTransforms()[index].Id;
 
                 if (renderType == RenderType.IdRender)
                 {
-                    Shaders.IdRender.Param_ColorId.SetValue(IdGenerator.GetColorFromId(id).ToVector4());
-                    Shaders.IdRender.Technique_Id.Apply();
+                    IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(IdGenerator.GetColorFromId(id).ToVector4());
+                    IdAndOutlineEffectSetup.Instance.Pass_Id.Apply();
                 }
                 if (renderType == RenderType.IdOutline)
                 {
@@ -440,19 +443,15 @@ namespace DeferredEngine.Renderer.Helper
                     {
                         _graphicsDevice.RasterizerState = RasterizerState.CullNone;
 
-                        Shaders.IdRender.Param_World.SetValue(localToWorldMatrix);
+                        IdAndOutlineEffectSetup.Instance.Param_World.SetValue(localToWorldMatrix);
 
                         if (outlined)
-                            Shaders.IdRender.Technique_Outline.Apply();
+                            IdAndOutlineEffectSetup.Instance.Pass_Outline.Apply();
                         else
-                        {
-                            Shaders.IdRender.Technique_Id.Apply();
-                        }
+                            IdAndOutlineEffectSetup.Instance.Pass_Id.Apply();
                     }
                     else
-                    {
                         return false;
-                    }
                 }
 
             }

@@ -32,8 +32,8 @@ namespace DeferredEngine.Recources
             public static readonly EffectParameter Param_OutlineSize = Effect.Parameters["OutlineSize"];
             public static readonly EffectParameter Param_World = Effect.Parameters["World"];
 
-            public static readonly EffectPass Technique_Id = Effect.Techniques["DrawId"].Passes[0];
-            public static readonly EffectPass Technique_Outline = Effect.Techniques["DrawOutline"].Passes[0];
+            public static readonly EffectPass Pass_Id = Effect.Techniques["DrawId"].Passes[0];
+            public static readonly EffectPass Pass_Outline = Effect.Techniques["DrawOutline"].Passes[0];
         }
 
         //Billboard Renderert

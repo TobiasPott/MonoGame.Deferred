@@ -4,8 +4,19 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DeferredEngine.Recources
 {
 
-    public class IdAndOutlineffectSetup : EffectSetupBase
+    public class IdAndOutlineEffectSetup : EffectSetupBase
     {
+        private static IdAndOutlineEffectSetup _instance = null;
+        public static IdAndOutlineEffectSetup Instance
+        {
+            get
+            {
+                if (_instance == null) _instance = new IdAndOutlineEffectSetup();
+                return _instance;
+            }
+        }
+
+
         public Effect Effect { get; protected set; }
 
         public EffectPass Pass_Id { get; protected set; }
@@ -17,7 +28,7 @@ namespace DeferredEngine.Recources
         public EffectParameter Param_World { get; protected set; }
 
 
-        public IdAndOutlineffectSetup(string shaderPath = "Shaders/Editor/IdRender") : base(shaderPath)
+        public IdAndOutlineEffectSetup(string shaderPath = "Shaders/Editor/IdRender") : base(shaderPath)
         {
             Effect = Globals.content.Load<Effect>("Shaders/Editor/IdRender");
             Param_WorldViewProj = Effect.Parameters["WorldViewProj"];

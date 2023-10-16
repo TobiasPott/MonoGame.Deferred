@@ -26,7 +26,9 @@ namespace DeferredEngine.Recources
         public Texture2D IconDecal { get; protected set; }
 
         public Model EditorArrow3D { get; protected set; }
+        public ModelMeshPart EditorArrow3DMeshPart { get; protected set; }
         public Model EditorArrow3DRound { get; protected set; }
+        public ModelMeshPart EditorArrow3DRoundMeshPart { get; protected set; }
 
 
         public Model Sphere { get; protected set; }
@@ -49,7 +51,9 @@ namespace DeferredEngine.Recources
 
             // Models and Meshes
             EditorArrow3D = content.Load<Model>("Art/Editor/Arrow");
+            EditorArrow3DMeshPart = EditorArrow3D.Meshes[0].MeshParts[0];
             EditorArrow3DRound = content.Load<Model>("Art/Editor/ArrowRound");
+            EditorArrow3DRoundMeshPart = EditorArrow3DRound.Meshes[0].MeshParts[0];
 
             IsoSphere = new SdfModelDefinition(content, "Art/default/isosphere", graphicsDevice, true);
             Sphere = content.Load<Model>("Art/default/sphere");
