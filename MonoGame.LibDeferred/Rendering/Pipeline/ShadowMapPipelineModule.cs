@@ -9,6 +9,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
+
+
+
     public class ShadowMapPipelineModule : PipelineModule, IRenderModule
     {
         public static float ShadowBias = 0.005f;
@@ -17,6 +20,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
         private BoundingFrustum _boundingFrustumShadow;
 
+        private ShadowMapEffectSetup _effectSetup = new ShadowMapEffectSetup();
 
         private enum ShadowPasses
         {
@@ -176,8 +180,8 @@ namespace DeferredEngine.Renderer.RenderModules
                     _graphicsDevice.Viewport = new Viewport(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
 
                     //_graphicsDevice.ScissorRectangle = new Rectangle(0, light.ShadowResolution* (int) cubeMapFace,  light.ShadowResolution, light.ShadowResolution);
-                    Shaders.ShadowMap.Param_FarClip.SetValue(light.Radius);
-                    Shaders.ShadowMap.Param_LightPositionWS.SetValue(light.Position);
+                    _effectSetup.Param_FarClip.SetValue(light.Radius);
+                    _effectSetup.Param_LightPositionWS.SetValue(light.Position);
 
                     _graphicsDevice.ScissorRectangle = new Rectangle(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
 
@@ -265,8 +269,8 @@ namespace DeferredEngine.Renderer.RenderModules
                 meshMaterialLibrary.FrustumCulling(_boundingFrustumShadow, true, light.Position);
 
                 // Rendering!
-                Shaders.ShadowMap.Param_FarClip.SetValue(light.ShadowFarClip);
-                Shaders.ShadowMap.Param_SizeBias.SetValue(ShadowMapPipelineModule.ShadowBias * 2048 / light.ShadowResolution);
+                _effectSetup.Param_FarClip.SetValue(light.ShadowFarClip);
+                _effectSetup.Param_SizeBias.SetValue(ShadowMapPipelineModule.ShadowBias * 2048 / light.ShadowResolution);
 
                 meshMaterialLibrary.Draw(DynamicMeshBatcher.RenderType.ShadowLinear, light.LightViewProjection, light.LightView, light.HasChanged, false, false, 0, renderModule: this);
             }
@@ -282,8 +286,9 @@ namespace DeferredEngine.Renderer.RenderModules
 
                 _graphicsDevice.SetRenderTarget(light.ShadowMap);
                 _graphicsDevice.Clear(ClearOptions.DepthBuffer, Color.White, 1, 0);
-                Shaders.ShadowMap.Param_FarClip.SetValue(light.ShadowFarClip);
-                Shaders.ShadowMap.Param_SizeBias.SetValue(ShadowMapPipelineModule.ShadowBias * 2048 / light.ShadowResolution);
+
+                _effectSetup.Param_FarClip.SetValue(light.ShadowFarClip);
+                _effectSetup.Param_SizeBias.SetValue(ShadowMapPipelineModule.ShadowBias * 2048 / light.ShadowResolution);
 
                 meshMaterialLibrary.Draw(DynamicMeshBatcher.RenderType.ShadowLinear,
                     light.LightViewProjection, light.LightView, false, true, false, 0, renderModule: this);
@@ -301,21 +306,21 @@ namespace DeferredEngine.Renderer.RenderModules
 
         public void Apply(Matrix localWorldMatrix, Matrix? view, Matrix viewProjection)
         {
-            Shaders.ShadowMap.Param_WorldViewProj.SetValue(localWorldMatrix * viewProjection);
+            _effectSetup.Param_WorldViewProj.SetValue(localWorldMatrix * viewProjection);
 
             switch (_pass)
             {
                 case ShadowPasses.Directional:
-                    Shaders.ShadowMap.Param_WorldView.SetValue(localWorldMatrix * (Matrix)view);
-                    Shaders.ShadowMap.Pass_LinearPass.Apply();
+                    _effectSetup.Param_WorldView.SetValue(localWorldMatrix * (Matrix)view);
+                    _effectSetup.Pass_LinearPass.Apply();
                     break;
                 case ShadowPasses.Omnidirectional:
-                    Shaders.ShadowMap.Param_World.SetValue(localWorldMatrix);
-                    Shaders.ShadowMap.Pass_DistancePass.Apply();
+                    _effectSetup.Param_World.SetValue(localWorldMatrix);
+                    _effectSetup.Pass_DistancePass.Apply();
                     break;
                 case ShadowPasses.OmnidirectionalAlpha:
-                    Shaders.ShadowMap.Param_World.SetValue(localWorldMatrix);
-                    Shaders.ShadowMap.Pass_DistanceAlphaPass.Apply();
+                    _effectSetup.Param_World.SetValue(localWorldMatrix);
+                    _effectSetup.Pass_DistanceAlphaPass.Apply();
                     break;
             }
         }
@@ -328,8 +333,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 if (material.HasMask)
                 {
                     _pass = ShadowPasses.OmnidirectionalAlpha;
-                    Shaders.ShadowMap.Param_MaskTexture.SetValue(material.Mask);
-
+                    _effectSetup.Param_MaskTexture.SetValue(material.Mask);
                 }
                 else
                 {
@@ -341,37 +345,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
         public override void Dispose()
         {
-
+            _effectSetup?.Dispose();
         }
-    }
-}
-
-
-namespace DeferredEngine.Recources
-{
-    public static partial class Shaders
-    {
-
-        // Shadow Map
-        public static class ShadowMap
-        {
-            public static Effect Effect = Globals.content.Load<Effect>("Shaders/Shadow/ShadowMap");
-
-            //Linear = VS Depth -> used for directional lights
-            public static EffectPass Pass_LinearPass = Effect.Techniques["DrawLinearDepth"].Passes[0];
-            //Distance = distance(pixel, light) -> used for omnidirectional lights
-            public static EffectPass Pass_DistancePass = Effect.Techniques["DrawDistanceDepth"].Passes[0];
-            public static EffectPass Pass_DistanceAlphaPass = Effect.Techniques["DrawDistanceDepthAlpha"].Passes[0];
-
-            public static EffectParameter Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
-            public static EffectParameter Param_WorldView = Effect.Parameters["WorldView"];
-            public static EffectParameter Param_World = Effect.Parameters["World"];
-            public static EffectParameter Param_LightPositionWS = Effect.Parameters["LightPositionWS"];
-            public static EffectParameter Param_FarClip = Effect.Parameters["FarClip"];
-            public static EffectParameter Param_SizeBias = Effect.Parameters["SizeBias"];
-            public static EffectParameter Param_MaskTexture = Effect.Parameters["MaskTexture"];
-        }
-
-
     }
 }
