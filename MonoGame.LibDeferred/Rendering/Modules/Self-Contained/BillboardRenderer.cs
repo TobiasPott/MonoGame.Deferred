@@ -31,55 +31,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _billboardBuffer = new BillboardBuffer(Color.White, graphicsDevice);
         }
 
-        private void DrawBillboard(Matrix world, Matrix view, Matrix staticViewProjection, int id)
-        {
-            _effectSetup.Param_WorldViewProj.SetValue(world * staticViewProjection);
-            _effectSetup.Param_WorldView.SetValue(world * view);
-            _effectSetup.Param_IdColor.SetValue(IdGenerator.GetColorFromId(id).ToVector3());
-            _effectSetup.Effect.CurrentTechnique.Passes[0].Apply();
-            _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 2);
-        }
 
-        public void DrawBillboards(EntitySceneGroup scene, EnvironmentProbe envSample, PipelineMatrices matrices)
-        {
-            _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-            _graphicsDevice.SetVertexBuffer(_billboardBuffer.VBuffer);
-            _graphicsDevice.Indices = (_billboardBuffer.IBuffer);
-
-            _effectSetup.Param_Texture.SetValue(StaticAssets.Instance.IconLight);
-            _effectSetup.Effect.CurrentTechnique = _effectSetup.Technique_Id;
-
-            Matrix staticViewProjection = matrices.StaticViewProjection;
-            Matrix view = matrices.View;
-
-            List<Decal> decals = scene.Decals;
-            List<DeferredPointLight> pointLights = scene.PointLights;
-            List<DeferredDirectionalLight> dirLights = scene.DirectionalLights;
-
-            for (int index = 0; index < decals.Count; index++)
-            {
-                var decal = decals[index];
-                DrawBillboard(decal.World, view, staticViewProjection, decal.Id);
-            }
-
-            for (int index = 0; index < pointLights.Count; index++)
-            {
-                var light = pointLights[index];
-                DrawBillboard(light.World, view, staticViewProjection, light.Id);
-            }
-
-            for (int index = 0; index < dirLights.Count; index++)
-            {
-                var light = dirLights[index];
-                DrawBillboard(light.World, view, staticViewProjection, light.Id);
-            }
-
-            _effectSetup.Param_Texture.SetValue(StaticAssets.Instance.IconEnvmap);
-            DrawBillboard(envSample.World, view, staticViewProjection, envSample.Id);
-
-        }
-
-        // ! ! ! ! Called in IdAndOutlineRenderer ! ! ! !
         public void DrawSceneBillboards(EntitySceneGroup scene, EnvironmentProbe envSample, PipelineMatrices matrices)
         {
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;

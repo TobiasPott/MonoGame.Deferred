@@ -267,7 +267,7 @@ namespace DeferredEngine.Renderer
 
             //Draw the elements that we are hovering over with outlines
             if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
-                _editorRender.DrawIds(meshBatcher, scene, envProbe, _matrices, gizmoContext);
+                _editorRender.IdAndOutlineRenderer.Draw(meshBatcher, scene, envProbe, _matrices, gizmoContext, _editorRender.HasMouseMovement);
 
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
             RenderMode(_currentOutput);
@@ -319,7 +319,7 @@ namespace DeferredEngine.Renderer
             if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
             {
                 if (RenderingSettings.e_DrawOutlines)
-                    DrawTextureToScreenToFullScreen(_editorRender.GetOutlinesRenderTarget(), BlendState.Additive);
+                    DrawTextureToScreenToFullScreen(_editorRender.IdAndOutlineRenderer.GetRenderTarget2D(), BlendState.Additive);
 
                 _editorRender.DrawEditorElements(scene, envProbe, _matrices, gizmoContext);
 

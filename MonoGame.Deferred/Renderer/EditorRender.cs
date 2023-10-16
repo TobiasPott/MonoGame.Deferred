@@ -19,7 +19,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
 
         private double _mouseMoved;
-        private bool _mouseMovement;
+        public bool HasMouseMovement { get; protected set; }
         private readonly double mouseMoveTimer = 400;
 
         public void Initialize(GraphicsDevice graphicsDevice)
@@ -40,34 +40,20 @@ namespace DeferredEngine.Renderer.RenderModules
         {
             if (RenderingStats.UIIsHovered || Input.mouseState.RightButton == ButtonState.Pressed)
             {
-                _mouseMovement = false;
+                HasMouseMovement = false;
                 return;
             }
-
             if (Input.mouseState != Input.mouseLastState)
             {
                 //reset the timer!
-
                 _mouseMoved = gameTime.TotalGameTime.TotalMilliseconds + mouseMoveTimer;
-                _mouseMovement = true;
+                HasMouseMovement = true;
             }
-
             if (_mouseMoved < gameTime.TotalGameTime.TotalMilliseconds)
             {
-                _mouseMovement = false;
+                HasMouseMovement = false;
             }
 
-        }
-
-        public RenderTarget2D GetOutlinesRenderTarget()
-        {
-            return IdAndOutlineRenderer.GetRenderTarget2D();
-        }
-
-
-        public void DrawIds(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, EnvironmentProbe envSample, PipelineMatrices matrices, GizmoDrawContext gizmoContext)
-        {
-            IdAndOutlineRenderer.Draw(meshBatcher, scene, envSample, matrices, gizmoContext, _mouseMovement);
         }
 
         public void DrawEditorElements(EntitySceneGroup scene, EnvironmentProbe envSample, PipelineMatrices matrices, GizmoDrawContext gizmoContext)
