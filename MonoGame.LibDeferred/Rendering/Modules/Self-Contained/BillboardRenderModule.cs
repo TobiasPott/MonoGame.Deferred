@@ -10,12 +10,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
-    public partial class BillboardRenderer
+    public partial class BillboardRenderModule
     {
 
         private GraphicsDevice _graphicsDevice;
 
-        public IdAndOutlineRenderer IdAndOutlineRenderer;
+        public IdAndOutlineRenderModule IdAndOutlineRenderer;
         private BillboardEffectSetup _effectSetup = new BillboardEffectSetup();
         private BillboardBuffer _billboardBuffer;
 
@@ -87,9 +87,8 @@ namespace DeferredEngine.Renderer.RenderModules
             _effectSetup.Effect.CurrentTechnique = _effectSetup.Technique_Billboard;
             _effectSetup.Param_IdColor.SetValue(Color.Gray.ToVector3());
 
-            List<Decal> decals = scene.Decals;
-
             // Decals
+            List<Decal> decals = scene.Decals;
             _effectSetup.Param_Texture.SetValue(StaticAssets.Instance.IconDecal);
             for (int i = 0; i < decals.Count; i++)
                 DrawEditorBillboard(decals[i], matrices, gizmoContext);
@@ -99,7 +98,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _effectSetup.Param_Texture.SetValue(StaticAssets.Instance.IconLight);
             for (int i = 0; i < pointLights.Count; i++)
                 DrawEditorBillboard(pointLights[i], matrices, gizmoContext);
-            
+
             //DirectionalLights
             List<DeferredDirectionalLight> dirLights = scene.DirectionalLights;
             HelperGeometryManager helperManager = HelperGeometryManager.GetInstance();
@@ -108,16 +107,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 DeferredDirectionalLight light = dirLights[i];
                 DrawEditorBillboard(light, matrices, gizmoContext);
 
-                Vector3 lPosition = light.Position;
-                Vector3 lDirection = light.Direction * 10;
-                Color lColor = light.Color;
-                helperManager.AddLineStartDir(lPosition, lDirection, 1, Color.Black, lColor);
-                helperManager.AddLineStartDir(lPosition + Vector3.UnitX * 10, lDirection, 1, Color.Black, lColor);
-                helperManager.AddLineStartDir(lPosition - Vector3.UnitX * 10, lDirection, 1, Color.Black, lColor);
-                helperManager.AddLineStartDir(lPosition + Vector3.UnitY * 10, lDirection, 1, Color.Black, lColor);
-                helperManager.AddLineStartDir(lPosition - Vector3.UnitY * 10, lDirection, 1, Color.Black, lColor);
-                helperManager.AddLineStartDir(lPosition + Vector3.UnitZ * 10, lDirection, 1, Color.Black, lColor);
-                helperManager.AddLineStartDir(lPosition - Vector3.UnitZ * 10, lDirection, 1, Color.Black, lColor);
+                helperManager.AddLineStartDir(light.Position, light.Direction * 10, 1, Color.Black, light.Color);
 
                 if (light.CastShadows)
                 {

@@ -24,7 +24,7 @@ namespace DeferredEngine.Renderer.Helper
         private readonly FullscreenTriangleBuffer _fullscreenTarget;
         private readonly GraphicsDevice _graphicsDevice;
 
-        public IdAndOutlineRenderer IdAndOutlineModule = null;
+        public IdAndOutlineRenderModule IdAndOutlineModule = null;
 
 
         public bool BatchByMaterial { get; set; } = false;

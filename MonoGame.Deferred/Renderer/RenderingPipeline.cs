@@ -272,7 +272,8 @@ namespace DeferredEngine.Renderer
             RenderEditorOverlays(gizmoContext, scene);
 
             //Draw debug geometry
-            RenderHelperGeometry();
+            _helperGeometryRenderModule.ViewProjection = _matrices.StaticViewProjection;
+            _helperGeometryRenderModule.Draw(); 
 
             //Set up the frustum culling for the next frame
             meshBatcher.FrustumCullingFinalizeFrame();
@@ -336,12 +337,6 @@ namespace DeferredEngine.Renderer
                 _spriteBatch.End();
             }
 
-        }
-
-        private void RenderHelperGeometry()
-        {
-            _helperGeometryRenderModule.ViewProjection = _matrices.StaticViewProjection;
-            _helperGeometryRenderModule.Draw();
         }
 
         #endregion
@@ -422,11 +417,6 @@ namespace DeferredEngine.Renderer
         /// <summary>
         /// Draw our shadow maps from the individual lights. Check if something has changed first, otherwise leave as it is
         /// </summary>
-        /// <param name="meshBatcher"></param>
-        /// <param name="entities"></param>
-        /// <param name="pointLights"></param>
-        /// <param name="dirLights"></param>
-        /// <param name="camera"></param>
         private void DrawShadowMaps(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, Camera camera)
         {
             //Don't render for the first frame, we need a guideline first
@@ -502,7 +492,6 @@ namespace DeferredEngine.Renderer
         /// Read here for more information
         /// http://mynameismjp.wordpress.com/2009/03/10/reconstructing-position-from-depth/
         /// </summary>
-        /// <param name="cameraFrustum"></param>
         private void ComputeFrustumCorners(BoundingFrustum cameraFrustum, Camera camera)
         {
             cameraFrustum.GetCorners(_cornersWorldSpace);
@@ -541,7 +530,6 @@ namespace DeferredEngine.Renderer
         /// <summary>
         /// Draw all our meshes to the GBuffer - albedo, normal, depth - for further computation
         /// </summary>
-        /// <param name="meshBatcher"></param>
         private void DrawGBuffer(DynamicMeshBatcher meshBatcher)
         {
             _gBufferModule.Draw(meshBatcher, _matrices);
@@ -559,7 +547,6 @@ namespace DeferredEngine.Renderer
         /// <summary>
         /// Draw deferred Decals
         /// </summary>
-        /// <param name="decals"></param>
         private void DrawDecals(List<Decal> decals)
         {
             if (!RenderingSettings.g_EnableDecals) return;
@@ -575,11 +562,9 @@ namespace DeferredEngine.Renderer
         /// <summary>
         /// Draw Screen Space Reflections
         /// </summary>
-        /// <param name="gameTime"></param>
         private void DrawScreenSpaceReflections(GameTime gameTime)
         {
             if (!RenderingSettings.g_SSReflection) return;
-
 
             //todo: more samples for more reflective materials!
             _graphicsDevice.SetRenderTarget(_auxTargets[MRT.SSFX_REFLECTION]);

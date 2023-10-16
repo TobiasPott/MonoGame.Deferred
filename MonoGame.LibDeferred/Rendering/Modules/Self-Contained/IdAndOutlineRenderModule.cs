@@ -11,7 +11,7 @@ using MonoGame.Ext;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
-    public partial class IdAndOutlineRenderer
+    public partial class IdAndOutlineRenderModule
     {
         // ToDo: check if gizmo alignment matches ids and axis order
         public const int ID_AXIS_X = 1;
@@ -37,6 +37,9 @@ namespace DeferredEngine.Renderer.RenderModules
             new Color(ID_AXIS_Z, 0, 0),
         };
 
+        private readonly Vector4 HoveredColor = new Vector4(1, 1, 1, 0.1f);
+        private readonly Vector4 SelectedColor = new Vector4(1, 1, 0, 0.1f);
+
         public enum Pass
         {
             Color,
@@ -44,14 +47,11 @@ namespace DeferredEngine.Renderer.RenderModules
         }
 
 
-        private readonly Vector4 _hoveredColor = new Vector4(1, 1, 1, 0.1f);
-        private readonly Vector4 _selectedColor = new Vector4(1, 1, 0, 0.1f);
-
-        public BillboardRenderer BillboardRenderer;
+        public BillboardRenderModule BillboardRenderer;
         private Color[] _readbackIdColor = new Color[1];
         private GraphicsDevice _graphicsDevice;
 
-        private RenderTarget2D _idAndOutlineRenderTarget2D;
+        private RenderTarget2D _renderTarget;
 
         public int HoveredId;
 
@@ -62,22 +62,22 @@ namespace DeferredEngine.Renderer.RenderModules
 
         public RenderTarget2D GetRenderTarget2D()
         {
-            return _idAndOutlineRenderTarget2D;
+            return _renderTarget;
         }
 
 
         public void SetUpRenderTarget(int width, int height)
         {
-            if (_idAndOutlineRenderTarget2D != null) _idAndOutlineRenderTarget2D.Dispose();
-
-            _idAndOutlineRenderTarget2D = RenderTarget2DDefinition.Aux_Id.CreateRenderTarget(_graphicsDevice, width, height);
+            if (_renderTarget != null)
+                _renderTarget.Dispose();
+            _renderTarget = RenderTarget2DDefinition.Aux_Id.CreateRenderTarget(_graphicsDevice, width, height);
         }
 
         public void Draw(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, PipelineMatrices matrices, GizmoDrawContext drawContext, bool mouseMoved)
         {
             if (drawContext.GizmoTransformationMode)
             {
-                _graphicsDevice.SetRenderTarget(_idAndOutlineRenderTarget2D);
+                _graphicsDevice.SetRenderTarget(_renderTarget);
                 _graphicsDevice.Clear(Color.Black);
                 return;
             }
@@ -86,13 +86,13 @@ namespace DeferredEngine.Renderer.RenderModules
                 DrawIds(meshBatcher, scene, matrices, drawContext);
 
             if (RenderingSettings.e_DrawOutlines)
-                DrawOutlines(meshBatcher, matrices, mouseMoved, HoveredId, drawContext, mouseMoved);
+                DrawOutlines(meshBatcher, matrices, drawContext, mouseMoved, HoveredId, mouseMoved);
         }
 
         private void DrawIds(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, PipelineMatrices matrices, GizmoDrawContext gizmoContext)
         {
 
-            _graphicsDevice.SetRenderTarget(_idAndOutlineRenderTarget2D);
+            _graphicsDevice.SetRenderTarget(_renderTarget);
             _graphicsDevice.BlendState = BlendState.Opaque;
 
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
@@ -110,8 +110,8 @@ namespace DeferredEngine.Renderer.RenderModules
             Rectangle sourceRectangle = new Rectangle(Mouse.GetState().X, Mouse.GetState().Y, 1, 1);
             try
             {
-                if (sourceRectangle.X >= 0 && sourceRectangle.Y >= 0 && sourceRectangle.X < _idAndOutlineRenderTarget2D.Width - 2 && sourceRectangle.Y < _idAndOutlineRenderTarget2D.Height - 2)
-                    _idAndOutlineRenderTarget2D.GetData(0, sourceRectangle, _readbackIdColor, 0, 1);
+                if (sourceRectangle.X >= 0 && sourceRectangle.Y >= 0 && sourceRectangle.X < _renderTarget.Width - 2 && sourceRectangle.Y < _renderTarget.Height - 2)
+                    _renderTarget.GetData(0, sourceRectangle, _readbackIdColor, 0, 1);
             }
             catch
             {
@@ -147,6 +147,7 @@ namespace DeferredEngine.Renderer.RenderModules
             DrawTransformGizmoAxis(_graphicsDevice, position, rotation, AxisAngles[5], this.HoveredId == ID_AXIS_Z ? 1 : 0.5f, axisColors[2], staticViewProjection, gizmoMode);
 
         }
+
         private static void DrawTransformGizmoAxis(GraphicsDevice graphicsDevice, Vector3 position, Matrix rotationObject, Vector3 angles, float scale,
             Color color, Matrix staticViewProjection, GizmoModes gizmoMode = GizmoModes.Translation, Vector3? direction = null)
         {
@@ -167,9 +168,10 @@ namespace DeferredEngine.Renderer.RenderModules
             graphicsDevice.Indices = (meshpart.IndexBuffer);
             graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, vertexOffset, startIndex, primitiveCount);
         }
-        private void DrawOutlines(DynamicMeshBatcher meshMat, PipelineMatrices matrices, bool drawAll, int hoveredId, GizmoDrawContext gizmoContext, bool mouseMoved)
+
+        private void DrawOutlines(DynamicMeshBatcher meshBatcher, PipelineMatrices matrices, GizmoDrawContext gizmoContext, bool drawAll, int hoveredId, bool mouseMoved)
         {
-            _graphicsDevice.SetRenderTarget(_idAndOutlineRenderTarget2D);
+            _graphicsDevice.SetRenderTarget(_renderTarget);
 
             if (!mouseMoved)
                 _graphicsDevice.Clear(ClearOptions.Target, Color.Black, 0, 0);
@@ -188,18 +190,20 @@ namespace DeferredEngine.Renderer.RenderModules
             {
                 //UPdate the size of our outlines!
 
-                if (!drawAll) meshMat.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, false, false, selectedId);
+                if (!drawAll) 
+                    meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, false, false, selectedId);
 
-                IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(_selectedColor);
-                meshMat.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, false, outlined: true, outlineId: selectedId);
+                IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(SelectedColor);
+                meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, false, outlined: true, outlineId: selectedId);
             }
 
             if (selectedId != hoveredId && hoveredId != 0 && mouseMoved)
             {
-                if (!drawAll) meshMat.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, false, false, hoveredId);
+                if (!drawAll)
+                    meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, false, false, hoveredId);
 
-                IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(_hoveredColor);
-                meshMat.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, false, outlined: true, outlineId: hoveredId);
+                IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(HoveredColor);
+                meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, false, outlined: true, outlineId: hoveredId);
             }
         }
 

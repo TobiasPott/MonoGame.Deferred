@@ -14,8 +14,8 @@ namespace DeferredEngine.Renderer.RenderModules
     {
         private GraphicsDevice _graphicsDevice;
 
-        public IdAndOutlineRenderer IdAndOutlineRenderer { get; protected set; }
-        public BillboardRenderer BillboardRenderer { get; protected set; }
+        public IdAndOutlineRenderModule IdAndOutlineRenderer { get; protected set; }
+        public BillboardRenderModule BillboardRenderer { get; protected set; }
 
 
         private double _mouseMoved;
@@ -27,9 +27,9 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice = graphicsDevice;
 
 
-            BillboardRenderer = new BillboardRenderer();
+            BillboardRenderer = new BillboardRenderModule();
             BillboardRenderer.Initialize(graphicsDevice);
-            IdAndOutlineRenderer = new IdAndOutlineRenderer();
+            IdAndOutlineRenderer = new IdAndOutlineRenderModule();
             IdAndOutlineRenderer.Initialize(graphicsDevice);
 
             BillboardRenderer.IdAndOutlineRenderer = IdAndOutlineRenderer;
@@ -64,7 +64,7 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.BlendState = BlendState.Opaque;
 
             BillboardRenderer.DrawEditorBillboards(scene, matrices, gizmoContext);
-            IdAndOutlineRenderer.DrawTransformGizmos(matrices, gizmoContext, IdAndOutlineRenderer.Pass.Color);
+            IdAndOutlineRenderer.DrawTransformGizmos(matrices, gizmoContext, IdAndOutlineRenderModule.Pass.Color);
         }
 
     }
