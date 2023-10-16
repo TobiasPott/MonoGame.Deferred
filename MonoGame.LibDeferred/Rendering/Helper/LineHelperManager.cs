@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using DeferredEngine.Entities;
+﻿using DeferredEngine.Entities;
 using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,27 +8,29 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
     public class LineHelperManager
     {
         private readonly List<LineHelper> Lines = new List<LineHelper>();
-        //private  VertexBuffer _vbuffer;
-        //private  IndexBuffer _ibuffer;
 
         private int _tempVertsPoolLength = 100;
-        public VertexPositionColor[] TempVertsPool;
+
+        private VertexPositionColor[] _tempVertsPool;
         private int _tempVertsPoolIndex;
         private int _tempVertsPoolOverCount;
 
+        private Vector3[] _frustumCorners = new Vector3[8];
+        private Vector3[] _bBoxCorners = new Vector3[8];
+
         public LineHelperManager()
         {
-            TempVertsPool = new VertexPositionColor[_tempVertsPoolLength];
+            _tempVertsPool = new VertexPositionColor[_tempVertsPoolLength];
         }
 
         public VertexPositionColor GetVertexPositionColor(Vector3 point, Color color)
         {
             if (_tempVertsPoolIndex < _tempVertsPoolLength - 3) //Buffer
             {
-                TempVertsPool[_tempVertsPoolIndex].Position = point;
-                TempVertsPool[_tempVertsPoolIndex].Color = color;
+                _tempVertsPool[_tempVertsPoolIndex].Position = point;
+                _tempVertsPool[_tempVertsPoolIndex].Color = color;
                 _tempVertsPoolIndex++;
-                return TempVertsPool[_tempVertsPoolIndex - 1];
+                return _tempVertsPool[_tempVertsPoolIndex - 1];
             }
             _tempVertsPoolOverCount++;
             return new VertexPositionColor(point, color);
@@ -40,36 +41,24 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
             if (_tempVertsPoolOverCount > 0)
             {
                 _tempVertsPoolLength += _tempVertsPoolOverCount;
-                TempVertsPool = new VertexPositionColor[_tempVertsPoolLength];
+                _tempVertsPool = new VertexPositionColor[_tempVertsPoolLength];
             }
 
             _tempVertsPoolOverCount = 0;
             _tempVertsPoolIndex = 0;
         }
 
-        public void AddLineStartEnd(Vector3 start, Vector3 end, short timer)
-        {
-            LineHelper lineHelper = new LineHelper(start, end, timer, this);
-            Lines.Add(lineHelper);
-        }
+        public void AddLineStartEnd(Vector3 start, Vector3 end, short timer) 
+            => Lines.Add(new LineHelper(start, end, timer, this));
 
         public void AddLineStartDir(Vector3 start, Vector3 dir, short timer)
-        {
-            LineHelper lineHelper = new LineHelper(start, start + dir, timer, this);
-            Lines.Add(lineHelper);
-        }
+            => AddLineStartEnd(start, start + dir, timer);
 
         public void AddLineStartEnd(Vector3 start, Vector3 end, short timer, Color startColor, Color endColor)
-        {
-            LineHelper lineHelper = new LineHelper(start, end, timer, startColor, endColor, this);
-            Lines.Add(lineHelper);
-        }
+            => Lines.Add(new LineHelper(start, end, timer, startColor, endColor, this));
 
         public void AddLineStartDir(Vector3 start, Vector3 dir, short timer, Color startColor, Color endColor)
-        {
-            LineHelper lineHelper = new LineHelper(start, start + dir, timer, startColor, endColor, this);
-            Lines.Add(lineHelper);
-        }
+            => Lines.Add(new LineHelper(start, start + dir, timer, startColor, endColor, this));
 
         public void AddFrustum(BoundingFrustumEx frustum, short timer, Color color)
         {
@@ -97,6 +86,8 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
 
             worldViewProjection.SetValue(viewProjection);
 
+            // ToDo: @tpott: Change rendering lines to build the vertex and index buffer when adding lines
+            //          This should allow to remove the LineHelper type as overhead
             for (int i = 0; i < Lines.Count; i++)
             {
                 LineHelper line = Lines[i];
@@ -105,9 +96,7 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
                     vertexColorPass.Apply();
 
                     //Gather
-                    graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineList, line.Verts, 0, 2, LineHelper.Indices,
-                        0,
-                        1);
+                    graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineList, line.Verts, 0, 2, LineHelper.Indices, 0, 1);
 
                     line.Timer--;
                     if (line.Timer <= 0)
@@ -125,7 +114,6 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
             AdjustTempVertsPoolSize();
         }
 
-        private Vector3[] _frustumCorners = new Vector3[8];
         public void CreateBoundingBoxLines(BoundingFrustum boundingFrustumExShadow)
         {
             boundingFrustumExShadow.GetCorners(_frustumCorners);
@@ -150,7 +138,9 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
         {
             if (entity != null)
             {
-                Vector3[] vertices = entity.BoundingBox.GetCorners();
+                entity.BoundingBox.GetCorners(_bBoxCorners);
+
+                Vector3[] vertices = _bBoxCorners;
                 //Transform
                 for (var index = 0; index < vertices.Length; index++)
                 {
@@ -173,5 +163,6 @@ namespace DeferredEngine.Renderer.Helper.HelperGeometry
                 AddLineStartEnd(vertices[7], vertices[4], 1);
             }
         }
+
     }
 }

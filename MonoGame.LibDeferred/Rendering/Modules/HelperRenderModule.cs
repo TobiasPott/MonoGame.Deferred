@@ -1,12 +1,12 @@
-﻿using DeferredEngine.Renderer.Helper.HelperGeometry;
+﻿using DeferredEngine.Recources;
+using DeferredEngine.Renderer.Helper.HelperGeometry;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 
 namespace DeferredEngine.Renderer.RenderModules
 {
-    public class HelperGeometryRenderModule
+    public class HelperRenderModule
     {
         private readonly HelperGeometryEffectSetup _effectSetup = new HelperGeometryEffectSetup();
 
@@ -16,7 +16,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
         private GraphicsDevice _graphicsDevice;
 
-        public HelperGeometryRenderModule()
+        public HelperRenderModule()
         { }
 
         public void Initialize(GraphicsDevice graphicsDevice)

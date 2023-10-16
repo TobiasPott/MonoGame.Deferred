@@ -44,7 +44,7 @@ namespace DeferredEngine.Renderer
         private LightingPipelineModule _lightingModule;
         private EnvironmentPipelineModule _environmentModule;
         private DecalRenderModule _decalRenderModule;
-        private HelperGeometryRenderModule _helperGeometryRenderModule;
+        private HelperRenderModule _helperGeometryRenderModule;
         private DistanceFieldRenderModule _distanceFieldRenderModule;
 
 
@@ -118,7 +118,7 @@ namespace DeferredEngine.Renderer
             _environmentModule = new EnvironmentPipelineModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
 
             _decalRenderModule = new DecalRenderModule();
-            _helperGeometryRenderModule = new HelperGeometryRenderModule();
+            _helperGeometryRenderModule = new HelperRenderModule();
             _distanceFieldRenderModule = new DistanceFieldRenderModule()
             { EnvironmentProbeRenderModule = _environmentModule, PointLightRenderModule = _pointLightRenderModule };
 

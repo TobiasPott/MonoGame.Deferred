@@ -4,7 +4,6 @@ using DeferredEngine.Recources;
 using DeferredEngine.Recources.Helper;
 using DeferredEngine.Renderer.Helper.Editor;
 using DeferredEngine.Renderer.Helper.HelperGeometry;
-using DeferredEngine.Renderer.PostProcessing;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 

@@ -6,7 +6,7 @@ namespace DeferredEngine.Renderer.Helper
 {
     public class OctahedronHelperManager
     {
-        private OctahedronMesh _octahedronMesh;
+        private OctahedronHelper _octahedronMesh;
         private List<Vector3> positions = new List<Vector3>();
         private List<Vector4> colors = new List<Vector4>();
         private Matrix scale = Matrix.CreateScale(.005f);
@@ -19,10 +19,10 @@ namespace DeferredEngine.Renderer.Helper
 
         public void Draw(GraphicsDevice graphics, Matrix viewProjection, EffectParameter worldViewProjection, EffectParameter globalColor, EffectPass globalColorPass)
         {
-            if(_octahedronMesh ==  null) _octahedronMesh = new OctahedronMesh(graphics);
+            if(_octahedronMesh ==  null) _octahedronMesh = new OctahedronHelper(graphics);
             
-            graphics.SetVertexBuffer(_octahedronMesh.GetVertexBuffer());
-            graphics.Indices = _octahedronMesh.GetIndexBuffer();
+            graphics.SetVertexBuffer(_octahedronMesh.VertexBuffer);
+            graphics.Indices = _octahedronMesh.IndexBuffer;
 
             for (var index = 0; index < positions.Count; index++)
             {

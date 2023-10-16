@@ -2,7 +2,7 @@
 using DeferredEngine.Logic;
 using Microsoft.Xna.Framework;
 
-namespace DeferredEngine.Renderer.PostProcessing
+namespace DeferredEngine.Recources
 {
     public struct GizmoDrawContext
     {
