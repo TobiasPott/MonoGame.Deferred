@@ -1,6 +1,5 @@
 ﻿using DeferredEngine.Entities;
 using DeferredEngine.Pipeline.Lighting;
-using DeferredEngine.Recources;
 using DeferredEngine.Renderer.Helper;
 using DeferredEngine.Renderer.RenderModules.Default;
 using Microsoft.Xna.Framework;
@@ -22,6 +21,7 @@ namespace DeferredEngine.Renderer.RenderModules
         private float[] LightIntensity;
         private Vector3[] LightColor;
 
+        private ForwardEffectSetup _effectSetup = new ForwardEffectSetup();
 
 
         public ForwardPipelineModule(ContentManager content, string shaderPath = "Shaders/forward/forward")
@@ -55,9 +55,6 @@ namespace DeferredEngine.Renderer.RenderModules
 
         private void SetupLighting(Camera camera, List<DeferredPointLight> pointLights, BoundingFrustum frustum)
         {
-            //Setup camera
-            Shaders.Forward.Param_CameraPositionWS.SetValue(camera.Position);
-
             int count = pointLights.Count > 40 ? MAXLIGHTS : pointLights.Count;
 
             if (LightPositionWS == null || pointLights.Count != LightPositionWS.Length)
@@ -85,53 +82,30 @@ namespace DeferredEngine.Renderer.RenderModules
                 lightsInBounds++;
             }
 
-            Shaders.Forward.Param_LightAmount.SetValue(lightsInBounds);
-            Shaders.Forward.Param_LightPositionWS.SetValue(LightPositionWS);
-            Shaders.Forward.Param_LightColor.SetValue(LightColor);
-            Shaders.Forward.Param_LightIntensity.SetValue(LightIntensity);
-            Shaders.Forward.Param_LightRadius.SetValue(LightRadius);
+            //Setup camera
+            _effectSetup.Param_CameraPositionWS.SetValue(camera.Position);
+
+            _effectSetup.Param_LightAmount.SetValue(lightsInBounds);
+            _effectSetup.Param_LightPositionWS.SetValue(LightPositionWS);
+            _effectSetup.Param_LightColor.SetValue(LightColor);
+            _effectSetup.Param_LightIntensity.SetValue(LightIntensity);
+            _effectSetup.Param_LightRadius.SetValue(LightRadius);
         }
 
 
         public override void Dispose()
         {
-            Shaders.Forward.Effect?.Dispose();
+            _effectSetup?.Dispose();
         }
 
         public void Apply(Matrix localWorldMatrix, Matrix? view, Matrix viewProjection)
         {
-            Shaders.Forward.Param_World.SetValue(localWorldMatrix);
-            Shaders.Forward.Param_WorldViewProj.SetValue(localWorldMatrix * viewProjection);
-            Shaders.Forward.Param_WorldViewIT.SetValue(Matrix.Transpose(Matrix.Invert(localWorldMatrix)));
-            Shaders.Forward.Pass_Default.Apply();
-        }
-    }
-}
-
-namespace DeferredEngine.Recources
-{
-    public static partial class Shaders
-    {
-
-        // Forward
-        public static class Forward
-        {
-            public static Effect Effect = Globals.content.Load<Effect>("Shaders/forward/forward");
-
-            public static EffectPass Pass_Default = Effect.Techniques["Default"].Passes[0];
-
-            public static EffectParameter Param_World = Effect.Parameters["World"];
-            public static EffectParameter Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
-            public static EffectParameter Param_WorldViewIT = Effect.Parameters["WorldViewIT"];
-            public static EffectParameter Param_LightAmount = Effect.Parameters["LightAmount"];
-            public static EffectParameter Param_LightPositionWS = Effect.Parameters["LightPositionWS"];
-            public static EffectParameter Param_LightRadius = Effect.Parameters["LightRadius"];
-            public static EffectParameter Param_LightIntensity = Effect.Parameters["LightIntensity"];
-            public static EffectParameter Param_LightColor = Effect.Parameters["LightColor"];
-            public static EffectParameter Param_TiledListLength = Effect.Parameters["TiledListLength"];
-            public static EffectParameter Param_CameraPositionWS = Effect.Parameters["CameraPositionWS"];
-
+            _effectSetup.Param_World.SetValue(localWorldMatrix);
+            _effectSetup.Param_WorldViewProj.SetValue(localWorldMatrix * viewProjection);
+            _effectSetup.Param_WorldViewIT.SetValue(Matrix.Transpose(Matrix.Invert(localWorldMatrix)));
+            _effectSetup.Pass_Default.Apply();
         }
 
     }
+
 }
