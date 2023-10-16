@@ -25,8 +25,9 @@ namespace DeferredEngine.Renderer
                 _renderTargetCubeMap = new RenderTargetCube(_graphicsDevice, RenderingSettings.EnvironmentMapping.MapResolution, true, SurfaceFormat.HalfVector4,
                     DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
 
+                // ToDo: @tpott: Param_ReflectionCubeMap was moved to EnvironmentEffectSetup and currently not supported for cubemap rendering
                 //Set this cubemap in the shader of the environment map
-                Shaders.Environment.Param_ReflectionCubeMap.SetValue(_renderTargetCubeMap);
+                //Shaders.Environment.Param_ReflectionCubeMap.SetValue(_renderTargetCubeMap);
             }
 
             //Set up all the base rendertargets with the resolution of our cubemap
