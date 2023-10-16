@@ -422,6 +422,7 @@ namespace DeferredEngine.Renderer.Helper
             }
             else if (renderType == RenderType.IdRender || renderType == RenderType.IdOutline)
             {
+                // ToDo: @tpott: Extract IdRender and Bilboard Shaders members
                 Shaders.IdRender.Param_WorldViewProj.SetValue(localToWorldMatrix * viewProjection);
 
                 int id = meshLib.GetTransforms()[index].Id;
@@ -429,7 +430,6 @@ namespace DeferredEngine.Renderer.Helper
                 if (renderType == RenderType.IdRender)
                 {
                     Shaders.IdRender.Param_ColorId.SetValue(IdGenerator.GetColorFromId(id).ToVector4());
-
                     Shaders.IdRender.Technique_Id.Apply();
                 }
                 if (renderType == RenderType.IdOutline)

@@ -15,6 +15,8 @@ namespace DeferredEngine.Renderer.RenderModules
 {
     public partial class IdAndOutlineRenderer
     {
+        private IdAndOutlineffectSetup _effecSetup = new IdAndOutlineffectSetup();
+
         private GraphicsDevice _graphicsDevice;
 
         private RenderTarget2D _idRenderTarget2D;
@@ -161,6 +163,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
         }
 
+        // ToDo: @tpott: Extract IdRender and Bilboard Shaders members
         private void DrawArrow(Vector3 position, Matrix rotationObject, Vector3 angles, float scale, Color color, Matrix staticViewProjection)
         {
             Matrix rotation = angles.ToMatrixRotationXYZ();
@@ -169,9 +172,11 @@ namespace DeferredEngine.Renderer.RenderModules
 
             Shaders.IdRender.Param_WorldViewProj.SetValue(worldViewProj);
             Shaders.IdRender.Param_ColorId.SetValue(color.ToVector4());
+            Shaders.IdRender.Technique_Id.Apply();
+
+
             ModelMeshPart meshpart = StaticAssets.Instance.EditorArrow3D.Meshes[0].MeshParts[0];
 
-            Shaders.IdRender.Technique_Id.Apply();
 
             _graphicsDevice.SetVertexBuffer(meshpart.VertexBuffer);
             _graphicsDevice.Indices = (meshpart.IndexBuffer);

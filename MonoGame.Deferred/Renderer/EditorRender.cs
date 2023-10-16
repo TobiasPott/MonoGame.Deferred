@@ -200,11 +200,10 @@ namespace DeferredEngine.Renderer.RenderModules
 
             Shaders.IdRender.Param_WorldViewProj.SetValue(worldViewProj);
             Shaders.IdRender.Param_ColorId.SetValue(color.ToVector4());
+            Shaders.IdRender.Technique_Id.Apply();
 
             Model model = gizmoMode == GizmoModes.Translation ? StaticAssets.Instance.EditorArrow3D : StaticAssets.Instance.EditorArrow3DRound;
             ModelMeshPart meshpart = model.Meshes[0].MeshParts[0];
-
-            Shaders.IdRender.Technique_Id.Apply();
 
             _graphicsDevice.SetVertexBuffer(meshpart.VertexBuffer);
             _graphicsDevice.Indices = (meshpart.IndexBuffer);
