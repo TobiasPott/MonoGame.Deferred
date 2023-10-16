@@ -1,9 +1,6 @@
 ﻿using DeferredEngine.Entities;
 using DeferredEngine.Logic;
 using DeferredEngine.Recources;
-using DeferredEngine.Renderer.Helper;
-using DeferredEngine.Renderer.Helper.Editor;
-using DeferredEngine.Renderer.PostProcessing;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -58,6 +55,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
         public void DrawEditor(EntitySceneGroup scene, PipelineMatrices matrices, GizmoDrawContext gizmoContext)
         {
+            // render directly to the output buffer
             _graphicsDevice.SetRenderTarget(null);
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;

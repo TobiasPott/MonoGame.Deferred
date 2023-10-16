@@ -20,9 +20,10 @@ using System.Diagnostics;
 
 namespace DeferredEngine.Renderer
 {
+
+
     public partial class RenderingPipeline : IDisposable
     {
-        #region VARIABLES
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  VARIABLES
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,18 +35,12 @@ namespace DeferredEngine.Renderer
 
         private EditorRender _editorRender;
 
-        private GBufferPipelineModule _gBufferModule;
-        private DeferredPipelineModule _deferredModule;
-        private ForwardPipelineModule _forwardModule;
-        private ShadowMapPipelineModule _shadowMapModule;
+        //Projection Matrices and derivates used in shaders
+        private PipelineMatrices _matrices;
+        private PipelineModuleStack _moduleStack;
 
-        private DirectionalLightPipelineModule _directionalLightRenderModule;
-        private PointLightPipelineModule _pointLightRenderModule;
-        private LightingPipelineModule _lightingModule;
-        private EnvironmentPipelineModule _environmentModule;
-        private DecalRenderModule _decalRenderModule;
-        private HelperRenderModule _helperGeometryRenderModule;
-        private DistanceFieldRenderModule _distanceFieldRenderModule;
+        //Used for the view space directions in our shaders. Far edges of our view frustum
+        private FrustumCornerVertices _frustumCorners = new FrustumCornerVertices();
 
 
         private TemporalAAFx _taaFx;
@@ -54,16 +49,9 @@ namespace DeferredEngine.Renderer
 
         //View Projection
         private bool _viewProjectionHasChanged;
-        //Projection Matrices and derivates used in shaders
-        private PipelineMatrices _matrices;
 
         //Bounding Frusta of our view projection, to calculate which objects are inside the view
         private BoundingFrustum _boundingFrustum;
-
-        //Used for the view space directions in our shaders. Far edges of our view frustum
-        private readonly Vector3[] _cornersWorldSpace = new Vector3[8];
-        private readonly Vector3[] _cornersViewSpace = new Vector3[8];
-        private readonly Vector3[] _currentFrustumCorners = new Vector3[4];
 
         //Checkvariables to see which console variables have changed from the frame before
         private float _g_FarClip;
@@ -87,18 +75,15 @@ namespace DeferredEngine.Renderer
         private readonly Stopwatch _performanceTimer = new Stopwatch();
         private long _performancePreviousTime;
 
-        #endregion
-
-        #region FUNCTIONS
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  BASE FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
-
         /// <summary>
         /// Initialize variables
         /// </summary>
@@ -107,20 +92,7 @@ namespace DeferredEngine.Renderer
         {
             _matrices = new PipelineMatrices();
 
-            _gBufferModule = new GBufferPipelineModule(content, "Shaders/GbufferSetup/GBuffer");
-            _forwardModule = new ForwardPipelineModule(content, "Shaders/forward/forward");
-            _shadowMapModule = new ShadowMapPipelineModule(content, "Shaders/Shadow/ShadowMap");
-            _deferredModule = new DeferredPipelineModule(content, "Shaders/Deferred/DeferredCompose");
-
-            _directionalLightRenderModule = new DirectionalLightPipelineModule(content, "Shaders/Deferred/DeferredDirectionalLight");
-            _pointLightRenderModule = new PointLightPipelineModule(content, "Shaders/Deferred/DeferredPointLight");
-            _lightingModule = new LightingPipelineModule(content) { PointLightRenderModule = _pointLightRenderModule, DirectionalLightRenderModule = _directionalLightRenderModule };
-            _environmentModule = new EnvironmentPipelineModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
-
-            _decalRenderModule = new DecalRenderModule();
-            _helperGeometryRenderModule = new HelperRenderModule();
-            _distanceFieldRenderModule = new DistanceFieldRenderModule()
-            { EnvironmentProbeRenderModule = _environmentModule, PointLightRenderModule = _pointLightRenderModule };
+            _moduleStack = new PipelineModuleStack(content);
 
             _bloomFx = new BloomFx(content);
             _taaFx = new TemporalAAFx() { Matrices = _matrices };
@@ -145,21 +117,9 @@ namespace DeferredEngine.Renderer
             _editorRender = new EditorRender();
             _editorRender.Initialize(graphicsDevice);
 
-            _gBufferModule.Initialize(graphicsDevice, _spriteBatch);
-            _gBufferModule.GBufferTarget = _gBufferTarget;
-            _deferredModule.Initialize(graphicsDevice, _spriteBatch);
-            _forwardModule.Initialize(graphicsDevice, _spriteBatch);
-            _shadowMapModule.Initialize(graphicsDevice, _spriteBatch);
-
-            _directionalLightRenderModule.Initialize(graphicsDevice, _spriteBatch);
-            _pointLightRenderModule.Initialize(graphicsDevice, _spriteBatch);
-            _lightingModule.Initialize(graphicsDevice, _spriteBatch);
-
-            _environmentModule.Initialize(graphicsDevice, _spriteBatch);
-            _distanceFieldRenderModule.Initialize(graphicsDevice, _spriteBatch);
-
-            _decalRenderModule.Initialize(graphicsDevice);
-            _helperGeometryRenderModule.Initialize(graphicsDevice);
+            _moduleStack.Initialize(graphicsDevice, _spriteBatch);
+            _moduleStack.GBuffer.GBufferTarget = _gBufferTarget;
+           
 
             _bloomFx.Initialize(graphicsDevice, RenderingSettings.g_ScreenResolution);
             _taaFx.Initialize(graphicsDevice, FullscreenTriangleBuffer.Instance);
@@ -184,22 +144,19 @@ namespace DeferredEngine.Renderer
             if (!isActive)
                 return;
             _editorRender.Update(gameTime);
-            _distanceFieldRenderModule.UpdateSdfGenerator(entities);
+            _moduleStack.DistanceField.UpdateSdfGenerator(entities);
 
-            _lightingModule.UpdateGameTime(gameTime);
+            _moduleStack.Lighting.UpdateGameTime(gameTime);
         }
 
-        #region RENDER FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  RENDER FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        #region MAIN DRAW FUNCTIONS
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         //  MAIN DRAW FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
         /// <summary>
         /// Main Draw function of the game
         /// </summary>
@@ -217,7 +174,7 @@ namespace DeferredEngine.Renderer
             //Update SDFs
             if (IsSDFUsed(scene.PointLights))
             {
-                _distanceFieldRenderModule.UpdateDistanceFieldTransformations(scene.Entities);
+                _moduleStack.DistanceField.UpdateDistanceFieldTransformations(scene.Entities);
             }
 
             //Update our view projection matrices if the camera moved
@@ -239,8 +196,8 @@ namespace DeferredEngine.Renderer
             DrawBilateralBlur();
 
             //Light the scene
-            _lightingModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
-            _lightingModule.DrawLights(scene, camera.Position, _lightingBufferTarget.Bindings, _lightingBufferTarget.Diffuse);
+            _moduleStack.Lighting.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
+            _moduleStack.Lighting.DrawLights(scene, camera.Position, _lightingBufferTarget.Bindings, _lightingBufferTarget.Diffuse);
 
             //Draw the environment cube map as a fullscreen effect on all meshes
             DrawEnvironmentMap(scene.EnvProbe, camera, gameTime);
@@ -272,8 +229,8 @@ namespace DeferredEngine.Renderer
             RenderEditorOverlays(gizmoContext, scene);
 
             //Draw debug geometry
-            _helperGeometryRenderModule.ViewProjection = _matrices.StaticViewProjection;
-            _helperGeometryRenderModule.Draw();
+            _moduleStack.Helper.ViewProjection = _matrices.StaticViewProjection;
+            _moduleStack.Helper.Draw();
 
             //Set up the frustum culling for the next frame
             meshBatcher.FrustumCullingFinalizeFrame();
@@ -320,7 +277,7 @@ namespace DeferredEngine.Renderer
                 {
                     if (gizmoContext.SelectedObject is Decal decal)
                     {
-                        _decalRenderModule.DrawOutlines(decal, _matrices);
+                        _moduleStack.Decal.DrawOutlines(decal, _matrices);
                     }
                     if (RenderingSettings.e_DrawBoundingBox
                         && gizmoContext.SelectedObject is ModelEntity entity)
@@ -330,18 +287,16 @@ namespace DeferredEngine.Renderer
                 }
             }
 
-            if (RenderingSettings.SDF.DrawDebug && _distanceFieldRenderModule.GetAtlas() != null)
+            if (RenderingSettings.SDF.DrawDebug && _moduleStack.DistanceField.GetAtlas() != null)
             {
                 _spriteBatch.Begin(0, BlendState.Opaque, SamplerState.PointClamp);
-                _spriteBatch.Draw(_distanceFieldRenderModule.GetAtlas(), new Rectangle(0, RenderingSettings.g_ScreenHeight - 200, RenderingSettings.g_ScreenWidth, 200), Color.White);
+                _spriteBatch.Draw(_moduleStack.DistanceField.GetAtlas(), new Rectangle(0, RenderingSettings.g_ScreenHeight - 200, RenderingSettings.g_ScreenWidth, 200), Color.White);
                 _spriteBatch.End();
             }
 
         }
 
-        #endregion
 
-        #region DEFERRED RENDERING FUNCTIONS
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         //  DEFERRED RENDERING FUNCTIONS, IN ORDER OF USAGE
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -380,9 +335,9 @@ namespace DeferredEngine.Renderer
             if (Math.Abs(_g_FarClip - RenderingSettings.g_FarPlane) > 0.0001f)
             {
                 _g_FarClip = RenderingSettings.g_FarPlane;
-                _gBufferModule.FarClip = _g_FarClip;
-                _decalRenderModule.FarClip = _g_FarClip;
-                _pointLightRenderModule.FarClip = _g_FarClip;
+                _moduleStack.GBuffer.FarClip = _g_FarClip;
+                _moduleStack.Decal.FarClip = _g_FarClip;
+                _moduleStack.PointLight.FarClip = _g_FarClip;
 
                 _editorRender.BillboardRenderer.FarClip = _g_FarClip;
 
@@ -423,7 +378,7 @@ namespace DeferredEngine.Renderer
             if (_boundingFrustum == null)
                 UpdateViewProjection(meshBatcher, camera);
 
-            _shadowMapModule.Draw(meshBatcher, scene);
+            _moduleStack.ShadowMap.Draw(meshBatcher, scene);
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)
@@ -448,7 +403,7 @@ namespace DeferredEngine.Renderer
                 //View matrix
                 _matrices.SetFromCamera(camera);
 
-                _pointLightRenderModule.InverseView = _matrices.InverseView;
+                _moduleStack.PointLight.InverseView = _matrices.InverseView;
 
                 //Temporal AA - alternate frames for temporal anti-aliasing
                 if (_taaFx?.Enabled ?? false)
@@ -491,37 +446,31 @@ namespace DeferredEngine.Renderer
         /// </summary>
         private void ComputeFrustumCorners(BoundingFrustum cameraFrustum, Camera camera)
         {
-            cameraFrustum.GetCorners(_cornersWorldSpace);
+            cameraFrustum.GetCorners(_frustumCorners.WorldSpace);
+            Vector3.Transform(_frustumCorners.WorldSpace, ref _matrices.View, _frustumCorners.ViewSpace); //put the frustum into view space
 
             /*this part is used for volume projection*/
             //World Space Corners - Camera Position
             for (int i = 0; i < 4; i++) //take only the 4 farthest points
             {
-                _currentFrustumCorners[i] = _cornersWorldSpace[i + 4] - camera.Position;
+                _frustumCorners.WorldSpaceFrustum[i] = _frustumCorners.WorldSpace[i + 4] - camera.Position;
+                _frustumCorners.ViewSpaceFrustum[i] = _frustumCorners.ViewSpace[i + 4];
             }
-            Vector3 temp = _currentFrustumCorners[3];
-            _currentFrustumCorners[3] = _currentFrustumCorners[2];
-            _currentFrustumCorners[2] = temp;
+            // swap 2 <-> 3
+            (_frustumCorners.WorldSpaceFrustum[2], _frustumCorners.WorldSpaceFrustum[3]) = (_frustumCorners.WorldSpaceFrustum[3], _frustumCorners.WorldSpaceFrustum[2]);
 
-            _distanceFieldRenderModule.FrustumCornersWorldSpace = _currentFrustumCorners;
-            _environmentModule.FrustumCornersWS = _currentFrustumCorners;
+            _moduleStack.DistanceField.FrustumCornersWorldSpace = _frustumCorners.WorldSpaceFrustum;
+            _moduleStack.Environment.FrustumCornersWS = _frustumCorners.WorldSpaceFrustum;
 
             //View Space Corners
-            //this is the inverse of our camera transform
-            Vector3.Transform(_cornersWorldSpace, ref _matrices.View, _cornersViewSpace); //put the frustum into view space
-            for (int i = 0; i < 4; i++) //take only the 4 farthest points
-            {
-                _currentFrustumCorners[i] = _cornersViewSpace[i + 4];
-            }
-            temp = _currentFrustumCorners[3];
-            _currentFrustumCorners[3] = _currentFrustumCorners[2];
-            _currentFrustumCorners[2] = temp;
+            // swap 2 <-> 3
+            (_frustumCorners.ViewSpaceFrustum[2], _frustumCorners.ViewSpaceFrustum[3]) = (_frustumCorners.ViewSpaceFrustum[3], _frustumCorners.ViewSpaceFrustum[2]);
 
-            Shaders.SSR.Param_FrustumCorners.SetValue(_currentFrustumCorners);
-            Shaders.SSAO.Param_FrustumCorners.SetValue(_currentFrustumCorners);
-            _taaFx.FrustumCorners = _currentFrustumCorners;
-            Shaders.ReconstructDepth.Param_FrustumCorners.SetValue(_currentFrustumCorners);
-            _directionalLightRenderModule.SetFrustumCorners(_currentFrustumCorners);
+            Shaders.SSR.Param_FrustumCorners.SetValue(_frustumCorners.ViewSpaceFrustum);
+            Shaders.SSAO.Param_FrustumCorners.SetValue(_frustumCorners.ViewSpaceFrustum);
+            Shaders.ReconstructDepth.Param_FrustumCorners.SetValue(_frustumCorners.ViewSpaceFrustum);
+            _moduleStack.DirectionalLight.SetFrustumCorners(_frustumCorners.ViewSpaceFrustum);
+            _taaFx.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
         }
 
         /// <summary>
@@ -529,7 +478,7 @@ namespace DeferredEngine.Renderer
         /// </summary>
         private void DrawGBuffer(DynamicMeshBatcher meshBatcher)
         {
-            _gBufferModule.Draw(meshBatcher, _matrices);
+            _moduleStack.GBuffer.Draw(meshBatcher, _matrices);
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)
@@ -553,7 +502,7 @@ namespace DeferredEngine.Renderer
 
             DrawTextureToScreenToFullScreen(_auxTargets[MRT.DECAL], BlendState.Opaque, _gBufferTarget.Albedo);
 
-            _decalRenderModule.Draw(decals, _matrices);
+            _moduleStack.Decal.Draw(decals, _matrices);
         }
 
         /// <summary>
@@ -687,8 +636,8 @@ namespace DeferredEngine.Renderer
         {
             if (!RenderingSettings.EnvironmentMapping.Enabled) return;
 
-            _environmentModule.SetEnvironmentProbe(envProbe);
-            _environmentModule.DrawEnvironmentMap(camera, _matrices.View, gameTime);
+            _moduleStack.Environment.SetEnvironmentProbe(envProbe);
+            _moduleStack.Environment.DrawEnvironmentMap(camera, _matrices.View, gameTime);
 
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)
@@ -706,8 +655,8 @@ namespace DeferredEngine.Renderer
         private RenderTarget2D Compose(RenderTarget2D destination)
         {
             // ToDo: @tpott: hacky way to disable ssao when disabled on global scale (GUI is insufficient here)
-            _deferredModule.UseSSAOMap = RenderingSettings.g_ssao_draw;
-            _deferredModule.Draw(destination);
+            _moduleStack.Deferred.UseSSAOMap = RenderingSettings.g_ssao_draw;
+            _moduleStack.Deferred.Draw(destination);
             //Performance Profiler
             if (RenderingSettings.d_IsProfileEnabled)
             {
@@ -737,8 +686,8 @@ namespace DeferredEngine.Renderer
             _graphicsDevice.SetRenderTarget(input);
             ReconstructDepth();
 
-            _forwardModule.PrepareDraw(camera, pointLights, _boundingFrustum);
-            return _forwardModule.Draw(meshBatcher, input, _matrices);
+            _moduleStack.Forward.PrepareDraw(camera, pointLights, _boundingFrustum);
+            return _moduleStack.Forward.Draw(meshBatcher, input, _matrices);
         }
 
         private RenderTarget2D DrawBloom(RenderTarget2D input)
@@ -791,7 +740,7 @@ namespace DeferredEngine.Renderer
         {
             if (!RenderingSettings.SDF.DrawDistance)
                 return;
-            _distanceFieldRenderModule.Draw(camera);
+            _moduleStack.DistanceField.Draw(camera);
         }
 
         /// <summary>
@@ -874,16 +823,10 @@ namespace DeferredEngine.Renderer
             }
         }
 
-        #endregion
 
-        #endregion
-
-        #region RENDERTARGET SETUP FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  RENDERTARGET SETUP FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
         private void SetUpRenderTargets(int width, int height, bool onlyEssentials)
         {
             float ssmultiplier = _supersampling;
@@ -898,7 +841,7 @@ namespace DeferredEngine.Renderer
             _lightingBufferTarget.Resize(targetWidth, targetHeight);
             _auxTargets.Resize(targetWidth, targetHeight);
 
-            _pointLightRenderModule.Resolution = new Vector2(targetWidth, targetHeight);
+            _moduleStack.PointLight.Resolution = new Vector2(targetWidth, targetHeight);
 
             if (!onlyEssentials)
             {
@@ -908,7 +851,7 @@ namespace DeferredEngine.Renderer
                 _taaFx.Resolution = new Vector2(targetWidth, targetHeight);
 
                 Shaders.SSR.Param_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
-                _environmentModule.Resolution = new Vector2(targetWidth, targetHeight);
+                _moduleStack.Environment.Resolution = new Vector2(targetWidth, targetHeight);
 
                 ///////////////////
                 // HALF RESOLUTION
@@ -935,19 +878,19 @@ namespace DeferredEngine.Renderer
             Shaders.ReconstructDepth.Param_DepthMap.SetValue(_gBufferTarget.Depth);
 
             // update point light module
-            _pointLightRenderModule.SetGBufferParams(_gBufferTarget);
+            _moduleStack.PointLight.SetGBufferParams(_gBufferTarget);
             // update directional light module
-            _directionalLightRenderModule.SetGBufferParams(_gBufferTarget);
-            _directionalLightRenderModule.SetScreenSpaceShadowMap(onlyEssentials ? _auxTargets[MRT.SSFX_BLUR_VERTICAL] : _auxTargets[MRT.SSFX_BLUR_FINAL]);
+            _moduleStack.DirectionalLight.SetGBufferParams(_gBufferTarget);
+            _moduleStack.DirectionalLight.SetScreenSpaceShadowMap(onlyEssentials ? _auxTargets[MRT.SSFX_BLUR_VERTICAL] : _auxTargets[MRT.SSFX_BLUR_FINAL]);
 
-            _environmentModule.SetGBufferParams(_gBufferTarget);
-            _environmentModule.SSRMap = _auxTargets[MRT.SSFX_REFLECTION];
+            _moduleStack.Environment.SetGBufferParams(_gBufferTarget);
+            _moduleStack.Environment.SSRMap = _auxTargets[MRT.SSFX_REFLECTION];
 
-            _decalRenderModule.DepthMap = _gBufferTarget.Depth;
+            _moduleStack.Decal.DepthMap = _gBufferTarget.Depth;
 
-            _distanceFieldRenderModule.DepthMap = _gBufferTarget.Depth;
+            _moduleStack.DistanceField.DepthMap = _gBufferTarget.Depth;
 
-            _deferredModule.SetRenderTargets(_gBufferTarget, _lightingBufferTarget, _auxTargets[MRT.SSFX_BLUR_FINAL]);
+            _moduleStack.Deferred.SetRenderTargets(_gBufferTarget, _lightingBufferTarget, _auxTargets[MRT.SSFX_BLUR_FINAL]);
 
             Shaders.SSAO.Param_NormalMap.SetValue(_gBufferTarget.Normal);
             Shaders.SSAO.Param_DepthMap.SetValue(_gBufferTarget.Depth);
@@ -959,13 +902,10 @@ namespace DeferredEngine.Renderer
             _taaFx.DepthMap = _gBufferTarget.Depth;
         }
 
-        #endregion
 
-        #region HELPER FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         //  HELPER FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-
         private void DrawTextureToScreenToCube(RenderTarget2D texture, RenderTargetCube target, CubeMapFace? face)
         {
 
@@ -987,9 +927,6 @@ namespace DeferredEngine.Renderer
         }
 
 
-        #endregion
-
-        #endregion
 
         public void Dispose()
         {
@@ -1000,10 +937,7 @@ namespace DeferredEngine.Renderer
             _taaFx?.Dispose();
             _colorGradingFx?.Dispose();
 
-            _lightingModule?.Dispose();
-            _environmentModule?.Dispose();
-            _gBufferModule?.Dispose();
-            _decalRenderModule?.Dispose();
+            _moduleStack?.Dispose();
 
             _gBufferTarget?.Dispose();
             _lightingBufferTarget?.Dispose();

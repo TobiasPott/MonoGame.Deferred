@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
-    public class HelperRenderModule
+    public class HelperRenderModule : IDisposable
     {
         private readonly HelperGeometryEffectSetup _effectSetup = new HelperGeometryEffectSetup();
 
@@ -27,6 +27,11 @@ namespace DeferredEngine.Renderer.RenderModules
         public void Draw()
         {
             HelperGeometryManager.GetInstance().Draw(_graphicsDevice, _viewProjection, _effectSetup);
+        }
+
+        public void Dispose()
+        {
+            _effectSetup?.Dispose();
         }
     }
 }

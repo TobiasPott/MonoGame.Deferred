@@ -33,8 +33,8 @@ namespace DeferredEngine.Renderer
             SetUpRenderTargets(RenderingSettings.EnvironmentMapping.MapResolution, RenderingSettings.EnvironmentMapping.MapResolution, true);
 
             //We don't want to use SSAO in this cubemap
-            bool prevUseSSAO = _deferredModule.UseSSAOMap;
-            _deferredModule.UseSSAOMap = false;
+            bool prevUseSSAO = _moduleStack.Deferred.UseSSAOMap;
+            _moduleStack.Deferred.UseSSAOMap = false;
 
             //Create our projection, which is a basic pyramid
             _matrices.Projection = Matrix.CreatePerspectiveFieldOfView((float)(Math.PI / 2), 1, 1, farPlane);
@@ -49,7 +49,7 @@ namespace DeferredEngine.Renderer
 
                 //Pass these values to our shader
                 Shaders.SSAO.Param_InverseViewProjection.SetValue(_matrices.InverseView);
-                _pointLightRenderModule.InverseView = _matrices.InverseView;
+                _moduleStack.PointLight.InverseView = _matrices.InverseView;
 
                 //yep we changed
                 _viewProjectionHasChanged = true;
@@ -65,10 +65,10 @@ namespace DeferredEngine.Renderer
 
                 bool volumeEnabled = PointLightPipelineModule.g_VolumetricLights;
                 PointLightPipelineModule.g_VolumetricLights = false;
-                _lightingModule.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
-                _lightingModule.DrawLights(scene, origin, _lightingBufferTarget.Bindings, _lightingBufferTarget.Diffuse);
+                _moduleStack.Lighting.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
+                _moduleStack.Lighting.DrawLights(scene, origin, _lightingBufferTarget.Bindings, _lightingBufferTarget.Diffuse);
 
-                _environmentModule.DrawSky();
+                _moduleStack.Environment.DrawSky();
 
                 PointLightPipelineModule.g_VolumetricLights = volumeEnabled;
 
@@ -81,7 +81,7 @@ namespace DeferredEngine.Renderer
                 _taaFx.Enabled = tempAa;
                 DrawTextureToScreenToCube(_auxTargets[MRT.COMPOSE], _renderTargetCubeMap, (CubeMapFace?)i);
             }
-            _deferredModule.UseSSAOMap = prevUseSSAO;
+            _moduleStack.Deferred.UseSSAOMap = prevUseSSAO;
 
             //Change RTs back to normal
             SetUpRenderTargets(RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight, true);
