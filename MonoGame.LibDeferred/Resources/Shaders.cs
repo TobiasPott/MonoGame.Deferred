@@ -23,19 +23,6 @@ namespace DeferredEngine.Recources
             public static readonly EffectParameter Param_FrustumCorners = Effect.Parameters["FrustumCorners"];
         }
 
-        //Id Generator
-        public static class IdRender
-        {
-            public static readonly Effect Effect = Globals.content.Load<Effect>("Shaders/Editor/IdRender");
-            public static readonly EffectParameter Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
-            public static readonly EffectParameter Param_ColorId = Effect.Parameters["ColorId"];
-            public static readonly EffectParameter Param_OutlineSize = Effect.Parameters["OutlineSize"];
-            public static readonly EffectParameter Param_World = Effect.Parameters["World"];
-
-            public static readonly EffectPass Pass_Id = Effect.Techniques["DrawId"].Passes[0];
-            public static readonly EffectPass Pass_Outline = Effect.Techniques["DrawOutline"].Passes[0];
-        }
-
         //Billboard Renderert
         public static class Billboard
         {
