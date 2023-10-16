@@ -29,17 +29,11 @@ namespace DeferredEngine.Renderer.Helper
         public bool IsAnyRendered => _rendered.Any(x => x);
         public bool AllRendered { set { for (int i = 0; i < _rendered.Count; i++) _rendered[i] = true; } }
 
-        public Vector3 GetBoundingCenterWorld(int index)
-        {
-            return _worldBoundingCenters[index];
-        }
 
         //IF a submesh belongs to an entity that has moved we need to update the BoundingBoxWorld Position!
         //returns the mean distance of all objects iwth that material
-        public float? UpdatePositionAndCheckRender(bool cameraHasChanged, BoundingFrustum viewFrustumEx, Vector3 cameraPosition, BoundingSphere sphere)
+        public void UpdatePositionAndCheckRender(bool cameraHasChanged, BoundingFrustum viewFrustumEx, Vector3 cameraPosition, BoundingSphere sphere)
         {
-            float? distance = null;
-
             bool hasAnythingChanged = false;
 
             for (var i = 0; i < _transforms.Count; i++)
@@ -68,17 +62,6 @@ namespace DeferredEngine.Renderer.Helper
 
             }
 
-            //We need to calcualte a new average distance
-            if (hasAnythingChanged)
-            {
-                distance = 0;
-                for (int i = 0; i < _worldBoundingCenters.Count; i++)
-                {
-                    distance += Vector3.DistanceSquared(cameraPosition, _worldBoundingCenters[i]);
-                }
-            }
-
-            return distance;
         }
 
         //Basically no chance we have the same model already. We should be fine just adding it to the list if we did everything else right.

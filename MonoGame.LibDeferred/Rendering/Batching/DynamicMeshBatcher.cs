@@ -168,35 +168,12 @@ namespace DeferredEngine.Renderer.Helper
 
             bool hasAnythingChanged = false;
             //Ok we applied the transformation to all the entities, now update the submesh boundingboxes!
-            // Parallel.For(0, Index, index1 =>
             for (int matBatchIndex = 0; matBatchIndex < _batches.Count; matBatchIndex++)
             {
-                float distance = 0;
-                int counter = 0;
-
-
-                //MaterialBatch matLib = RenderingSettings.g_cpusort ? MaterialBatch[MaterialLibPointer[index1]] : MaterialBatch[index1];
                 MaterialBatch matLib = _batches[matBatchIndex];
                 for (int i = 0; i < matLib.Count; i++)
-                {
-                    float? distanceSq = matLib[i].UpdatePositionAndCheckRender(hasCameraChanged, boundingFrustrum, cameraPosition, _defaultBoundingSphere);
-
-                    //If we get a new distance, apply it to the material
-                    if (distanceSq != null)
-                    {
-                        distance += (float)distanceSq;
-                        counter++;
-                        hasAnythingChanged = true;
-                    }
-                }
-
-                if (Math.Abs(distance) > 0.00001f)
-                {
-                    distance /= counter;
-                    matLib.DistanceSquared = distance;
-                    matLib.HasChangedThisFrame = true;
-                }
-            }//);
+                    matLib[i].UpdatePositionAndCheckRender(hasCameraChanged, boundingFrustrum, cameraPosition, _defaultBoundingSphere);
+            }
 
             return hasAnythingChanged;
         }
@@ -357,7 +334,7 @@ namespace DeferredEngine.Renderer.Helper
             }
         }
 
-        private bool ApplyShaders(RenderType renderType, IRenderModule renderModule, Matrix localToWorldMatrix, Matrix? view, Matrix viewProjection, MeshBatch meshBatch, 
+        private bool ApplyShaders(RenderType renderType, IRenderModule renderModule, Matrix localToWorldMatrix, Matrix? view, Matrix viewProjection, MeshBatch meshBatch,
             int index, int outlineId, bool outlined)
         {
             switch (renderType)
