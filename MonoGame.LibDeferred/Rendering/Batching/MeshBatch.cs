@@ -27,7 +27,7 @@ namespace DeferredEngine.Renderer.Helper
 
 
         public bool IsAnyRendered => _rendered.Any(x => x);
-
+        public bool AllRendered { set { for (int i = 0; i < _rendered.Count; i++) _rendered[i] = true; } }
 
         public Vector3 GetBoundingCenterWorld(int index)
         {

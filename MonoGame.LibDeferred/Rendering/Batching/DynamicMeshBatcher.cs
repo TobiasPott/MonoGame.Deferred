@@ -148,12 +148,10 @@ namespace DeferredEngine.Renderer.Helper
                     //If we previously did cull and now don't we need to set all the submeshes to render
                     for (int matBatchIndex = 0; matBatchIndex < MaterialBatch.Count; matBatchIndex++)
                     {
-                        MaterialBatch matLib = MaterialBatch[matBatchIndex];
-                        for (int i = 0; i < matLib.Count; i++)
+                        MaterialBatch matBatch = MaterialBatch[matBatchIndex];
+                        for (int i = 0; i < matBatch.Count; i++)
                         {
-                            MeshBatch meshLib = matLib.GetMeshLibrary()[i];
-                            for (int j = 0; j < meshLib.Rendered.Count; j++)
-                                meshLib.Rendered[j] = true;
+                            matBatch[i].AllRendered = true;
                         }
                     }
 
@@ -177,8 +175,7 @@ namespace DeferredEngine.Renderer.Helper
                 MaterialBatch matLib = MaterialBatch[matBatchIndex];
                 for (int i = 0; i < matLib.Count; i++)
                 {
-                    MeshBatch meshLib = matLib.GetMeshLibrary()[i];
-                    float? distanceSq = meshLib.UpdatePositionAndCheckRender(hasCameraChanged, boundingFrustrum, cameraPosition, _defaultBoundingSphere);
+                    float? distanceSq = matLib[i].UpdatePositionAndCheckRender(hasCameraChanged, boundingFrustrum, cameraPosition, _defaultBoundingSphere);
 
                     //If we get a new distance, apply it to the material
                     if (distanceSq != null)
@@ -247,8 +244,7 @@ namespace DeferredEngine.Renderer.Helper
 
                 for (int i = 0; i < matLib.Count; i++)
                 {
-                    MeshBatch meshLib = matLib.GetMeshLibrary()[i];
-                    if(meshLib.IsAnyRendered)
+                    if (matLib[i].IsAnyRendered)
                     {
                         isUsed = true;
                         break;
@@ -285,7 +281,7 @@ namespace DeferredEngine.Renderer.Helper
 
                 for (int i = 0; i < matLib.Count; i++)
                 {
-                    MeshBatch meshLib = matLib.GetMeshLibrary()[i];
+                    MeshBatch meshLib = matLib[i];
 
                     //Initialize the mesh VB and IB
                     ModelMeshPart mesh = meshLib.GetMesh();
@@ -339,15 +335,10 @@ namespace DeferredEngine.Renderer.Helper
                         for (int i = 0; i < matLib.Count; i++)
                         {
                             //Now we have to check whether we have a rendered thing in here
-                            MeshBatch meshLib = matLib.GetMeshLibrary()[i];
-                            for (int index = 0; index < meshLib.Count; index++)
+                            if (matLib[i].IsAnyRendered)
                             {
-                                if(meshLib.IsAnyRendered)
-                                {
-                                    discardFrame = false;
-                                    break;
-                                }
-
+                                discardFrame = false;
+                                break;
                             }
                         }
                         if (!discardFrame) break;

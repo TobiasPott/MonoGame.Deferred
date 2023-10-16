@@ -32,6 +32,8 @@ namespace DeferredEngine.Renderer.Helper
         }
         public List<MeshBatch> GetMeshLibrary() => _batches;
 
+        public MeshBatch this[int index] => _batches[index];
+
 
         public void Register(ModelMeshPart mesh, TransformableObject transform, BoundingSphere boundingSphere)
         {
