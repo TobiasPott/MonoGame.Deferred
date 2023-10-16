@@ -172,7 +172,7 @@ namespace DeferredEngine.Renderer.Helper
             {
                 MaterialBatch matLib = _batches[matBatchIndex];
                 for (int i = 0; i < matLib.Count; i++)
-                    matLib[i].UpdatePositionAndCheckRender(hasCameraChanged, boundingFrustrum, cameraPosition, _defaultBoundingSphere);
+                    matLib[i].UpdatePositionAndCheckRender(hasCameraChanged, boundingFrustrum, _defaultBoundingSphere);
             }
 
             return hasAnythingChanged;

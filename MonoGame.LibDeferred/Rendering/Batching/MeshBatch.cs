@@ -32,28 +32,19 @@ namespace DeferredEngine.Renderer.Helper
 
         //IF a submesh belongs to an entity that has moved we need to update the BoundingBoxWorld Position!
         //returns the mean distance of all objects iwth that material
-        public void UpdatePositionAndCheckRender(bool cameraHasChanged, BoundingFrustum viewFrustumEx, Vector3 cameraPosition, BoundingSphere sphere)
+        public void UpdatePositionAndCheckRender(bool cameraHasChanged, BoundingFrustum viewFrustumEx, BoundingSphere sphere)
         {
             for (var i = 0; i < _transforms.Count; i++)
             {
                 TransformableObject transform = _transforms[i];
 
                 _worldBoundingCenters[i] = Vector3.Transform(_meshBoundingSphere.Center, transform.World);
-
                 //If either the trafomatrix or the camera has changed we need to check visibility
                 if (cameraHasChanged)
                 {
                     sphere.Center = _worldBoundingCenters[i];
                     sphere.Radius = _meshBoundingSphere.Radius * transform.World.M11; // previously .Scale.X;
-                    if (viewFrustumEx.Contains(sphere) == ContainmentType.Disjoint)
-                    {
-                        _rendered[i] = false;
-                    }
-                    else
-                    {
-                        _rendered[i] = true;
-                    }
-
+                    _rendered[i] = viewFrustumEx.Contains(sphere) != ContainmentType.Disjoint;
                 }
 
             }
