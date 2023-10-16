@@ -56,15 +56,15 @@ namespace DeferredEngine.Renderer.RenderModules
 
         }
 
-        public void DrawEditorElements(EntitySceneGroup scene, EnvironmentProbe envSample, PipelineMatrices matrices, GizmoDrawContext gizmoContext)
+        public void DrawEditor(EntitySceneGroup scene, PipelineMatrices matrices, GizmoDrawContext gizmoContext)
         {
             _graphicsDevice.SetRenderTarget(null);
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             _graphicsDevice.BlendState = BlendState.Opaque;
 
-            IdAndOutlineRenderer.DrawTransformGizmos(matrices, gizmoContext);
-            BillboardRenderer.DrawEditorBillboards(scene, envSample, matrices.StaticViewProjection, matrices.View, gizmoContext);
+            BillboardRenderer.DrawEditorBillboards(scene, matrices, gizmoContext);
+            IdAndOutlineRenderer.DrawTransformGizmos(matrices, gizmoContext, IdAndOutlineRenderer.Pass.Color);
         }
 
     }

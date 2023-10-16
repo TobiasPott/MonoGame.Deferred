@@ -203,15 +203,7 @@ namespace DeferredEngine.Renderer
         /// <summary>
         /// Main Draw function of the game
         /// </summary>
-        /// <param name="camera">view point of the renderer</param>
-        /// <param name="meshBatcher">a class that has stored all our mesh data</param>
-        /// <param name="entities">entities and their properties</param>
-        /// <param name="pointLights"></param>
-        /// <param name="directionalLights"></param>
-        /// <param name="gizmoContext">The data passed from our editor logic</param>
-        /// <param name="gameTime"></param>
-        /// <returns></returns>
-        public EditorLogic.EditorReceivedData Draw(Camera camera, DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, EnvironmentProbe envProbe, GizmoDrawContext gizmoContext, GameTime gameTime)
+        public EditorLogic.EditorReceivedData Draw(Camera camera, DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GizmoDrawContext gizmoContext, GameTime gameTime)
         {
             //Reset the stat counter, so we can count stats/information for this frame only
             ResetStats();
@@ -251,7 +243,7 @@ namespace DeferredEngine.Renderer
             _lightingModule.DrawLights(scene, camera.Position, _lightingBufferTarget.Bindings, _lightingBufferTarget.Diffuse);
 
             //Draw the environment cube map as a fullscreen effect on all meshes
-            DrawEnvironmentMap(envProbe, camera, gameTime);
+            DrawEnvironmentMap(scene.EnvProbe, camera, gameTime);
 
             //Compose the scene by combining our lighting data with the gbuffer data
             _currentOutput = Compose(_auxTargets[MRT.COMPOSE]);
@@ -267,7 +259,7 @@ namespace DeferredEngine.Renderer
 
             //Draw the elements that we are hovering over with outlines
             if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
-                _editorRender.IdAndOutlineRenderer.Draw(meshBatcher, scene, envProbe, _matrices, gizmoContext, _editorRender.HasMouseMovement);
+                _editorRender.IdAndOutlineRenderer.Draw(meshBatcher, scene, _matrices, gizmoContext, _editorRender.HasMouseMovement);
 
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
             RenderMode(_currentOutput);
@@ -277,7 +269,7 @@ namespace DeferredEngine.Renderer
 
             //Additional editor elements that overlay our screen
 
-            RenderEditorOverlays(gizmoContext, scene, envProbe);
+            RenderEditorOverlays(gizmoContext, scene);
 
             //Draw debug geometry
             RenderHelperGeometry();
@@ -314,14 +306,14 @@ namespace DeferredEngine.Renderer
             return false;
         }
 
-        private void RenderEditorOverlays(GizmoDrawContext gizmoContext, EntitySceneGroup scene, EnvironmentProbe envProbe)
+        private void RenderEditorOverlays(GizmoDrawContext gizmoContext, EntitySceneGroup scene)
         {
             if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
             {
                 if (RenderingSettings.e_DrawOutlines)
                     DrawTextureToScreenToFullScreen(_editorRender.IdAndOutlineRenderer.GetRenderTarget2D(), BlendState.Additive);
 
-                _editorRender.DrawEditorElements(scene, envProbe, _matrices, gizmoContext);
+                _editorRender.DrawEditor(scene, _matrices, gizmoContext);
 
                 if (gizmoContext.SelectedObject != null)
                 {

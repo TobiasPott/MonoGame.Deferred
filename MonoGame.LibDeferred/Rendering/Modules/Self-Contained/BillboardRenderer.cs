@@ -32,7 +32,7 @@ namespace DeferredEngine.Renderer.RenderModules
         }
 
 
-        public void DrawSceneBillboards(EntitySceneGroup scene, EnvironmentProbe envSample, PipelineMatrices matrices)
+        public void DrawSceneBillboards(EntitySceneGroup scene, PipelineMatrices matrices)
         {
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             _graphicsDevice.SetVertexBuffer(_billboardBuffer.VBuffer);
@@ -67,7 +67,7 @@ namespace DeferredEngine.Renderer.RenderModules
             }
 
             _effectSetup.Param_Texture.SetValue(StaticAssets.Instance.IconEnvmap);
-            DrawSceneBillboard(envSample.World, view, staticViewProjection, envSample.Id);
+            DrawSceneBillboard(scene.EnvProbe.World, view, staticViewProjection, scene.EnvProbe.Id);
 
         }
         private void DrawSceneBillboard(Matrix world, Matrix view, Matrix staticViewProjection, int id)
@@ -81,7 +81,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
 
 
-        public void DrawEditorBillboards(EntitySceneGroup scene, EnvironmentProbe envSample, Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
+        public void DrawEditorBillboards(EntitySceneGroup scene, PipelineMatrices matrices, GizmoDrawContext gizmoContext)
         {
             List<Decal> decals = scene.Decals;
             List<DeferredPointLight> pointLights = scene.PointLights;
@@ -100,7 +100,7 @@ namespace DeferredEngine.Renderer.RenderModules
             for (int index = 0; index < decals.Count; index++)
             {
                 var decal = decals[index];
-                DrawEditorBillboard(decal, staticViewProjection, view, gizmoContext);
+                DrawEditorBillboard(decal, matrices.StaticViewProjection, matrices.View, gizmoContext);
             }
 
             //Lights
@@ -108,7 +108,7 @@ namespace DeferredEngine.Renderer.RenderModules
             for (int index = 0; index < pointLights.Count; index++)
             {
                 var light = pointLights[index];
-                DrawEditorBillboard(light, staticViewProjection, view, gizmoContext);
+                DrawEditorBillboard(light, matrices.StaticViewProjection, matrices.View, gizmoContext);
             }
 
             HelperGeometryManager helperManager = HelperGeometryManager.GetInstance();
@@ -116,7 +116,7 @@ namespace DeferredEngine.Renderer.RenderModules
             for (var index = 0; index < dirLights.Count; index++)
             {
                 DeferredDirectionalLight light = dirLights[index];
-                DrawEditorBillboard(light, staticViewProjection, view, gizmoContext);
+                DrawEditorBillboard(light, matrices.StaticViewProjection, matrices.View, gizmoContext);
 
                 Vector3 lPosition = light.Position;
                 Vector3 lDirection = light.Direction * 10;
@@ -137,11 +137,11 @@ namespace DeferredEngine.Renderer.RenderModules
             }
 
             //EnvMap
-
-            _effectSetup.Param_Texture.SetValue(StaticAssets.Instance.IconEnvmap);
-
-            DrawEditorBillboard(envSample, staticViewProjection, view, gizmoContext);
-
+            if (scene.EnvProbe != null)
+            {
+                _effectSetup.Param_Texture.SetValue(StaticAssets.Instance.IconEnvmap);
+                DrawEditorBillboard(scene.EnvProbe, matrices.StaticViewProjection, matrices.View, gizmoContext);
+            }
         }
         private void DrawEditorBillboard(TransformableObject billboardObject, Matrix staticViewProjection, Matrix view, GizmoDrawContext gizmoContext)
         {

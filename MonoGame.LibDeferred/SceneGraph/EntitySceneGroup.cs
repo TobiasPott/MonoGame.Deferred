@@ -11,13 +11,15 @@ namespace DeferredEngine.Entities
         public readonly List<DeferredPointLight> PointLights;
         public readonly List<DeferredDirectionalLight> DirectionalLights;
         public readonly List<Decal> Decals;
+        public readonly EnvironmentProbe EnvProbe;
 
-        public EntitySceneGroup(List<ModelEntity> entities, List<DeferredDirectionalLight> directionalLights, List<DeferredPointLight> pointLights, List<Decal> decals)
+        public EntitySceneGroup(List<ModelEntity> entities, List<DeferredDirectionalLight> directionalLights, List<DeferredPointLight> pointLights, List<Decal> decals, EnvironmentProbe envProbe)
         {
             this.Entities = entities;
             this.DirectionalLights = directionalLights;
             this.PointLights = pointLights;
             this.Decals = decals;
+            this.EnvProbe = envProbe;
         }
     }
 }

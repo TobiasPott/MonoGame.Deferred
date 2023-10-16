@@ -83,8 +83,7 @@ namespace DeferredEngine.Logic
             //Our renderer gives us information on what id is currently hovered over so we can update / manipulate objects in the logic functions
             _editorReceivedDataBuffer = _renderer.Draw(_sceneLogic.Camera,
                 _sceneLogic.MeshMaterialLibrary,
-                new EntitySceneGroup(_sceneLogic.BasicEntities, _sceneLogic.DirectionalLights, _sceneLogic.PointLights, _sceneLogic.Decals),
-                envProbe: _sceneLogic.EnvProbe,
+                new EntitySceneGroup(_sceneLogic.BasicEntities, _sceneLogic.DirectionalLights, _sceneLogic.PointLights, _sceneLogic.Decals, _sceneLogic.EnvProbe),
                 gizmoContext: _editorLogic.GetEditorData(),
                 gameTime: gameTime);
 
