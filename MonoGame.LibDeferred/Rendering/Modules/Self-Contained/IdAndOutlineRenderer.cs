@@ -133,27 +133,38 @@ namespace DeferredEngine.Renderer.RenderModules
             DrawBillboard(envSample.World, view, staticViewProjection, envSample.Id);
 
         }
+        public void DrawGizmos(PipelineMatrices matrices, GizmoDrawContext gizmoContext)
+        {
+            if (gizmoContext.SelectedObjectId == 0) return;
 
+            Vector3 position = gizmoContext.SelectedObjectPosition;
+            GizmoModes gizmoMode = gizmoContext.GizmoMode;
+            Matrix rotation = (RenderingStats.e_LocalTransformation || gizmoMode == GizmoModes.Scale) ? gizmoContext.SelectedObject.RotationMatrix : Matrix.Identity;
+
+            DrawArrow(_graphicsDevice, position, rotation, new Vector3(0, 0, 0), this.HoveredId == 1 ? 1 : 0.5f, Color.Blue, matrices.StaticViewProjection, gizmoMode); //z 1
+            DrawArrow(_graphicsDevice, position, rotation, new Vector3((float)-Math.PI / 2, 0, 0), this.HoveredId == 2 ? 1 : 0.5f, Color.Green, matrices.StaticViewProjection, gizmoMode); //y 2
+            DrawArrow(_graphicsDevice, position, rotation, new Vector3(0, (float)Math.PI / 2, 0), this.HoveredId == 3 ? 1 : 0.5f, Color.Red, matrices.StaticViewProjection, gizmoMode); //x 3
+
+            DrawArrow(_graphicsDevice, position, rotation, new Vector3((float)Math.PI, 0, 0), this.HoveredId == 1 ? 1 : 0.5f, Color.Blue, matrices.StaticViewProjection, gizmoMode); //z 1
+            DrawArrow(_graphicsDevice, position, rotation, new Vector3((float)Math.PI / 2, 0, 0), this.HoveredId == 2 ? 1 : 0.5f, Color.Green, matrices.StaticViewProjection, gizmoMode); //y 2
+            DrawArrow(_graphicsDevice, position, rotation, new Vector3(0, (float)-Math.PI / 2, 0), this.HoveredId == 3 ? 1 : 0.5f, Color.Red, matrices.StaticViewProjection, gizmoMode); //x 3
+        }
         public void DrawGizmos(Matrix staticViewProjection, GizmoDrawContext gizmoContext)
         {
             if (gizmoContext.SelectedObjectId == 0) return;
 
-            _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-            _graphicsDevice.DepthStencilState = DepthStencilState.None;
-            _graphicsDevice.BlendState = BlendState.Opaque;
-
             Vector3 position = gizmoContext.SelectedObjectPosition;
-
+            GizmoModes gizmoMode = gizmoContext.GizmoMode;
             Matrix rotation = (RenderingStats.e_LocalTransformation || gizmoContext.GizmoMode == GizmoModes.Scale) ? gizmoContext.SelectedObject.RotationMatrix : Matrix.Identity;
 
             //Z
-            DrawArrow(_graphicsDevice, position, rotation, new Vector3(0, 0, 0), 0.5f, new Color(1, 0, 0), staticViewProjection);
-            DrawArrow(_graphicsDevice, position, rotation, new Vector3((float)-Math.PI / 2.0f, 0, 0), 0.5f, new Color(2, 0, 0), staticViewProjection);
-            DrawArrow(_graphicsDevice, position, rotation, new Vector3(0, (float)Math.PI / 2.0f, 0), 0.5f, new Color(3, 0, 0), staticViewProjection);
+            DrawArrow(_graphicsDevice, position, rotation, new Vector3(0, 0, 0), this.HoveredId == 1 ? 1 : 0.5f, new Color(1, 0, 0), staticViewProjection, gizmoMode);
+            DrawArrow(_graphicsDevice, position, rotation, new Vector3((float)-Math.PI / 2.0f, 0, 0), this.HoveredId == 2 ? 1 : 0.5f, new Color(2, 0, 0), staticViewProjection, gizmoMode);
+            DrawArrow(_graphicsDevice, position, rotation, new Vector3(0, (float)Math.PI / 2.0f, 0), this.HoveredId == 3 ? 1 : 0.5f, new Color(3, 0, 0), staticViewProjection, gizmoMode);
 
-            DrawArrow(_graphicsDevice, position, rotation, new Vector3((float)Math.PI, 0, 0), 0.5f, new Color(1, 0, 0), staticViewProjection);
-            DrawArrow(_graphicsDevice, position, rotation, new Vector3((float)Math.PI / 2.0f, 0, 0), 0.5f, new Color(2, 0, 0), staticViewProjection);
-            DrawArrow(_graphicsDevice, position, rotation, new Vector3(0, (float)-Math.PI / 2.0f, 0), 0.5f, new Color(3, 0, 0), staticViewProjection);
+            DrawArrow(_graphicsDevice, position, rotation, new Vector3((float)Math.PI, 0, 0), this.HoveredId == 1 ? 1 : 0.5f, new Color(1, 0, 0), staticViewProjection, gizmoMode);
+            DrawArrow(_graphicsDevice, position, rotation, new Vector3((float)Math.PI / 2.0f, 0, 0), this.HoveredId == 2 ? 1 : 0.5f, new Color(2, 0, 0), staticViewProjection, gizmoMode);
+            DrawArrow(_graphicsDevice, position, rotation, new Vector3(0, (float)-Math.PI / 2.0f, 0), this.HoveredId == 3 ? 1 : 0.5f, new Color(3, 0, 0), staticViewProjection, gizmoMode);
 
         }
         public static void DrawArrow(GraphicsDevice graphicsDevice, Vector3 position, Matrix rotationObject, Vector3 angles, float scale,

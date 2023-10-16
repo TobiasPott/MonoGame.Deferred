@@ -163,26 +163,10 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             _graphicsDevice.BlendState = BlendState.Opaque;
 
-            DrawGizmo(matrices, gizmoContext);
+            _idAndOutlineRenderer.DrawGizmos(matrices, gizmoContext);
             DrawBillboards(scene, envSample, matrices.StaticViewProjection, matrices.View, gizmoContext);
         }
 
-        protected void DrawGizmo(PipelineMatrices matrices, GizmoDrawContext gizmoContext)
-        {
-            if (gizmoContext.SelectedObjectId == 0) return;
-
-            Vector3 position = gizmoContext.SelectedObjectPosition;
-            GizmoModes gizmoMode = gizmoContext.GizmoMode;
-            Matrix rotation = (RenderingStats.e_LocalTransformation || gizmoMode == GizmoModes.Scale) ? gizmoContext.SelectedObject.RotationMatrix : Matrix.Identity;
-
-            IdAndOutlineRenderer.DrawArrow(_graphicsDevice, position, rotation, new Vector3(0, 0, 0), GetHoveredId() == 1 ? 1 : 0.5f, Color.Blue, matrices.StaticViewProjection, gizmoMode); //z 1
-            IdAndOutlineRenderer.DrawArrow(_graphicsDevice, position, rotation, new Vector3((float)-Math.PI / 2, 0, 0), GetHoveredId() == 2 ? 1 : 0.5f, Color.Green, matrices.StaticViewProjection, gizmoMode); //y 2
-            IdAndOutlineRenderer.DrawArrow(_graphicsDevice, position, rotation, new Vector3(0, (float)Math.PI / 2, 0), GetHoveredId() == 3 ? 1 : 0.5f, Color.Red, matrices.StaticViewProjection, gizmoMode); //x 3
-
-            IdAndOutlineRenderer.DrawArrow(_graphicsDevice, position, rotation, new Vector3((float)Math.PI, 0, 0), GetHoveredId() == 1 ? 1 : 0.5f, Color.Blue, matrices.StaticViewProjection, gizmoMode); //z 1
-            IdAndOutlineRenderer.DrawArrow(_graphicsDevice, position, rotation, new Vector3((float)Math.PI / 2, 0, 0), GetHoveredId() == 2 ? 1 : 0.5f, Color.Green, matrices.StaticViewProjection, gizmoMode); //y 2
-            IdAndOutlineRenderer.DrawArrow(_graphicsDevice, position, rotation, new Vector3(0, (float)-Math.PI / 2, 0), GetHoveredId() == 3 ? 1 : 0.5f, Color.Red, matrices.StaticViewProjection, gizmoMode); //x 3
-        }
 
         /// <summary>
         /// Returns the id of the currently hovered object
