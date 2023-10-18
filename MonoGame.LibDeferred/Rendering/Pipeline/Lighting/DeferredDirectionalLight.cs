@@ -23,28 +23,31 @@ namespace DeferredEngine.Pipeline.Lighting
             PCF, SoftPCF3x, SoftPCF5x, Poisson, /*VSM*/
         }
 
+        public bool HasChanged;
 
         public float Intensity;
+        private Vector3 _direction;
+        private Vector3 _initialDirection;
 
         public Vector3 DirectionViewSpace;
 
-        private Vector3 _initialDirection;
-        private Vector3 _direction;
         private Color _color;
+        public Vector3 ColorV3;
 
-        // wrap into nested type
         public bool CastShadows;
         public float ShadowSize;
         public float ShadowFarClip;
         public int ShadowResolution;
-        public ShadowFilteringTypes ShadowFiltering;
+
         public RenderTarget2D ShadowMap;
 
-        public readonly MatrixSet Matrices = new MatrixSet();
+        public ShadowFilteringTypes ShadowFiltering;
 
+        public Matrix ViewProjection;
+        public Matrix View;
+        public Matrix ViewProjection_ViewSpace;
+        public Matrix View_ViewSpace;
 
-        public bool HasChanged { get; set; }
-        public Vector3 Color_sRGB => _color.ToVector3().Pow(2.2f);
 
         /// <summary>
         /// Create a Directional light, shadows are optional
@@ -72,10 +75,20 @@ namespace DeferredEngine.Pipeline.Lighting
 
             Position = position;
 
+            _rotationMatrix = Matrix.Identity;
+
             Name = GetType().Name + " " + Id;
         }
 
-        public Color Color { get; set; } = Color.White;
+        public Color Color
+        {
+            get { return _color; }
+            set
+            {
+                _color = value;
+                ColorV3 = (_color.ToVector3().Pow(2.2f)); // applies sRGB gamma correction
+            }
+        }
 
         public Vector3 Direction
         {
@@ -109,14 +122,14 @@ namespace DeferredEngine.Pipeline.Lighting
 
         public void UpdateViewProjection()
         {
-            Matrices.View = Matrix.CreateLookAt(Position, Position + Direction, Vector3.Down);
-            Matrices.ViewProjection = Matrices.View * Matrix.CreateOrthographic(ShadowSize, ShadowSize, -ShadowFarClip, ShadowFarClip);
+            View = Matrix.CreateLookAt(Position, Position + Direction, Vector3.Down);
+            ViewProjection = View * Matrix.CreateOrthographic(ShadowSize, ShadowSize, -ShadowFarClip, ShadowFarClip);
         }
         public void UpdateViewSpaceProjection(PipelineMatrices matrices)
         {
             DirectionViewSpace = Vector3.Transform(Direction, matrices.ViewIT);
-            Matrices.ViewProjection_ViewSpace = matrices.InverseView * Matrices.ViewProjection;
-            Matrices.View_ViewSpace = matrices.InverseView * Matrices.View;
+            ViewProjection_ViewSpace = matrices.InverseView * ViewProjection;
+            View_ViewSpace = matrices.InverseView * View;
         }
 
     }

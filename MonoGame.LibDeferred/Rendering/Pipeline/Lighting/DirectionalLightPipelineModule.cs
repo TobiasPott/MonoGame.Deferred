@@ -79,14 +79,14 @@ namespace DeferredEngine.Pipeline.Lighting
         }
         public void ApplyShader(DeferredDirectionalLight light)
         {
-            _effectSetup.Param_LightColor.SetValue(light.Color_sRGB);
+            _effectSetup.Param_LightColor.SetValue(light.ColorV3);
             _effectSetup.Param_LightDirection.SetValue(light.DirectionViewSpace);
             _effectSetup.Param_LightIntensity.SetValue(light.Intensity);
 
             if (light.CastShadows)
             {
-                _effectSetup.Param_LightView.SetValue(light.Matrices.View_ViewSpace);
-                _effectSetup.Param_LightViewProjection.SetValue(light.Matrices.ViewProjection_ViewSpace);
+                _effectSetup.Param_LightView.SetValue(light.View_ViewSpace);
+                _effectSetup.Param_LightViewProjection.SetValue(light.ViewProjection_ViewSpace);
                 _effectSetup.Param_LightFarClip.SetValue(light.ShadowFarClip);
                 _effectSetup.Param_ShadowMap.SetValue(light.ShadowMap);
                 _effectSetup.Param_ShadowFiltering.SetValue((int)light.ShadowFiltering);
