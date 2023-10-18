@@ -76,7 +76,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 if (frustum.Contains(light.BoundingSphere) == ContainmentType.Disjoint) continue;
 
                 LightPositionWS[lightsInBounds] = light.Position;
-                LightColor[lightsInBounds] = light.ColorV3;
+                LightColor[lightsInBounds] = light.Color_sRGB;
                 LightIntensity[lightsInBounds] = light.Intensity;
                 LightRadius[lightsInBounds] = light.Radius;
                 lightsInBounds++;

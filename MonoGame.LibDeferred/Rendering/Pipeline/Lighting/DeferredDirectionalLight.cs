@@ -18,36 +18,37 @@ namespace DeferredEngine.Pipeline.Lighting
             public Matrix View_ViewSpace;
         }
 
+        public enum ShadowFilteringTypes
+        {
+            PCF, SoftPCF3x, SoftPCF5x, Poisson, /*VSM*/
+        }
 
-        public bool HasChanged;
 
         public float Intensity;
-        private Vector3 _direction;
-        private Vector3 _initialDirection;
 
         public Vector3 DirectionViewSpace;
 
+        private Vector3 _initialDirection;
+        private Vector3 _direction;
         private Color _color;
-        public Vector3 ColorV3;
 
+        // wrap into nested type
         public bool CastShadows;
         public float ShadowSize;
         public float ShadowFarClip;
         public int ShadowResolution;
-
-        public RenderTarget2D ShadowMap;
-
         public ShadowFilteringTypes ShadowFiltering;
+        public RenderTarget2D ShadowMap;
 
         public Matrix ViewProjection;
         public Matrix View;
         public Matrix ViewProjection_ViewSpace;
         public Matrix View_ViewSpace;
 
-        public enum ShadowFilteringTypes
-        {
-            PCF, SoftPCF3x, SoftPCF5x, Poisson, /*VSM*/
-        }
+
+
+        public bool HasChanged { get; set; }
+        public Vector3 Color_sRGB => _color.ToVector3().Pow(2.2f);
 
         /// <summary>
         /// Create a Directional light, shadows are optional
@@ -80,15 +81,7 @@ namespace DeferredEngine.Pipeline.Lighting
             Name = GetType().Name + " " + Id;
         }
 
-        public Color Color
-        {
-            get { return _color; }
-            set
-            {
-                _color = value;
-                ColorV3 = (_color.ToVector3().Pow(2.2f)); // applies sRGB gamma correction
-            }
-        }
+        public Color Color { get; set; } = Color.White;
 
         public Vector3 Direction
         {

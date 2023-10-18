@@ -79,7 +79,7 @@ namespace DeferredEngine.Pipeline.Lighting
         }
         public void ApplyShader(DeferredDirectionalLight light)
         {
-            _effectSetup.Param_LightColor.SetValue(light.ColorV3);
+            _effectSetup.Param_LightColor.SetValue(light.Color_sRGB);
             _effectSetup.Param_LightDirection.SetValue(light.DirectionViewSpace);
             _effectSetup.Param_LightIntensity.SetValue(light.Intensity);
 

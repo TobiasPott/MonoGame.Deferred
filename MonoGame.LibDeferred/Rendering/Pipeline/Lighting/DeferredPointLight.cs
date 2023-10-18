@@ -24,7 +24,6 @@ namespace DeferredEngine.Pipeline.Lighting
         public Matrix WorldMatrix;
         private float _radius;
         private Color _color;
-        public Vector3 ColorV3;
         public float Intensity;
         public int ShadowMapRadius = 3;
 
@@ -54,6 +53,7 @@ namespace DeferredEngine.Pipeline.Lighting
         public readonly bool IsVolumetric;
         public readonly float LightVolumeDensity = 1;
 
+        public Vector3 Color_sRGB => _color.ToVector3().Pow(2.2f);
 
         /// <summary>
         /// A point light is a light that shines in all directions
@@ -80,11 +80,7 @@ namespace DeferredEngine.Pipeline.Lighting
         public Color Color
         {
             get { return _color; }
-            set
-            {
-                _color = value;
-                ColorV3 = (_color.ToVector3().Pow(2.2f));
-            }
+            set { _color = value; }
         }
 
         public override Vector3 Position
@@ -129,11 +125,7 @@ namespace DeferredEngine.Pipeline.Lighting
                 _ => Matrix.Identity,
             };
         }
-        public virtual void ApplyShader(Matrix inverseView)
-        {
 
-
-        }
     }
 
 }

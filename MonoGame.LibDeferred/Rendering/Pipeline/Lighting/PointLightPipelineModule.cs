@@ -141,7 +141,7 @@ namespace DeferredEngine.Pipeline.Lighting
             _effectSetup.Param_WorldView.SetValue(light.ViewSpace);
             _effectSetup.Param_WorldViewProjection.SetValue(light.WorldViewProj);
             _effectSetup.Param_LightPosition.SetValue(light.ViewSpace.Translation);
-            _effectSetup.Param_LightColor.SetValue(light.ColorV3);
+            _effectSetup.Param_LightColor.SetValue(light.Color_sRGB);
             _effectSetup.Param_LightRadius.SetValue(light.Radius);
             _effectSetup.Param_LightIntensity.SetValue(light.Intensity);
 
