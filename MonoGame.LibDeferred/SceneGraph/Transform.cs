@@ -17,7 +17,7 @@ namespace DeferredEngine.Entities
             }
         }
 
-        protected Matrix _rotationMatrix;
+        protected Matrix _rotationMatrix = Matrix.Identity;
         public override Matrix RotationMatrix
         {
             get => _rotationMatrix;
@@ -28,7 +28,7 @@ namespace DeferredEngine.Entities
             }
         }
 
-        protected Vector3 _scale;
+        protected Vector3 _scale = Vector3.One;
         public override Vector3 Scale
         {
             get => _scale;

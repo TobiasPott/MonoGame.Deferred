@@ -6,6 +6,7 @@ using DeferredEngine.Renderer.Helper.Editor;
 using DeferredEngine.Renderer.Helper.HelperGeometry;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Diagnostics;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
@@ -62,6 +63,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 DrawSceneBillboard(light.World, matrices, light.Id);
             }
 
+            Debug.WriteLine("DrawSceneBillboards: " + this + " => " + scene.EnvProbe.World);
             _effectSetup.Param_Texture.SetValue(StaticAssets.Instance.IconEnvmap);
             DrawSceneBillboard(scene.EnvProbe.World, matrices, scene.EnvProbe.Id);
 

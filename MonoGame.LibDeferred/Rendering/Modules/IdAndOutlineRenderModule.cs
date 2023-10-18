@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Ext;
+using System.Diagnostics;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
@@ -103,6 +104,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
             //Now onto the billboards
             // ToDo: @tpott: Consider moving Billboards into entities like Decals (but with different effect?! O.o)
+
             BillboardRenderer?.DrawSceneBillboards(scene, matrices);
 
             //Now onto the gizmos

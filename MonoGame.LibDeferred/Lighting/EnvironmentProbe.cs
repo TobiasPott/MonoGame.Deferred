@@ -29,8 +29,8 @@ namespace DeferredEngine.Entities
 
         public EnvironmentProbe(Vector3 position)
         {
-            Position = position;
             Id = IdGenerator.GetNewId();
+            Position = position;
             Name = GetType().Name + " " + Id;
         }
 

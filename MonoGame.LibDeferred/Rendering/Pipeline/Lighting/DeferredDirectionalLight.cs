@@ -72,8 +72,6 @@ namespace DeferredEngine.Pipeline.Lighting
 
             Position = position;
 
-            _rotationMatrix = Matrix.Identity;
-
             Name = GetType().Name + " " + Id;
         }
 
