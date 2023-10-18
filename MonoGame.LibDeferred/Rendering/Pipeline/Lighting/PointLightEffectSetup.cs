@@ -9,12 +9,19 @@ namespace DeferredEngine.Pipeline.Lighting
     {
         public Effect Effect { get; protected set; }
 
-        public EffectTechnique Technique_Unshadowed { get; protected set; }
-        public EffectTechnique Technique_UnshadowedVolumetric { get; protected set; }
-        public EffectTechnique Technique_Shadowed { get; protected set; }
-        public EffectTechnique Technique_ShadowedSDF { get; protected set; }
-        public EffectTechnique Technique_ShadowedVolumetric { get; protected set; }
-        public EffectTechnique Technique_WriteStencil { get; protected set; }
+        protected EffectTechnique Technique_Unshadowed { get; set; }
+        protected EffectTechnique Technique_UnshadowedVolumetric { get; set; }
+        protected EffectTechnique Technique_Shadowed { get; set; }
+        protected EffectTechnique Technique_ShadowedSDF { get; set; }
+        protected EffectTechnique Technique_ShadowedVolumetric { get; set; }
+        protected EffectTechnique Technique_WriteStencil { get; set; }
+
+        public EffectPass Pass_Unshadowed { get; protected set; }
+        public EffectPass Pass_UnshadowedVolumetric { get; protected set; }
+        public EffectPass Pass_Shadowed { get; protected set; }
+        public EffectPass Pass_ShadowedSDF { get; protected set; }
+        public EffectPass Pass_ShadowedVolumetric { get; protected set; }
+        public EffectPass Pass_WriteStencil { get; protected set; }
 
 
         public EffectParameter Param_ShadowMap { get; protected set; }
@@ -58,6 +65,13 @@ namespace DeferredEngine.Pipeline.Lighting
             Technique_ShadowedSDF = Effect.Techniques["ShadowedSDF"];
             Technique_ShadowedVolumetric = Effect.Techniques["ShadowedVolume"];
             Technique_WriteStencil = Effect.Techniques["WriteStencilMask"];
+
+            Pass_Unshadowed = Technique_Unshadowed.Passes[0];
+            Pass_UnshadowedVolumetric = Technique_UnshadowedVolumetric.Passes[0];
+            Pass_Shadowed = Technique_Shadowed.Passes[0];
+            Pass_ShadowedSDF = Technique_ShadowedSDF.Passes[0];
+            Pass_ShadowedVolumetric = Technique_ShadowedVolumetric.Passes[0];
+            Pass_WriteStencil = Technique_WriteStencil.Passes[0];
 
             Param_ShadowMap = Effect.Parameters["ShadowMap"];
 

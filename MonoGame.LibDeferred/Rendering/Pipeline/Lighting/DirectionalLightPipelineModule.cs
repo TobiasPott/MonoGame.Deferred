@@ -85,8 +85,8 @@ namespace DeferredEngine.Pipeline.Lighting
 
             if (light.CastShadows)
             {
-                _effectSetup.Param_LightView.SetValue(light.View_ViewSpace);
-                _effectSetup.Param_LightViewProjection.SetValue(light.ViewProjection_ViewSpace);
+                _effectSetup.Param_LightView.SetValue(light.Matrices.View_ViewSpace);
+                _effectSetup.Param_LightViewProjection.SetValue(light.Matrices.ViewProjection_ViewSpace);
                 _effectSetup.Param_LightFarClip.SetValue(light.ShadowFarClip);
                 _effectSetup.Param_ShadowMap.SetValue(light.ShadowMap);
                 _effectSetup.Param_ShadowFiltering.SetValue((int)light.ShadowFiltering);

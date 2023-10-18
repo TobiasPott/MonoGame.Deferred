@@ -8,41 +8,27 @@ namespace DeferredEngine.Pipeline.Lighting
 {
     public class DeferredPointLight : TransformableObject
     {
-        public class Matrices
+        public class MatrixSet
         {
-            public Matrix LightViewProjectionPositiveX;
-            public Matrix LightViewProjectionNegativeX;
-            public Matrix LightViewProjectionPositiveY;
-            public Matrix LightViewProjectionNegativeY;
-            public Matrix LightViewProjectionPositiveZ;
-            public Matrix LightViewProjectionNegativeZ;
+            public Matrix ViewProjectionPositiveX;
+            public Matrix ViewProjectionNegativeX;
+            public Matrix ViewProjectionPositiveY;
+            public Matrix ViewProjectionNegativeY;
+            public Matrix ViewProjectionPositiveZ;
+            public Matrix ViewProjectionNegativeZ;
 
-            public Matrix LightViewSpace;
-            public Matrix LightWorldViewProj;
+            public Matrix ViewSpace;
+            public Matrix WorldViewProj;
+            public Matrix WorldMatrix;
         }
 
-        public Matrix WorldMatrix;
-        private float _radius;
-        private Color _color;
-        public float Intensity;
         public int ShadowMapRadius = 3;
 
         public bool HasChanged = true;
 
         public readonly int ShadowResolution;
         public readonly bool StaticShadows;
-
         public RenderTarget2D ShadowMap;
-
-        public Matrix ViewProjectionPositiveX;
-        public Matrix ViewProjectionNegativeX;
-        public Matrix ViewProjectionPositiveY;
-        public Matrix ViewProjectionNegativeY;
-        public Matrix ViewProjectionPositiveZ;
-        public Matrix ViewProjectionNegativeZ;
-
-        public Matrix ViewSpace;
-        public Matrix WorldViewProj;
 
         public BoundingSphere BoundingSphere;
 
@@ -50,8 +36,14 @@ namespace DeferredEngine.Pipeline.Lighting
         public bool CastSDFShadows;
         public int SoftShadowBlurAmount = 0;
 
+        private float _radius;
+        private Color _color;
+        public float Intensity;
         public readonly bool IsVolumetric;
         public readonly float LightVolumeDensity = 1;
+
+
+        public readonly MatrixSet Matrices = new MatrixSet();
 
         public Vector3 Color_sRGB => _color.ToVector3().Pow(2.2f);
 
@@ -60,6 +52,8 @@ namespace DeferredEngine.Pipeline.Lighting
         /// </summary>
         public DeferredPointLight(Vector3 position, float radius, Color color, float intensity, bool castShadows, bool isVolumetric, int shadowResolution, int softShadowBlurAmount, bool staticShadow, float volumeDensity = 1, bool isEnabled = true)
         {
+            Id = IdGenerator.GetNewId();
+
             BoundingSphere = new BoundingSphere(position, radius);
             Position = position;
             Radius = radius;
@@ -73,8 +67,12 @@ namespace DeferredEngine.Pipeline.Lighting
             StaticShadows = staticShadow;
             LightVolumeDensity = volumeDensity;
             IsEnabled = isEnabled;
-            Id = IdGenerator.GetNewId();
+
             Name = GetType().Name + " " + Id;
+        }
+        protected DeferredPointLight()
+        {
+
         }
 
         public Color Color
@@ -90,7 +88,7 @@ namespace DeferredEngine.Pipeline.Lighting
             {
                 base.Position = value;
                 BoundingSphere.Center = value;
-                WorldMatrix = Matrix.CreateScale(Radius * 1.1f) * Matrix.CreateTranslation(Position);
+                Matrices.WorldMatrix = Matrix.CreateScale(Radius * 1.1f) * Matrix.CreateTranslation(Position);
                 HasChanged = true;
             }
         }
@@ -102,26 +100,22 @@ namespace DeferredEngine.Pipeline.Lighting
             {
                 _radius = value;
                 BoundingSphere.Radius = value;
-                WorldMatrix = Matrix.CreateScale(Radius * 1.1f) * Matrix.CreateTranslation(Position);
+                Matrices.WorldMatrix = Matrix.CreateScale(Radius * 1.1f) * Matrix.CreateTranslation(Position);
                 HasChanged = true;
             }
         }
 
-        protected DeferredPointLight()
-        {
-
-        }
 
         public Matrix GetViewProjection(CubeMapFace face)
         {
             return face switch
             {
-                CubeMapFace.NegativeX => this.ViewProjectionNegativeX,
-                CubeMapFace.NegativeY => this.ViewProjectionNegativeY,
-                CubeMapFace.NegativeZ => this.ViewProjectionNegativeZ,
-                CubeMapFace.PositiveX => this.ViewProjectionPositiveX,
-                CubeMapFace.PositiveY => this.ViewProjectionPositiveY,
-                CubeMapFace.PositiveZ => this.ViewProjectionPositiveZ,
+                CubeMapFace.NegativeX => Matrices.ViewProjectionNegativeX,
+                CubeMapFace.NegativeY => Matrices.ViewProjectionNegativeY,
+                CubeMapFace.NegativeZ => Matrices.ViewProjectionNegativeZ,
+                CubeMapFace.PositiveX => Matrices.ViewProjectionPositiveX,
+                CubeMapFace.PositiveY => Matrices.ViewProjectionPositiveY,
+                CubeMapFace.PositiveZ => Matrices.ViewProjectionPositiveZ,
                 _ => Matrix.Identity,
             };
         }

@@ -134,13 +134,14 @@ namespace DeferredEngine.Pipeline.Lighting
             //Send the light parameters to the shader
             if (viewProjectionHasChanged)
             {
-                light.ViewSpace = light.WorldMatrix * view;
-                light.WorldViewProj = light.WorldMatrix * viewProjection;
+                light.Matrices.ViewSpace = light.Matrices.WorldMatrix * view;
+                light.Matrices.WorldViewProj = light.Matrices.WorldMatrix * viewProjection;
             }
 
-            _effectSetup.Param_WorldView.SetValue(light.ViewSpace);
-            _effectSetup.Param_WorldViewProjection.SetValue(light.WorldViewProj);
-            _effectSetup.Param_LightPosition.SetValue(light.ViewSpace.Translation);
+            _effectSetup.Param_WorldView.SetValue(light.Matrices.ViewSpace);
+            _effectSetup.Param_WorldViewProjection.SetValue(light.Matrices.WorldViewProj);
+            _effectSetup.Param_LightPosition.SetValue(light.Matrices.ViewSpace.Translation);
+
             _effectSetup.Param_LightColor.SetValue(light.Color_sRGB);
             _effectSetup.Param_LightRadius.SetValue(light.Radius);
             _effectSetup.Param_LightIntensity.SetValue(light.Intensity);
@@ -155,12 +156,11 @@ namespace DeferredEngine.Pipeline.Lighting
                 _graphicsDevice.DepthStencilState = _stencilCullPass1;
                 //draw front faces
                 _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-                _effectSetup.Technique_WriteStencil.Passes[0].Apply();
+                _effectSetup.Pass_WriteStencil.Apply();
 
                 _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, vertexOffset, startIndex, primitiveCount);
 
                 ////////////
-
                 _graphicsDevice.DepthStencilState = _stencilCullPass2;
                 //draw backfaces
                 _graphicsDevice.RasterizerState = RasterizerState.CullClockwise;
@@ -189,7 +189,7 @@ namespace DeferredEngine.Pipeline.Lighting
             // Experimental
             if (light.CastSDFShadows)
             {
-                _effectSetup.Technique_ShadowedSDF.Passes[0].Apply();
+                _effectSetup.Pass_ShadowedSDF.Apply();
             }
             else if (light.ShadowMap != null && light.CastShadows)
             {
@@ -200,11 +200,11 @@ namespace DeferredEngine.Pipeline.Lighting
                 if (light.IsVolumetric && PointLightPipelineModule.g_VolumetricLights)
                 {
                     _effectSetup.Param_LightVolumeDensity.SetValue(light.LightVolumeDensity);
-                    _effectSetup.Technique_ShadowedVolumetric.Passes[0].Apply();
+                    _effectSetup.Pass_ShadowedVolumetric.Apply();
                 }
                 else
                 {
-                    _effectSetup.Technique_Shadowed.Passes[0].Apply();
+                    _effectSetup.Pass_Shadowed.Apply();
                 }
             }
             else
@@ -214,11 +214,11 @@ namespace DeferredEngine.Pipeline.Lighting
                 if (light.IsVolumetric && PointLightPipelineModule.g_VolumetricLights)
                 {
                     _effectSetup.Param_LightVolumeDensity.SetValue(light.LightVolumeDensity);
-                    _effectSetup.Technique_UnshadowedVolumetric.Passes[0].Apply();
+                    _effectSetup.Pass_UnshadowedVolumetric.Apply();
                 }
                 else
                 {
-                    _effectSetup.Technique_Unshadowed.Passes[0].Apply();
+                    _effectSetup.Pass_Unshadowed.Apply();
                 }
             }
         }
