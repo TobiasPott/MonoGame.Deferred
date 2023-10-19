@@ -485,7 +485,7 @@ namespace DeferredEngine.Logic
                 _objectSlider2.IsHidden = true;
                 _objectColorPicker1.IsHidden = true;
 
-                if (selectedObject is DeferredPointLight)
+                if (selectedObject is PointLight)
                 {
                     _objectToggle0.IsHidden = false;
                     _objectToggle1.IsHidden = false;
@@ -529,7 +529,7 @@ namespace DeferredEngine.Logic
                     }
                 }
 
-                else if (selectedObject is DeferredDirectionalLight)
+                else if (selectedObject is DirectionalLight)
                 {
                     _objectToggle0.IsHidden = false;
                     _objectToggle2.IsHidden = false;

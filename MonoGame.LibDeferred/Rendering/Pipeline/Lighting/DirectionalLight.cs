@@ -8,7 +8,7 @@ using MonoGame.Ext;
 namespace DeferredEngine.Pipeline.Lighting
 {
 
-    public sealed class DeferredDirectionalLight : TransformableObject
+    public sealed class DirectionalLight : TransformableObject
     {
         public class MatrixSet
         {
@@ -46,7 +46,7 @@ namespace DeferredEngine.Pipeline.Lighting
         /// <summary>
         /// Create a Directional light, shadows are optional
         /// </summary>
-        public DeferredDirectionalLight(Color color, float intensity, Vector3 direction, Vector3 position = default(Vector3),
+        public DirectionalLight(Color color, float intensity, Vector3 direction, Vector3 position = default(Vector3),
             bool castShadows = false, float shadowSize = 100, float shadowFarClip = 100, int shadowMapResolution = 512,
             ShadowFilteringTypes shadowFiltering = ShadowFilteringTypes.Poisson)
         {

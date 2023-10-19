@@ -42,15 +42,15 @@ namespace DeferredEngine.Renderer.RenderModules
 
         public void Draw(DynamicMeshBatcher meshMaterialLibrary, EntitySceneGroup scene)
         {
-            List<DeferredPointLight> pointLights = scene.PointLights;
-            List<DeferredDirectionalLight> dirLights = scene.DirectionalLights;
+            List<PointLight> pointLights = scene.PointLights;
+            List<Pipeline.Lighting.DirectionalLight> dirLights = scene.DirectionalLights;
 
             _pass = ShadowPasses.Omnidirectional;
 
             //Go through all our point lights
             for (int index = 0; index < pointLights.Count; index++)
             {
-                DeferredPointLight light = pointLights[index];
+                PointLight light = pointLights[index];
 
                 if (!light.IsEnabled) continue;
 
@@ -80,7 +80,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
             for (int index = 0; index < dirLights.Count; index++)
             {
-                DeferredDirectionalLight light = dirLights[index];
+                Pipeline.Lighting.DirectionalLight light = dirLights[index];
                 if (!light.IsEnabled) continue;
 
                 if (light.CastShadows)
@@ -99,7 +99,7 @@ namespace DeferredEngine.Renderer.RenderModules
         /// <summary>
         /// Create the shadow map for each cubemapside, then combine into one cubemap
         /// </summary>
-        private void CreateShadowCubeMap(DeferredPointLight light, int size, DynamicMeshBatcher meshMaterialLibrary)
+        private void CreateShadowCubeMap(PointLight light, int size, DynamicMeshBatcher meshMaterialLibrary)
         {
             //For VSM we need 2 channels, -> Vector2
             //todo: check if we need preserve contents
@@ -237,7 +237,7 @@ namespace DeferredEngine.Renderer.RenderModules
         /// <summary>
         /// Only one shadow map needed for a directional light
         /// </summary>
-        private void CreateShadowMapDirectionalLight(DeferredDirectionalLight light, int shadowResolution, DynamicMeshBatcher meshMaterialLibrary)
+        private void CreateShadowMapDirectionalLight(Pipeline.Lighting.DirectionalLight light, int shadowResolution, DynamicMeshBatcher meshMaterialLibrary)
         {
             //Create a renderTarget if we don't have one yet
             if (light.ShadowMap == null)

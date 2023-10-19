@@ -6,7 +6,7 @@ using MonoGame.Ext;
 
 namespace DeferredEngine.Pipeline.Lighting
 {
-    public class DeferredPointLight : TransformableObject
+    public class PointLight : TransformableObject
     {
         public class MatrixSet
         {
@@ -50,7 +50,7 @@ namespace DeferredEngine.Pipeline.Lighting
         /// <summary>
         /// A point light is a light that shines in all directions
         /// </summary>
-        public DeferredPointLight(Vector3 position, float radius, Color color, float intensity, bool castShadows, bool isVolumetric, int shadowResolution, int softShadowBlurAmount, bool staticShadow, float volumeDensity = 1, bool isEnabled = true)
+        public PointLight(Vector3 position, float radius, Color color, float intensity, bool castShadows, bool isVolumetric, int shadowResolution, int softShadowBlurAmount, bool staticShadow, float volumeDensity = 1, bool isEnabled = true)
         {
             Id = IdGenerator.GetNewId();
 
@@ -70,7 +70,7 @@ namespace DeferredEngine.Pipeline.Lighting
 
             Name = GetType().Name + " " + Id;
         }
-        protected DeferredPointLight()
+        protected PointLight()
         {
 
         }

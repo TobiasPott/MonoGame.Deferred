@@ -30,8 +30,8 @@ namespace DeferredEngine.Logic
 
         public readonly List<ModelEntity> BasicEntities = new List<ModelEntity>();
         public readonly List<Decal> Decals = new List<Decal>();
-        public readonly List<DeferredPointLight> PointLights = new List<DeferredPointLight>();
-        public readonly List<DeferredDirectionalLight> DirectionalLights = new List<DeferredDirectionalLight>();
+        public readonly List<PointLight> PointLights = new List<PointLight>();
+        public readonly List<Pipeline.Lighting.DirectionalLight> DirectionalLights = new List<Pipeline.Lighting.DirectionalLight>();
         public EnvironmentProbe EnvProbe;
 
         //Which render target are we currently displaying?
@@ -168,7 +168,7 @@ namespace DeferredEngine.Logic
                 shadowWorldSize: 450,
                 shadowDepth: 180,
                 shadowResolution: 1024,
-                shadowFilteringFiltering: DeferredDirectionalLight.ShadowFilteringTypes.SoftPCF3x);
+                shadowFilteringFiltering: Pipeline.Lighting.DirectionalLight.ShadowFilteringTypes.SoftPCF3x);
         }
 
 
@@ -242,11 +242,11 @@ namespace DeferredEngine.Logic
         /// <param name="shadowResolution"></param>
         /// <param name="shadowFilteringFiltering"></param>
         /// <returns></returns>
-        private DeferredDirectionalLight AddDirectionalLight(Vector3 direction, int intensity, Color color, Vector3 position = default(Vector3),
-            bool drawShadows = false, float shadowWorldSize = 100, float shadowDepth = 100, int shadowResolution = 512, 
-            DeferredDirectionalLight.ShadowFilteringTypes shadowFilteringFiltering = DeferredDirectionalLight.ShadowFilteringTypes.Poisson)
+        private Pipeline.Lighting.DirectionalLight AddDirectionalLight(Vector3 direction, int intensity, Color color, Vector3 position = default(Vector3),
+            bool drawShadows = false, float shadowWorldSize = 100, float shadowDepth = 100, int shadowResolution = 512,
+            Pipeline.Lighting.DirectionalLight.ShadowFilteringTypes shadowFilteringFiltering = Pipeline.Lighting.DirectionalLight.ShadowFilteringTypes.Poisson)
         {
-            DeferredDirectionalLight light = new DeferredDirectionalLight(color: color,
+            Pipeline.Lighting.DirectionalLight light = new Pipeline.Lighting.DirectionalLight(color: color,
                 intensity: intensity,
                 direction: direction,
                 position: position,
@@ -273,9 +273,9 @@ namespace DeferredEngine.Logic
         /// <param name="shadowResolution">shadow map resolution per face. Optional</param>
         /// <param name="staticShadow">if set to true the shadows will not update at all. Dynamic shadows in contrast update only when needed.</param>
         /// <returns></returns>
-        private DeferredPointLight AddPointLight(Vector3 position, float radius, Color color, float intensity, bool castShadows, bool isVolumetric = false, float volumetricDensity = 1, int shadowResolution = 256, int softShadowBlurAmount = 0, bool staticShadow = false)
+        private PointLight AddPointLight(Vector3 position, float radius, Color color, float intensity, bool castShadows, bool isVolumetric = false, float volumetricDensity = 1, int shadowResolution = 256, int softShadowBlurAmount = 0, bool staticShadow = false)
         {
-            DeferredPointLight light = new DeferredPointLight(position, radius, color, intensity, castShadows, isVolumetric, shadowResolution, softShadowBlurAmount, staticShadow, volumetricDensity);
+            PointLight light = new PointLight(position, radius, color, intensity, castShadows, isVolumetric, shadowResolution, softShadowBlurAmount, staticShadow, volumetricDensity);
             PointLights.Add(light);
             return light;
         }

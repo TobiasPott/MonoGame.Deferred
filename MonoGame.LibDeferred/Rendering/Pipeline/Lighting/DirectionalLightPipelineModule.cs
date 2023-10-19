@@ -44,7 +44,7 @@ namespace DeferredEngine.Pipeline.Lighting
         /// <summary>
         /// Draw all directional lights, set up some shader variables first
         /// </summary>
-        public void DrawDirectionalLights(List<DeferredDirectionalLight> dirLights, Vector3 cameraPosition, PipelineMatrices matrices, bool viewProjectionHasChanged)
+        public void DrawDirectionalLights(List<DirectionalLight> dirLights, Vector3 cameraPosition, PipelineMatrices matrices, bool viewProjectionHasChanged)
         {
             if (dirLights.Count < 1) return;
 
@@ -58,7 +58,7 @@ namespace DeferredEngine.Pipeline.Lighting
 
             for (int index = 0; index < dirLights.Count; index++)
             {
-                DeferredDirectionalLight light = dirLights[index];
+                DirectionalLight light = dirLights[index];
                 if (viewProjectionHasChanged)
                     light.UpdateViewSpaceProjection(matrices);
 
@@ -70,14 +70,14 @@ namespace DeferredEngine.Pipeline.Lighting
         /// Draw the individual light, full screen effect
         /// </summary>
         /// <param name="light"></param>
-        private void DrawDirectionalLight(DeferredDirectionalLight light)
+        private void DrawDirectionalLight(DirectionalLight light)
         {
             if (!light.IsEnabled) return;
 
             this.ApplyShader(light);
             _fullscreenTarget.Draw(_graphicsDevice);
         }
-        public void ApplyShader(DeferredDirectionalLight light)
+        public void ApplyShader(DirectionalLight light)
         {
             _effectSetup.Param_LightColor.SetValue(light.ColorV3);
             _effectSetup.Param_LightDirection.SetValue(light.DirectionViewSpace);

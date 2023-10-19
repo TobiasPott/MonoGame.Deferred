@@ -47,8 +47,8 @@ namespace DeferredEngine.Logic
         public void Update(GameTime gameTime,
             List<ModelEntity> entities,
             List<Decal> decals,
-            List<DeferredPointLight> pointLights,
-            List<DeferredDirectionalLight> dirLights,
+            List<PointLight> pointLights,
+            List<Pipeline.Lighting.DirectionalLight> dirLights,
             EnvironmentProbe envSample,
             EditorReceivedData data,
             DynamicMeshBatcher meshMaterialLibrary)
@@ -119,7 +119,7 @@ namespace DeferredEngine.Logic
 
                     for (int index = 0; index < pointLights.Count; index++)
                     {
-                        DeferredPointLight pointLight = pointLights[index];
+                        PointLight pointLight = pointLights[index];
                         if (pointLight.Id == hoveredId)
                         {
                             SelectedObject = pointLight;
@@ -129,7 +129,7 @@ namespace DeferredEngine.Logic
 
                     for (int index = 0; index < dirLights.Count; index++)
                     {
-                        DeferredDirectionalLight directionalLight = dirLights[index];
+                        Pipeline.Lighting.DirectionalLight directionalLight = dirLights[index];
                         if (directionalLight.Id == hoveredId)
                         {
                             SelectedObject = directionalLight;
@@ -166,15 +166,15 @@ namespace DeferredEngine.Logic
 
                     SelectedObject = null;
                 }
-                else if (SelectedObject is DeferredPointLight)
+                else if (SelectedObject is PointLight)
                 {
-                    pointLights.Remove((DeferredPointLight)SelectedObject);
+                    pointLights.Remove((PointLight)SelectedObject);
 
                     SelectedObject = null;
                 }
-                else if (SelectedObject is DeferredDirectionalLight)
+                else if (SelectedObject is Pipeline.Lighting.DirectionalLight)
                 {
-                    dirLights.Remove((DeferredDirectionalLight)SelectedObject);
+                    dirLights.Remove((Pipeline.Lighting.DirectionalLight)SelectedObject);
 
                     SelectedObject = null;
                 }

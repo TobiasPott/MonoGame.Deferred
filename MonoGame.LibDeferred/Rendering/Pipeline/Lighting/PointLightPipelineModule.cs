@@ -97,7 +97,7 @@ namespace DeferredEngine.Pipeline.Lighting
         /// <summary>
         /// Draw the point lights, set up some stuff first
         /// </summary>
-        public void Draw(List<DeferredPointLight> pointLights, Vector3 cameraOrigin, PipelineMatrices matrices, bool viewProjectionHasChanged)
+        public void Draw(List<PointLight> pointLights, Vector3 cameraOrigin, PipelineMatrices matrices, bool viewProjectionHasChanged)
         {
             if (pointLights.Count < 1) return;
 
@@ -120,7 +120,7 @@ namespace DeferredEngine.Pipeline.Lighting
         /// <summary>
         /// Draw each individual point lights
         /// </summary>
-        private void DrawPointLight(DeferredPointLight light, Vector3 cameraOrigin, int vertexOffset, int startIndex, int primitiveCount, bool viewProjectionHasChanged, Matrix view, Matrix viewProjection)
+        private void DrawPointLight(PointLight light, Vector3 cameraOrigin, int vertexOffset, int startIndex, int primitiveCount, bool viewProjectionHasChanged, Matrix view, Matrix viewProjection)
         {
             if (!light.IsEnabled) return;
 
@@ -184,7 +184,7 @@ namespace DeferredEngine.Pipeline.Lighting
             //Draw the sphere
         }
 
-        private void ApplyShader(DeferredPointLight light)
+        private void ApplyShader(PointLight light)
         {
             // Experimental
             if (light.CastSDFShadows)

@@ -47,13 +47,13 @@ namespace DeferredEngine.Renderer.RenderModules
             return output;
         }
 
-        public void PrepareDraw(Camera camera, List<DeferredPointLight> pointLights, BoundingFrustum frustum)
+        public void PrepareDraw(Camera camera, List<PointLight> pointLights, BoundingFrustum frustum)
         {
             SetupLighting(camera, pointLights, frustum);
 
         }
 
-        private void SetupLighting(Camera camera, List<DeferredPointLight> pointLights, BoundingFrustum frustum)
+        private void SetupLighting(Camera camera, List<PointLight> pointLights, BoundingFrustum frustum)
         {
             int count = pointLights.Count > 40 ? MAXLIGHTS : pointLights.Count;
 
@@ -70,7 +70,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
             for (var index = 0; index < count; index++)
             {
-                DeferredPointLight light = pointLights[index];
+                PointLight light = pointLights[index];
 
                 //Check frustum culling
                 if (frustum.Contains(light.BoundingSphere) == ContainmentType.Disjoint) continue;

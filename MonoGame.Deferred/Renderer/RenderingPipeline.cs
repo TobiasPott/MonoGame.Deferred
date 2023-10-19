@@ -257,7 +257,7 @@ namespace DeferredEngine.Renderer
 
         }
 
-        private bool IsSDFUsed(List<DeferredPointLight> pointLights)
+        private bool IsSDFUsed(List<PointLight> pointLights)
         {
             for (var index = 0; index < pointLights.Count; index++)
             {
@@ -351,7 +351,7 @@ namespace DeferredEngine.Renderer
         /// <param name="dirLights"></param>
         private void CheckRenderChanges(EntitySceneGroup scene)
         {
-            List<DeferredDirectionalLight> dirLights = scene.DirectionalLights;
+            List<Pipeline.Lighting.DirectionalLight> dirLights = scene.DirectionalLights;
             if (Math.Abs(_g_FarClip - RenderingSettings.g_FarPlane) > 0.0001f)
             {
                 _g_FarClip = RenderingSettings.g_FarPlane;
@@ -693,7 +693,7 @@ namespace DeferredEngine.Renderer
             FullscreenTarget.Draw(_graphicsDevice);
         }
 
-        private RenderTarget2D DrawForward(RenderTarget2D input, DynamicMeshBatcher meshBatcher, Camera camera, List<DeferredPointLight> pointLights)
+        private RenderTarget2D DrawForward(RenderTarget2D input, DynamicMeshBatcher meshBatcher, Camera camera, List<PointLight> pointLights)
         {
             if (!ForwardPipelineModule.g_EnableForward)
                 return input;

@@ -42,8 +42,8 @@ namespace DeferredEngine.Renderer.RenderModules
             _effectSetup.Effect.CurrentTechnique = _effectSetup.Technique_Id;
 
             List<Decal> decals = scene.Decals;
-            List<DeferredPointLight> pointLights = scene.PointLights;
-            List<DeferredDirectionalLight> dirLights = scene.DirectionalLights;
+            List<PointLight> pointLights = scene.PointLights;
+            List<Pipeline.Lighting.DirectionalLight> dirLights = scene.DirectionalLights;
 
             for (int index = 0; index < decals.Count; index++)
             {
@@ -95,17 +95,17 @@ namespace DeferredEngine.Renderer.RenderModules
                 DrawEditorBillboard(decals[i], matrices, gizmoContext);
 
             // Point Lights
-            List<DeferredPointLight> pointLights = scene.PointLights;
+            List<PointLight> pointLights = scene.PointLights;
             _effectSetup.Param_Texture.SetValue(StaticAssets.Instance.IconLight);
             for (int i = 0; i < pointLights.Count; i++)
                 DrawEditorBillboard(pointLights[i], matrices, gizmoContext);
 
             //DirectionalLights
-            List<DeferredDirectionalLight> dirLights = scene.DirectionalLights;
+            List<Pipeline.Lighting.DirectionalLight> dirLights = scene.DirectionalLights;
             HelperGeometryManager helperManager = HelperGeometryManager.GetInstance();
             for (int i = 0; i < dirLights.Count; i++)
             {
-                DeferredDirectionalLight light = dirLights[i];
+                Pipeline.Lighting.DirectionalLight light = dirLights[i];
                 DrawEditorBillboard(light, matrices, gizmoContext);
 
                 helperManager.AddLineStartDir(light.Position, light.Direction * 10, 1, Color.Black, light.Color);
