@@ -259,9 +259,9 @@ namespace DeferredEngine.Renderer.RenderModules
                 // update light view projection from itself (position, direction, size and far clip)
                 light.UpdateViewProjection();
                 if (_boundingFrustumShadow == null)
-                    _boundingFrustumShadow = new BoundingFrustum(light.ViewProjection);
+                    _boundingFrustumShadow = new BoundingFrustum(light.Matrices.ViewProjection);
                 else
-                    _boundingFrustumShadow.Matrix = light.ViewProjection;
+                    _boundingFrustumShadow.Matrix = light.Matrices.ViewProjection;
 
                 _graphicsDevice.SetRenderTarget(light.ShadowMap);
                 _graphicsDevice.Clear(ClearOptions.DepthBuffer, Color.White, 1, 0);
@@ -272,11 +272,11 @@ namespace DeferredEngine.Renderer.RenderModules
                 _effectSetup.Param_FarClip.SetValue(light.ShadowFarClip);
                 _effectSetup.Param_SizeBias.SetValue(ShadowMapPipelineModule.ShadowBias * 2048 / light.ShadowResolution);
 
-                meshMaterialLibrary.Draw(DynamicMeshBatcher.RenderType.ShadowLinear, light.ViewProjection, light.View, light.HasChanged, false, false, 0, renderModule: this);
+                meshMaterialLibrary.Draw(DynamicMeshBatcher.RenderType.ShadowLinear, light.Matrices.ViewProjection, light.Matrices.View, light.HasChanged, false, false, 0, renderModule: this);
             }
             else
             {
-                _boundingFrustumShadow = new BoundingFrustum(light.ViewProjection);
+                _boundingFrustumShadow = new BoundingFrustum(light.Matrices.ViewProjection);
 
                 bool hasAnyObjectMoved = meshMaterialLibrary.FrustumCulling(boundingFrustrum: _boundingFrustumShadow, hasCameraChanged: false, cameraPosition: light.Position);
 
@@ -291,7 +291,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 _effectSetup.Param_SizeBias.SetValue(ShadowMapPipelineModule.ShadowBias * 2048 / light.ShadowResolution);
 
                 meshMaterialLibrary.Draw(DynamicMeshBatcher.RenderType.ShadowLinear,
-                    light.ViewProjection, light.View, false, true, false, 0, renderModule: this);
+                    light.Matrices.ViewProjection, light.Matrices.View, false, true, false, 0, renderModule: this);
             }
 
             //Blur!

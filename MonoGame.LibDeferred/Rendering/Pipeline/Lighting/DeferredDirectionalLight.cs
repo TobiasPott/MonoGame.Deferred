@@ -40,14 +40,8 @@ namespace DeferredEngine.Pipeline.Lighting
         public int ShadowResolution;
 
         public RenderTarget2D ShadowMap;
-
+        public readonly MatrixSet Matrices = new MatrixSet();
         public ShadowFilteringTypes ShadowFiltering;
-
-        public Matrix ViewProjection;
-        public Matrix View;
-        public Matrix ViewProjection_ViewSpace;
-        public Matrix View_ViewSpace;
-
 
         /// <summary>
         /// Create a Directional light, shadows are optional
@@ -122,14 +116,14 @@ namespace DeferredEngine.Pipeline.Lighting
 
         public void UpdateViewProjection()
         {
-            View = Matrix.CreateLookAt(Position, Position + Direction, Vector3.Down);
-            ViewProjection = View * Matrix.CreateOrthographic(ShadowSize, ShadowSize, -ShadowFarClip, ShadowFarClip);
+            Matrices.View = Matrix.CreateLookAt(Position, Position + Direction, Vector3.Down);
+            Matrices.ViewProjection = Matrices.View * Matrix.CreateOrthographic(ShadowSize, ShadowSize, -ShadowFarClip, ShadowFarClip);
         }
         public void UpdateViewSpaceProjection(PipelineMatrices matrices)
         {
             DirectionViewSpace = Vector3.Transform(Direction, matrices.ViewIT);
-            ViewProjection_ViewSpace = matrices.InverseView * ViewProjection;
-            View_ViewSpace = matrices.InverseView * View;
+            Matrices.ViewProjection_ViewSpace = matrices.InverseView * Matrices.ViewProjection;
+            Matrices.View_ViewSpace = matrices.InverseView * Matrices.View;
         }
 
     }
