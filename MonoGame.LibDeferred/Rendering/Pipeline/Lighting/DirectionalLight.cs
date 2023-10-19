@@ -29,8 +29,6 @@ namespace DeferredEngine.Pipeline.Lighting
         private Vector3 _direction;
         private Vector3 _initialDirection;
 
-        public Vector3 DirectionViewSpace;
-
         private Color _color;
         public Vector3 ColorV3;
 
@@ -42,37 +40,6 @@ namespace DeferredEngine.Pipeline.Lighting
         public RenderTarget2D ShadowMap;
         public readonly MatrixSet Matrices = new MatrixSet();
         public ShadowFilteringTypes ShadowFiltering;
-
-        /// <summary>
-        /// Create a Directional light, shadows are optional
-        /// </summary>
-        public DirectionalLight(Color color, float intensity, Vector3 direction, Vector3 position = default(Vector3),
-            bool castShadows = false, float shadowSize = 100, float shadowFarClip = 100, int shadowMapResolution = 512,
-            ShadowFilteringTypes shadowFiltering = ShadowFilteringTypes.Poisson)
-        {
-            Id = IdGenerator.GetNewId();
-
-            Color = color;
-            Intensity = intensity;
-
-            Vector3 normalizedDirection = direction;
-            normalizedDirection.Normalize();
-            Direction = normalizedDirection;
-            _initialDirection = normalizedDirection;
-
-            CastShadows = castShadows;
-            ShadowSize = shadowSize;
-            ShadowFarClip = shadowFarClip;
-            ShadowResolution = shadowMapResolution;
-
-            ShadowFiltering = shadowFiltering;
-
-            Position = position;
-
-            _rotationMatrix = Matrix.Identity;
-
-            Name = GetType().Name + " " + Id;
-        }
 
         public Color Color
         {
@@ -112,6 +79,39 @@ namespace DeferredEngine.Pipeline.Lighting
                 base.RotationMatrix = value;
                 Direction = Vector3.Transform(_initialDirection, RotationMatrix);
             }
+        }
+        public Vector3 DirectionViewSpace { get; protected set; }
+
+
+        /// <summary>
+        /// Create a Directional light, shadows are optional
+        /// </summary>
+        public DirectionalLight(Color color, float intensity, Vector3 direction, Vector3 position = default(Vector3),
+            bool castShadows = false, float shadowSize = 100, float shadowFarClip = 100, int shadowMapResolution = 512,
+            ShadowFilteringTypes shadowFiltering = ShadowFilteringTypes.Poisson)
+        {
+            Id = IdGenerator.GetNewId();
+
+            Color = color;
+            Intensity = intensity;
+
+            Vector3 normalizedDirection = direction;
+            normalizedDirection.Normalize();
+            Direction = normalizedDirection;
+            _initialDirection = normalizedDirection;
+
+            CastShadows = castShadows;
+            ShadowSize = shadowSize;
+            ShadowFarClip = shadowFarClip;
+            ShadowResolution = shadowMapResolution;
+
+            ShadowFiltering = shadowFiltering;
+
+            Position = position;
+
+            _rotationMatrix = Matrix.Identity;
+
+            Name = GetType().Name + " " + Id;
         }
 
         public void UpdateViewProjection()

@@ -110,6 +110,13 @@ namespace DeferredEngine.Renderer.RenderModules
 
                 helperManager.AddLineStartDir(light.Position, light.Direction * 10, 1, Color.Black, light.Color);
 
+                helperManager.AddLineStartDir(light.Position + Vector3.UnitX * 10, light.Direction, 1, Color.Black, light.Color);
+                helperManager.AddLineStartDir(light.Position - Vector3.UnitX * 10, light.Direction, 1, Color.Black, light.Color);
+                helperManager.AddLineStartDir(light.Position + Vector3.UnitY * 10, light.Direction, 1, Color.Black, light.Color);
+                helperManager.AddLineStartDir(light.Position - Vector3.UnitY * 10, light.Direction, 1, Color.Black, light.Color);
+                helperManager.AddLineStartDir(light.Position + Vector3.UnitZ * 10, light.Direction, 1, Color.Black, light.Color);
+                helperManager.AddLineStartDir(light.Position - Vector3.UnitZ * 10, light.Direction, 1, Color.Black, light.Color);
+
                 if (light.CastShadows)
                 {
                     BoundingFrustum boundingFrustumShadow = new BoundingFrustum(light.Matrices.ViewProjection);
