@@ -218,9 +218,9 @@ namespace DeferredEngine.Renderer.Helper
             {
                 MaterialBatch matLib = _batches[matBatchIndex];
 
-                if (matLib.Count <= 0) 
+                if (matLib.Count <= 0)
                     continue;
-               
+
                 //Count the draws of different materials!
                 MaterialEffect material = matLib.Material;
                 //Check if alpha or opaque!
@@ -277,12 +277,13 @@ namespace DeferredEngine.Renderer.Helper
 
                         Matrix localWorldMatrix = meshLib.GetTransforms()[index].World;
 
-                        if (!ApplyShaders(renderType, renderModule, localWorldMatrix, view, viewProjection, meshLib, index, context.OutlineId, context.Flags.HasFlag(RenderFlags.Outlined)))
+                        if (!ApplyShaders(_graphicsDevice, renderType, renderModule, localWorldMatrix, view, viewProjection, meshLib, index, context.OutlineId, context.Flags.HasFlag(RenderFlags.Outlined)))
                             continue;
                         RenderingStats.MeshDraws++;
 
-                        _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, vertexOffset, startIndex,
-                                primitiveCount);
+                        // ToDo: Research Instanced Drawind https://www.braynzarsoft.net/viewtutorial/q16390-33-instancing-with-indexed-primitives
+                        //      to improve rendering by providing instance matrices
+                        _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, vertexOffset, startIndex, primitiveCount);
                     }
                 }
 
@@ -347,7 +348,7 @@ namespace DeferredEngine.Renderer.Helper
             }
         }
 
-        private bool ApplyShaders(RenderType renderType, IRenderModule renderModule, Matrix localToWorldMatrix, Matrix? view, Matrix viewProjection, MeshBatch meshBatch,
+        private static bool ApplyShaders(GraphicsDevice graphicsDevice, RenderType renderType, IRenderModule renderModule, Matrix localToWorldMatrix, Matrix? view, Matrix viewProjection, MeshBatch meshBatch,
             int index, int outlineId, bool outlined)
         {
             switch (renderType)
@@ -363,25 +364,23 @@ namespace DeferredEngine.Renderer.Helper
                     break;
                 case RenderType.IdRender:
                 case RenderType.IdOutline:
-                    if (!ApplyIdAndOutlineShaders(renderType, localToWorldMatrix, viewProjection, meshBatch, index, outlineId, outlined))
+                    if (!ApplyIdAndOutlineShaders(graphicsDevice, renderType, localToWorldMatrix, viewProjection, meshBatch, index, outlineId, outlined))
                         return false;
                     break;
             }
             return true;
         }
-
-        private void ApplyRenderModuleShaders(IRenderModule renderModule, Matrix localToWorldMatrix, Matrix? view, Matrix viewProjection)
+        private static void ApplyRenderModuleShaders(IRenderModule renderModule, Matrix localToWorldMatrix, Matrix? view, Matrix viewProjection)
         {
             renderModule.Apply(localToWorldMatrix, view, viewProjection);
         }
-        private void ApplyHologramShaders(Matrix localToWorldMatrix, Matrix viewProjection)
+        private static void ApplyHologramShaders(Matrix localToWorldMatrix, Matrix viewProjection)
         {
             HologramEffectSetup.Instance.Param_World.SetValue(localToWorldMatrix);
             HologramEffectSetup.Instance.Param_WorldViewProj.SetValue(localToWorldMatrix * viewProjection);
             HologramEffectSetup.Instance.Effect.CurrentTechnique.Passes[0].Apply();
         }
-
-        private bool ApplyIdAndOutlineShaders(RenderType renderType, Matrix localToWorldMatrix, Matrix viewProjection, MeshBatch meshBatch, int index, int outlineId, bool outlined)
+        private static bool ApplyIdAndOutlineShaders(GraphicsDevice graphicsDevice, RenderType renderType, Matrix localToWorldMatrix, Matrix viewProjection, MeshBatch meshBatch, int index, int outlineId, bool outlined)
         {
             // ToDo: @tpott: Extract IdRender and Bilboard Shaders members
             IdAndOutlineEffectSetup.Instance.Param_WorldViewProj.SetValue(localToWorldMatrix * viewProjection);
@@ -399,7 +398,7 @@ namespace DeferredEngine.Renderer.Helper
                 //Is this the Id we want to outline?
                 if (id == outlineId)
                 {
-                    _graphicsDevice.RasterizerState = RasterizerState.CullNone;
+                    graphicsDevice.RasterizerState = RasterizerState.CullNone;
 
                     IdAndOutlineEffectSetup.Instance.Param_World.SetValue(localToWorldMatrix);
 

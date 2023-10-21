@@ -142,7 +142,7 @@ namespace DeferredEngine.Renderer.RenderModules
                             viewProjection: lightViewProjection,
                             view: null,
                             RenderContext.Default,
-                            renderModule: this);
+                            this);
 
                 }
             }
@@ -172,7 +172,7 @@ namespace DeferredEngine.Renderer.RenderModules
                         viewProjection: lightViewProjection,
                         view: null,
                         RenderContext.Default,
-                        renderModule: this);
+                        this);
                 }
             }
         }
@@ -217,8 +217,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
 
                 if (meshBatcher.CheckRequiresRedraw(RenderType.ShadowOmnidirectional, true, light.HasChanged))
-                    meshBatcher.Draw(RenderType.ShadowLinear, light.Matrices.ViewProjection, light.Matrices.View,
-                        RenderContext.Default, renderModule: this);
+                    meshBatcher.Draw(RenderType.ShadowLinear, light.Matrices.ViewProjection, light.Matrices.View, RenderContext.Default, this);
             }
             else
             {
@@ -237,8 +236,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 _effectSetup.Param_SizeBias.SetValue(ShadowMapPipelineModule.ShadowBias * 2048 / light.ShadowResolution);
 
                 if (meshBatcher.CheckRequiresRedraw(RenderType.ShadowLinear, false, true))
-                    meshBatcher.Draw(RenderType.ShadowLinear, light.Matrices.ViewProjection, light.Matrices.View,
-                        RenderContext.Default, renderModule: this);
+                    meshBatcher.Draw(RenderType.ShadowLinear, light.Matrices.ViewProjection, light.Matrices.View, RenderContext.Default, this);
             }
 
             //Blur!
