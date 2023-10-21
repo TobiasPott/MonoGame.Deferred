@@ -88,13 +88,8 @@ namespace DeferredEngine.Renderer
             SetUpRenderTargets(RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight, true);
 
             //Performance Profiler
-            if (RenderingSettings.d_IsProfileEnabled)
-            {
-                long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                RenderingStats.d_profileDrawCubeMap = performanceCurrentTime - _performancePreviousTime;
+            _profiler.SampleTimestamp(ref RenderingStats.d_profileDrawCubeMap);
 
-                _performancePreviousTime = performanceCurrentTime;
-            }
         }
 
     }

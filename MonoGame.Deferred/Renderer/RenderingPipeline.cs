@@ -12,7 +12,6 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //    MAIN RENDER FUNCTIONS, TheKosmonaut 2016
@@ -42,6 +41,7 @@ namespace DeferredEngine.Renderer
         //Projection Matrices and derivates used in shaders
         private PipelineMatrices _matrices;
         private PipelineModuleStack _moduleStack;
+        private PipelineProfiler _profiler;
 
         //Used for the view space directions in our shaders. Far edges of our view frustum
         private FrustumCornerVertices _frustumCorners = new FrustumCornerVertices();
@@ -75,11 +75,6 @@ namespace DeferredEngine.Renderer
         private RenderTargetCube _renderTargetCubeMap;
 
 
-        //Performance Profiler
-        private readonly Stopwatch _performanceTimer = new Stopwatch();
-        private long _performancePreviousTime;
-
-
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -97,6 +92,7 @@ namespace DeferredEngine.Renderer
             _matrices = new PipelineMatrices();
 
             _moduleStack = new PipelineModuleStack(content);
+            _profiler = new PipelineProfiler();
 
             _bloomFx = new BloomFx(content);
             _taaFx = new TemporalAAFx() { Matrices = _matrices };
@@ -236,11 +232,7 @@ namespace DeferredEngine.Renderer
             meshBatcher.FrustumCullingFinalizeFrame();
 
             //Performance Profiler
-            if (RenderingSettings.d_IsProfileEnabled)
-            {
-                long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                RenderingStats.d_profileTotalRender = performanceCurrentTime;
-            }
+            _profiler.Sample(ref RenderingStats.d_profileTotalRender);
 
             //return data we have recovered from the editor id, so we know what entity gets hovered/clicked on and can manipulate in the update function
             return new ObjectHoverContext
@@ -328,16 +320,7 @@ namespace DeferredEngine.Renderer
             RenderingStats.activeShadowMaps = 0;
             RenderingStats.EmissiveMeshDraws = 0;
 
-            //Profiler
-            if (RenderingSettings.d_IsProfileEnabled)
-            {
-                _performanceTimer.Restart();
-                _performancePreviousTime = 0;
-            }
-            else if (_performanceTimer.IsRunning)
-            {
-                _performanceTimer.Stop();
-            }
+            _profiler.Reset();
         }
 
         /// <summary>
@@ -371,11 +354,8 @@ namespace DeferredEngine.Renderer
             }
 
             //Performance Profiler
-            if (RenderingSettings.d_IsProfileEnabled)
-            {
-                long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                _performancePreviousTime = performanceCurrentTime;
-            }
+            _profiler.Timestamp();
+
         }
 
         /// <summary>
@@ -389,14 +369,8 @@ namespace DeferredEngine.Renderer
 
             _moduleStack.ShadowMap.Draw(meshBatcher, scene);
 
-            //Performance Profiler
-            if (RenderingSettings.d_IsProfileEnabled)
-            {
-                long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                RenderingStats.d_profileDrawShadows = performanceCurrentTime - _performancePreviousTime;
-
-                _performancePreviousTime = performanceCurrentTime;
-            }
+            //Performance Profile
+            _profiler.SampleTimestamp(ref RenderingStats.d_profileDrawShadows);
         }
 
         /// <summary>
@@ -437,13 +411,7 @@ namespace DeferredEngine.Renderer
             meshBatcher.FrustumCulling(_boundingFrustum, _viewProjectionHasChanged, camera.Position);
 
             //Performance Profiler
-            if (RenderingSettings.d_IsProfileEnabled)
-            {
-                long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                RenderingStats.d_profileUpdateViewProjection = performanceCurrentTime - _performancePreviousTime;
-
-                _performancePreviousTime = performanceCurrentTime;
-            }
+            _profiler.SampleTimestamp(ref RenderingStats.d_profileUpdateViewProjection);
         }
 
         /// <summary>
@@ -490,13 +458,7 @@ namespace DeferredEngine.Renderer
             _moduleStack.GBuffer.Draw(meshBatcher, _matrices);
 
             //Performance Profiler
-            if (RenderingSettings.d_IsProfileEnabled)
-            {
-                long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                RenderingStats.d_profileDrawGBuffer = performanceCurrentTime - _performancePreviousTime;
-
-                _performancePreviousTime = performanceCurrentTime;
-            }
+            _profiler.SampleTimestamp(ref RenderingStats.d_profileDrawGBuffer);
         }
 
         /// <summary>
@@ -544,13 +506,8 @@ namespace DeferredEngine.Renderer
             Shaders.SSR.Effect.CurrentTechnique.Passes[0].Apply();
             FullscreenTarget.Draw(_graphicsDevice);
 
-            if (RenderingSettings.d_IsProfileEnabled)
-            {
-                long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                RenderingStats.d_profileDrawSSR = performanceCurrentTime - _performancePreviousTime;
-
-                _performancePreviousTime = performanceCurrentTime;
-            }
+            // Profiler sample
+            _profiler.SampleTimestamp(ref RenderingStats.d_profileDrawSSR);
 
         }
 
@@ -573,14 +530,9 @@ namespace DeferredEngine.Renderer
             Shaders.SSAO.Effect.CurrentTechnique.Passes[0].Apply();
             FullscreenTarget.Draw(_graphicsDevice);
 
-            //Performance Profiler
-            if (RenderingSettings.d_IsProfileEnabled)
-            {
-                long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                RenderingStats.d_profileDrawScreenSpaceEffect = performanceCurrentTime - _performancePreviousTime;
 
-                _performancePreviousTime = performanceCurrentTime;
-            }
+            //Performance Profiler
+            _profiler.SampleTimestamp(ref RenderingStats.d_profileDrawScreenSpaceEffect);
         }
 
         /// <summary>
@@ -629,13 +581,7 @@ namespace DeferredEngine.Renderer
             }
 
             //Performance Profiler
-            if (RenderingSettings.d_IsProfileEnabled)
-            {
-                long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                RenderingStats.d_profileDrawBilateralBlur = performanceCurrentTime - _performancePreviousTime;
-
-                _performancePreviousTime = performanceCurrentTime;
-            }
+            _profiler.SampleTimestamp(ref RenderingStats.d_profileDrawBilateralBlur);
         }
 
         /// <summary>
@@ -649,13 +595,8 @@ namespace DeferredEngine.Renderer
             _moduleStack.Environment.DrawEnvironmentMap(camera, _matrices.View, gameTime);
 
             //Performance Profiler
-            if (RenderingSettings.d_IsProfileEnabled)
-            {
-                long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                RenderingStats.d_profileDrawEnvironmentMap = performanceCurrentTime - _performancePreviousTime;
+            _profiler.SampleTimestamp(ref RenderingStats.d_profileDrawEnvironmentMap);
 
-                _performancePreviousTime = performanceCurrentTime;
-            }
         }
 
         /// <summary>
@@ -666,14 +607,9 @@ namespace DeferredEngine.Renderer
             // ToDo: @tpott: hacky way to disable ssao when disabled on global scale (GUI is insufficient here)
             _moduleStack.Deferred.UseSSAOMap = RenderingSettings.g_ssao_draw;
             _moduleStack.Deferred.Draw(destination);
-            //Performance Profiler
-            if (RenderingSettings.d_IsProfileEnabled)
-            {
-                long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                RenderingStats.d_profileCompose = performanceCurrentTime - _performancePreviousTime;
 
-                _performancePreviousTime = performanceCurrentTime;
-            }
+            //Performance Profiler
+            _profiler.SampleTimestamp(ref RenderingStats.d_profileCompose);
 
             return destination;
         }
@@ -735,13 +671,7 @@ namespace DeferredEngine.Renderer
                 output);
 
             //Performance Profiler
-            if (RenderingSettings.d_IsProfileEnabled)
-            {
-                long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                RenderingStats.d_profileCombineTemporalAntialiasing = performanceCurrentTime - _performancePreviousTime;
-
-                _performancePreviousTime = performanceCurrentTime;
-            }
+            _profiler.SampleTimestamp(ref RenderingStats.d_profileCombineTemporalAntialiasing);
 
             return RenderingSettings.TAA.UseTonemapping ? input : output;
         }
@@ -822,15 +752,8 @@ namespace DeferredEngine.Renderer
                     break;
             }
 
-
             //Performance Profiler
-            if (RenderingSettings.d_IsProfileEnabled)
-            {
-                long performanceCurrentTime = _performanceTimer.ElapsedTicks;
-                RenderingStats.d_profileDrawFinalRender = performanceCurrentTime - _performancePreviousTime;
-
-                _performancePreviousTime = performanceCurrentTime;
-            }
+            _profiler.SampleTimestamp(ref RenderingStats.d_profileDrawFinalRender);
         }
 
 
