@@ -383,12 +383,12 @@ namespace DeferredEngine.Logic
             if (!PipelineProfiler.IsProfilerEnabled) 
                 return;
 
-            FieldInfo[] info2 = typeof(PipelineProfiler).GetFields();
+            FieldInfo[] info2 = typeof(PipelineSamples).GetFields();
             int foundIndex = 0;
             for (int index = 0; index < info2.Length; index++)
             {
                 FieldInfo info = info2[index];
-                if (info.Name.Contains(PipelineProfiler.FieldInfoPrefix))
+                if (info.Name.Contains(PipelineSamples.FieldInfoPrefix))
                 {
                     _spriteBatch.DrawString(_sprFont, info.Name + " " + info.GetValue(null), new Vector2(10.0f, 55.0f + foundIndex * 15), Color.White);
                     foundIndex++;

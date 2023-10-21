@@ -88,7 +88,7 @@ namespace DeferredEngine.Renderer
             SetUpRenderTargets(RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight, true);
 
             //Performance Profiler
-            _profiler.SampleTimestamp(ref PipelineProfiler.SampleDrawCubeMap);
+            _profiler.SampleTimestamp(ref PipelineSamples.SDraw_CubeMap);
         }
 
     }

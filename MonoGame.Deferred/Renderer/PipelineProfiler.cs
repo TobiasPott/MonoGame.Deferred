@@ -4,23 +4,28 @@
 namespace DeferredEngine.Renderer
 {
 
+    public class PipelineSamples
+    {
+        public const string FieldInfoPrefix = "S";
+
+        public static long SDraw_Shadows;
+        public static long SDraw_CubeMap;
+        public static long SDraw_GBuffer;
+        public static long SDraw_SSFx;
+        public static long SDraw_BilateralBlur;
+        public static long SDraw_EnvironmentMap;
+        public static long SDraw_SSFx_SSR;
+        public static long SDraw_Compose;
+        public static long SDraw_CombineTAA;
+        public static long SDraw_FinalRender;
+        public static long SDraw_TotalRender;
+
+        public static long SUpdate_ViewProjection;
+    }
+
+
     public class PipelineProfiler
     {
-        public const string FieldInfoPrefix = "Sample";
-
-        public static long SampleDrawShadows;
-        public static long SampleDrawCubeMap;
-        public static long SampleUpdateViewProjection;
-        public static long SampleDrawGBuffer;
-        public static long SampleDrawScreenSpaceEffect;
-        public static long SampleDrawBilateralBlur;
-        public static long SampleDrawEnvironmentMap;
-        public static long SampleDrawSSR;
-        public static long SampleCompose;
-        public static long SampleCombineTAA;
-        public static long SampleDrawFinalRender;
-        public static long SampleTotalRender;
-
 
 
         //Profiler
