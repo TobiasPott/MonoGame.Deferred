@@ -1,5 +1,4 @@
 ﻿using DeferredEngine.Recources;
-using DeferredEngine.Rendering.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -34,12 +33,12 @@ namespace DeferredEngine.Rendering.PostProcessing
             _rt20482.Dispose();
         }
 
-        public RenderTarget2D Draw(RenderTarget2D output)
+        public override RenderTarget2D Draw(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
-            this.EnsureRenderTargetFormat(output, SurfaceFormat.Vector2);
+            this.EnsureRenderTargetFormat(sourceRT, SurfaceFormat.Vector2);
 
             //Only square expected
-            int size = output.Width;
+            int size = sourceRT.Width;
             //select rendertarget
             RenderTarget2D renderTargetBlur = GetRenderTarget2D(size);
             this.EnsureRenderTargetReference(renderTargetBlur, null);
@@ -48,15 +47,15 @@ namespace DeferredEngine.Rendering.PostProcessing
 
             Vector2 invRes = new Vector2(1.0f / size, 1.0f / size);
             _effectSetup.Param_InverseResolution.SetValue(invRes);
-            _effectSetup.Param_TargetMap.SetValue(output);
+            _effectSetup.Param_TargetMap.SetValue(sourceRT);
 
             this.Draw(_effectSetup.Pass_Horizontal);
 
-            _graphicsDevice.SetRenderTarget(output);
+            _graphicsDevice.SetRenderTarget(sourceRT);
             _effectSetup.Param_TargetMap.SetValue(renderTargetBlur);
             this.Draw(_effectSetup.Pass_Vertical);
 
-            return output;
+            return sourceRT;
         }
 
         public RenderTargetCube Draw(RenderTargetCube outputCube, CubeMapFace cubeFace)

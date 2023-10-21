@@ -38,23 +38,25 @@ namespace DeferredEngine.Rendering.PostProcessing
         public void SwapOffFrame()
         { IsOffFrame = !IsOffFrame; }
 
-        public void Draw(RenderTarget2D currentFrame, RenderTarget2D lastFrame, RenderTarget2D output)
+        public override RenderTarget2D Draw(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
         {
-            _graphicsDevice.SetRenderTarget(output);
+            _graphicsDevice.SetRenderTarget(destRT);
             _graphicsDevice.SetState(BlendStateOption.Opaque);
 
-            _effectSetup.Param_UpdateMap.SetValue(currentFrame);
-            _effectSetup.Param_AccumulationMap.SetValue(lastFrame);
+            _effectSetup.Param_UpdateMap.SetValue(sourceRT);
+            _effectSetup.Param_AccumulationMap.SetValue(previousRT);
             _effectSetup.Param_CurrentToPrevious.SetValue(Matrices.CurrentViewToPreviousViewProjection);
 
             this.Draw(_effectSetup.Pass_TemporalAA);
 
             if (UseTonemap)
             {
-                _graphicsDevice.SetRenderTarget(currentFrame);
-                _effectSetup.Param_UpdateMap.SetValue(output);
+                _graphicsDevice.SetRenderTarget(sourceRT);
+                _effectSetup.Param_UpdateMap.SetValue(destRT);
                 this.Draw(_effectSetup.Pass_TonemapInverse);
             }
+
+            return destRT;
         }
 
         public override void Dispose()

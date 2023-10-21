@@ -83,34 +83,22 @@ namespace DeferredEngine.Rendering.PostProcessing
             LookUpTable = content.Load<Texture2D>("Shaders/PostProcessing/lut");
         }
 
-        public override void Dispose()
-        {
-            _effectSetup?.Dispose();
-            _renderTarget?.Dispose();
-        }
-
 
         /// <summary>
         /// returns a modified image with color grading applied.
         /// </summary>
-        /// <param name="graphics"> GraphicsDevice</param>
-        /// <param name="input"> The basic texture or rendertarget you want to modify</param>
-        /// <param name="lookupTable"> The specific lookup table used</param>
-        /// <returns></returns>
-        public RenderTarget2D Draw(Texture2D input, Texture2D lookupTable = null)
+        public override RenderTarget2D Draw(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
-            if (lookupTable == null)
-                lookupTable = _lookupTable;
 
             //Set up rendertarget
-            if (_renderTarget == null || _renderTarget.Width != input.Width || _renderTarget.Height != input.Height)
+            if (_renderTarget == null || _renderTarget.Width != sourceRT.Width || _renderTarget.Height != sourceRT.Height)
             {
                 _renderTarget?.Dispose();
-                _renderTarget = new RenderTarget2D(_graphicsDevice, input.Width, input.Height, false, SurfaceFormat.Color, DepthFormat.None);
+                _renderTarget = new RenderTarget2D(_graphicsDevice, sourceRT.Width, sourceRT.Height, false, SurfaceFormat.Color, DepthFormat.None);
             }
 
-            InputTexture = input;
-            Size = (lookupTable.Width == 64) ? 16 : 32;
+            InputTexture = sourceRT;
+            Size = (_lookupTable.Width == 64) ? 16 : 32;
 
             _graphicsDevice.SetRenderTarget(_renderTarget);
             _graphicsDevice.SetState(BlendStateOption.Opaque);
@@ -143,6 +131,12 @@ namespace DeferredEngine.Rendering.PostProcessing
             Stream stream = File.Create(relativeFilePath);
             _renderTarget.SaveAsPng(stream, _renderTarget.Width, _renderTarget.Height);
             stream.Dispose();
+        }
+
+        public override void Dispose()
+        {
+            _effectSetup?.Dispose();
+            _renderTarget?.Dispose();
         }
 
 

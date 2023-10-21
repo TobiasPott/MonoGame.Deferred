@@ -1,5 +1,4 @@
 ﻿using DeferredEngine.Recources;
-using DeferredEngine.Rendering.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -210,8 +209,8 @@ namespace DeferredEngine.Rendering.PostProcessing
         /// <summary>
         /// Main draw function
         /// </summary>
-        /// <param name="inputTexture">the image from which we want to extract bright parts and blur these</param>
-        public RenderTarget2D Draw(Texture2D inputTexture)
+        /// <param name="sourceRT">the image from which we want to extract bright parts and blur these</param>
+        public RenderTarget2D Draw(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
             //Check if we are initialized
             if (_graphicsDevice == null)
@@ -222,7 +221,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             _graphicsDevice.SetStates(DepthStencilStateOption.KeepState, RasterizerStateOption.CullNone, BlendStateOption.Opaque);
             _graphicsDevice.SetRenderTarget(_mipMaps[0]);
 
-            BloomScreenTexture = inputTexture;
+            BloomScreenTexture = sourceRT;
             BloomInverseResolution = Vector2.One / _resolution;
 
             if (BloomUseLuminance) _effectSetup.Pass_ExtractLuminance.Apply();
