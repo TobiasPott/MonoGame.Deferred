@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
-
+using SharpDX.XAudio2;
 
 namespace DeferredEngine.Pipeline.Lighting
 {
@@ -10,6 +10,12 @@ namespace DeferredEngine.Pipeline.Lighting
     {
         public class MatrixSet
         {
+            public Matrix ViewProjectionPositiveX;
+            public Matrix ViewProjectionNegativeX;
+            public Matrix ViewProjectionPositiveY;
+            public Matrix ViewProjectionNegativeY;
+            public Matrix ViewProjectionPositiveZ;
+            public Matrix ViewProjectionNegativeZ;
             public readonly Matrix[] ViewProjection = new Matrix[6];
 
             public Matrix ViewSpace;
@@ -117,6 +123,59 @@ namespace DeferredEngine.Pipeline.Lighting
         public Matrix GetViewProjection(CubeMapFace cubeMapFace) => Matrices.ViewProjection[(int)cubeMapFace];
         public Matrix SetViewProjection(CubeMapFace cubeMapFace, Matrix view, Matrix viewProjection) => Matrices.ViewProjection[(int)cubeMapFace] = view * viewProjection;
 
+
+
+
+        public void GetLightViewMatrices(CubeMapFace cubeMapFace, ref Matrix lightView, ref Matrix lightViewProjection)
+        {
+            Matrix lightProjection = this.GetProjection();
+            // render the scene to all cubemap faces
+            switch (cubeMapFace)
+            {
+                case CubeMapFace.PositiveX:
+                    {
+                        lightView = Matrix.CreateLookAt(_position, _position + Vector3.UnitX, Vector3.UnitZ);
+                        lightViewProjection = lightView * lightProjection;
+                        Matrices.ViewProjectionPositiveX = lightViewProjection;
+                        break;
+                    }
+                case CubeMapFace.NegativeX:
+                    {
+                        lightView = Matrix.CreateLookAt(_position, _position - Vector3.UnitX, Vector3.UnitZ);
+                        lightViewProjection = lightView * lightProjection;
+                        Matrices.ViewProjectionNegativeX = lightViewProjection;
+                        break;
+                    }
+                case CubeMapFace.PositiveY:
+                    {
+                        lightView = Matrix.CreateLookAt(_position, _position + Vector3.UnitY, Vector3.UnitZ);
+                        lightViewProjection = lightView * lightProjection;
+                        Matrices.ViewProjectionPositiveY = lightViewProjection;
+                        break;
+                    }
+                case CubeMapFace.NegativeY:
+                    {
+                        lightView = Matrix.CreateLookAt(_position, _position - Vector3.UnitY, Vector3.UnitZ);
+                        lightViewProjection = lightView * lightProjection;
+                        Matrices.ViewProjectionNegativeY = lightViewProjection;
+                        break;
+                    }
+                case CubeMapFace.PositiveZ:
+                    {
+                        lightView = Matrix.CreateLookAt(_position, _position + Vector3.UnitZ, Vector3.UnitX);
+                        lightViewProjection = lightView * lightProjection;
+                        Matrices.ViewProjectionPositiveZ = lightViewProjection;
+                        break;
+                    }
+                case CubeMapFace.NegativeZ:
+                    {
+                        lightView = Matrix.CreateLookAt(_position, _position - Vector3.UnitZ, Vector3.UnitX);
+                        lightViewProjection = lightView * lightProjection;
+                        Matrices.ViewProjectionNegativeZ = lightViewProjection;
+                        break;
+                    }
+            }
+        }
 
     }
 

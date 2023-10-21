@@ -88,7 +88,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 DrawIds(meshBatcher, scene, matrices, drawContext);
 
             if (IdAndOutlineRenderModule.e_DrawOutlines)
-                DrawOutlines(meshBatcher, matrices, drawContext, mouseMoved, HoveredId, mouseMoved);
+                DrawOutlines(meshBatcher, matrices, drawContext, HoveredId, mouseMoved);
         }
 
         private void DrawIds(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, PipelineMatrices matrices, GizmoDrawContext gizmoContext)
@@ -100,7 +100,8 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-            meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdRender, matrices);
+            if (meshBatcher.CheckRequiresRedraw(DynamicMeshBatcher.RenderType.IdRender, false, false))
+                meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdRender, matrices);
 
             //Now onto the billboards
             // ToDo: @tpott: Consider moving Billboards into entities like Decals (but with different effect?! O.o)
@@ -172,7 +173,7 @@ namespace DeferredEngine.Renderer.RenderModules
             graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, vertexOffset, startIndex, primitiveCount);
         }
 
-        private void DrawOutlines(DynamicMeshBatcher meshBatcher, PipelineMatrices matrices, GizmoDrawContext gizmoContext, bool drawAll, int hoveredId, bool mouseMoved)
+        private void DrawOutlines(DynamicMeshBatcher meshBatcher, PipelineMatrices matrices, GizmoDrawContext gizmoContext, int hoveredId, bool mouseMoved)
         {
             _graphicsDevice.SetRenderTarget(_renderTarget);
 
@@ -187,26 +188,22 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
 
+            bool needsRedraw = meshBatcher.CheckRequiresRedraw(DynamicMeshBatcher.RenderType.IdRender, false, false);
             int selectedId = gizmoContext.SelectedObjectId;
             //Selected entity
             if (selectedId != 0)
             {
-                //UPdate the size of our outlines!
-
-                if (!drawAll)
-                    meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, false, false, selectedId);
-
                 IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(SelectedColor);
-                meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, false, outlined: true, outlineId: selectedId);
+                if (needsRedraw)
+                    meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, outlined: true, outlineId: selectedId);
 
-                if (selectedId != hoveredId && hoveredId != 0 && mouseMoved)
-                {
-                    if (!drawAll)
-                        meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, false, false, hoveredId);
-
-                    IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(HoveredColor);
-                    meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, false, outlined: true, outlineId: hoveredId);
-                }
+            }
+            // Hovered entity
+            if (selectedId != hoveredId && hoveredId != 0 && mouseMoved)
+            {
+                IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(HoveredColor);
+                if (needsRedraw)
+                    meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, outlined: true, outlineId: hoveredId);
             }
 
         }

@@ -200,21 +200,10 @@ namespace DeferredEngine.Renderer.Helper
         }
 
         public void Draw(RenderType renderType, PipelineMatrices matrices,
-            bool lightViewPointChanged = false,
-            bool hasAnyObjectMoved = false,
-            bool outlined = false,
-            int outlineId = 0,
-            IRenderModule renderModule = null)
-            => Draw(renderType, matrices.ViewProjection, matrices.View, lightViewPointChanged, hasAnyObjectMoved, outlined, outlineId, renderModule);
-        public void Draw(RenderType renderType, Matrix viewProjection, Matrix? view, bool lightViewPointChanged = false, bool hasAnyObjectMoved = false, bool outlined = false, int outlineId = 0, IRenderModule renderModule = null)
+            bool outlined = false, int outlineId = 0, IRenderModule renderModule = null)
+            => Draw(renderType, matrices.ViewProjection, matrices.View, outlined, outlineId, renderModule);
+        public void Draw(RenderType renderType, Matrix viewProjection, Matrix? view, bool outlined = false, int outlineId = 0, IRenderModule renderModule = null)
         {
-            if (renderType == RenderType.ShadowLinear || renderType == RenderType.ShadowOmnidirectional)
-            {
-                //For shadowmaps we need to find out whether any object has moved and if so if it is rendered. If yes, redraw the whole frame, if no don't do anything
-                if (!CheckShadowMapUpdateNeeds(lightViewPointChanged, hasAnyObjectMoved))
-                    return;
-            }
-
             SetBlendAndRasterizerState(renderType);
 
             for (int matBatchIndex = 0; matBatchIndex < _batches.Count; matBatchIndex++)
@@ -300,6 +289,15 @@ namespace DeferredEngine.Renderer.Helper
             }
         }
 
+
+        public bool CheckRequiresRedraw(DynamicMeshBatcher.RenderType renderType, bool lightViewPointChanged, bool hasAnyObjectMoved)
+        {
+            if (renderType == RenderType.ShadowLinear || renderType == RenderType.ShadowOmnidirectional)
+                //For shadowmaps we need to find out whether any object has moved and if so if it is rendered. If yes, redraw the whole frame, if no don't do anything
+                return CheckShadowMapUpdateNeeds(lightViewPointChanged, hasAnyObjectMoved);
+
+            return true;
+        }
         /// <summary>
         /// Checks whether or not anything has moved, if no then we ignore the frame
         /// </summary>
