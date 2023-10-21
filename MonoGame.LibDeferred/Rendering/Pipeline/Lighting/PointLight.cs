@@ -1,8 +1,8 @@
 ﻿using DeferredEngine.Entities;
-using DeferredEngine.Recources.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
+
 
 namespace DeferredEngine.Pipeline.Lighting
 {
@@ -10,12 +10,7 @@ namespace DeferredEngine.Pipeline.Lighting
     {
         public class MatrixSet
         {
-            public Matrix ViewProjectionPositiveX;
-            public Matrix ViewProjectionNegativeX;
-            public Matrix ViewProjectionPositiveY;
-            public Matrix ViewProjectionNegativeY;
-            public Matrix ViewProjectionPositiveZ;
-            public Matrix ViewProjectionNegativeZ;
+            public readonly Matrix[] ViewProjection = new Matrix[6];
 
             public Matrix ViewSpace;
             public Matrix WorldViewProj;
@@ -51,9 +46,8 @@ namespace DeferredEngine.Pipeline.Lighting
         /// A point light is a light that shines in all directions
         /// </summary>
         public PointLight(Vector3 position, float radius, Color color, float intensity, bool castShadows, bool isVolumetric, int shadowResolution, int softShadowBlurAmount, bool staticShadow, float volumeDensity = 1, bool isEnabled = true)
+            : base()
         {
-            Id = IdGenerator.GetNewId();
-
             BoundingSphere = new BoundingSphere(position, radius);
             Position = position;
             Radius = radius;
@@ -105,20 +99,24 @@ namespace DeferredEngine.Pipeline.Lighting
             }
         }
 
-
-        public Matrix GetViewProjection(CubeMapFace face)
+        public Matrix GetProjection() => Matrix.CreatePerspectiveFieldOfView((float)(Math.PI / 2), 1, 1, this.Radius);
+        public Matrix GetView(CubeMapFace cubeMapFace)
         {
-            return face switch
+            return cubeMapFace switch
             {
-                CubeMapFace.NegativeX => Matrices.ViewProjectionNegativeX,
-                CubeMapFace.NegativeY => Matrices.ViewProjectionNegativeY,
-                CubeMapFace.NegativeZ => Matrices.ViewProjectionNegativeZ,
-                CubeMapFace.PositiveX => Matrices.ViewProjectionPositiveX,
-                CubeMapFace.PositiveY => Matrices.ViewProjectionPositiveY,
-                CubeMapFace.PositiveZ => Matrices.ViewProjectionPositiveZ,
-                _ => Matrix.Identity,
+                CubeMapFace.NegativeX => Matrix.CreateLookAt(this._position, this._position + Vector3.Left, Vector3.Up),
+                CubeMapFace.NegativeY => Matrix.CreateLookAt(this._position, this._position + Vector3.Down, Vector3.Forward),
+                CubeMapFace.NegativeZ => Matrix.CreateLookAt(this._position, this._position + Vector3.Backward, Vector3.Up),
+                CubeMapFace.PositiveX => Matrix.CreateLookAt(this._position, this._position + Vector3.Right, Vector3.Up),
+                CubeMapFace.PositiveY => Matrix.CreateLookAt(this._position, this._position + Vector3.Up, Vector3.Backward),
+                CubeMapFace.PositiveZ => Matrix.CreateLookAt(this._position, this._position + Vector3.Forward, Vector3.Up),
+                _ => Matrix.CreateLookAt(this._position, this._position + Vector3.Forward, Vector3.Up),
             };
+
         }
+        public Matrix GetViewProjection(CubeMapFace cubeMapFace) => Matrices.ViewProjection[(int)cubeMapFace];
+        public Matrix SetViewProjection(CubeMapFace cubeMapFace, Matrix view, Matrix viewProjection) => Matrices.ViewProjection[(int)cubeMapFace] = view * viewProjection;
+
 
     }
 

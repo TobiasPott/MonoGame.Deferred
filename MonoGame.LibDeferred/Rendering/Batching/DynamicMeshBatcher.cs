@@ -293,19 +293,17 @@ namespace DeferredEngine.Renderer.Helper
         {
             if (lightViewPointChanged || hasAnyObjectMoved)
             {
-                if (!IsAnyRendered) return false;
+                if (!IsAnyRendered) 
+                    return false;
 
                 _graphicsDevice.DepthStencilState = DepthWriteState;
 
                 DeferredEffectSetup.Instance.Pass_Clear.Apply();
                 _fullscreenTarget.Draw(_graphicsDevice);
-
                 _graphicsDevice.DepthStencilState = DepthStencilState.Default;
-
             }
 
             RenderingStats.activeShadowMaps++;
-
             return true;
         }
 

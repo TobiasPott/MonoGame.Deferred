@@ -74,20 +74,21 @@ namespace DeferredEngine.Renderer
             return false;
         }
 
-        private void SetViewFromCubeMapFace(Vector3 origin, CubeMapFace cubeMapFace)
-        {
-            View = cubeMapFace switch
-            {
-                CubeMapFace.NegativeX => Matrix.CreateLookAt(origin, origin + Vector3.Left, Vector3.Up),
-                CubeMapFace.NegativeY => Matrix.CreateLookAt(origin, origin + Vector3.Down, Vector3.Forward),
-                CubeMapFace.NegativeZ => Matrix.CreateLookAt(origin, origin + Vector3.Backward, Vector3.Up),
-                CubeMapFace.PositiveX => Matrix.CreateLookAt(origin, origin + Vector3.Right, Vector3.Up),
-                CubeMapFace.PositiveY => Matrix.CreateLookAt(origin, origin + Vector3.Up, Vector3.Backward),
-                CubeMapFace.PositiveZ => Matrix.CreateLookAt(origin, origin + Vector3.Forward, Vector3.Up),
-                _ => Matrix.CreateLookAt(origin, origin + Vector3.Forward, Vector3.Up),
-            };
+        //private void SetViewFromCubeMapFace(Vector3 origin, CubeMapFace cubeMapFace)
+        //{
+        //    View = cubeMapFace switch
+        //    {
+        //        CubeMapFace.NegativeX => Matrix.CreateLookAt(origin, origin + Vector3.Left, Vector3.Up),
+        //        CubeMapFace.NegativeY => Matrix.CreateLookAt(origin, origin + Vector3.Down, Vector3.Forward),
+        //        CubeMapFace.NegativeZ => Matrix.CreateLookAt(origin, origin + Vector3.Backward, Vector3.Up),
+        //        CubeMapFace.PositiveX => Matrix.CreateLookAt(origin, origin + Vector3.Right, Vector3.Up),
+        //        CubeMapFace.PositiveY => Matrix.CreateLookAt(origin, origin + Vector3.Up, Vector3.Backward),
+        //        CubeMapFace.PositiveZ => Matrix.CreateLookAt(origin, origin + Vector3.Forward, Vector3.Up),
+        //        _ => Matrix.CreateLookAt(origin, origin + Vector3.Forward, Vector3.Up),
+        //    };
 
-        }
+        //}
+
     }
 
 }
