@@ -1,34 +1,36 @@
-﻿using DeferredEngine.Recources;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//    MAIN RENDER FUNCTIONS, TheKosmonaut 2016
 
 namespace DeferredEngine.Renderer
 {
 
     public class PipelineProfiler
     {
-        public static long d_profileDrawShadows;
-        public static long d_profileDrawCubeMap;
-        public static long d_profileUpdateViewProjection;
-        public static long d_profileDrawGBuffer;
-        public static long d_profileDrawScreenSpaceEffect;
-        public static long d_profileDrawBilateralBlur;
-        public static long d_profileDrawEnvironmentMap;
-        public static long d_profileDrawSSR;
-        public static long d_profileCompose;
-        public static long d_profileCombineTAA;
-        public static long d_profileDrawFinalRender;
-        public static long d_profileTotalRender;
+        public const string FieldInfoPrefix = "Sample";
+
+        public static long SampleDrawShadows;
+        public static long SampleDrawCubeMap;
+        public static long SampleUpdateViewProjection;
+        public static long SampleDrawGBuffer;
+        public static long SampleDrawScreenSpaceEffect;
+        public static long SampleDrawBilateralBlur;
+        public static long SampleDrawEnvironmentMap;
+        public static long SampleDrawSSR;
+        public static long SampleCompose;
+        public static long SampleCombineTAA;
+        public static long SampleDrawFinalRender;
+        public static long SampleTotalRender;
 
 
 
-
+        //Profiler
+        public static bool IsProfilerEnabled = false;
 
         //Performance Profiler
         private readonly Stopwatch _timer = new Stopwatch();
         private long _prevTimestamp;
+
+        public bool IsEnabled { get; set; } = true;
 
         /// <summary>
         /// retrieves the current profiler time and sets the profiler timestamp 
@@ -36,7 +38,7 @@ namespace DeferredEngine.Renderer
         public void SampleTimestamp(ref long profilerSample)
         {
             //Performance Profiler
-            if (RenderingSettings.d_IsProfileEnabled)
+            if (PipelineProfiler.IsProfilerEnabled && IsEnabled)
             {
                 long currentTime = _timer.ElapsedTicks;
                 profilerSample = currentTime - _prevTimestamp;
@@ -49,7 +51,7 @@ namespace DeferredEngine.Renderer
         public void Timestamp()
         {
             //Performance Profiler
-            if (RenderingSettings.d_IsProfileEnabled)
+            if (PipelineProfiler.IsProfilerEnabled && IsEnabled)
                 _prevTimestamp = _timer.ElapsedTicks;
         }
         /// <summary>
@@ -58,7 +60,7 @@ namespace DeferredEngine.Renderer
         public void Sample(ref long profilerSample)
         {
             //Performance Profiler
-            if (RenderingSettings.d_IsProfileEnabled)
+            if (PipelineProfiler.IsProfilerEnabled && IsEnabled)
                 profilerSample = _timer.ElapsedTicks;
         }
         /// <summary>
@@ -67,7 +69,7 @@ namespace DeferredEngine.Renderer
         public void Reset()
         {
             //Profiler
-            if (RenderingSettings.d_IsProfileEnabled)
+            if (PipelineProfiler.IsProfilerEnabled && IsEnabled)
             {
                 _timer.Restart();
                 _prevTimestamp = 0;

@@ -380,7 +380,7 @@ namespace DeferredEngine.Logic
         /// </summary>
         private void LoadProfilerStrings()
         {
-            if (!RenderingSettings.d_IsProfileEnabled) 
+            if (!PipelineProfiler.IsProfilerEnabled) 
                 return;
 
             FieldInfo[] info2 = typeof(PipelineProfiler).GetFields();
@@ -388,12 +388,10 @@ namespace DeferredEngine.Logic
             for (int index = 0; index < info2.Length; index++)
             {
                 FieldInfo info = info2[index];
-                if (info.Name.Contains("d_profile"))
+                if (info.Name.Contains(PipelineProfiler.FieldInfoPrefix))
                 {
-                    _spriteBatch.DrawString(_sprFont, info.Name + " " + info.GetValue(null), new Vector2(10.0f, 55.0f + foundIndex * 15),
-                        Color.White);
+                    _spriteBatch.DrawString(_sprFont, info.Name + " " + info.GetValue(null), new Vector2(10.0f, 55.0f + foundIndex * 15), Color.White);
                     foundIndex++;
-                    //return;
                 }
             }
         }

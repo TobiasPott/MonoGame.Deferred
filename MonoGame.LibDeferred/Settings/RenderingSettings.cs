@@ -11,8 +11,6 @@ namespace DeferredEngine.Recources
 
         //Editor
         public static bool e_IsEditorEnabled = true;
-        //Profiler
-        public static bool d_IsProfileEnabled = false;
 
         //UI
         public static bool ui_IsUIEnabled = true;
