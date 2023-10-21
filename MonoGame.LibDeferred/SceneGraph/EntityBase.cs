@@ -1,7 +1,6 @@
 ﻿using DeferredEngine.Recources.Helper;
+using Microsoft.Xna.Framework;
 using MonoGame.Ext;
-using Matrix = Microsoft.Xna.Framework.Matrix;
-using Vector3 = Microsoft.Xna.Framework.Vector3;
 
 namespace DeferredEngine.Entities
 {

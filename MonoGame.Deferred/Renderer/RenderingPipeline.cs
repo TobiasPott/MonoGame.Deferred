@@ -192,7 +192,7 @@ namespace DeferredEngine.Renderer
             DrawBilateralBlur();
 
             //Light the scene
-            _moduleStack.Lighting.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
+            //_moduleStack.Lighting.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
             _moduleStack.Lighting.DrawLights(scene, camera.Position, _lightingBufferTarget.Bindings, _lightingBufferTarget.Diffuse);
 
             //Draw the environment cube map as a fullscreen effect on all meshes
@@ -378,6 +378,8 @@ namespace DeferredEngine.Renderer
         /// </summary>
         private void UpdateViewProjection(DynamicMeshBatcher meshBatcher, Camera camera)
         {
+            // ToDo: @tpott: This boolean flag controls general update and draw, though it should only determine if matrices and such should be updated
+            //      if a frame should be drawn is a conditioned layered on top of this and may be required regardless of camera change
             _viewProjectionHasChanged = camera.HasChanged;
 
             //If the camera didn't do anything we don't need to update this stuff
@@ -385,7 +387,6 @@ namespace DeferredEngine.Renderer
             {
                 //View matrix
                 _matrices.SetFromCamera(camera);
-
                 _moduleStack.PointLight.InverseView = _matrices.InverseView;
 
                 //Temporal AA - alternate frames for temporal anti-aliasing
@@ -396,6 +397,7 @@ namespace DeferredEngine.Renderer
                     _taaFx.UpdateViewProjection(_matrices);
                 }
 
+                _moduleStack.Lighting.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
 
                 _matrices.PreviousViewProjection = _matrices.ViewProjection;
                 _matrices.InverseViewProjection = Matrix.Invert(_matrices.ViewProjection);

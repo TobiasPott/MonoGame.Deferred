@@ -60,12 +60,23 @@ namespace DeferredEngine.Renderer
         }
         public void SetFromCamera(Camera camera)
         {
+            // update our previous projection matrices
+            PreviousViewProjection = ViewProjection;
             //View matrix
-            View = Matrix.CreateLookAt(camera.Position, camera.Lookat, camera.Up);
-            Projection = Matrix.CreatePerspectiveFieldOfView(camera.FieldOfView, RenderingSettings.g_ScreenAspect, 1, RenderingSettings.g_FarPlane);
+            View = camera.View;
+            Projection = camera.Projection;
+            ViewProjection = camera.ViewProjection;
+
 
             // update our projection matrices
-            this.UpdateFromView();
+            InverseView = Matrix.Invert(View);
+            ViewIT = Matrix.Transpose(InverseView);
+            InverseViewProjection = Matrix.Invert(ViewProjection);
+
+            // this is the unjittered viewProjection. For some effects we don't want the jittered one
+            StaticViewProjection = ViewProjection;
+            // Transformation for TAA - from current view back to the old view projection
+            CurrentViewToPreviousViewProjection = Matrix.Invert(View) * PreviousViewProjection;
         }
         public void UpdateFromView()
         {
