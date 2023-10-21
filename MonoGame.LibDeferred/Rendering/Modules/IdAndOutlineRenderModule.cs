@@ -96,9 +96,7 @@ namespace DeferredEngine.Renderer.RenderModules
 
             _graphicsDevice.SetRenderTarget(_renderTarget);
             _graphicsDevice.BlendState = BlendState.Opaque;
-
-            _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-            _graphicsDevice.DepthStencilState = DepthStencilState.Default;
+            _graphicsDevice.SetDepthStencilDefault_RasterizerCullCCW();
 
             if (meshBatcher.CheckRequiresRedraw(RenderType.IdRender, false, false))
                 meshBatcher.Draw(RenderType.IdRender, matrices, RenderContext.Default);
@@ -184,9 +182,8 @@ namespace DeferredEngine.Renderer.RenderModules
                 _graphicsDevice.Clear(Color.Black);
             }
             _graphicsDevice.BlendState = BlendState.Opaque;
-            _graphicsDevice.DepthStencilState = DepthStencilState.Default;
-            _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-
+            _graphicsDevice.SetDepthStencilDefault_RasterizerCullCCW();
+            
 
             bool needsRedraw = meshBatcher.CheckRequiresRedraw(RenderType.IdRender, false, false);
             int selectedId = gizmoContext.SelectedObjectId;

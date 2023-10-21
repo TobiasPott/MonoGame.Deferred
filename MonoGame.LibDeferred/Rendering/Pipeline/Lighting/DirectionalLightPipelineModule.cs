@@ -4,6 +4,7 @@ using DeferredEngine.Renderer.RenderModules;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Ext;
 
 namespace DeferredEngine.Pipeline.Lighting
 {
@@ -48,9 +49,7 @@ namespace DeferredEngine.Pipeline.Lighting
         {
             if (dirLights.Count < 1) return;
 
-            _graphicsDevice.DepthStencilState = DepthStencilState.Default;
-            _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-            _graphicsDevice.DepthStencilState = DepthStencilState.None;
+            _graphicsDevice.SetDepthStencilNone_RasterizerCullCCW();
 
             //If nothing has changed we don't need to update
             if (viewProjectionHasChanged)

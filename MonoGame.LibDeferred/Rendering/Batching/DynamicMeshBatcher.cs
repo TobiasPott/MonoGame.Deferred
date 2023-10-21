@@ -5,6 +5,7 @@ using DeferredEngine.Renderer.RenderModules;
 using DeferredEngine.Renderer.RenderModules.Default;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Ext;
 using System.Diagnostics;
 
 namespace DeferredEngine.Renderer.Helper
@@ -216,13 +217,13 @@ namespace DeferredEngine.Renderer.Helper
 
             for (int matBatchIndex = 0; matBatchIndex < _batches.Count; matBatchIndex++)
             {
-                MaterialBatch matLib = _batches[matBatchIndex];
+                MaterialBatch materialBatch = _batches[matBatchIndex];
 
-                if (matLib.Count <= 0)
+                if (materialBatch.Count <= 0)
                     continue;
 
                 //Count the draws of different materials!
-                MaterialEffect material = matLib.Material;
+                MaterialEffect material = materialBatch.Material;
                 //Check if alpha or opaque!
                 if (renderType == RenderType.Opaque && material.IsTransparent
                     || renderType == RenderType.Opaque && material.Type == MaterialEffect.MaterialTypes.ForwardShaded)
@@ -238,9 +239,9 @@ namespace DeferredEngine.Renderer.Helper
 
                 //if none of this materialtype is drawn continue too!
                 bool isUsed = false;
-                for (int i = 0; i < matLib.Count; i++)
+                for (int i = 0; i < materialBatch.Count; i++)
                 {
-                    if (matLib[i].IsAnyRendered)
+                    if (materialBatch[i].IsAnyRendered)
                     {
                         isUsed = true;
                         break;
@@ -255,35 +256,30 @@ namespace DeferredEngine.Renderer.Helper
                 //Set the appropriate Shader for the material
                 PerMaterialSettings(renderType, material, renderModule);
 
-                for (int i = 0; i < matLib.Count; i++)
+                for (int i = 0; i < materialBatch.Count; i++)
                 {
-                    MeshBatch meshLib = matLib[i];
-
+                    MeshBatch meshBatch = materialBatch[i];
+                    ModelMeshPart mesh = meshBatch.GetMesh();
+                    
                     //Initialize the mesh VB and IB
-                    ModelMeshPart mesh = meshLib.GetMesh();
                     _graphicsDevice.SetVertexBuffer(mesh.VertexBuffer);
                     _graphicsDevice.Indices = mesh.IndexBuffer;
-                    int primitiveCount = mesh.PrimitiveCount;
-                    int vertexOffset = mesh.VertexOffset;
-                    //int vCount = meshLib.GetMesh().NumVertices;
-                    int startIndex = mesh.StartIndex;
+
 
                     //Now draw the local meshes!
-                    for (int index = 0; index < meshLib.Count; index++)
+                    for (int index = 0; index < meshBatch.Count; index++)
                     {
                         //If it's set to "not rendered" skip
-                        if (!meshLib.Rendered[index])
+                        if (!meshBatch.Rendered[index])
                             continue;
 
-                        Matrix localWorldMatrix = meshLib.GetTransforms()[index].World;
-
-                        if (!ApplyShaders(_graphicsDevice, renderType, renderModule, localWorldMatrix, view, viewProjection, meshLib, index, context.OutlineId, context.Flags.HasFlag(RenderFlags.Outlined)))
+                        if (!ApplyShaders(_graphicsDevice, renderType, renderModule, meshBatch[index].World, view, viewProjection, meshBatch, meshBatch[index].Id, context.OutlineId, context.Flags.HasFlag(RenderFlags.Outlined)))
                             continue;
                         RenderingStats.MeshDraws++;
 
                         // ToDo: Research Instanced Drawind https://www.braynzarsoft.net/viewtutorial/q16390-33-instancing-with-indexed-primitives
                         //      to improve rendering by providing instance matrices
-                        _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, vertexOffset, startIndex, primitiveCount);
+                        _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, mesh.VertexOffset, mesh.StartIndex, mesh.PrimitiveCount);
                     }
                 }
 
@@ -335,21 +331,21 @@ namespace DeferredEngine.Renderer.Helper
                 }
                 else //Need special rasterization
                 {
-                    _graphicsDevice.DepthStencilState = DepthStencilState.Default;
                     _graphicsDevice.BlendState = BlendState.Opaque;
+                    _graphicsDevice.DepthStencilState = DepthStencilState.Default;
                     _graphicsDevice.RasterizerState = ShadowGenerationRasterizerState;
                 }
             }
             else //if (renderType == RenderType.alpha)
             {
                 _graphicsDevice.BlendState = BlendState.NonPremultiplied;
-                _graphicsDevice.DepthStencilState = DepthStencilState.Default;
-                _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+                _graphicsDevice.SetDepthStencilDefault_RasterizerCullCCW();
             }
         }
 
-        private static bool ApplyShaders(GraphicsDevice graphicsDevice, RenderType renderType, IRenderModule renderModule, Matrix localToWorldMatrix, Matrix? view, Matrix viewProjection, MeshBatch meshBatch,
-            int index, int outlineId, bool outlined)
+        private static bool ApplyShaders(GraphicsDevice graphicsDevice, RenderType renderType, IRenderModule renderModule, 
+            Matrix localToWorldMatrix, Matrix? view, Matrix viewProjection, MeshBatch meshBatch,
+            int transformId, int outlineId, bool outlined)
         {
             switch (renderType)
             {
@@ -364,7 +360,7 @@ namespace DeferredEngine.Renderer.Helper
                     break;
                 case RenderType.IdRender:
                 case RenderType.IdOutline:
-                    if (!ApplyIdAndOutlineShaders(graphicsDevice, renderType, localToWorldMatrix, viewProjection, meshBatch, index, outlineId, outlined))
+                    if (!ApplyIdAndOutlineShaders(graphicsDevice, renderType, localToWorldMatrix, viewProjection, transformId, outlineId, outlined))
                         return false;
                     break;
             }
@@ -380,23 +376,22 @@ namespace DeferredEngine.Renderer.Helper
             HologramEffectSetup.Instance.Param_WorldViewProj.SetValue(localToWorldMatrix * viewProjection);
             HologramEffectSetup.Instance.Effect.CurrentTechnique.Passes[0].Apply();
         }
-        private static bool ApplyIdAndOutlineShaders(GraphicsDevice graphicsDevice, RenderType renderType, Matrix localToWorldMatrix, Matrix viewProjection, MeshBatch meshBatch, int index, int outlineId, bool outlined)
+        private static bool ApplyIdAndOutlineShaders(GraphicsDevice graphicsDevice, RenderType renderType, Matrix localToWorldMatrix, Matrix viewProjection,
+            int transformId, int outlineId, bool outlined)
         {
             // ToDo: @tpott: Extract IdRender and Bilboard Shaders members
             IdAndOutlineEffectSetup.Instance.Param_WorldViewProj.SetValue(localToWorldMatrix * viewProjection);
 
-            int id = meshBatch.GetTransforms()[index].Id;
-
             if (renderType == RenderType.IdRender)
             {
-                IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(IdGenerator.GetColorFromId(id).ToVector4());
+                IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(IdGenerator.GetColorFromId(transformId).ToVector4());
                 IdAndOutlineEffectSetup.Instance.Pass_Id.Apply();
             }
             if (renderType == RenderType.IdOutline)
             {
 
                 //Is this the Id we want to outline?
-                if (id == outlineId)
+                if (transformId == outlineId)
                 {
                     graphicsDevice.RasterizerState = RasterizerState.CullNone;
 

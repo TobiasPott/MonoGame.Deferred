@@ -22,12 +22,14 @@ namespace DeferredEngine.Renderer.Helper
         public void SetMesh(ModelMeshPart mesh) => _mesh = mesh;
         public bool HasMesh(ModelMeshPart mesh) => _mesh == mesh;
         public ModelMeshPart GetMesh() => _mesh;
-        public List<TransformableObject> GetTransforms() => _transforms;
         public List<bool> Rendered => _rendered;
 
 
         public bool IsAnyRendered => _rendered.Any(x => x);
         public bool AllRendered { set { for (int i = 0; i < _rendered.Count; i++) _rendered[i] = true; } }
+
+        public TransformableObject this[int index] => _transforms[index];
+
 
 
         //IF a submesh belongs to an entity that has moved we need to update the BoundingBoxWorld Position!

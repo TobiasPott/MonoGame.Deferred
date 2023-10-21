@@ -4,6 +4,7 @@ using DeferredEngine.Renderer.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Ext;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
@@ -107,14 +108,13 @@ namespace DeferredEngine.Renderer.RenderModules
             _effectSetup.Param_TransposeView.SetValue(Matrix.Transpose(view));
             _effectSetup.Pass_Basic.Apply();
 
-            _graphicsDevice.DepthStencilState = DepthStencilState.None;
-            _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+            _graphicsDevice.SetDepthStencilNone_RasterizerCullCCW();
             _fullscreenTarget.Draw(_graphicsDevice);
         }
         public void DrawSky()
         {
-            _graphicsDevice.DepthStencilState = DepthStencilState.None;
-            _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+            _graphicsDevice.SetDepthStencilNone_RasterizerCullCCW(); //.DepthStencilState = DepthStencilState.None;
+            //_graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
             _effectSetup.Pass_Sky.Apply();
             _fullscreenTarget.Draw(_graphicsDevice);
