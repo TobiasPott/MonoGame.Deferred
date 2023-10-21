@@ -9,19 +9,37 @@ using System.Diagnostics;
 
 namespace DeferredEngine.Renderer.Helper
 {
+
+    [Flags]
+    public enum RenderFlags
+    {
+        None = 0,
+        Outlined = 1,
+    }
+    public class RenderContext
+    {
+        public static readonly RenderContext Default = new RenderContext();
+
+
+        public RenderFlags Flags = RenderFlags.None;
+        public int OutlineId = 0;
+    }
+
+    public enum RenderType
+    {
+        Opaque,
+        ShadowOmnidirectional,
+        ShadowLinear,
+        Hologram,
+        Forward,
+        IdRender,
+        IdOutline,
+    }
+
+
     // Controls all Materials and Meshes, so they are ordered at render time.
     public class DynamicMeshBatcher
     {
-        public enum RenderType
-        {
-            Opaque,
-            ShadowOmnidirectional,
-            ShadowLinear,
-            Hologram,
-            Forward,
-            IdRender,
-            IdOutline,
-        }
 
         private const int InitialLibrarySize = 16;
 
@@ -190,19 +208,9 @@ namespace DeferredEngine.Renderer.Helper
             }
         }
 
-        [Flags]
-        public enum DrawFlags
-        {
-            LightViewChanged = 1,
-            ObjectsChanged = 2,
-            Outlined = 4,
-
-        }
-
-        public void Draw(RenderType renderType, PipelineMatrices matrices,
-            bool outlined = false, int outlineId = 0, IRenderModule renderModule = null)
-            => Draw(renderType, matrices.ViewProjection, matrices.View, outlined, outlineId, renderModule);
-        public void Draw(RenderType renderType, Matrix viewProjection, Matrix? view, bool outlined = false, int outlineId = 0, IRenderModule renderModule = null)
+        public void Draw(RenderType renderType, PipelineMatrices matrices, RenderContext context, IRenderModule renderModule = null)
+            => Draw(renderType, matrices.ViewProjection, matrices.View, context, renderModule);
+        public void Draw(RenderType renderType, Matrix viewProjection, Matrix? view, RenderContext context, IRenderModule renderModule = null)
         {
             SetBlendAndRasterizerState(renderType);
 
@@ -210,24 +218,10 @@ namespace DeferredEngine.Renderer.Helper
             {
                 MaterialBatch matLib = _batches[matBatchIndex];
 
-                if (matLib.Count < 1) continue;
-
-                //if none of this materialtype is drawn continue too!
-                bool isUsed = false;
-
-                for (int i = 0; i < matLib.Count; i++)
-                {
-                    if (matLib[i].IsAnyRendered)
-                    {
-                        isUsed = true;
-                        break;
-                    }
-
-                }
-                if (!isUsed) continue;
-
+                if (matLib.Count <= 0) 
+                    continue;
+               
                 //Count the draws of different materials!
-
                 MaterialEffect material = matLib.Material;
                 //Check if alpha or opaque!
                 if (renderType == RenderType.Opaque && material.IsTransparent
@@ -237,19 +231,28 @@ namespace DeferredEngine.Renderer.Helper
                     continue;
                 if (renderType != RenderType.Hologram && material.Type == MaterialEffect.MaterialTypes.Hologram)
                     continue;
-
-                if (renderType == RenderType.Forward &&
-                    material.Type != MaterialEffect.MaterialTypes.ForwardShaded)
+                if (renderType == RenderType.Forward && material.Type != MaterialEffect.MaterialTypes.ForwardShaded)
+                    continue;
+                if ((renderType == RenderType.ShadowOmnidirectional || renderType == RenderType.ShadowLinear) && !material.HasShadow)
                     continue;
 
-                //Set the appropriate Shader for the material
-                if ((renderType == RenderType.ShadowOmnidirectional || renderType == RenderType.ShadowLinear)
-                    && !material.HasShadow)
-                    continue;
+                //if none of this materialtype is drawn continue too!
+                bool isUsed = false;
+                for (int i = 0; i < matLib.Count; i++)
+                {
+                    if (matLib[i].IsAnyRendered)
+                    {
+                        isUsed = true;
+                        break;
+                    }
+                }
+                if (!isUsed) continue;
 
+                // Statistics counter
                 if (renderType != RenderType.IdRender && renderType != RenderType.IdOutline)
                     RenderingStats.MaterialDraws++;
 
+                //Set the appropriate Shader for the material
                 PerMaterialSettings(renderType, material, renderModule);
 
                 for (int i = 0; i < matLib.Count; i++)
@@ -274,7 +277,7 @@ namespace DeferredEngine.Renderer.Helper
 
                         Matrix localWorldMatrix = meshLib.GetTransforms()[index].World;
 
-                        if (!ApplyShaders(renderType, renderModule, localWorldMatrix, view, viewProjection, meshLib, index, outlineId, outlined))
+                        if (!ApplyShaders(renderType, renderModule, localWorldMatrix, view, viewProjection, meshLib, index, context.OutlineId, context.Flags.HasFlag(RenderFlags.Outlined)))
                             continue;
                         RenderingStats.MeshDraws++;
 
@@ -290,7 +293,7 @@ namespace DeferredEngine.Renderer.Helper
         }
 
 
-        public bool CheckRequiresRedraw(DynamicMeshBatcher.RenderType renderType, bool lightViewPointChanged, bool hasAnyObjectMoved)
+        public bool CheckRequiresRedraw(RenderType renderType, bool lightViewPointChanged, bool hasAnyObjectMoved)
         {
             if (renderType == RenderType.ShadowLinear || renderType == RenderType.ShadowOmnidirectional)
                 //For shadowmaps we need to find out whether any object has moved and if so if it is rendered. If yes, redraw the whole frame, if no don't do anything

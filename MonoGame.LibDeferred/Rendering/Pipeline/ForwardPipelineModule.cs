@@ -42,8 +42,8 @@ namespace DeferredEngine.Renderer.RenderModules
         {
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-            if (meshBatcher.CheckRequiresRedraw(DynamicMeshBatcher.RenderType.Forward, false, false))
-                meshBatcher.Draw(DynamicMeshBatcher.RenderType.Forward, matrices, renderModule: this);
+            if (meshBatcher.CheckRequiresRedraw(RenderType.Forward, false, false))
+                meshBatcher.Draw(RenderType.Forward, matrices, RenderContext.Default, renderModule: this);
 
             return output;
         }

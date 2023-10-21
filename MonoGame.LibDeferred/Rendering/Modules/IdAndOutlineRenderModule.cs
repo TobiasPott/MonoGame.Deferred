@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Ext;
-using System.Diagnostics;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
@@ -54,6 +53,7 @@ namespace DeferredEngine.Renderer.RenderModules
         private GraphicsDevice _graphicsDevice;
 
         private RenderTarget2D _renderTarget;
+        private RenderContext _renderContext = new RenderContext() { Flags = RenderFlags.Outlined };
 
         public int HoveredId;
 
@@ -100,8 +100,8 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-            if (meshBatcher.CheckRequiresRedraw(DynamicMeshBatcher.RenderType.IdRender, false, false))
-                meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdRender, matrices);
+            if (meshBatcher.CheckRequiresRedraw(RenderType.IdRender, false, false))
+                meshBatcher.Draw(RenderType.IdRender, matrices, RenderContext.Default);
 
             //Now onto the billboards
             // ToDo: @tpott: Consider moving Billboards into entities like Decals (but with different effect?! O.o)
@@ -188,22 +188,28 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
 
-            bool needsRedraw = meshBatcher.CheckRequiresRedraw(DynamicMeshBatcher.RenderType.IdRender, false, false);
+            bool needsRedraw = meshBatcher.CheckRequiresRedraw(RenderType.IdRender, false, false);
             int selectedId = gizmoContext.SelectedObjectId;
+
             //Selected entity
             if (selectedId != 0)
             {
                 IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(SelectedColor);
                 if (needsRedraw)
-                    meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, outlined: true, outlineId: selectedId);
-
+                {
+                    _renderContext.OutlineId = selectedId;
+                    meshBatcher.Draw(RenderType.IdOutline, matrices, _renderContext);
+                }
             }
             // Hovered entity
             if (selectedId != hoveredId && hoveredId != 0 && mouseMoved)
             {
                 IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(HoveredColor);
                 if (needsRedraw)
-                    meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, outlined: true, outlineId: hoveredId);
+                {
+                    _renderContext.OutlineId = hoveredId;
+                    meshBatcher.Draw(RenderType.IdOutline, matrices, _renderContext);
+                }
             }
 
         }
