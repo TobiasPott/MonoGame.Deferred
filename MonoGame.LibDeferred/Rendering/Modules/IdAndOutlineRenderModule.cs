@@ -100,7 +100,8 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-            meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdRender, matrices);
+            if (meshBatcher.CheckRequiresRedraw(DynamicMeshBatcher.RenderType.IdRender, false, false))
+                meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdRender, matrices);
 
             //Now onto the billboards
             // ToDo: @tpott: Consider moving Billboards into entities like Decals (but with different effect?! O.o)
@@ -193,19 +194,22 @@ namespace DeferredEngine.Renderer.RenderModules
             {
                 //UPdate the size of our outlines!
 
-                if (!drawAll)
-                    meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, false, false, selectedId);
+                bool needsRedraw = meshBatcher.CheckRequiresRedraw(DynamicMeshBatcher.RenderType.IdRender, false, false);
+                if (!drawAll && needsRedraw)
+                    meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, selectedId);
 
                 IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(SelectedColor);
-                meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, false, outlined: true, outlineId: selectedId);
+                if (needsRedraw)
+                    meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, outlined: true, outlineId: selectedId);
 
                 if (selectedId != hoveredId && hoveredId != 0 && mouseMoved)
                 {
-                    if (!drawAll)
-                        meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, false, false, hoveredId);
+                    if (!drawAll && needsRedraw)
+                        meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, hoveredId);
 
                     IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(HoveredColor);
-                    meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, false, outlined: true, outlineId: hoveredId);
+                    if (needsRedraw)
+                        meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, outlined: true, outlineId: hoveredId);
                 }
             }
 

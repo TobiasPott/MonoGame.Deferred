@@ -138,12 +138,13 @@ namespace DeferredEngine.Renderer.RenderModules
                     _graphicsDevice.Viewport = new Viewport(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
                     _graphicsDevice.ScissorRectangle = new Rectangle(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
 
-                    meshBatcher.Draw(renderType: DynamicMeshBatcher.RenderType.ShadowOmnidirectional,
-                        viewProjection: lightViewProjection,
-                        view: null,
-                        lightViewPointChanged: true,
-                        hasAnyObjectMoved: light.HasChanged,
-                        renderModule: this);
+                    //For shadowmaps we need to find out whether any object has moved and if so if it is rendered. If yes, redraw the whole frame, if no don't do anything
+
+                    if (meshBatcher.CheckRequiresRedraw(DynamicMeshBatcher.RenderType.ShadowOmnidirectional, true, light.HasChanged))
+                        meshBatcher.Draw(renderType: DynamicMeshBatcher.RenderType.ShadowOmnidirectional,
+                            viewProjection: lightViewProjection,
+                            view: null,
+                            renderModule: this);
 
                 }
             }
@@ -174,11 +175,10 @@ namespace DeferredEngine.Renderer.RenderModules
                     _graphicsDevice.Viewport = new Viewport(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
                     _graphicsDevice.ScissorRectangle = new Rectangle(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
 
-                    meshBatcher.Draw(renderType: DynamicMeshBatcher.RenderType.ShadowOmnidirectional,
+                    if (meshBatcher.CheckRequiresRedraw(DynamicMeshBatcher.RenderType.ShadowOmnidirectional, light.HasChanged, true))
+                        meshBatcher.Draw(renderType: DynamicMeshBatcher.RenderType.ShadowOmnidirectional,
                         viewProjection: lightViewProjection,
                         view: null,
-                        lightViewPointChanged: light.HasChanged,
-                        hasAnyObjectMoved: true,
                         renderModule: this);
                 }
             }
@@ -222,7 +222,10 @@ namespace DeferredEngine.Renderer.RenderModules
                 _effectSetup.Param_FarClip.SetValue(light.ShadowFarClip);
                 _effectSetup.Param_SizeBias.SetValue(ShadowMapPipelineModule.ShadowBias * 2048 / light.ShadowResolution);
 
-                meshBatcher.Draw(DynamicMeshBatcher.RenderType.ShadowLinear, light.Matrices.ViewProjection, light.Matrices.View, light.HasChanged, false, false, 0, renderModule: this);
+
+                if (meshBatcher.CheckRequiresRedraw(DynamicMeshBatcher.RenderType.ShadowOmnidirectional, true, light.HasChanged))
+                    meshBatcher.Draw(DynamicMeshBatcher.RenderType.ShadowLinear, light.Matrices.ViewProjection, light.Matrices.View,
+                        false, 0, renderModule: this);
             }
             else
             {
@@ -240,8 +243,9 @@ namespace DeferredEngine.Renderer.RenderModules
                 _effectSetup.Param_FarClip.SetValue(light.ShadowFarClip);
                 _effectSetup.Param_SizeBias.SetValue(ShadowMapPipelineModule.ShadowBias * 2048 / light.ShadowResolution);
 
-                meshBatcher.Draw(DynamicMeshBatcher.RenderType.ShadowLinear,
-                    light.Matrices.ViewProjection, light.Matrices.View, false, true, false, 0, renderModule: this);
+                if (meshBatcher.CheckRequiresRedraw(DynamicMeshBatcher.RenderType.ShadowLinear, false, true))
+                    meshBatcher.Draw(DynamicMeshBatcher.RenderType.ShadowLinear, light.Matrices.ViewProjection, light.Matrices.View,
+                        false, 0, renderModule: this);
             }
 
             //Blur!

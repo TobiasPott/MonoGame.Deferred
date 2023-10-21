@@ -52,7 +52,8 @@ namespace DeferredEngine.Renderer.RenderModules
             }
 
             //Draw the Gbuffer!
-            meshBatcher.Draw(renderType: DynamicMeshBatcher.RenderType.Opaque, matrices: matrices, lightViewPointChanged: true, renderModule: this);
+            if (meshBatcher.CheckRequiresRedraw(DynamicMeshBatcher.RenderType.Opaque, true, false))
+                meshBatcher.Draw(renderType: DynamicMeshBatcher.RenderType.Opaque, matrices: matrices, renderModule: this);
 
         }
 
