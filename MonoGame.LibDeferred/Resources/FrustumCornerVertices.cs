@@ -1,9 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//    MAIN RENDER FUNCTIONS, TheKosmonaut 2016
-
-namespace DeferredEngine.Renderer
+namespace DeferredEngine.Recources
 {
     public class FrustumCornerVertices
     {
