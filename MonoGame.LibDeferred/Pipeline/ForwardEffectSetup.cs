@@ -1,7 +1,7 @@
 ﻿using DeferredEngine.Recources;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Renderer.RenderModules
+namespace DeferredEngine.Pipeline
 {
     // Forward
     public class ForwardEffectSetup : EffectSetupBase

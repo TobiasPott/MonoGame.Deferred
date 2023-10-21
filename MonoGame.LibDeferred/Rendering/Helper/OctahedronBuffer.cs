@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Renderer.Helper
+namespace DeferredEngine.Rendering.Helper
 {
     public class OctahedronBuffer : IDisposable
     {

@@ -1,14 +1,13 @@
 ﻿using DeferredEngine.Entities;
+using DeferredEngine.Pipeline;
 using DeferredEngine.Recources;
-using DeferredEngine.Recources.Helper;
-using DeferredEngine.Renderer.RenderModules;
-using DeferredEngine.Renderer.RenderModules.Default;
+using DeferredEngine.Rendering.RenderModules.Default;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 using System.Diagnostics;
 
-namespace DeferredEngine.Renderer.Helper
+namespace DeferredEngine.Rendering
 {
 
     [Flags]
@@ -260,7 +259,7 @@ namespace DeferredEngine.Renderer.Helper
                 {
                     MeshBatch meshBatch = materialBatch[i];
                     ModelMeshPart mesh = meshBatch.GetMesh();
-                    
+
                     //Initialize the mesh VB and IB
                     _graphicsDevice.SetVertexBuffer(mesh.VertexBuffer);
                     _graphicsDevice.Indices = mesh.IndexBuffer;

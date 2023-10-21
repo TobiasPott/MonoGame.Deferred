@@ -1,9 +1,9 @@
 ﻿using DeferredEngine.Entities;
-using DeferredEngine.Recources;
+using DeferredEngine.Pipeline.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Renderer.Helper.HelperGeometry
+namespace DeferredEngine.Rendering.Helper.HelperGeometry
 {
     //Singleton
     public class HelperGeometryManager

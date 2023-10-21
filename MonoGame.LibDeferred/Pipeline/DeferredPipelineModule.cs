@@ -1,8 +1,8 @@
-﻿using DeferredEngine.Renderer.Helper;
+﻿using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Renderer.RenderModules
+namespace DeferredEngine.Pipeline
 {
     public enum DeferredColorSpace
     {

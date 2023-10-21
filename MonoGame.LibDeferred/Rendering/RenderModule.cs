@@ -1,10 +1,10 @@
 ﻿using DeferredEngine.Recources.Helper;
 using DeferredEngine.Recources;
-using DeferredEngine.Renderer.Helper;
+using DeferredEngine.Rendering.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Renderer.RenderModules.Default
+namespace DeferredEngine.Rendering.RenderModules.Default
 {
     public interface IRenderModule
     {

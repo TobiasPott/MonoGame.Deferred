@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Renderer.Helper
+namespace DeferredEngine.Rendering
 {
     //The individual model mesh, and a library or different world coordinates basically is what we need
     public class MeshBatch

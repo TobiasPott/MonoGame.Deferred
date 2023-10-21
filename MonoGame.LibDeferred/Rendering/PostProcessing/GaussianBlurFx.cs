@@ -1,9 +1,9 @@
 ﻿using DeferredEngine.Recources;
-using DeferredEngine.Renderer.Helper;
+using DeferredEngine.Rendering.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Renderer.PostProcessing
+namespace DeferredEngine.Rendering.PostProcessing
 {
     [Obsolete($"{nameof(GaussianBlurFx)} is unused and needs refactoring when the rendering pipeline is modularized.")]
     public class GaussianBlurFx : BaseFx

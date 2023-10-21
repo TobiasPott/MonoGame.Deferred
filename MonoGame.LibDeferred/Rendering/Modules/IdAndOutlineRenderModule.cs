@@ -2,13 +2,13 @@
 using DeferredEngine.Entities;
 using DeferredEngine.Recources;
 using DeferredEngine.Recources.Helper;
-using DeferredEngine.Renderer.Helper;
+using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Ext;
 
-namespace DeferredEngine.Renderer.RenderModules
+namespace DeferredEngine.Pipeline.Utilities
 {
     public partial class IdAndOutlineRenderModule
     {
@@ -183,7 +183,7 @@ namespace DeferredEngine.Renderer.RenderModules
             }
             _graphicsDevice.BlendState = BlendState.Opaque;
             _graphicsDevice.SetDepthStencilDefault_RasterizerCullCCW();
-            
+
 
             bool needsRedraw = meshBatcher.CheckRequiresRedraw(RenderType.IdRender, false, false);
             int selectedId = gizmoContext.SelectedObjectId;

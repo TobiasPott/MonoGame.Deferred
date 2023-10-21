@@ -1,7 +1,8 @@
-﻿using DeferredEngine.Recources;
+﻿using DeferredEngine.Pipeline;
+using DeferredEngine.Recources;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Renderer.RenderModules.SDF
+namespace DeferredEngine.Rendering.SDF
 {
     public class DistanceFieldEffectSetup : EffectSetupBase
     {
@@ -28,7 +29,7 @@ namespace DeferredEngine.Renderer.RenderModules.SDF
         public EffectParameter Param_TriangleTexResolution { get; protected set; }
         public EffectParameter Param_TriangleAmount { get; protected set; }
 
-        public DistanceFieldEffectSetup(string shaderPath = "Shaders/SDF/volumeProjection") 
+        public DistanceFieldEffectSetup(string shaderPath = "Shaders/SDF/volumeProjection")
             : base(shaderPath)
         {
             Effect = Globals.content.Load<Effect>(shaderPath);

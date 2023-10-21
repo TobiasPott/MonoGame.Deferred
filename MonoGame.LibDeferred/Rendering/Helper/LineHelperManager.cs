@@ -3,7 +3,7 @@ using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Renderer.Helper.HelperGeometry
+namespace DeferredEngine.Rendering.Helper.HelperGeometry
 {
     public class LineHelperManager
     {

@@ -1,8 +1,8 @@
 ﻿using Deferred.Utilities;
 using DeferredEngine.Entities;
 using DeferredEngine.Pipeline.Lighting;
+using DeferredEngine.Pipeline.Utilities;
 using DeferredEngine.Recources;
-using DeferredEngine.Renderer.RenderModules;
 using HelperSuite.GUI;
 using HelperSuite.GUIHelper;
 using Microsoft.Xna.Framework;

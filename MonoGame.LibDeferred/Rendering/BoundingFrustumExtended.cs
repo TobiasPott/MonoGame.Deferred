@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace DeferredEngine.Renderer.Helper
+namespace DeferredEngine.Rendering.Helper
 {
     // MIT License - Copyright (C) The Mono.Xna Team
     // This file is subject to the terms and conditions defined in

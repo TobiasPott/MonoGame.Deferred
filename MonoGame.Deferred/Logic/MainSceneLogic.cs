@@ -1,7 +1,8 @@
 ﻿using DeferredEngine.Entities;
 using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Recources;
-using DeferredEngine.Renderer.Helper;
+using DeferredEngine.Rendering;
+using DeferredEngine.Rendering.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -211,9 +212,9 @@ namespace DeferredEngine.Logic
             if (Input.WasKeyPressed(Keys.F1))
             {
                 _renderModeCycle++;
-                if (_renderModeCycle > Enum.GetNames(typeof(Renderer.RenderModes)).Length - 1) _renderModeCycle = 0;
+                if (_renderModeCycle > Enum.GetNames(typeof(Rendering.RenderModes)).Length - 1) _renderModeCycle = 0;
 
-                RenderingSettings.g_RenderMode = (Renderer.RenderModes)_renderModeCycle;
+                RenderingSettings.g_RenderMode = (Rendering.RenderModes)_renderModeCycle;
             }
         }
 

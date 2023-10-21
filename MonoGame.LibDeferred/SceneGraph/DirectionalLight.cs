@@ -1,6 +1,5 @@
 ﻿using DeferredEngine.Entities;
-using DeferredEngine.Recources.Helper;
-using DeferredEngine.Renderer;
+using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;

@@ -1,11 +1,11 @@
 ﻿using DeferredEngine.Entities;
 using DeferredEngine.Logic;
+using DeferredEngine.Pipeline;
 using DeferredEngine.Pipeline.Lighting;
+using DeferredEngine.Pipeline.Utilities;
 using DeferredEngine.Recources;
-using DeferredEngine.Renderer.Helper;
-using DeferredEngine.Renderer.Helper.HelperGeometry;
-using DeferredEngine.Renderer.PostProcessing;
-using DeferredEngine.Renderer.RenderModules;
+using DeferredEngine.Rendering.Helper.HelperGeometry;
+using DeferredEngine.Rendering.PostProcessing;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,7 +16,7 @@ using System.Collections.Generic;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //    MAIN RENDER FUNCTIONS, TheKosmonaut 2016
 
-namespace DeferredEngine.Renderer
+namespace DeferredEngine.Rendering
 {
 
 

@@ -1,7 +1,7 @@
-﻿using DeferredEngine.Renderer.RenderModules;
+﻿using DeferredEngine.Recources;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Recources
+namespace DeferredEngine.Pipeline.Utilities
 {
 
     public class DecalEffectSetup : EffectSetupBase

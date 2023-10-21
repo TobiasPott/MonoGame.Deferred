@@ -1,4 +1,4 @@
-﻿namespace DeferredEngine.Renderer.RenderModules
+﻿namespace DeferredEngine.Pipeline
 {
     public abstract class EffectSetupBase : IDisposable
     {

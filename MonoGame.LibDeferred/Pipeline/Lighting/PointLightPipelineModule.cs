@@ -1,6 +1,5 @@
 ﻿using DeferredEngine.Recources;
-using DeferredEngine.Renderer;
-using DeferredEngine.Renderer.RenderModules;
+using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;

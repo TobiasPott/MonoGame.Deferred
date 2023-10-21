@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Renderer
+namespace DeferredEngine.Rendering
 {
     public static class MRT
     {

@@ -1,7 +1,7 @@
-﻿using DeferredEngine.Renderer.Helper;
+﻿using DeferredEngine.Rendering.Helper;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Renderer.PostProcessing
+namespace DeferredEngine.Rendering.PostProcessing
 {
     public abstract class BaseFx : IDisposable
     {

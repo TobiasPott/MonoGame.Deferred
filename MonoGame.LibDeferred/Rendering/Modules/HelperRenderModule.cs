@@ -1,10 +1,9 @@
-﻿using DeferredEngine.Recources;
-using DeferredEngine.Renderer.Helper.HelperGeometry;
+﻿using DeferredEngine.Rendering.Helper.HelperGeometry;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 
-namespace DeferredEngine.Renderer.RenderModules
+namespace DeferredEngine.Pipeline.Utilities
 {
     public class HelperRenderModule : IDisposable
     {

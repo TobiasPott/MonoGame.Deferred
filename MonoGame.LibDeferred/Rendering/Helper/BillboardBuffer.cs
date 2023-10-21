@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Renderer.Helper.Editor
+namespace DeferredEngine.Rendering.Helper.Editor
 {
     public class BillboardBuffer : IDisposable
     {

@@ -2,13 +2,14 @@
 using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Recources;
 using DeferredEngine.Recources.Helper;
-using DeferredEngine.Renderer.Helper.Editor;
-using DeferredEngine.Renderer.Helper.HelperGeometry;
+using DeferredEngine.Rendering;
+using DeferredEngine.Rendering.Helper.Editor;
+using DeferredEngine.Rendering.Helper.HelperGeometry;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
 
-namespace DeferredEngine.Renderer.RenderModules
+namespace DeferredEngine.Pipeline.Utilities
 {
     public partial class BillboardRenderModule
     {

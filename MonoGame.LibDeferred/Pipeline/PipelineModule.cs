@@ -1,9 +1,9 @@
-﻿using DeferredEngine.Renderer.Helper;
+﻿using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.Runtime.CompilerServices;
 
-namespace DeferredEngine.Renderer.RenderModules
+namespace DeferredEngine.Pipeline
 {
 
     public abstract class PipelineModule : IDisposable

@@ -1,11 +1,12 @@
-﻿using DeferredEngine.Pipeline.Lighting;
-using DeferredEngine.Renderer.RenderModules;
-using DeferredEngine.Renderer.RenderModules.SDF;
+﻿using DeferredEngine.Pipeline;
+using DeferredEngine.Pipeline.Lighting;
+using DeferredEngine.Pipeline.Utilities;
+using DeferredEngine.Rendering.SDF;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 
-namespace DeferredEngine.Renderer
+namespace DeferredEngine.Rendering
 {
     public class PipelineModuleStack : IDisposable
     {

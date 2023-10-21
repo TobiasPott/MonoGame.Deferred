@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace DeferredEngine.Renderer.RenderModules.SDF
+namespace DeferredEngine.Rendering.SDF
 {
     public struct SdfSamplePoint
     {

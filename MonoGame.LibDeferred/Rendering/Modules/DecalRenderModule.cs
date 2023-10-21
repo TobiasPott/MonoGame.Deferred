@@ -1,9 +1,9 @@
 ﻿using DeferredEngine.Entities;
-using DeferredEngine.Recources;
+using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Renderer.RenderModules
+namespace DeferredEngine.Pipeline.Utilities
 {
     public class DecalRenderModule : IDisposable
     {

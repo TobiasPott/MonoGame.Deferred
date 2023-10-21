@@ -1,11 +1,11 @@
 ﻿using DeferredEngine.Recources;
-using DeferredEngine.Renderer.Helper;
-using DeferredEngine.Renderer.RenderModules.Default;
+using DeferredEngine.Rendering;
+using DeferredEngine.Rendering.RenderModules.Default;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Renderer.RenderModules
+namespace DeferredEngine.Pipeline
 {
     //Just a template
     public class GBufferPipelineModule : PipelineModule, IRenderModule

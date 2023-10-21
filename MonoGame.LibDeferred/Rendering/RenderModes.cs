@@ -1,5 +1,5 @@
 ﻿
-namespace DeferredEngine.Renderer
+namespace DeferredEngine.Rendering
 {
     //Render modes
     public enum RenderModes

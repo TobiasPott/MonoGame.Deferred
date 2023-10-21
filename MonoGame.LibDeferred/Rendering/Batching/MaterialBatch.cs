@@ -3,7 +3,7 @@ using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Renderer.Helper
+namespace DeferredEngine.Rendering
 {
     /// <summary>
     /// Library which has a list of meshlibraries that correspond to a material.

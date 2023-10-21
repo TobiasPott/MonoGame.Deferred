@@ -1,9 +1,9 @@
-﻿using DeferredEngine.Recources;
-using DeferredEngine.Renderer.RenderModules;
+﻿using DeferredEngine.Pipeline;
+using DeferredEngine.Recources;
 using Microsoft.Xna.Framework.Graphics;
 
 
-namespace DeferredEngine.Renderer.PostProcessing
+namespace DeferredEngine.Rendering.PostProcessing
 {
     // Color Grading Effect
     public class ColorGradingFxEffectSetup : EffectSetupBase

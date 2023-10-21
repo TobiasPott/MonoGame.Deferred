@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 
-namespace DeferredEngine.Renderer.Helper
+namespace DeferredEngine.Rendering.Helper
 {
     public static class FastRand
     {

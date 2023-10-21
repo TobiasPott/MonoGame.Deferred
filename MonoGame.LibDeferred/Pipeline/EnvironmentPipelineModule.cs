@@ -1,12 +1,12 @@
 ﻿using DeferredEngine.Entities;
 using DeferredEngine.Recources;
-using DeferredEngine.Renderer.Helper;
+using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 
-namespace DeferredEngine.Renderer.RenderModules
+namespace DeferredEngine.Pipeline
 {
     //Just a template
     public partial class EnvironmentPipelineModule : PipelineModule

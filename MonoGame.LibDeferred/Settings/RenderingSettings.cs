@@ -1,4 +1,4 @@
-﻿using DeferredEngine.Renderer;
+﻿using DeferredEngine.Rendering;
 
 namespace DeferredEngine.Recources
 {

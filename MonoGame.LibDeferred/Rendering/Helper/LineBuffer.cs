@@ -1,9 +1,9 @@
 ﻿using DeferredEngine.Recources;
-using DeferredEngine.Renderer.Helper.HelperGeometry;
+using DeferredEngine.Rendering.Helper.HelperGeometry;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Renderer.Helper
+namespace DeferredEngine.Rendering.Helper
 {
     public class LineBuffer
     {

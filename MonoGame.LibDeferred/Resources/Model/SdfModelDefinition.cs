@@ -1,4 +1,4 @@
-﻿using DeferredEngine.Renderer.RenderModules.SDF;
+﻿using DeferredEngine.Rendering.SDF;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;

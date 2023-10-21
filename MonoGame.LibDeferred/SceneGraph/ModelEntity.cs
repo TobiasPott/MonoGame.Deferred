@@ -1,5 +1,5 @@
 ﻿using DeferredEngine.Recources;
-using DeferredEngine.Renderer.Helper;
+using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework;
 
 namespace DeferredEngine.Entities

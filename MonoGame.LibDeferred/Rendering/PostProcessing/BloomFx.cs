@@ -1,10 +1,10 @@
 ﻿using DeferredEngine.Recources;
-using DeferredEngine.Renderer.Helper;
+using DeferredEngine.Rendering.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Renderer.PostProcessing
+namespace DeferredEngine.Rendering.PostProcessing
 {
     /// <summary>
     /// Bloom / Blur, 2016 TheKosmonaut

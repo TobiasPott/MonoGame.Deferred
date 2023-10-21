@@ -1,7 +1,7 @@
 ﻿using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 
-namespace DeferredEngine.Renderer
+namespace DeferredEngine.Rendering
 {
     public class HaltonSequence
     {

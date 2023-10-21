@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 using System.Diagnostics;
 
-namespace DeferredEngine.Renderer.RenderModules.SDF
+namespace DeferredEngine.Rendering.SDF
 {
     public partial class DistanceFieldRenderModule
     {

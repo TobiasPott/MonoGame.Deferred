@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 
 
-namespace DeferredEngine.Renderer.RenderModules
+namespace DeferredEngine.Pipeline
 {
     // Deferred Environment
     public class EnvironmentEffectSetup : EffectSetupBase

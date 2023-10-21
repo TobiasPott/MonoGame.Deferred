@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Renderer.RenderModules.Default
+namespace DeferredEngine.Rendering.RenderModules.Default
 {
     //Just a template
     /*

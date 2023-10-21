@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Renderer.PostProcessing
+namespace DeferredEngine.Rendering.PostProcessing
 {
     //Just a template
     public class TemporalAAFx : BaseFx

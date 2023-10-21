@@ -2,15 +2,12 @@
 using DeferredEngine.Entities;
 using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Recources;
-using DeferredEngine.Renderer.Helper;
+using DeferredEngine.Rendering;
 using HelperSuite.GUIHelper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Collections.Generic;
-using Windows.UI.Notifications;
-using DirectionalLight = DeferredEngine.Pipeline.Lighting.DirectionalLight;
 
 namespace DeferredEngine.Logic
 {
@@ -48,12 +45,7 @@ namespace DeferredEngine.Logic
         /// <summary>
         /// Main Logic for the editor part
         /// </summary>
-        public void Update(GameTime gameTime, EntitySceneGroup scene,
-            //List<PointLight> pointLights,
-            //List<DirectionalLight> dirLights,
-            //EnvironmentProbe envProbe,
-            ObjectHoverContext hoverContext,
-            DynamicMeshBatcher meshBatcher)
+        public void Update(GameTime gameTime, EntitySceneGroup scene, ObjectHoverContext hoverContext, DynamicMeshBatcher meshBatcher)
         {
             if (!RenderingSettings.e_IsEditorEnabled) return;
 

@@ -1,12 +1,12 @@
 ﻿
 using DeferredEngine.Entities;
+using DeferredEngine.Pipeline;
 using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Recources;
-using DeferredEngine.Renderer.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DeferredEngine.Renderer.RenderModules.SDF
+namespace DeferredEngine.Rendering.SDF
 {
 
     //Just a template
