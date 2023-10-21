@@ -107,7 +107,6 @@ namespace DeferredEngine.Pipeline
 
             _effectSetup.Param_TransposeView.SetValue(Matrix.Transpose(view));
             _effectSetup.Pass_Basic.Apply();
-
             _graphicsDevice.SetDepthStencilNone_RasterizerCullCCW();
             _fullscreenTarget.Draw(_graphicsDevice);
         }

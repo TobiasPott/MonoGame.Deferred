@@ -6,21 +6,6 @@ namespace MonoGame.Ext
 {
     public static class Extensions
     {
-
-        // ToDo: Extend to cover BlendState and wrap target state to map to an enum which includes a "keep" option to leave a state unchanged
-        public static void SetDepthStencilNone_RasterizerCullCCW(this GraphicsDevice graphicsDevice)
-        {
-            graphicsDevice.DepthStencilState = DepthStencilState.None;
-            graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-        }
-
-        public static void SetDepthStencilDefault_RasterizerCullCCW(this GraphicsDevice graphicsDevice)
-        {
-            graphicsDevice.DepthStencilState = DepthStencilState.Default;
-            graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-        }
-
-
         public static void Transform(this Vector3[] sourceArray, Matrix matrix, Vector3[] destinationArray)
         {
             Vector3.Transform(sourceArray, ref matrix, destinationArray);

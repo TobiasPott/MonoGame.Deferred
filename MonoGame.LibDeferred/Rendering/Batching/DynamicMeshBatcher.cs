@@ -325,20 +325,17 @@ namespace DeferredEngine.Rendering
             {
                 if (renderType != RenderType.ShadowOmnidirectional)
                 {
-                    _graphicsDevice.BlendState = BlendState.Opaque;
-                    _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+                    _graphicsDevice.SetStates(DepthStencilStateOption.KeepState, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
                 }
                 else //Need special rasterization
                 {
-                    _graphicsDevice.BlendState = BlendState.Opaque;
-                    _graphicsDevice.DepthStencilState = DepthStencilState.Default;
+                    _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.KeepState, BlendStateOption.Opaque);
                     _graphicsDevice.RasterizerState = ShadowGenerationRasterizerState;
                 }
             }
             else //if (renderType == RenderType.alpha)
             {
-                _graphicsDevice.BlendState = BlendState.NonPremultiplied;
-                _graphicsDevice.SetDepthStencilDefault_RasterizerCullCCW();
+                _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.NonPremultiplied);
             }
         }
 

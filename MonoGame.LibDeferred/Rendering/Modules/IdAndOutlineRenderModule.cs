@@ -95,8 +95,7 @@ namespace DeferredEngine.Pipeline.Utilities
         {
 
             _graphicsDevice.SetRenderTarget(_renderTarget);
-            _graphicsDevice.BlendState = BlendState.Opaque;
-            _graphicsDevice.SetDepthStencilDefault_RasterizerCullCCW();
+            _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
 
             if (meshBatcher.CheckRequiresRedraw(RenderType.IdRender, false, false))
                 meshBatcher.Draw(RenderType.IdRender, matrices, RenderContext.Default);
@@ -181,8 +180,7 @@ namespace DeferredEngine.Pipeline.Utilities
             {
                 _graphicsDevice.Clear(Color.Black);
             }
-            _graphicsDevice.BlendState = BlendState.Opaque;
-            _graphicsDevice.SetDepthStencilDefault_RasterizerCullCCW();
+            _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
 
 
             bool needsRedraw = meshBatcher.CheckRequiresRedraw(RenderType.IdRender, false, false);

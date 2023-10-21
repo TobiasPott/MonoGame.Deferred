@@ -293,8 +293,7 @@ namespace DeferredEngine.Rendering
         {
             // render directly to the output buffer
             _graphicsDevice.SetRenderTarget(null);
-            _graphicsDevice.SetDepthStencilDefault_RasterizerCullCCW();
-            _graphicsDevice.BlendState = BlendState.Opaque;
+            _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
 
             if (passes.HasFlag(EditorPasses.Billboard))
                 _moduleStack.Billboard.DrawEditorBillboards(scene, matrices, gizmoContext);
@@ -486,8 +485,7 @@ namespace DeferredEngine.Rendering
 
             //todo: more samples for more reflective materials!
             _graphicsDevice.SetRenderTarget(_auxTargets[MRT.SSFX_REFLECTION]);
-            _graphicsDevice.BlendState = BlendState.Opaque;
-            _graphicsDevice.SetDepthStencilDefault_RasterizerCullCCW();
+            _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
 
             if (_taaFx.Enabled)
             {
@@ -520,7 +518,7 @@ namespace DeferredEngine.Rendering
             if (!RenderingSettings.g_ssao_draw) return;
 
             _graphicsDevice.SetRenderTarget(_auxTargets[MRT.SSFX_AMBIENTOCCLUSION]);
-            _graphicsDevice.SetDepthStencilDefault_RasterizerCullCCW();
+            _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.KeepState);
 
             Shaders.SSAO.SetCameraAndMatrices(camera.Position, _matrices);
 
@@ -693,7 +691,7 @@ namespace DeferredEngine.Rendering
 
             Shaders.PostProcssing.Param_ScreenTexture.SetValue(currentInput);
             _graphicsDevice.SetRenderTarget(destinationRenderTarget);
-            _graphicsDevice.SetDepthStencilDefault_RasterizerCullCCW();
+            _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.KeepState);
 
             Shaders.PostProcssing.Effect.CurrentTechnique.Passes[0].Apply();
             FullscreenTarget.Draw(_graphicsDevice);
