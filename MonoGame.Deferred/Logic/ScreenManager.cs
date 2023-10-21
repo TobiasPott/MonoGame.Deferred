@@ -45,9 +45,9 @@ namespace DeferredEngine.Logic
         public void Update(GameTime gameTime, bool isActive)
         {
             _guiLogic.Update(gameTime, isActive, _editorLogic.SelectedObject);
-            _editorLogic.Update(gameTime, _sceneLogic.BasicEntities, _sceneLogic.Decals, _sceneLogic.PointLights, _sceneLogic.DirectionalLights, _sceneLogic.EnvProbe, _objectHoverContext, _sceneLogic.MeshMaterialLibrary);
+            _editorLogic.Update(gameTime, _sceneLogic.Scene, _objectHoverContext, _sceneLogic.MeshMaterialLibrary);
             _sceneLogic.Update(gameTime, isActive);
-            _renderer.Update(gameTime, isActive, _sceneLogic.BasicEntities);
+            _renderer.Update(gameTime, isActive, _sceneLogic.Scene);
 
             _debug.Update(gameTime);
         }
@@ -77,13 +77,13 @@ namespace DeferredEngine.Logic
         {
             content.Dispose();
         }
-        
+
+
         public void Draw(GameTime gameTime)
         {
             //Our renderer gives us information on what id is currently hovered over so we can update / manipulate objects in the logic functions
             _objectHoverContext = _renderer.Draw(_sceneLogic.Camera,
-                _sceneLogic.MeshMaterialLibrary,
-                new EntitySceneGroup(_sceneLogic.BasicEntities, _sceneLogic.DirectionalLights, _sceneLogic.PointLights, _sceneLogic.Decals, _sceneLogic.EnvProbe),
+                _sceneLogic.MeshMaterialLibrary, _sceneLogic.Scene,
                 gizmoContext: _editorLogic.GetEditorData(),
                 gameTime: gameTime);
 

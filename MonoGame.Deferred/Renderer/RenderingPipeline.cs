@@ -140,12 +140,12 @@ namespace DeferredEngine.Renderer
         /// <summary>
         /// Update our function
         /// </summary>
-        public void Update(GameTime gameTime, bool isActive, List<ModelEntity> entities)
+        public void Update(GameTime gameTime, bool isActive, EntitySceneGroup scene)
         {
             if (!isActive)
                 return;
 
-            _moduleStack.DistanceField.UpdateSdfGenerator(entities);
+            _moduleStack.DistanceField.UpdateSdfGenerator(scene.Entities);
             _moduleStack.Lighting.UpdateGameTime(gameTime);
         }
 

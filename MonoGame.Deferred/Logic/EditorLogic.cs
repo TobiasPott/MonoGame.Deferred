@@ -9,6 +9,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using Windows.UI.Notifications;
+using DirectionalLight = DeferredEngine.Pipeline.Lighting.DirectionalLight;
 
 namespace DeferredEngine.Logic
 {
@@ -16,8 +18,6 @@ namespace DeferredEngine.Logic
     {
         private static EditorLogic _instance = null;
         public static EditorLogic Instance => _instance;
-
-
 
 
         private bool _gizmoTransformationMode;
@@ -48,17 +48,12 @@ namespace DeferredEngine.Logic
         /// <summary>
         /// Main Logic for the editor part
         /// </summary>
-        /// <param name="gameTime"></param>
-        /// <param name="entities"></param>
-        /// <param name="data"></param>
-        public void Update(GameTime gameTime,
-            List<ModelEntity> entities,
-            List<Decal> decals,
-            List<PointLight> pointLights,
-            List<Pipeline.Lighting.DirectionalLight> dirLights,
-            EnvironmentProbe envSample,
-            ObjectHoverContext data,
-            DynamicMeshBatcher meshMaterialLibrary)
+        public void Update(GameTime gameTime, EntitySceneGroup scene,
+            //List<PointLight> pointLights,
+            //List<DirectionalLight> dirLights,
+            //EnvironmentProbe envProbe,
+            ObjectHoverContext hoverContext,
+            DynamicMeshBatcher meshBatcher)
         {
             if (!RenderingSettings.e_IsEditorEnabled) return;
 
@@ -72,13 +67,13 @@ namespace DeferredEngine.Logic
             Update_MouseMoved(gameTime);
             _gizmoMode = RenderingStats.e_gizmoMode;
 
-            int hoveredId = data.HoveredId;
+            int hoveredId = hoverContext.HoveredId;
 
             if (_gizmoTransformationMode)
             {
                 if (Input.mouseState.LeftButton == ButtonState.Pressed)
                 {
-                    GizmoControl(_gizmoId, data);
+                    GizmoControl(_gizmoId, hoverContext);
                 }
                 else _gizmoTransformationMode = false;
             }
@@ -91,7 +86,7 @@ namespace DeferredEngine.Logic
                 if (hoveredId >= 1 && hoveredId <= 3)
                 {
                     _gizmoId = hoveredId;
-                    GizmoControl(_gizmoId, data);
+                    GizmoControl(_gizmoId, hoverContext);
                     return;
                 }
 
@@ -102,10 +97,11 @@ namespace DeferredEngine.Logic
                 }
 
                 bool foundnew = false;
+
                 //Get the selected entity!
-                for (int index = 0; index < entities.Count; index++)
+                for (int index = 0; index < scene.Entities.Count; index++)
                 {
-                    var VARIABLE = entities[index];
+                    var VARIABLE = scene.Entities[index];
                     if (VARIABLE.Id == hoveredId)
                     {
                         SelectedObject = VARIABLE;
@@ -115,9 +111,9 @@ namespace DeferredEngine.Logic
                 }
                 if (foundnew == false)
                 {
-                    for (int index = 0; index < decals.Count; index++)
+                    for (int index = 0; index < scene.Decals.Count; index++)
                     {
-                        Decal decal = decals[index];
+                        Decal decal = scene.Decals[index];
                         if (decal.Id == hoveredId)
                         {
                             SelectedObject = decal;
@@ -125,9 +121,9 @@ namespace DeferredEngine.Logic
                         }
                     }
 
-                    for (int index = 0; index < pointLights.Count; index++)
+                    for (int index = 0; index < scene.PointLights.Count; index++)
                     {
-                        PointLight pointLight = pointLights[index];
+                        PointLight pointLight = scene.PointLights[index];
                         if (pointLight.Id == hoveredId)
                         {
                             SelectedObject = pointLight;
@@ -135,9 +131,9 @@ namespace DeferredEngine.Logic
                         }
                     }
 
-                    for (int index = 0; index < dirLights.Count; index++)
+                    for (int index = 0; index < scene.DirectionalLights.Count; index++)
                     {
-                        Pipeline.Lighting.DirectionalLight directionalLight = dirLights[index];
+                        Pipeline.Lighting.DirectionalLight directionalLight = scene.DirectionalLights[index];
                         if (directionalLight.Id == hoveredId)
                         {
                             SelectedObject = directionalLight;
@@ -145,11 +141,9 @@ namespace DeferredEngine.Logic
                         }
                     }
 
+                    if (scene.EnvProbe.Id == hoveredId)
                     {
-                        if (envSample.Id == hoveredId)
-                        {
-                            SelectedObject = envSample;
-                        }
+                        SelectedObject = scene.EnvProbe;
                     }
 
                 }
@@ -163,26 +157,27 @@ namespace DeferredEngine.Logic
                 //Find object
                 if (SelectedObject is ModelEntity)
                 {
-                    entities.Remove((ModelEntity)SelectedObject);
-                    meshMaterialLibrary.DeleteFromRegistry((ModelEntity)SelectedObject);
+                    scene.Entities.Remove((ModelEntity)SelectedObject);
+                    meshBatcher.DeleteFromRegistry((ModelEntity)SelectedObject);
 
                     SelectedObject = null;
                 }
                 else if (SelectedObject is Decal)
                 {
-                    decals.Remove((Decal)SelectedObject);
+                    scene.Decals.Remove((Decal)SelectedObject);
 
                     SelectedObject = null;
                 }
                 else if (SelectedObject is PointLight)
                 {
-                    pointLights.Remove((PointLight)SelectedObject);
+                    scene.PointLights.Remove((PointLight)SelectedObject);
 
                     SelectedObject = null;
+
                 }
                 else if (SelectedObject is Pipeline.Lighting.DirectionalLight)
                 {
-                    dirLights.Remove((Pipeline.Lighting.DirectionalLight)SelectedObject);
+                    scene.DirectionalLights.Remove((Pipeline.Lighting.DirectionalLight)SelectedObject);
 
                     SelectedObject = null;
                 }

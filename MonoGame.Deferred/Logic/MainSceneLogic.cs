@@ -14,8 +14,6 @@ namespace DeferredEngine.Logic
 {
     public class MainSceneLogic
     {
-        #region FIELDS
-
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  VARIABLES
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -28,6 +26,7 @@ namespace DeferredEngine.Logic
         //mesh library, holds all the meshes and their materials
         public DynamicMeshBatcher MeshMaterialLibrary;
 
+        private EntitySceneGroup _scene;
         public readonly List<ModelEntity> BasicEntities = new List<ModelEntity>();
         public readonly List<Decal> Decals = new List<Decal>();
         public readonly List<PointLight> PointLights = new List<PointLight>();
@@ -37,9 +36,8 @@ namespace DeferredEngine.Logic
         //Which render target are we currently displaying?
         private int _renderModeCycle;
 
-        //SDF
 
-        #endregion
+        public EntitySceneGroup Scene => _scene;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  FUNCTIONS
@@ -58,6 +56,8 @@ namespace DeferredEngine.Logic
             MeshMaterialLibrary.BatchByMaterial = false;
 
             SetUpEditorScene(graphicsDevice);
+
+            _scene = new EntitySceneGroup(BasicEntities, DirectionalLights, PointLights, Decals, EnvProbe);
         }
 
         //Load our default setup!
