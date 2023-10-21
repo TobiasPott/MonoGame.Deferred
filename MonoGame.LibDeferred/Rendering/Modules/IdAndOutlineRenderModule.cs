@@ -88,7 +88,7 @@ namespace DeferredEngine.Renderer.RenderModules
                 DrawIds(meshBatcher, scene, matrices, drawContext);
 
             if (IdAndOutlineRenderModule.e_DrawOutlines)
-                DrawOutlines(meshBatcher, matrices, drawContext, mouseMoved, HoveredId, mouseMoved);
+                DrawOutlines(meshBatcher, matrices, drawContext, HoveredId, mouseMoved);
         }
 
         private void DrawIds(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, PipelineMatrices matrices, GizmoDrawContext gizmoContext)
@@ -173,7 +173,7 @@ namespace DeferredEngine.Renderer.RenderModules
             graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, vertexOffset, startIndex, primitiveCount);
         }
 
-        private void DrawOutlines(DynamicMeshBatcher meshBatcher, PipelineMatrices matrices, GizmoDrawContext gizmoContext, bool drawAll, int hoveredId, bool mouseMoved)
+        private void DrawOutlines(DynamicMeshBatcher meshBatcher, PipelineMatrices matrices, GizmoDrawContext gizmoContext, int hoveredId, bool mouseMoved)
         {
             _graphicsDevice.SetRenderTarget(_renderTarget);
 
@@ -188,29 +188,22 @@ namespace DeferredEngine.Renderer.RenderModules
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
 
+            bool needsRedraw = meshBatcher.CheckRequiresRedraw(DynamicMeshBatcher.RenderType.IdRender, false, false);
             int selectedId = gizmoContext.SelectedObjectId;
             //Selected entity
             if (selectedId != 0)
             {
-                //UPdate the size of our outlines!
-
-                bool needsRedraw = meshBatcher.CheckRequiresRedraw(DynamicMeshBatcher.RenderType.IdRender, false, false);
-                if (!drawAll && needsRedraw)
-                    meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, selectedId);
-
                 IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(SelectedColor);
                 if (needsRedraw)
                     meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, outlined: true, outlineId: selectedId);
 
-                if (selectedId != hoveredId && hoveredId != 0 && mouseMoved)
-                {
-                    if (!drawAll && needsRedraw)
-                        meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, false, hoveredId);
-
-                    IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(HoveredColor);
-                    if (needsRedraw)
-                        meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, outlined: true, outlineId: hoveredId);
-                }
+            }
+            // Hovered entity
+            if (selectedId != hoveredId && hoveredId != 0 && mouseMoved)
+            {
+                IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(HoveredColor);
+                if (needsRedraw)
+                    meshBatcher.Draw(DynamicMeshBatcher.RenderType.IdOutline, matrices, outlined: true, outlineId: hoveredId);
             }
 
         }
