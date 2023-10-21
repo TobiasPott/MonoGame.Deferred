@@ -217,7 +217,7 @@ namespace DeferredEngine.Rendering
 
             // Step: 15
             //Do Bloom
-            _currentOutput = DrawBloom(_currentOutput);
+            _currentOutput = _fxStack.DrawBloom(_currentOutput, null, _auxTargets[MRT.BLOOM]);
 
             // Step: 16
             //Draw the elements that we are hovering over with outlines
@@ -633,28 +633,6 @@ namespace DeferredEngine.Rendering
 
             _moduleStack.Forward.PrepareDraw(camera, pointLights, _boundingFrustum);
             return _moduleStack.Forward.Draw(meshBatcher, input, _matrices);
-        }
-
-        private RenderTarget2D DrawBloom(RenderTarget2D input)
-        {
-            if (_fxStack.Bloom.Enabled)
-            {
-                Texture2D bloom = _fxStack.Bloom.Draw(input, null, null);
-
-                _graphicsDevice.SetRenderTargets(_auxTargets[MRT.BLOOM]);
-                _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
-
-                _spriteBatch.Draw(input, RenderingSettings.g_ScreenRect, Color.White);
-                _spriteBatch.Draw(bloom, RenderingSettings.g_ScreenRect, Color.White);
-
-                _spriteBatch.End();
-
-                return _auxTargets[MRT.BLOOM];
-            }
-            else
-            {
-                return input;
-            }
         }
 
         /// <summary>

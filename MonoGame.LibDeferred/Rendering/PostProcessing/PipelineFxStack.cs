@@ -65,6 +65,28 @@ namespace DeferredEngine.Rendering.PostProcessing
 
             DrawTextureToScreenToFullScreen(destRT);
         }
+        public RenderTarget2D DrawBloom(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
+        {
+            if (this.Bloom.Enabled)
+            {
+                Texture2D bloom = this.Bloom.Draw(sourceRT, null, null);
+
+                _graphicsDevice.SetRenderTargets(destRT); // _auxTargets[MRT.BLOOM]);
+                _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
+
+                _spriteBatch.Draw(sourceRT, RenderingSettings.g_ScreenRect, Color.White);
+                _spriteBatch.Draw(bloom, RenderingSettings.g_ScreenRect, Color.White);
+
+                _spriteBatch.End();
+
+                return destRT; // _auxTargets[MRT.BLOOM];
+            }
+            else
+            {
+                return sourceRT;
+            }
+        }
+
 
 
         private void DrawTextureToScreenToFullScreen(Texture2D source, BlendState blendState = null, RenderTarget2D destRT = null)
