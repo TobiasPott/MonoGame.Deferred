@@ -3,10 +3,7 @@ using DeferredEngine.Renderer.RenderModules;
 using DeferredEngine.Renderer.RenderModules.SDF;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//    MAIN RENDER FUNCTIONS, TheKosmonaut 2016
 
 namespace DeferredEngine.Renderer
 {
