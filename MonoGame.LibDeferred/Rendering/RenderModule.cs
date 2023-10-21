@@ -3,6 +3,7 @@ using DeferredEngine.Recources;
 using DeferredEngine.Recources.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Ext;
 
 namespace DeferredEngine.Rendering.RenderModules.Default
 {
@@ -60,7 +61,7 @@ namespace DeferredEngine.Rendering.RenderModules.Default
                 //Is this the Id we want to outline?
                 if (transformId == outlineId)
                 {
-                    graphicsDevice.RasterizerState = RasterizerState.CullNone;
+                    graphicsDevice.SetState(RasterizerStateOption.CullNone);
 
                     IdAndOutlineEffectSetup.Instance.Param_World.SetValue(localToWorldMatrix);
 

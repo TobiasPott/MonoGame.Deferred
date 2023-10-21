@@ -546,9 +546,8 @@ namespace DeferredEngine.Rendering
 
             if (RenderingSettings.g_ssao_blur && RenderingSettings.g_ssao_draw)
             {
-                _graphicsDevice.RasterizerState = RasterizerState.CullNone;
-
                 _graphicsDevice.SetRenderTarget(_auxTargets[MRT.SSFX_BLUR_HORIZONTAL]);
+                _graphicsDevice.SetState(RasterizerStateOption.CullNone);
 
                 Shaders.SSAO.Param_InverseResolution.SetValue(new Vector2(1.0f / _auxTargets[MRT.SSFX_BLUR_VERTICAL].Width, 1.0f / _auxTargets[MRT.SSFX_BLUR_VERTICAL].Height) * 2);
                 Shaders.SSAO.Param_SSAOMap.SetValue(_auxTargets[MRT.SSFX_BLUR_VERTICAL]);

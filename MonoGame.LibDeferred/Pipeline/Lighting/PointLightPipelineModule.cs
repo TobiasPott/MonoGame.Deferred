@@ -3,6 +3,7 @@ using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Ext;
 
 namespace DeferredEngine.Pipeline.Lighting
 {
@@ -102,13 +103,14 @@ namespace DeferredEngine.Pipeline.Lighting
 
             ModelMeshPart meshpart = StaticAssets.Instance.SphereMeshPart;
             _graphicsDevice.SetVertexBuffer(meshpart.VertexBuffer);
-            _graphicsDevice.Indices = (meshpart.IndexBuffer);
-            int primitiveCount = meshpart.PrimitiveCount;
-            int vertexOffset = meshpart.VertexOffset;
-            int startIndex = meshpart.StartIndex;
+            _graphicsDevice.Indices = meshpart.IndexBuffer;
 
             if (PointLightPipelineModule.g_VolumetricLights && _gameTime != null)
                 _effectSetup.Param_Time.SetValue((float)_gameTime.TotalGameTime.TotalSeconds % 1000);
+
+            int primitiveCount = meshpart.PrimitiveCount;
+            int vertexOffset = meshpart.VertexOffset;
+            int startIndex = meshpart.StartIndex;
 
             for (int index = 0; index < pointLights.Count; index++)
             {
@@ -152,17 +154,18 @@ namespace DeferredEngine.Pipeline.Lighting
 
             if (LightingPipelineModule.g_UseDepthStencilLightCulling == 2)
             {
-                _graphicsDevice.DepthStencilState = _stencilCullPass1;
                 //draw front faces
-                _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+                _graphicsDevice.DepthStencilState = _stencilCullPass1;
+                _graphicsDevice.SetState(RasterizerStateOption.CullCounterClockwise);
+                
                 _effectSetup.Pass_WriteStencil.Apply();
 
                 _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, vertexOffset, startIndex, primitiveCount);
 
                 ////////////
-                _graphicsDevice.DepthStencilState = _stencilCullPass2;
                 //draw backfaces
-                _graphicsDevice.RasterizerState = RasterizerState.CullClockwise;
+                _graphicsDevice.DepthStencilState = _stencilCullPass2;
+                _graphicsDevice.SetState(RasterizerStateOption.CullClockwise);
 
                 ApplyShader(light);
 
@@ -170,12 +173,11 @@ namespace DeferredEngine.Pipeline.Lighting
             }
             else
             {
-                //If we are inside compute the backfaces, otherwise frontfaces of the sphere
-                _graphicsDevice.RasterizerState = inside > 0 ? RasterizerState.CullClockwise : RasterizerState.CullCounterClockwise;
-
                 ApplyShader(light);
-
-                _graphicsDevice.DepthStencilState = LightingPipelineModule.g_UseDepthStencilLightCulling > 0 && !light.IsVolumetric && inside < 0 ? DepthStencilState.DepthRead : DepthStencilState.None;
+                //If we are inside compute the backfaces, otherwise frontfaces of the sphere
+                bool isDepthRead = LightingPipelineModule.g_UseDepthStencilLightCulling > 0 && !light.IsVolumetric && inside < 0;              
+                _graphicsDevice.SetStates(isDepthRead ? DepthStencilStateOption.DepthRead : DepthStencilStateOption.None,
+                    inside > 0 ? RasterizerStateOption.CullClockwise : RasterizerStateOption.CullCounterClockwise, BlendStateOption.KeepState);
 
                 _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, vertexOffset, startIndex, primitiveCount);
             }

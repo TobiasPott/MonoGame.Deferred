@@ -59,10 +59,8 @@ namespace DeferredEngine.Pipeline
         public override RenderTarget2D Draw(RenderTarget2D destination)
         {
             // ToDo: Move 'Compose' to DeferredPipelineModule and pass target buffer as RenderTarget2D parameter
-            _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-
             _graphicsDevice.SetRenderTarget(destination);
-            _graphicsDevice.SetState(BlendStateOption.Opaque);
+            _graphicsDevice.SetStates(DepthStencilStateOption.KeepState, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
 
             //combine!
             _effectSetup.Effect_Compose.CurrentTechnique.Passes[0].Apply();

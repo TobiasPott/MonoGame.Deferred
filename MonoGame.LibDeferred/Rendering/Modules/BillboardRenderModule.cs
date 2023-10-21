@@ -7,6 +7,7 @@ using DeferredEngine.Rendering.Helper.Editor;
 using DeferredEngine.Rendering.Helper.HelperGeometry;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Ext;
 using System.Diagnostics;
 
 namespace DeferredEngine.Pipeline.Utilities
@@ -35,7 +36,7 @@ namespace DeferredEngine.Pipeline.Utilities
 
         public void DrawSceneBillboards(EntitySceneGroup scene, PipelineMatrices matrices)
         {
-            _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+            _graphicsDevice.SetState(RasterizerStateOption.CullCounterClockwise);
             _graphicsDevice.SetVertexBuffer(_billboardBuffer.VertexBuffer);
             _graphicsDevice.Indices = (_billboardBuffer.IndexBuffer);
 
@@ -82,7 +83,7 @@ namespace DeferredEngine.Pipeline.Utilities
 
         public void DrawEditorBillboards(EntitySceneGroup scene, PipelineMatrices matrices, GizmoDrawContext gizmoContext)
         {
-            _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+            _graphicsDevice.SetState(RasterizerStateOption.CullCounterClockwise);
             _graphicsDevice.SetVertexBuffer(_billboardBuffer.VertexBuffer);
             _graphicsDevice.Indices = (_billboardBuffer.IndexBuffer);
 

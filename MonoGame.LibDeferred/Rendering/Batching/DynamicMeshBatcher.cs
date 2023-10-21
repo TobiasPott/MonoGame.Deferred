@@ -284,7 +284,7 @@ namespace DeferredEngine.Rendering
 
                 //Reset to 
                 if (material.RenderCClockwise)
-                    _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+                    _graphicsDevice.SetState(RasterizerStateOption.CullCounterClockwise);
             }
         }
 
@@ -311,7 +311,7 @@ namespace DeferredEngine.Rendering
 
                 DeferredEffectSetup.Instance.Pass_Clear.Apply();
                 _fullscreenTarget.Draw(_graphicsDevice);
-                _graphicsDevice.DepthStencilState = DepthStencilState.Default;
+                _graphicsDevice.SetState( DepthStencilStateOption.Default);
             }
 
             RenderingStats.activeShadowMaps++;
@@ -344,7 +344,7 @@ namespace DeferredEngine.Rendering
         {
             if (material.RenderCClockwise)
             {
-                _graphicsDevice.RasterizerState = RasterizerState.CullClockwise;
+                _graphicsDevice.SetState(RasterizerStateOption.CullClockwise);
             }
             else if (renderType == RenderType.ShadowOmnidirectional)
             {

@@ -11,4 +11,8 @@
     <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.1.303" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MonoGame.LibDeferred\MonoGame.LibDeferred.csproj" />
+  </ItemGroup>
+
 </Project>

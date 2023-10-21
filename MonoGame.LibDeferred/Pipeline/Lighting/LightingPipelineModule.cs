@@ -1,10 +1,10 @@
 ﻿using DeferredEngine.Entities;
 using DeferredEngine.Recources;
 using DeferredEngine.Rendering;
-using DeferredEngine.Rendering.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Ext;
 
 namespace DeferredEngine.Pipeline.Lighting
 {
@@ -107,7 +107,7 @@ namespace DeferredEngine.Pipeline.Lighting
             if (_viewProjectionHasChanged)
                 Shaders.ReconstructDepth.Param_Projection.SetValue(_matrices.Projection);
 
-            _graphicsDevice.DepthStencilState = DepthStencilState.Default;
+            _graphicsDevice.SetState(DepthStencilStateOption.Default);
             Shaders.ReconstructDepth.Effect.CurrentTechnique.Passes[0].Apply();
             _fullscreenTarget.Draw(_graphicsDevice);
         }

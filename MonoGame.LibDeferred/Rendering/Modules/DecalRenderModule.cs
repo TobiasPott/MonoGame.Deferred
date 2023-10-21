@@ -2,6 +2,7 @@
 using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Ext;
 
 namespace DeferredEngine.Pipeline.Utilities
 {
@@ -112,7 +113,7 @@ namespace DeferredEngine.Pipeline.Utilities
         {
             _graphicsDevice.SetVertexBuffer(_vertexBuffer);
             _graphicsDevice.Indices = _indexBufferCube;
-            _graphicsDevice.RasterizerState = RasterizerState.CullClockwise;
+            _graphicsDevice.SetState(RasterizerStateOption.CullClockwise);
             _graphicsDevice.BlendState = _decalBlend;
 
             for (int index = 0; index < decals.Count; index++)

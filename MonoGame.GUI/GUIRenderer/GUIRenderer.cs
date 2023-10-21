@@ -5,6 +5,7 @@ using HelperSuite.GUIHelper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Ext;
 
 namespace HelperSuite.GUIRenderer
 {
@@ -14,7 +15,7 @@ namespace HelperSuite.GUIRenderer
         private SpriteBatch _spriteBatch;
 
         public Vector2 Resolution;
-        
+
         private Texture2D _plainWhite;
         private Texture2D _colorPickerBig;
         private Texture2D _colorPickerSmall;
@@ -30,42 +31,42 @@ namespace HelperSuite.GUIRenderer
             public Vector2 dim;
             public Color color;
         }
-        
+
         public void Initialize(GraphicsDevice graphicsDevice, int width, int height)
         {
             _foregroundIndex = 0;
-            
+
             _graphicsDevice = graphicsDevice;
             _spriteBatch = new SpriteBatch(graphicsDevice);
-            
+
             Resolution = new Vector2(width, height);
 
-            _plainWhite = new Texture2D(graphicsDevice, 1,1);
+            _plainWhite = new Texture2D(graphicsDevice, 1, 1);
             _plainWhite.SetData(new[] { Color.White });
         }
 
         public void Load(ContentManager content)
         {
             MonospaceFont = content.Load<SpriteFont>("Fonts/monospace");
-            
+
             _colorPickerSmall = content.Load<Texture2D>("Graphical User Interface/colorpickersmall");
             _colorPickerBig = content.Load<Texture2D>("Graphical User Interface/colorpickerBig");
 
         }
-        
+
         public void Draw(GUICanvas canvas)
         {
             //if (!GameSettings.ui_DrawUI) return;
-            
+
             _foregroundIndex = 0;
-            //_graphicsDevice.SetRenderTarget(null);
-            _graphicsDevice.RasterizerState = RasterizerState.CullNone;
-            
+
+            _graphicsDevice.SetState(RasterizerStateOption.CullNone);
+
             _spriteBatch.Begin();
             canvas.Draw(this, Vector2.Zero, GUIControl.GetMousePosition());
 
             //Now draw foregroundImages
-            for (int index = 0; index <= _foregroundIndex-1; index++)
+            for (int index = 0; index <= _foregroundIndex - 1; index++)
             {
                 ForegroundImage image = foregroundImages[index];
                 DrawImage(image.pos, image.dim, image.tex, image.color, false);
@@ -110,11 +111,11 @@ namespace HelperSuite.GUIRenderer
                 _foregroundIndex++;
             }
         }
-    
+
 
         private Rectangle RectangleFromVectors(Vector2 pos, Vector2 dim)
         {
-            return new Rectangle((int) pos.X, (int) pos.Y, (int) dim.X, (int) dim.Y);
+            return new Rectangle((int)pos.X, (int)pos.Y, (int)dim.X, (int)dim.Y);
         }
 
         public void DrawText(Vector2 position, StringBuilder text, SpriteFont textFont, Color textColor)
