@@ -291,27 +291,27 @@ namespace DeferredEngine.Rendering
 
         public bool CheckRequiresRedraw(RenderType renderType, bool lightViewPointChanged, bool hasAnyObjectMoved)
         {
+            if (!this.IsAnyRendered)
+                return false;
+
             if (renderType == RenderType.ShadowLinear || renderType == RenderType.ShadowOmnidirectional)
                 //For shadowmaps we need to find out whether any object has moved and if so if it is rendered. If yes, redraw the whole frame, if no don't do anything
-                return CheckShadowMapUpdateNeeds(lightViewPointChanged, hasAnyObjectMoved);
+                return CheckShadowMapRequiresUpdate(lightViewPointChanged, hasAnyObjectMoved);
 
             return true;
         }
         /// <summary>
         /// Checks whether or not anything has moved, if no then we ignore the frame
         /// </summary>
-        private bool CheckShadowMapUpdateNeeds(bool lightViewPointChanged, bool hasAnyObjectMoved)
+        private bool CheckShadowMapRequiresUpdate(bool lightViewPointChanged, bool hasAnyObjectMoved)
         {
             if (lightViewPointChanged || hasAnyObjectMoved)
             {
-                if (!IsAnyRendered)
-                    return false;
-
                 _graphicsDevice.DepthStencilState = DepthWriteState;
 
                 DeferredEffectSetup.Instance.Pass_Clear.Apply();
                 _fullscreenTarget.Draw(_graphicsDevice);
-                _graphicsDevice.SetState( DepthStencilStateOption.Default);
+                _graphicsDevice.SetState(DepthStencilStateOption.Default);
             }
 
             RenderingStats.activeShadowMaps++;
