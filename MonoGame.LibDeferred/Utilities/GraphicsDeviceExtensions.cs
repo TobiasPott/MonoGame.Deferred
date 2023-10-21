@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using System.Runtime.CompilerServices;
 
 namespace MonoGame.Ext
 {
@@ -29,6 +30,8 @@ namespace MonoGame.Ext
     {
 
         // ToDo: Extend to cover BlendState and wrap target state to map to an enum which includes a "keep" option to leave a state unchanged
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetStates(this GraphicsDevice graphicsDevice, 
             DepthStencilStateOption depthStencil = DepthStencilStateOption.KeepState, 
             RasterizerStateOption rasterizer = RasterizerStateOption.KeepState, 
@@ -39,6 +42,8 @@ namespace MonoGame.Ext
             if (blend != BlendStateOption.KeepState) graphicsDevice.SetState(blend);
         }
 
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetState(this GraphicsDevice graphicsDevice, DepthStencilStateOption state)
         {
             if (state == DepthStencilStateOption.KeepState)
@@ -51,6 +56,8 @@ namespace MonoGame.Ext
                 _ => graphicsDevice.DepthStencilState
             };
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetState(this GraphicsDevice graphicsDevice, RasterizerStateOption state)
         {
             if (state == RasterizerStateOption.KeepState)
@@ -63,6 +70,7 @@ namespace MonoGame.Ext
                 _ => graphicsDevice.RasterizerState
             };
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetState(this GraphicsDevice graphicsDevice, BlendStateOption state)
         {
             if (state == BlendStateOption.KeepState)
