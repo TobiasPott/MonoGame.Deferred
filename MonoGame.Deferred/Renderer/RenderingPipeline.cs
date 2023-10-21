@@ -41,13 +41,13 @@ namespace DeferredEngine.Rendering
         //Projection Matrices and derivates used in shaders
         private PipelineMatrices _matrices;
         private PipelineModuleStack _moduleStack;
+        private PostProcessingStack _postFxStack;
         private PipelineProfiler _profiler;
 
         //Used for the view space directions in our shaders. Far edges of our view frustum
         private FrustumCornerVertices _frustumCorners = new FrustumCornerVertices();
 
 
-        private PostProcessingStack _postFxStack;
 
         //View Projection
         private bool _viewProjectionHasChanged;
@@ -681,34 +681,9 @@ namespace DeferredEngine.Rendering
         }
 
         /// <summary>
-        /// Add some post processing to the image
-        /// </summary>
-        /// <param name="currentInput"></param>
-        private void DrawPostProcessing(RenderTarget2D currentInput)
-        {
-            if (!RenderingSettings.g_PostProcessing) return;
-
-            RenderTarget2D destinationRenderTarget = _auxTargets[MRT.OUTPUT];
-
-            Shaders.PostProcssing.Param_ScreenTexture.SetValue(currentInput);
-            _graphicsDevice.SetRenderTarget(destinationRenderTarget);
-            _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.KeepState);
-
-            Shaders.PostProcssing.Effect.CurrentTechnique.Passes[0].Apply();
-            FullscreenTarget.Draw(_graphicsDevice);
-
-            if (_postFxStack.ColorGrading.Enabled)
-                destinationRenderTarget = _postFxStack.ColorGrading.Draw(destinationRenderTarget);
-
-            DrawTextureToScreenToFullScreen(destinationRenderTarget);
-        }
-
-        /// <summary>
         /// Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
         /// </summary>
-        /// <param name="currentOutput"></param>
-        /// <param name="editorData"></param>
-        private void RenderMode(RenderTarget2D currentInput)
+        private void RenderMode(RenderTarget2D currentTarget)
         {
             switch (RenderingSettings.g_RenderMode)
             {
@@ -740,10 +715,11 @@ namespace DeferredEngine.Rendering
                     DrawTextureToScreenToFullScreen(_auxTargets[MRT.SSFX_REFLECTION]);
                     break;
                 case RenderModes.HDR:
-                    DrawTextureToScreenToFullScreen(currentInput);
+                    DrawTextureToScreenToFullScreen(currentTarget);
                     break;
                 default:
-                    DrawPostProcessing(currentInput);
+                    _postFxStack.DrawPostProcessing(currentTarget, null, _auxTargets[MRT.OUTPUT]);
+                    _postFxStack.DrawColorGrading(null, null, _auxTargets[MRT.OUTPUT]);
                     break;
             }
 
