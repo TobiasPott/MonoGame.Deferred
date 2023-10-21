@@ -21,15 +21,15 @@ namespace DeferredEngine.Entities
             set
             {
                 base.Position = value;
-                if(AutoUpdate)
+                if (AutoUpdate)
                     NeedsUpdate = true;
             }
         }
 
 
         public EnvironmentProbe(Vector3 position)
+            : base()
         {
-            Id = IdGenerator.GetNewId();
             Position = position;
             Name = GetType().Name + " " + Id;
         }
@@ -39,5 +39,5 @@ namespace DeferredEngine.Entities
             NeedsUpdate = true;
         }
     }
-    
+
 }

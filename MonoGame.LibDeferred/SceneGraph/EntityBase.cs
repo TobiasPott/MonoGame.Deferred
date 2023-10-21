@@ -8,8 +8,8 @@ namespace DeferredEngine.Entities
     {
 
         public EntityBase()
+            : base()
         {
-            Id = IdGenerator.GetNewId();
             Name = GetType().Name + " " + Id;
 
             Position = Vector3.Zero;
@@ -17,8 +17,8 @@ namespace DeferredEngine.Entities
             Scale = Vector3.One;
         }
         public EntityBase(Vector3 position, Vector3 eulerAngles, Vector3 scale)
+            : base()
         {
-            Id = IdGenerator.GetNewId();
             Name = GetType().Name + " " + Id;
 
             Position = position;

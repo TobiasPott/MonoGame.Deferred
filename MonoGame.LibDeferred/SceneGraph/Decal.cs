@@ -12,9 +12,9 @@ namespace DeferredEngine.Entities
         public Decal(Texture2D texture, Vector3 position, Vector3 angles, Vector3 scale) :
             this(texture, position, angles.ToMatrixRotationXYZ(), scale)
         { }
-        public Decal(Texture2D texture, Vector3 position, Matrix rotationMatrix, Vector3 scale)
+        public Decal(Texture2D texture, Vector3 position, Matrix rotationMatrix, Vector3 scale) 
+            : base()
         {
-            Id = IdGenerator.GetNewId();
             Name = GetType().Name + " " + Id;
 
             Texture = texture;

@@ -1,8 +1,8 @@
 ﻿using DeferredEngine.Entities;
-using DeferredEngine.Recources.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
+
 
 namespace DeferredEngine.Pipeline.Lighting
 {
@@ -16,6 +16,7 @@ namespace DeferredEngine.Pipeline.Lighting
             public Matrix ViewProjectionNegativeY;
             public Matrix ViewProjectionPositiveZ;
             public Matrix ViewProjectionNegativeZ;
+            public readonly Matrix[] ViewProjection = new Matrix[6];
 
             public Matrix ViewSpace;
             public Matrix WorldViewProj;
@@ -51,9 +52,8 @@ namespace DeferredEngine.Pipeline.Lighting
         /// A point light is a light that shines in all directions
         /// </summary>
         public PointLight(Vector3 position, float radius, Color color, float intensity, bool castShadows, bool isVolumetric, int shadowResolution, int softShadowBlurAmount, bool staticShadow, float volumeDensity = 1, bool isEnabled = true)
+            : base()
         {
-            Id = IdGenerator.GetNewId();
-
             BoundingSphere = new BoundingSphere(position, radius);
             Position = position;
             Radius = radius;

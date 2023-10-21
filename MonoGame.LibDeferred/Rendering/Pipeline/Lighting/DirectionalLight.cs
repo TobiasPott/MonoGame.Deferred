@@ -89,9 +89,8 @@ namespace DeferredEngine.Pipeline.Lighting
         public DirectionalLight(Color color, float intensity, Vector3 direction, Vector3 position = default(Vector3),
             bool castShadows = false, float shadowSize = 100, float shadowFarClip = 100, int shadowMapResolution = 512,
             ShadowFilteringTypes shadowFiltering = ShadowFilteringTypes.Poisson)
+            : base()
         {
-            Id = IdGenerator.GetNewId();
-
             Color = color;
             Intensity = intensity;
 
