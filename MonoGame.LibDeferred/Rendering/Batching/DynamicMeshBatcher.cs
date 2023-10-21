@@ -190,18 +190,32 @@ namespace DeferredEngine.Renderer.Helper
             }
         }
 
-        public void Draw(RenderType renderType, PipelineMatrices matrices, bool lightViewPointChanged = false, bool hasAnyObjectMoved = false, bool outlined = false, int outlineId = 0, IRenderModule renderModule = null)
+        [Flags]
+        public enum DrawFlags
+        {
+            LightViewChanged = 1,
+            ObjectsChanged = 2,
+            Outlined = 4,
+
+        }
+
+        public void Draw(RenderType renderType, PipelineMatrices matrices,
+            bool lightViewPointChanged = false,
+            bool hasAnyObjectMoved = false,
+            bool outlined = false,
+            int outlineId = 0,
+            IRenderModule renderModule = null)
             => Draw(renderType, matrices.ViewProjection, matrices.View, lightViewPointChanged, hasAnyObjectMoved, outlined, outlineId, renderModule);
         public void Draw(RenderType renderType, Matrix viewProjection, Matrix? view, bool lightViewPointChanged = false, bool hasAnyObjectMoved = false, bool outlined = false, int outlineId = 0, IRenderModule renderModule = null)
         {
-            SetBlendAndRasterizerState(renderType);
-
             if (renderType == RenderType.ShadowLinear || renderType == RenderType.ShadowOmnidirectional)
             {
                 //For shadowmaps we need to find out whether any object has moved and if so if it is rendered. If yes, redraw the whole frame, if no don't do anything
                 if (!CheckShadowMapUpdateNeeds(lightViewPointChanged, hasAnyObjectMoved))
                     return;
             }
+
+            SetBlendAndRasterizerState(renderType);
 
             for (int matBatchIndex = 0; matBatchIndex < _batches.Count; matBatchIndex++)
             {
@@ -293,7 +307,7 @@ namespace DeferredEngine.Renderer.Helper
         {
             if (lightViewPointChanged || hasAnyObjectMoved)
             {
-                if (!IsAnyRendered) 
+                if (!IsAnyRendered)
                     return false;
 
                 _graphicsDevice.DepthStencilState = DepthWriteState;
