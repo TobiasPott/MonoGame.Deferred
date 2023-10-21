@@ -1,5 +1,6 @@
 ﻿using DeferredEngine.Recources;
 using DeferredEngine.Recources.Helper;
+using DeferredEngine.Renderer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -382,7 +383,7 @@ namespace DeferredEngine.Logic
             if (!RenderingSettings.d_IsProfileEnabled) 
                 return;
 
-            FieldInfo[] info2 = typeof(RenderingStats).GetFields();
+            FieldInfo[] info2 = typeof(PipelineProfiler).GetFields();
             int foundIndex = 0;
             for (int index = 0; index < info2.Length; index++)
             {

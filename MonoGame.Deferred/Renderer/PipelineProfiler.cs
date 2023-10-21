@@ -9,6 +9,18 @@ namespace DeferredEngine.Renderer
 
     public class PipelineProfiler
     {
+        public static long d_profileDrawShadows;
+        public static long d_profileDrawCubeMap;
+        public static long d_profileUpdateViewProjection;
+        public static long d_profileDrawGBuffer;
+        public static long d_profileDrawScreenSpaceEffect;
+        public static long d_profileDrawBilateralBlur;
+        public static long d_profileDrawEnvironmentMap;
+        public static long d_profileDrawSSR;
+        public static long d_profileCompose;
+        public static long d_profileCombineTAA;
+        public static long d_profileDrawFinalRender;
+        public static long d_profileTotalRender;
 
 
 
@@ -68,4 +80,3 @@ namespace DeferredEngine.Renderer
     }
 
 }
-

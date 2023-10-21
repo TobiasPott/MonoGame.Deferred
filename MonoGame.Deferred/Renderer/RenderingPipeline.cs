@@ -232,7 +232,7 @@ namespace DeferredEngine.Renderer
             meshBatcher.FrustumCullingFinalizeFrame();
 
             //Performance Profiler
-            _profiler.Sample(ref RenderingStats.d_profileTotalRender);
+            _profiler.Sample(ref PipelineProfiler.d_profileTotalRender);
 
             //return data we have recovered from the editor id, so we know what entity gets hovered/clicked on and can manipulate in the update function
             return new ObjectHoverContext
@@ -370,7 +370,7 @@ namespace DeferredEngine.Renderer
             _moduleStack.ShadowMap.Draw(meshBatcher, scene);
 
             //Performance Profile
-            _profiler.SampleTimestamp(ref RenderingStats.d_profileDrawShadows);
+            _profiler.SampleTimestamp(ref PipelineProfiler.d_profileDrawShadows);
         }
 
         /// <summary>
@@ -411,7 +411,7 @@ namespace DeferredEngine.Renderer
             meshBatcher.FrustumCulling(_boundingFrustum, _viewProjectionHasChanged, camera.Position);
 
             //Performance Profiler
-            _profiler.SampleTimestamp(ref RenderingStats.d_profileUpdateViewProjection);
+            _profiler.SampleTimestamp(ref PipelineProfiler.d_profileUpdateViewProjection);
         }
 
         /// <summary>
@@ -458,7 +458,7 @@ namespace DeferredEngine.Renderer
             _moduleStack.GBuffer.Draw(meshBatcher, _matrices);
 
             //Performance Profiler
-            _profiler.SampleTimestamp(ref RenderingStats.d_profileDrawGBuffer);
+            _profiler.SampleTimestamp(ref PipelineProfiler.d_profileDrawGBuffer);
         }
 
         /// <summary>
@@ -507,7 +507,7 @@ namespace DeferredEngine.Renderer
             FullscreenTarget.Draw(_graphicsDevice);
 
             // Profiler sample
-            _profiler.SampleTimestamp(ref RenderingStats.d_profileDrawSSR);
+            _profiler.SampleTimestamp(ref PipelineProfiler.d_profileDrawSSR);
 
         }
 
@@ -532,7 +532,7 @@ namespace DeferredEngine.Renderer
 
 
             //Performance Profiler
-            _profiler.SampleTimestamp(ref RenderingStats.d_profileDrawScreenSpaceEffect);
+            _profiler.SampleTimestamp(ref PipelineProfiler.d_profileDrawScreenSpaceEffect);
         }
 
         /// <summary>
@@ -581,7 +581,7 @@ namespace DeferredEngine.Renderer
             }
 
             //Performance Profiler
-            _profiler.SampleTimestamp(ref RenderingStats.d_profileDrawBilateralBlur);
+            _profiler.SampleTimestamp(ref PipelineProfiler.d_profileDrawBilateralBlur);
         }
 
         /// <summary>
@@ -595,7 +595,7 @@ namespace DeferredEngine.Renderer
             _moduleStack.Environment.DrawEnvironmentMap(camera, _matrices.View, gameTime);
 
             //Performance Profiler
-            _profiler.SampleTimestamp(ref RenderingStats.d_profileDrawEnvironmentMap);
+            _profiler.SampleTimestamp(ref PipelineProfiler.d_profileDrawEnvironmentMap);
 
         }
 
@@ -609,7 +609,7 @@ namespace DeferredEngine.Renderer
             _moduleStack.Deferred.Draw(destination);
 
             //Performance Profiler
-            _profiler.SampleTimestamp(ref RenderingStats.d_profileCompose);
+            _profiler.SampleTimestamp(ref PipelineProfiler.d_profileCompose);
 
             return destination;
         }
@@ -671,7 +671,7 @@ namespace DeferredEngine.Renderer
                 output);
 
             //Performance Profiler
-            _profiler.SampleTimestamp(ref RenderingStats.d_profileCombineTemporalAntialiasing);
+            _profiler.SampleTimestamp(ref PipelineProfiler.d_profileCombineTAA);
 
             return RenderingSettings.TAA.UseTonemapping ? input : output;
         }
@@ -753,7 +753,7 @@ namespace DeferredEngine.Renderer
             }
 
             //Performance Profiler
-            _profiler.SampleTimestamp(ref RenderingStats.d_profileDrawFinalRender);
+            _profiler.SampleTimestamp(ref PipelineProfiler.d_profileDrawFinalRender);
         }
 
 
