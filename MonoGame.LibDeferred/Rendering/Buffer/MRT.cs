@@ -69,7 +69,15 @@ namespace DeferredEngine.Rendering
         {
             public PipelineTargets(GraphicsDevice graphicsDevice, int width, int height) : base(graphicsDevice, width, height, MRT.PipelineDefinitions)
             { }
+
+            public void GetTemporalAARenderTargets(bool isOffFrame, out RenderTarget2D destRT, out RenderTarget2D previousRT)
+            {
+                destRT = !isOffFrame ? this[MRT.SSFX_TAA_1] : this[MRT.SSFX_TAA_2];
+                previousRT = isOffFrame ? this[MRT.SSFX_TAA_1] : this[MRT.SSFX_TAA_2];
+            }
         }
+
+
 
     }
 

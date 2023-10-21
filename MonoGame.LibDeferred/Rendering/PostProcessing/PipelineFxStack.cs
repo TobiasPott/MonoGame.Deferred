@@ -87,6 +87,18 @@ namespace DeferredEngine.Rendering.PostProcessing
             }
         }
 
+        /// <summary>
+        /// Combine the render with previous frames to get more information per sample and make the image anti-aliased / super sampled
+        /// </summary>
+        public RenderTarget2D DrawTemporalAA(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
+        {
+            if (!this.TemporaAA.Enabled)
+                return sourceRT;
+
+            this.TemporaAA.Draw(sourceRT, previousRT, destRT);
+
+            return RenderingSettings.TAA.UseTonemapping ? sourceRT : destRT;
+        }
 
 
         private void DrawTextureToScreenToFullScreen(Texture2D source, BlendState blendState = null, RenderTarget2D destRT = null)

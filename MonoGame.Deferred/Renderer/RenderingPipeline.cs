@@ -208,10 +208,11 @@ namespace DeferredEngine.Rendering
 
             // Step: 14
             //Compose the image and add information from previous frames to apply temporal super sampling
+            _auxTargets.GetTemporalAARenderTargets(_fxStack.TemporaAA.IsOffFrame, out RenderTarget2D taaDestRT, out RenderTarget2D taaPreviousRT);
+            _currentOutput = _fxStack.DrawTemporalAA(_currentOutput, taaPreviousRT, taaDestRT);
+            //Performance Profiler
+            _profiler.SampleTimestamp(ref PipelineSamples.SDraw_CombineTAA);
 
-            RenderTarget2D taaDestRT = !_fxStack.TemporaAA.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2];
-            RenderTarget2D taaPreviousRT = _fxStack.TemporaAA.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2];
-            _currentOutput = DrawTemporalAA(_currentOutput, taaPreviousRT, taaDestRT);
 
             // Step: 15
             //Do Bloom
@@ -633,21 +634,6 @@ namespace DeferredEngine.Rendering
             return _moduleStack.Forward.Draw(meshBatcher, input, _matrices);
         }
 
-        /// <summary>
-        /// Combine the render with previous frames to get more information per sample and make the image anti-aliased / super sampled
-        /// </summary>
-        private RenderTarget2D DrawTemporalAA(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
-        {
-            if (!_fxStack.TemporaAA.Enabled)
-                return sourceRT;
-
-            _fxStack.TemporaAA.Draw(sourceRT, previousRT, destRT);
-
-            //Performance Profiler
-            _profiler.SampleTimestamp(ref PipelineSamples.SDraw_CombineTAA);
-
-            return RenderingSettings.TAA.UseTonemapping ? sourceRT : destRT;
-        }
 
         private void DrawSDFs(Camera camera)
         {
