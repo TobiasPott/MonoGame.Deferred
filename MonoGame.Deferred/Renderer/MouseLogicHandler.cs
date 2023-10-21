@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace DeferredEngine.Renderer.RenderModules
 {
-    public class EditorRender
+    public class MouseLogicHandler
     {
 
         private double _mouseMoved;

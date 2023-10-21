@@ -39,7 +39,7 @@ namespace DeferredEngine.Renderer
         private SpriteBatch _spriteBatch;
         private FullscreenTriangleBuffer FullscreenTarget { get => FullscreenTriangleBuffer.Instance; }
 
-        private EditorRender _editorRender;
+        private MouseLogicHandler _editorRender;
 
         //Projection Matrices and derivates used in shaders
         private PipelineMatrices _matrices;
@@ -120,7 +120,7 @@ namespace DeferredEngine.Renderer
             _lightingBufferTarget = new LightingBufferTarget(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
             _auxTargets = new MRT.PipelineTargets(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
 
-            _editorRender = new EditorRender();
+            _editorRender = new MouseLogicHandler();
 
             _moduleStack.Initialize(graphicsDevice, _spriteBatch);
             _moduleStack.GBuffer.GBufferTarget = _gBufferTarget;
