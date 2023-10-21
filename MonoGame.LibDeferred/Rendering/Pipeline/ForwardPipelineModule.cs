@@ -38,11 +38,11 @@ namespace DeferredEngine.Renderer.RenderModules
         /// <summary>
         /// Draw forward shaded, alpha blended materials. Very basic and unoptimized algorithm. Can be improved to use tiling in future.
         /// </summary>
-        public RenderTarget2D Draw(DynamicMeshBatcher meshMat, RenderTarget2D output, PipelineMatrices matrices)
+        public RenderTarget2D Draw(DynamicMeshBatcher meshBatcher, RenderTarget2D output, PipelineMatrices matrices)
         {
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-            meshMat.Draw(DynamicMeshBatcher.RenderType.Forward, matrices, renderModule: this);
+            meshBatcher.Draw(DynamicMeshBatcher.RenderType.Forward, matrices, renderModule: this);
 
             return output;
         }

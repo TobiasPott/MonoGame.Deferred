@@ -25,7 +25,7 @@ namespace DeferredEngine.Renderer.RenderModules
         public abstract void Dispose();
 
 
-        public virtual void Draw(DynamicMeshBatcher meshMat)
+        public virtual void Draw(DynamicMeshBatcher meshBatcher)
         {
 
         }

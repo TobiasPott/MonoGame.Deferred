@@ -1,6 +1,5 @@
-﻿using System.Diagnostics;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
+using System.Diagnostics;
 
 namespace DeferredEngine.Recources.Helper
 {
@@ -20,7 +19,7 @@ namespace DeferredEngine.Recources.Helper
 
         public static void SaveImageData(float[] data, int width, int height, int zdepth, string path)
         {
-            
+
             // create a byte array and copy the floats into it...
 
             if (data.Length != width * height * zdepth)
@@ -30,7 +29,7 @@ namespace DeferredEngine.Recources.Helper
 
             var byteArray = new byte[data.Length * 4];
             Buffer.BlockCopy(data, 0, byteArray, 0, byteArray.Length);
-            
+
             FileStream fs = null;
             try
             {
@@ -77,7 +76,7 @@ namespace DeferredEngine.Recources.Helper
         }
 
         //Returns true if successful, else false
-        public static bool LoadFloatArray(string path, out float[] floatArray, out int width, out int height, out int zdepth )
+        public static bool LoadFloatArray(string path, out float[] floatArray, out int width, out int height, out int zdepth)
         {
             //Debug.WriteLine(path);  
 
@@ -111,7 +110,7 @@ namespace DeferredEngine.Recources.Helper
 
 
                 //throw e;
-                
+
             }
             finally
             {

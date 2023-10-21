@@ -141,13 +141,13 @@ namespace DeferredEngine.Renderer.RenderModules
             GizmoModes gizmoMode = gizmoContext.GizmoMode;
             Matrix rotation = (RenderingStats.e_LocalTransformation || gizmoContext.GizmoMode == GizmoModes.Scale) ? gizmoContext.SelectedObject.RotationMatrix : Matrix.Identity;
 
-            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, AxisAngles[0], this.HoveredId == ID_AXIS_X ? 1 : 0.5f, axisColors[0], staticViewProjection, gizmoMode);
-            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, AxisAngles[1], this.HoveredId == ID_AXIS_Y ? 1 : 0.5f, axisColors[1], staticViewProjection, gizmoMode);
-            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, AxisAngles[2], this.HoveredId == ID_AXIS_Z ? 1 : 0.5f, axisColors[2], staticViewProjection, gizmoMode);
+            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, AxisAngles[0], this.HoveredId == ID_AXIS_X ? 1.5f : 1.0f, axisColors[0], staticViewProjection, gizmoMode);
+            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, AxisAngles[1], this.HoveredId == ID_AXIS_Y ? 1.5f : 1.0f, axisColors[1], staticViewProjection, gizmoMode);
+            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, AxisAngles[2], this.HoveredId == ID_AXIS_Z ? 1.5f : 1.0f, axisColors[2], staticViewProjection, gizmoMode);
 
-            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, AxisAngles[3], this.HoveredId == ID_AXIS_X ? 1 : 0.5f, axisColors[0], staticViewProjection, gizmoMode);
-            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, AxisAngles[4], this.HoveredId == ID_AXIS_Y ? 1 : 0.5f, axisColors[1], staticViewProjection, gizmoMode);
-            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, AxisAngles[5], this.HoveredId == ID_AXIS_Z ? 1 : 0.5f, axisColors[2], staticViewProjection, gizmoMode);
+            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, AxisAngles[3], this.HoveredId == ID_AXIS_X ? 1.5f : 1.0f, axisColors[0], staticViewProjection, gizmoMode);
+            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, AxisAngles[4], this.HoveredId == ID_AXIS_Y ? 1.5f : 1.0f, axisColors[1], staticViewProjection, gizmoMode);
+            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, AxisAngles[5], this.HoveredId == ID_AXIS_Z ? 1.5f : 1.0f, axisColors[2], staticViewProjection, gizmoMode);
 
         }
 
@@ -155,7 +155,7 @@ namespace DeferredEngine.Renderer.RenderModules
             Color color, Matrix staticViewProjection, GizmoModes gizmoMode = GizmoModes.Translation, Vector3? direction = null)
         {
             Matrix rotation = (direction != null) ? Matrix.CreateLookAt(Vector3.Zero, (Vector3)direction, Vector3.UnitX) : angles.ToMatrixRotationXYZ();
-            Matrix scaleMatrix = Matrix.CreateScale(0.75f, 0.75f, scale * 1.5f);
+            Matrix scaleMatrix = Matrix.CreateScale(scale, scale, 1.0f);
             Matrix worldViewProj = scaleMatrix * rotation * rotationObject * Matrix.CreateTranslation(position) * staticViewProjection;
 
             IdAndOutlineEffectSetup.Instance.Param_WorldViewProj.SetValue(worldViewProj);

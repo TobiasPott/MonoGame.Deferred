@@ -24,7 +24,7 @@ namespace DeferredEngine.Logic
 
 
         //mesh library, holds all the meshes and their materials
-        public DynamicMeshBatcher MeshMaterialLibrary;
+        public DynamicMeshBatcher MeshBatcher;
 
         private EntitySceneGroup _scene;
         public readonly List<ModelEntity> BasicEntities = new List<ModelEntity>();
@@ -52,8 +52,8 @@ namespace DeferredEngine.Logic
         {
             _assets = assets;
 
-            MeshMaterialLibrary = new DynamicMeshBatcher(graphicsDevice);
-            MeshMaterialLibrary.BatchByMaterial = false;
+            MeshBatcher = new DynamicMeshBatcher(graphicsDevice);
+            MeshBatcher.BatchByMaterial = false;
 
             SetUpEditorScene(graphicsDevice);
 
@@ -299,7 +299,7 @@ namespace DeferredEngine.Logic
                 position: position,
                 eulerAngles: new Vector3((float)angleX, (float)angleY, (float)angleZ),
                 scale: Vector3.One * scale,
-                library: MeshMaterialLibrary);
+                library: MeshBatcher);
             BasicEntities.Add(entity);
 
             return entity;
@@ -323,7 +323,7 @@ namespace DeferredEngine.Logic
                 position: position,
                 eulerAngles: new Vector3((float)angleX, (float)angleY, (float)angleZ),
                 scale: Vector3.One * scale,
-                library: MeshMaterialLibrary);
+                library: MeshBatcher);
             BasicEntities.Add(entity);
 
             return entity;
