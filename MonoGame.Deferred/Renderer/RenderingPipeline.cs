@@ -47,11 +47,6 @@ namespace DeferredEngine.Rendering
         //Used for the view space directions in our shaders. Far edges of our view frustum
         private FrustumCornerVertices _frustumCorners = new FrustumCornerVertices();
 
-
-
-        //View Projection
-        private bool _viewProjectionHasChanged;
-
         //Bounding Frusta of our view projection, to calculate which objects are inside the view
         private BoundingFrustum _boundingFrustum;
 
@@ -205,7 +200,7 @@ namespace DeferredEngine.Rendering
 
             // Step: 12
             //Compose the scene by combining our lighting data with the gbuffer data
-            _currentOutput = Compose(_auxTargets[MRT.COMPOSE]);
+            _currentOutput = DrawDeferredCompose(null, null, _auxTargets[MRT.COMPOSE]);
 
             // Step: 13
             //Forward
@@ -213,7 +208,10 @@ namespace DeferredEngine.Rendering
 
             // Step: 14
             //Compose the image and add information from previous frames to apply temporal super sampling
-            _currentOutput = TonemapAndCombineTemporalAntialiasing(_currentOutput);
+
+            RenderTarget2D taaDestRT = !_fxStack.TemporaAA.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2];
+            RenderTarget2D taaPreviousRT = _fxStack.TemporaAA.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2];
+            _currentOutput = DrawTemporalAA(_currentOutput, taaPreviousRT, taaDestRT);
 
             // Step: 15
             //Do Bloom
@@ -392,10 +390,10 @@ namespace DeferredEngine.Rendering
         {
             // ToDo: @tpott: This boolean flag controls general update and draw, though it should only determine if matrices and such should be updated
             //      if a frame should be drawn is a conditioned layered on top of this and may be required regardless of camera change
-            _viewProjectionHasChanged = camera.HasChanged;
+            bool viewProjectionHasChanged = camera.HasChanged;
 
             //If the camera didn't do anything we don't need to update this stuff
-            if (_viewProjectionHasChanged)
+            if (viewProjectionHasChanged)
             {
                 //View matrix
                 _matrices.SetFromCamera(camera);
@@ -404,12 +402,12 @@ namespace DeferredEngine.Rendering
                 //Temporal AA - alternate frames for temporal anti-aliasing
                 if (_fxStack.TemporaAA.Enabled)
                 {
-                    _viewProjectionHasChanged = true;
+                    viewProjectionHasChanged = true;
                     _fxStack.TemporaAA.SwapOffFrame();
                     _matrices.ApplyViewProjectionJitter(_fxStack.TemporaAA.JitterMode, _fxStack.TemporaAA.IsOffFrame, _fxStack.TemporaAA.HaltonSequence);
                 }
 
-                _moduleStack.Lighting.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
+                _moduleStack.Lighting.UpdateViewProjection(_boundingFrustum, viewProjectionHasChanged, _matrices);
 
                 //_matrices.PreviousViewProjection = _matrices.ViewProjection;
                 //_matrices.InverseViewProjection = Matrix.Invert(_matrices.ViewProjection);
@@ -422,7 +420,7 @@ namespace DeferredEngine.Rendering
             }
 
             //We need to update whether or not entities are in our boundingFrustum and then cull them or not!
-            meshBatcher.FrustumCulling(_boundingFrustum, _viewProjectionHasChanged, camera.Position);
+            meshBatcher.FrustumCulling(_boundingFrustum, viewProjectionHasChanged, camera.Position);
 
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SUpdate_ViewProjection);
@@ -610,16 +608,16 @@ namespace DeferredEngine.Rendering
         /// <summary>
         /// Compose the render by combining the albedo channel with the light channels
         /// </summary>
-        private RenderTarget2D Compose(RenderTarget2D destination)
+        private RenderTarget2D DrawDeferredCompose(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
         {
             // ToDo: @tpott: hacky way to disable ssao when disabled on global scale (GUI is insufficient here)
             _moduleStack.Deferred.UseSSAOMap = RenderingSettings.g_ssao_draw;
-            _moduleStack.Deferred.Draw(destination);
+            _moduleStack.Deferred.Draw(destRT);
 
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_Compose);
 
-            return destination;
+            return destRT;
         }
 
 
@@ -638,17 +636,17 @@ namespace DeferredEngine.Rendering
         /// <summary>
         /// Combine the render with previous frames to get more information per sample and make the image anti-aliased / super sampled
         /// </summary>
-        private RenderTarget2D TonemapAndCombineTemporalAntialiasing(RenderTarget2D input)
+        private RenderTarget2D DrawTemporalAA(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
         {
-            if (!_fxStack.TemporaAA.Enabled) return input;
+            if (!_fxStack.TemporaAA.Enabled)
+                return sourceRT;
 
-            RenderTarget2D output = !_fxStack.TemporaAA.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2];
-            _fxStack.TemporaAA.Draw(input, _fxStack.TemporaAA.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2], output);
+            _fxStack.TemporaAA.Draw(sourceRT, previousRT, destRT);
 
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_CombineTAA);
 
-            return RenderingSettings.TAA.UseTonemapping ? input : output;
+            return RenderingSettings.TAA.UseTonemapping ? sourceRT : destRT;
         }
 
         private void DrawSDFs(Camera camera)

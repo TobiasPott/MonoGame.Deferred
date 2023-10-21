@@ -8,9 +8,9 @@ namespace DeferredEngine.Rendering.PostProcessing
 {
     public class PipelineFxStack : IDisposable
     {
-        public readonly BloomFx Bloom;
+        protected readonly BloomFx Bloom;
         public readonly TemporalAAFx TemporaAA;
-        public readonly ColorGradingFx ColorGrading;
+        protected readonly ColorGradingFx ColorGrading;
 
         //GaussianBlurFx _gaussianBlur;
 
