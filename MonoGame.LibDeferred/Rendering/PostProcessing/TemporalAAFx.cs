@@ -1,6 +1,7 @@
 ﻿using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Ext;
 
 namespace DeferredEngine.Rendering.PostProcessing
 {
@@ -40,7 +41,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         public void Draw(RenderTarget2D currentFrame, RenderTarget2D lastFrame, RenderTarget2D output)
         {
             _graphicsDevice.SetRenderTarget(output);
-            _graphicsDevice.BlendState = BlendState.Opaque;
+            _graphicsDevice.SetState(BlendStateOption.Opaque);
 
             _effectSetup.Param_UpdateMap.SetValue(currentFrame);
             _effectSetup.Param_AccumulationMap.SetValue(lastFrame);

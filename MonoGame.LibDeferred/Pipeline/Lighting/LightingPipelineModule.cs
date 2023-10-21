@@ -102,7 +102,7 @@ namespace DeferredEngine.Pipeline.Lighting
             DirectionalLightRenderModule.DrawDirectionalLights(scene.DirectionalLights, cameraOrigin, _matrices, _viewProjectionHasChanged);
 
         }
-        private void ReconstructDepth()
+        public void ReconstructDepth()
         {
             if (_viewProjectionHasChanged)
                 Shaders.ReconstructDepth.Param_Projection.SetValue(_matrices.Projection);

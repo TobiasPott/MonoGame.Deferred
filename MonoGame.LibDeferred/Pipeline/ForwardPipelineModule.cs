@@ -5,6 +5,7 @@ using DeferredEngine.Rendering.RenderModules.Default;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Diagnostics;
 
 namespace DeferredEngine.Pipeline
 {
@@ -40,7 +41,7 @@ namespace DeferredEngine.Pipeline
         /// </summary>
         public RenderTarget2D Draw(DynamicMeshBatcher meshBatcher, RenderTarget2D output, PipelineMatrices matrices)
         {
-            _graphicsDevice.DepthStencilState = DepthStencilState.Default;
+            //_graphicsDevice.SetState(DepthStencilStateOption.Default);
 
             if (meshBatcher.CheckRequiresRedraw(RenderType.Forward, false, false))
                 meshBatcher.Draw(RenderType.Forward, matrices, RenderContext.Default, renderModule: this);

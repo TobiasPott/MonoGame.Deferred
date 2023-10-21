@@ -3,6 +3,7 @@ using DeferredEngine.Rendering.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Ext;
 
 namespace DeferredEngine.Rendering.PostProcessing
 {
@@ -216,11 +217,9 @@ namespace DeferredEngine.Rendering.PostProcessing
             if (_graphicsDevice == null)
                 throw new Exception("Module not yet Loaded / Initialized. Use Load() first");
 
-            _graphicsDevice.RasterizerState = RasterizerState.CullNone;
-            _graphicsDevice.BlendState = BlendState.Opaque;
-
             //EXTRACT  //Note: Is setRenderTargets(binding better?)
             //We extract the bright values which are above the Threshold and save them to Mip0
+            _graphicsDevice.SetStates(DepthStencilStateOption.KeepState, RasterizerStateOption.CullNone, BlendStateOption.Opaque);
             _graphicsDevice.SetRenderTarget(_mipMaps[0]);
 
             BloomScreenTexture = inputTexture;
@@ -377,7 +376,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         private void ChangeBlendState()
         {
-            _graphicsDevice.BlendState = BlendState.AlphaBlend;
+            _graphicsDevice.SetState(BlendStateOption.AlphaBlend);
         }
 
 

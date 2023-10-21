@@ -1,6 +1,7 @@
 ﻿using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Ext;
 
 namespace DeferredEngine.Pipeline
 {
@@ -61,7 +62,7 @@ namespace DeferredEngine.Pipeline
             _graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
             _graphicsDevice.SetRenderTarget(destination);
-            _graphicsDevice.BlendState = BlendState.Opaque;
+            _graphicsDevice.SetState(BlendStateOption.Opaque);
 
             //combine!
             _effectSetup.Effect_Compose.CurrentTechnique.Passes[0].Apply();

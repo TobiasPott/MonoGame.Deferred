@@ -610,15 +610,6 @@ namespace DeferredEngine.Rendering
             return destination;
         }
 
-        private void ReconstructDepth()
-        {
-            if (_viewProjectionHasChanged)
-                Shaders.ReconstructDepth.Param_Projection.SetValue(_matrices.Projection);
-
-            _graphicsDevice.DepthStencilState = DepthStencilState.Default;
-            Shaders.ReconstructDepth.Effect.CurrentTechnique.Passes[0].Apply();
-            FullscreenTarget.Draw(_graphicsDevice);
-        }
 
         private RenderTarget2D DrawForward(RenderTarget2D input, DynamicMeshBatcher meshBatcher, Camera camera, List<PointLight> pointLights)
         {
@@ -626,7 +617,7 @@ namespace DeferredEngine.Rendering
                 return input;
 
             _graphicsDevice.SetRenderTarget(input);
-            ReconstructDepth();
+            _moduleStack.Lighting.ReconstructDepth();
 
             _moduleStack.Forward.PrepareDraw(camera, pointLights, _boundingFrustum);
             return _moduleStack.Forward.Draw(meshBatcher, input, _matrices);

@@ -1,7 +1,7 @@
 ﻿using DeferredEngine.Recources;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-
+using MonoGame.Ext;
 
 namespace DeferredEngine.Rendering.PostProcessing
 {
@@ -113,7 +113,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             Size = (lookupTable.Width == 64) ? 16 : 32;
 
             _graphicsDevice.SetRenderTarget(_renderTarget);
-            _graphicsDevice.BlendState = BlendState.Opaque;
+            _graphicsDevice.SetState(BlendStateOption.Opaque);
             this.Draw(_effectSetup.Pass_ApplyLUT);
             return _renderTarget;
         }

@@ -4,6 +4,7 @@ using DeferredEngine.Rendering.RenderModules.Default;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Ext;
 
 namespace DeferredEngine.Pipeline
 {
@@ -44,9 +45,7 @@ namespace DeferredEngine.Pipeline
             //Clear the GBuffer
             if (this.ClearGBuffer)
             {
-                _graphicsDevice.RasterizerState = RasterizerState.CullNone;
-                _graphicsDevice.BlendState = BlendState.Opaque;
-                _graphicsDevice.DepthStencilState = DepthStencilState.Default;
+                _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullNone, BlendStateOption.Opaque);
                 _effectSetup.Pass_ClearGBuffer.Apply();
                 _fullscreenTarget.Draw(_graphicsDevice);
             }
