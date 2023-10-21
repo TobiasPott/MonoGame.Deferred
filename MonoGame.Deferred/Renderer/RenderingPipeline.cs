@@ -160,7 +160,7 @@ namespace DeferredEngine.Renderer
         /// <summary>
         /// Main Draw function of the game
         /// </summary>
-        public EditorLogic.EditorReceivedData Draw(Camera camera, DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GizmoDrawContext gizmoContext, GameTime gameTime)
+        public ObjectHoverContext Draw(Camera camera, DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GizmoDrawContext gizmoContext, GameTime gameTime)
         {
             //Reset the stat counter, so we can count stats/information for this frame only
             ResetStats();
@@ -216,7 +216,7 @@ namespace DeferredEngine.Renderer
 
             //Draw the elements that we are hovering over with outlines
             if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
-                _moduleStack.IdAndOutline.Draw(meshBatcher, scene, _matrices, gizmoContext, EditorLogic.Instance.HasMouseMovement);
+                _moduleStack.IdAndOutline.Draw(meshBatcher, scene, _matrices, gizmoContext, EditorLogic.Instance.HasMouseMoved);
 
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
             RenderMode(_currentOutput);
@@ -243,7 +243,7 @@ namespace DeferredEngine.Renderer
             }
 
             //return data we have recovered from the editor id, so we know what entity gets hovered/clicked on and can manipulate in the update function
-            return new EditorLogic.EditorReceivedData
+            return new ObjectHoverContext
             {
                 HoveredId = _moduleStack.IdAndOutline.HoveredId,
                 ViewMatrix = _matrices.View,

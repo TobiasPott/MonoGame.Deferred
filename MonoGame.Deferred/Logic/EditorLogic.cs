@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 namespace DeferredEngine.Logic
 {
-    public class EditorLogic
+    public partial class EditorLogic
     {
         private static EditorLogic _instance = null;
         public static EditorLogic Instance => _instance;
@@ -34,15 +34,7 @@ namespace DeferredEngine.Logic
 
         private readonly double mouseMoveTimer = 400;
         private double _mouseMovedNextThreshold;
-        public bool HasMouseMovement { get; protected set; }
-
-
-        public struct EditorReceivedData
-        {
-            public int HoveredId;
-            public Matrix ViewMatrix;
-            public Matrix ProjectionMatrix;
-        }
+        public bool HasMouseMoved { get; protected set; }
 
         public void Initialize(GraphicsDevice graphicsDevice)
         {
@@ -65,7 +57,7 @@ namespace DeferredEngine.Logic
             List<PointLight> pointLights,
             List<Pipeline.Lighting.DirectionalLight> dirLights,
             EnvironmentProbe envSample,
-            EditorReceivedData data,
+            ObjectHoverContext data,
             DynamicMeshBatcher meshMaterialLibrary)
         {
             if (!RenderingSettings.e_IsEditorEnabled) return;
@@ -202,21 +194,21 @@ namespace DeferredEngine.Logic
         {
             if (RenderingStats.UIIsHovered || Input.mouseState.RightButton == ButtonState.Pressed)
             {
-                HasMouseMovement = false;
+                HasMouseMoved = false;
                 return;
             }
             if (Input.mouseState != Input.mouseLastState)
             {
                 //reset the timer!
                 _mouseMovedNextThreshold = gameTime.TotalGameTime.TotalMilliseconds + mouseMoveTimer;
-                HasMouseMovement = true;
+                HasMouseMoved = true;
             }
             if (_mouseMovedNextThreshold < gameTime.TotalGameTime.TotalMilliseconds)
             {
-                HasMouseMovement = false;
+                HasMouseMoved = false;
             }
         }
-        private void GizmoControl(int gizmoId, EditorReceivedData data)
+        private void GizmoControl(int gizmoId, ObjectHoverContext data)
         {
             if (SelectedObject == null) return;
             //there must be a selected object for a gizmo

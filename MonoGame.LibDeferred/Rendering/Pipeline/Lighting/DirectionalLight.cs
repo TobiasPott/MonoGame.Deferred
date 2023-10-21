@@ -8,7 +8,7 @@ using MonoGame.Ext;
 namespace DeferredEngine.Pipeline.Lighting
 {
 
-    public sealed class DirectionalLight : TransformableObject
+    public class DirectionalLight : TransformableObject
     {
         public class MatrixSet
         {
