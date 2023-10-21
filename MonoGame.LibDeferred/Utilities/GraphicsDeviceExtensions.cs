@@ -28,15 +28,6 @@ namespace MonoGame.Ext
     public static class GraphicsDeviceExtensions
     {
 
-
-        // ToDo: Extend to cover BlendState and wrap target state to map to an enum which includes a "keep" option to leave a state unchanged
-        public static void SetDepthStencilNone_RasterizerCullCCW(this GraphicsDevice graphicsDevice)
-        {
-            graphicsDevice.DepthStencilState = DepthStencilState.None;
-            graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-        }
-
-
         // ToDo: Extend to cover BlendState and wrap target state to map to an enum which includes a "keep" option to leave a state unchanged
         public static void SetStates(this GraphicsDevice graphicsDevice, 
             DepthStencilStateOption depthStencil = DepthStencilStateOption.KeepState, 

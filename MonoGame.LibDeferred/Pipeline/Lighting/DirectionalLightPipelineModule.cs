@@ -46,8 +46,9 @@ namespace DeferredEngine.Pipeline.Lighting
         /// </summary>
         public void DrawDirectionalLights(List<DirectionalLight> dirLights, Vector3 cameraPosition, PipelineMatrices matrices, bool viewProjectionHasChanged)
         {
-            if (dirLights.Count < 1) return;
-            _graphicsDevice.SetDepthStencilNone_RasterizerCullCCW();
+            if (dirLights.Count < 1) 
+                return;
+            _graphicsDevice.SetStates(DepthStencilStateOption.None, RasterizerStateOption.CullCounterClockwise);
 
             //If nothing has changed we don't need to update
             if (viewProjectionHasChanged)

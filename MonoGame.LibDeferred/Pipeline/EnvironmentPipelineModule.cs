@@ -107,13 +107,13 @@ namespace DeferredEngine.Pipeline
 
             _effectSetup.Param_TransposeView.SetValue(Matrix.Transpose(view));
             _effectSetup.Pass_Basic.Apply();
-            _graphicsDevice.SetDepthStencilNone_RasterizerCullCCW();
+
+            _graphicsDevice.SetStates(DepthStencilStateOption.None, RasterizerStateOption.CullCounterClockwise);
             _fullscreenTarget.Draw(_graphicsDevice);
         }
         public void DrawSky()
         {
-            _graphicsDevice.SetDepthStencilNone_RasterizerCullCCW(); //.DepthStencilState = DepthStencilState.None;
-            //_graphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+            _graphicsDevice.SetStates(DepthStencilStateOption.None, RasterizerStateOption.CullCounterClockwise);
 
             _effectSetup.Pass_Sky.Apply();
             _fullscreenTarget.Draw(_graphicsDevice);
