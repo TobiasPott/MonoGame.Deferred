@@ -12,9 +12,11 @@ namespace DeferredEngine.Entities
         public bool HasChanged = true;
 
 
-
-
+        protected Matrix _view;
         protected Matrix _projection;
+        protected Matrix _viewProjection;
+
+
         public virtual Matrix Projection
         {
             get
@@ -24,9 +26,6 @@ namespace DeferredEngine.Entities
                 return _projection;
             }
         }
-
-
-        protected Matrix _viewProjection;
         public virtual Matrix ViewProjection
         {
             get
@@ -37,13 +36,12 @@ namespace DeferredEngine.Entities
             }
         }
 
-        protected Matrix _view;
         public virtual Matrix View
         {
             get
             {
                 if (_worldHasChanged)
-                   UpdateMatrices();
+                    UpdateMatrices();
                 return _view;
             }
         }
@@ -70,6 +68,7 @@ namespace DeferredEngine.Entities
                 if (_up != value)
                 {
                     _up = value;
+                    _worldHasChanged = true;
                     HasChanged = true;
                 }
             }
@@ -83,6 +82,7 @@ namespace DeferredEngine.Entities
                 if (_forward != value)
                 {
                     _forward = value;
+                    _worldHasChanged = true;
                     HasChanged = true;
                 }
             }
@@ -94,6 +94,7 @@ namespace DeferredEngine.Entities
             set
             {
                 _fieldOfView = value;
+                _worldHasChanged = true;
                 HasChanged = true;
             }
         }

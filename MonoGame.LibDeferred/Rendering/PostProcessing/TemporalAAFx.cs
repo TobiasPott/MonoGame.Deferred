@@ -59,29 +59,30 @@ namespace DeferredEngine.Renderer.PostProcessing
 
         public bool UpdateViewProjection(PipelineMatrices matrices)
         {
-            switch (this.JitterMode)
-            {
-                case 0: //2 frames, just basic translation. Worst taa implementation. Not good with the continous integration used
-                    {
-                        Vector2 translation = Vector2.One * (this.IsOffFrame ? 0.5f : -0.5f);
-                        matrices.ViewProjection *= (translation / RenderingSettings.g_ScreenResolution).ToMatrixTranslationXY();
-                        return true;
-                    }
-                case 1: // Just random translation
-                    {
-                        float randomAngle = FastRand.NextAngle();
-                        Vector2 translation = (new Vector2((float)Math.Sin(randomAngle), (float)Math.Cos(randomAngle)) / RenderingSettings.g_ScreenResolution) * 0.5f;
-                        matrices.ViewProjection *= translation.ToMatrixTranslationXY();
-                        return true;
-                    }
-                case 2: // Halton sequence, default
-                    {
-                        Vector3 translation = _haltonSequence.GetHaltonSequence();
-                        matrices.ViewProjection *= Matrix.CreateTranslation(translation);
-                        return true;
-                    }
-            }
-            return false;
+            return matrices.ApplyViewProjectionJitter(this.JitterMode, this.IsOffFrame, _haltonSequence);
+            //switch (this.JitterMode)
+            //{
+            //    case 0: //2 frames, just basic translation. Worst taa implementation. Not good with the continous integration used
+            //        {
+            //            Vector2 translation = Vector2.One * (this.IsOffFrame ? 0.5f : -0.5f);
+            //            matrices.ViewProjection *= (translation / RenderingSettings.g_ScreenResolution).ToMatrixTranslationXY();
+            //            return true;
+            //        }
+            //    case 1: // Just random translation
+            //        {
+            //            float randomAngle = FastRand.NextAngle();
+            //            Vector2 translation = (new Vector2((float)Math.Sin(randomAngle), (float)Math.Cos(randomAngle)) / RenderingSettings.g_ScreenResolution) * 0.5f;
+            //            matrices.ViewProjection *= translation.ToMatrixTranslationXY();
+            //            return true;
+            //        }
+            //    case 2: // Halton sequence, default
+            //        {
+            //            Vector3 translation = _haltonSequence.GetNext();
+            //            matrices.ViewProjection *= Matrix.CreateTranslation(translation);
+            //            return true;
+            //        }
+            //}
+            //return false;
         }
 
         public override void Dispose()

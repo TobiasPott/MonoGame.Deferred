@@ -399,8 +399,8 @@ namespace DeferredEngine.Renderer
 
                 _moduleStack.Lighting.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
 
-                _matrices.PreviousViewProjection = _matrices.ViewProjection;
-                _matrices.InverseViewProjection = Matrix.Invert(_matrices.ViewProjection);
+                //_matrices.PreviousViewProjection = _matrices.ViewProjection;
+                //_matrices.InverseViewProjection = Matrix.Invert(_matrices.ViewProjection);
 
                 if (_boundingFrustum == null) _boundingFrustum = new BoundingFrustum(_matrices.StaticViewProjection);
                 else _boundingFrustum.Matrix = _matrices.StaticViewProjection;
@@ -426,7 +426,7 @@ namespace DeferredEngine.Renderer
         private void ComputeFrustumCorners(BoundingFrustum cameraFrustum, Camera camera)
         {
             cameraFrustum.GetCorners(_frustumCorners.WorldSpace);
-            Vector3.Transform(_frustumCorners.WorldSpace, ref _matrices.View, _frustumCorners.ViewSpace); //put the frustum into view space
+            Extensions.Transform(_frustumCorners.WorldSpace, _matrices.View, _frustumCorners.ViewSpace); //put the frustum into view space
 
             /*this part is used for volume projection*/
             //World Space Corners - Camera Position

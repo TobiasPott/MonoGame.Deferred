@@ -6,6 +6,14 @@ namespace MonoGame.Ext
 {
     public static class Extensions
     {
+
+        public static void Transform(this Vector3[] sourceArray, Matrix matrix, Vector3[] destinationArray)
+        {
+            Vector3.Transform(sourceArray, ref matrix, destinationArray);
+        }
+
+
+
         public static void SetValue(this EffectParameter param, int[] value)
         {
             for (var i = 0; i < value.Length; i++)
