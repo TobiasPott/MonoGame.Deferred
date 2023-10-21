@@ -113,7 +113,6 @@ namespace DeferredEngine.Renderer.RenderModules
             {
                 _graphicsDevice.SetRenderTarget(light.ShadowMap);
 
-                Matrix lightProjection = light.GetProjection();
                 Matrix lightView = Matrix.Identity;
 
 
@@ -150,7 +149,8 @@ namespace DeferredEngine.Renderer.RenderModules
             }
             else
             {
-                bool draw = false;
+                // set target to light shadow map
+                _graphicsDevice.SetRenderTarget(light.ShadowMap);
 
                 for (int i = 0; i < 6; i++)
                 {
@@ -164,13 +164,6 @@ namespace DeferredEngine.Renderer.RenderModules
                     bool hasAnyObjectMoved = meshBatcher.FrustumCulling(_boundingFrustumShadow, false, light.Position);
 
                     if (!hasAnyObjectMoved) continue;
-
-                    if (!draw)
-                    {
-
-                        _graphicsDevice.SetRenderTarget(light.ShadowMap);
-                        draw = true;
-                    }
 
                     _graphicsDevice.Viewport = new Viewport(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
                     _graphicsDevice.ScissorRectangle = new Rectangle(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
