@@ -7,12 +7,18 @@ using HelperSuite.GUIHelper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 
 namespace DeferredEngine.Logic
 {
     public class EditorLogic
     {
+        private static EditorLogic _instance = null;
+        public static EditorLogic Instance => _instance;
+
+
+
 
         private bool _gizmoTransformationMode;
         private Vector3 _gizmoPosition;
@@ -26,6 +32,11 @@ namespace DeferredEngine.Logic
         private float previousMouseX = 0;
         private float previousMouseY = 0;
 
+        private readonly double mouseMoveTimer = 400;
+        private double _mouseMovedNextThreshold;
+        public bool HasMouseMovement { get; protected set; }
+
+
         public struct EditorReceivedData
         {
             public int HoveredId;
@@ -36,6 +47,10 @@ namespace DeferredEngine.Logic
         public void Initialize(GraphicsDevice graphicsDevice)
         {
             _graphicsDevice = graphicsDevice;
+            if (_instance == null)
+                _instance = this;
+            else
+                throw new InvalidOperationException($"Only one instance of {nameof(EditorLogic)} can be alive at a time");
         }
 
         /// <summary>
@@ -62,6 +77,7 @@ namespace DeferredEngine.Logic
                 if (Input.WasKeyPressed(Keys.Z)) RenderingStats.e_gizmoMode = GizmoModes.Scale;
             }
 
+            Update_MouseMoved(gameTime);
             _gizmoMode = RenderingStats.e_gizmoMode;
 
             int hoveredId = data.HoveredId;
@@ -182,6 +198,24 @@ namespace DeferredEngine.Logic
 
         }
 
+        private void Update_MouseMoved(GameTime gameTime)
+        {
+            if (RenderingStats.UIIsHovered || Input.mouseState.RightButton == ButtonState.Pressed)
+            {
+                HasMouseMovement = false;
+                return;
+            }
+            if (Input.mouseState != Input.mouseLastState)
+            {
+                //reset the timer!
+                _mouseMovedNextThreshold = gameTime.TotalGameTime.TotalMilliseconds + mouseMoveTimer;
+                HasMouseMovement = true;
+            }
+            if (_mouseMovedNextThreshold < gameTime.TotalGameTime.TotalMilliseconds)
+            {
+                HasMouseMovement = false;
+            }
+        }
         private void GizmoControl(int gizmoId, EditorReceivedData data)
         {
             if (SelectedObject == null) return;

@@ -39,8 +39,6 @@ namespace DeferredEngine.Renderer
         private SpriteBatch _spriteBatch;
         private FullscreenTriangleBuffer FullscreenTarget { get => FullscreenTriangleBuffer.Instance; }
 
-        private MouseLogicHandler _editorRender;
-
         //Projection Matrices and derivates used in shaders
         private PipelineMatrices _matrices;
         private PipelineModuleStack _moduleStack;
@@ -120,8 +118,6 @@ namespace DeferredEngine.Renderer
             _lightingBufferTarget = new LightingBufferTarget(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
             _auxTargets = new MRT.PipelineTargets(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
 
-            _editorRender = new MouseLogicHandler();
-
             _moduleStack.Initialize(graphicsDevice, _spriteBatch);
             _moduleStack.GBuffer.GBufferTarget = _gBufferTarget;
 
@@ -148,9 +144,8 @@ namespace DeferredEngine.Renderer
         {
             if (!isActive)
                 return;
-            _editorRender.Update(gameTime);
-            _moduleStack.DistanceField.UpdateSdfGenerator(entities);
 
+            _moduleStack.DistanceField.UpdateSdfGenerator(entities);
             _moduleStack.Lighting.UpdateGameTime(gameTime);
         }
 
@@ -221,7 +216,7 @@ namespace DeferredEngine.Renderer
 
             //Draw the elements that we are hovering over with outlines
             if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
-                _moduleStack.IdAndOutline.Draw(meshBatcher, scene, _matrices, gizmoContext, _editorRender.HasMouseMovement);
+                _moduleStack.IdAndOutline.Draw(meshBatcher, scene, _matrices, gizmoContext, EditorLogic.Instance.HasMouseMovement);
 
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
             RenderMode(_currentOutput);
