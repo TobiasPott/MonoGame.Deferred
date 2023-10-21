@@ -273,7 +273,7 @@ namespace DeferredEngine.Renderer.Helper
                         if (!meshBatch.Rendered[index])
                             continue;
 
-                        if (!ApplyShaders(_graphicsDevice, renderType, renderModule, meshBatch[index].World, view, viewProjection, meshBatch, meshBatch[index].Id, context.OutlineId, context.Flags.HasFlag(RenderFlags.Outlined)))
+                        if (!RenderModule.ApplyShaders(_graphicsDevice, renderType, renderModule, meshBatch[index].World, view, viewProjection, meshBatch[index].Id, context.OutlineId, context.Flags.HasFlag(RenderFlags.Outlined)))
                             continue;
                         RenderingStats.MeshDraws++;
 
@@ -341,71 +341,6 @@ namespace DeferredEngine.Renderer.Helper
                 _graphicsDevice.BlendState = BlendState.NonPremultiplied;
                 _graphicsDevice.SetDepthStencilDefault_RasterizerCullCCW();
             }
-        }
-
-        private static bool ApplyShaders(GraphicsDevice graphicsDevice, RenderType renderType, IRenderModule renderModule, 
-            Matrix localToWorldMatrix, Matrix? view, Matrix viewProjection, MeshBatch meshBatch,
-            int transformId, int outlineId, bool outlined)
-        {
-            switch (renderType)
-            {
-                case RenderType.Opaque:
-                case RenderType.ShadowLinear:
-                case RenderType.ShadowOmnidirectional:
-                case RenderType.Forward:
-                    ApplyRenderModuleShaders(renderModule, localToWorldMatrix, view, viewProjection);
-                    break;
-                case RenderType.Hologram:
-                    ApplyHologramShaders(localToWorldMatrix, viewProjection);
-                    break;
-                case RenderType.IdRender:
-                case RenderType.IdOutline:
-                    if (!ApplyIdAndOutlineShaders(graphicsDevice, renderType, localToWorldMatrix, viewProjection, transformId, outlineId, outlined))
-                        return false;
-                    break;
-            }
-            return true;
-        }
-        private static void ApplyRenderModuleShaders(IRenderModule renderModule, Matrix localToWorldMatrix, Matrix? view, Matrix viewProjection)
-        {
-            renderModule.Apply(localToWorldMatrix, view, viewProjection);
-        }
-        private static void ApplyHologramShaders(Matrix localToWorldMatrix, Matrix viewProjection)
-        {
-            HologramEffectSetup.Instance.Param_World.SetValue(localToWorldMatrix);
-            HologramEffectSetup.Instance.Param_WorldViewProj.SetValue(localToWorldMatrix * viewProjection);
-            HologramEffectSetup.Instance.Effect.CurrentTechnique.Passes[0].Apply();
-        }
-        private static bool ApplyIdAndOutlineShaders(GraphicsDevice graphicsDevice, RenderType renderType, Matrix localToWorldMatrix, Matrix viewProjection,
-            int transformId, int outlineId, bool outlined)
-        {
-            // ToDo: @tpott: Extract IdRender and Bilboard Shaders members
-            IdAndOutlineEffectSetup.Instance.Param_WorldViewProj.SetValue(localToWorldMatrix * viewProjection);
-
-            if (renderType == RenderType.IdRender)
-            {
-                IdAndOutlineEffectSetup.Instance.Param_ColorId.SetValue(IdGenerator.GetColorFromId(transformId).ToVector4());
-                IdAndOutlineEffectSetup.Instance.Pass_Id.Apply();
-            }
-            if (renderType == RenderType.IdOutline)
-            {
-
-                //Is this the Id we want to outline?
-                if (transformId == outlineId)
-                {
-                    graphicsDevice.RasterizerState = RasterizerState.CullNone;
-
-                    IdAndOutlineEffectSetup.Instance.Param_World.SetValue(localToWorldMatrix);
-
-                    if (outlined)
-                        IdAndOutlineEffectSetup.Instance.Pass_Outline.Apply();
-                    else
-                        IdAndOutlineEffectSetup.Instance.Pass_Id.Apply();
-                }
-                else
-                    return false;
-            }
-            return true;
         }
 
 
