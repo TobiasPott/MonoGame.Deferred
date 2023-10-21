@@ -6,7 +6,7 @@ using MonoGame.Ext;
 
 namespace DeferredEngine.Rendering.PostProcessing
 {
-    public class PostProcessingStack : IDisposable
+    public class PipelineFxStack : IDisposable
     {
         public readonly BloomFx Bloom;
         public readonly TemporalAAFx TemporaAA;
@@ -20,7 +20,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         private FullscreenTriangleBuffer _fullscreenTarget;
 
 
-        public PostProcessingStack(ContentManager content)
+        public PipelineFxStack(ContentManager content)
         {
             Bloom = new BloomFx(content);
             TemporaAA = new TemporalAAFx();

@@ -41,7 +41,7 @@ namespace DeferredEngine.Rendering
         //Projection Matrices and derivates used in shaders
         private PipelineMatrices _matrices;
         private PipelineModuleStack _moduleStack;
-        private PostProcessingStack _postFxStack;
+        private PipelineFxStack _fxStack;
         private PipelineProfiler _profiler;
 
         //Used for the view space directions in our shaders. Far edges of our view frustum
@@ -92,8 +92,8 @@ namespace DeferredEngine.Rendering
             _moduleStack = new PipelineModuleStack(content);
             _profiler = new PipelineProfiler();
 
-            _postFxStack = new PostProcessingStack(content);
-            _postFxStack.SetPipelineMatrices(_matrices);
+            _fxStack = new PipelineFxStack(content);
+            _fxStack.SetPipelineMatrices(_matrices);
 
         }
 
@@ -114,7 +114,7 @@ namespace DeferredEngine.Rendering
             _moduleStack.Initialize(graphicsDevice, _spriteBatch);
             _moduleStack.GBuffer.GBufferTarget = _gBufferTarget;
 
-            _postFxStack.Initialize(graphicsDevice, _spriteBatch);
+            _fxStack.Initialize(graphicsDevice, _spriteBatch);
 
 
             _boundingFrustum = new BoundingFrustum(_matrices.ViewProjection);
@@ -402,11 +402,11 @@ namespace DeferredEngine.Rendering
                 _moduleStack.PointLight.InverseView = _matrices.InverseView;
 
                 //Temporal AA - alternate frames for temporal anti-aliasing
-                if (_postFxStack.TemporaAA.Enabled)
+                if (_fxStack.TemporaAA.Enabled)
                 {
                     _viewProjectionHasChanged = true;
-                    _postFxStack.TemporaAA.SwapOffFrame();
-                    _matrices.ApplyViewProjectionJitter(_postFxStack.TemporaAA.JitterMode, _postFxStack.TemporaAA.IsOffFrame, _postFxStack.TemporaAA.HaltonSequence);
+                    _fxStack.TemporaAA.SwapOffFrame();
+                    _matrices.ApplyViewProjectionJitter(_fxStack.TemporaAA.JitterMode, _fxStack.TemporaAA.IsOffFrame, _fxStack.TemporaAA.HaltonSequence);
                 }
 
                 _moduleStack.Lighting.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
@@ -461,7 +461,7 @@ namespace DeferredEngine.Rendering
             Shaders.SSAO.Param_FrustumCorners.SetValue(_frustumCorners.ViewSpaceFrustum);
             Shaders.ReconstructDepth.Param_FrustumCorners.SetValue(_frustumCorners.ViewSpaceFrustum);
             _moduleStack.DirectionalLight.SetFrustumCorners(_frustumCorners.ViewSpaceFrustum);
-            _postFxStack.TemporaAA.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
+            _fxStack.TemporaAA.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
         }
 
         /// <summary>
@@ -500,9 +500,9 @@ namespace DeferredEngine.Rendering
             _graphicsDevice.SetRenderTarget(_auxTargets[MRT.SSFX_REFLECTION]);
             _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
 
-            if (_postFxStack.TemporaAA.Enabled)
+            if (_fxStack.TemporaAA.Enabled)
             {
-                Shaders.SSR.Param_TargetMap.SetValue(_postFxStack.TemporaAA.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2]);
+                Shaders.SSR.Param_TargetMap.SetValue(_fxStack.TemporaAA.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2]);
             }
             else
             {
@@ -637,9 +637,9 @@ namespace DeferredEngine.Rendering
 
         private RenderTarget2D DrawBloom(RenderTarget2D input)
         {
-            if (_postFxStack.Bloom.Enabled)
+            if (_fxStack.Bloom.Enabled)
             {
-                Texture2D bloom = _postFxStack.Bloom.Draw(input, null, null);
+                Texture2D bloom = _fxStack.Bloom.Draw(input, null, null);
 
                 _graphicsDevice.SetRenderTargets(_auxTargets[MRT.BLOOM]);
                 _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
@@ -662,10 +662,10 @@ namespace DeferredEngine.Rendering
         /// </summary>
         private RenderTarget2D TonemapAndCombineTemporalAntialiasing(RenderTarget2D input)
         {
-            if (!_postFxStack.TemporaAA.Enabled) return input;
+            if (!_fxStack.TemporaAA.Enabled) return input;
 
-            RenderTarget2D output = !_postFxStack.TemporaAA.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2];
-            _postFxStack.TemporaAA.Draw(input, _postFxStack.TemporaAA.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2], output);
+            RenderTarget2D output = !_fxStack.TemporaAA.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2];
+            _fxStack.TemporaAA.Draw(input, _fxStack.TemporaAA.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2], output);
 
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_CombineTAA);
@@ -718,8 +718,8 @@ namespace DeferredEngine.Rendering
                     DrawTextureToScreenToFullScreen(currentTarget);
                     break;
                 default:
-                    _postFxStack.DrawPostProcessing(currentTarget, null, _auxTargets[MRT.OUTPUT]);
-                    _postFxStack.DrawColorGrading(null, null, _auxTargets[MRT.OUTPUT]);
+                    _fxStack.DrawPostProcessing(currentTarget, null, _auxTargets[MRT.OUTPUT]);
+                    _fxStack.DrawColorGrading(null, null, _auxTargets[MRT.OUTPUT]);
                     break;
             }
 
@@ -752,7 +752,7 @@ namespace DeferredEngine.Rendering
                 _moduleStack.Billboard.AspectRatio = (float)targetWidth / targetHeight;
                 _moduleStack.IdAndOutline.SetUpRenderTarget(width, height);
 
-                _postFxStack.TemporaAA.Resolution = new Vector2(targetWidth, targetHeight);
+                _fxStack.TemporaAA.Resolution = new Vector2(targetWidth, targetHeight);
 
                 Shaders.SSR.Param_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
                 _moduleStack.Environment.Resolution = new Vector2(targetWidth, targetHeight);
@@ -797,7 +797,7 @@ namespace DeferredEngine.Rendering
             Shaders.SSR.Param_NormalMap.SetValue(_gBufferTarget.Normal);
             Shaders.SSR.Param_DepthMap.SetValue(_gBufferTarget.Depth);
 
-            _postFxStack.TemporaAA.DepthMap = _gBufferTarget.Depth;
+            _fxStack.TemporaAA.DepthMap = _gBufferTarget.Depth;
         }
 
 
@@ -832,7 +832,7 @@ namespace DeferredEngine.Rendering
             _spriteBatch?.Dispose();
 
             _moduleStack?.Dispose();
-            _postFxStack?.Dispose();
+            _fxStack?.Dispose();
 
             _gBufferTarget?.Dispose();
             _lightingBufferTarget?.Dispose();
