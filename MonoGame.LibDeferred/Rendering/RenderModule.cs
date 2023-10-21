@@ -1,6 +1,6 @@
-﻿using DeferredEngine.Recources.Helper;
+﻿using DeferredEngine.Pipeline.Utilities;
 using DeferredEngine.Recources;
-using DeferredEngine.Rendering.Helper;
+using DeferredEngine.Recources.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
