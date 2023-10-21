@@ -4,6 +4,7 @@ using DeferredEngine.Renderer.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
+using System.Windows.Forms;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //    MAIN RENDER FUNCTIONS, TheKosmonaut 2016
@@ -26,42 +27,6 @@ namespace DeferredEngine.Renderer
 
 
 
-        public void SetFromCubeMapFace(Vector3 origin, CubeMapFace cubeMapFace)
-        {
-            switch (cubeMapFace)
-            {
-                case CubeMapFace.NegativeX:
-                    {
-                        View = Matrix.CreateLookAt(origin, origin + Vector3.Left, Vector3.Up);
-                        break;
-                    }
-                case CubeMapFace.NegativeY:
-                    {
-                        View = Matrix.CreateLookAt(origin, origin + Vector3.Down, Vector3.Forward);
-                        break;
-                    }
-                case CubeMapFace.NegativeZ:
-                    {
-                        View = Matrix.CreateLookAt(origin, origin + Vector3.Backward, Vector3.Up);
-                        break;
-                    }
-                case CubeMapFace.PositiveX:
-                    {
-                        View = Matrix.CreateLookAt(origin, origin + Vector3.Right, Vector3.Up);
-                        break;
-                    }
-                case CubeMapFace.PositiveY:
-                    {
-                        View = Matrix.CreateLookAt(origin, origin + Vector3.Up, Vector3.Backward);
-                        break;
-                    }
-                case CubeMapFace.PositiveZ:
-                    {
-                        View = Matrix.CreateLookAt(origin, origin + Vector3.Forward, Vector3.Up);
-                        break;
-                    }
-            }
-        }
         public void SetFromCamera(Camera camera)
         {
             // update our previous projection matrices
@@ -109,6 +74,20 @@ namespace DeferredEngine.Renderer
             return false;
         }
 
+        private void SetViewFromCubeMapFace(Vector3 origin, CubeMapFace cubeMapFace)
+        {
+            View = cubeMapFace switch
+            {
+                CubeMapFace.NegativeX => Matrix.CreateLookAt(origin, origin + Vector3.Left, Vector3.Up),
+                CubeMapFace.NegativeY => Matrix.CreateLookAt(origin, origin + Vector3.Down, Vector3.Forward),
+                CubeMapFace.NegativeZ => Matrix.CreateLookAt(origin, origin + Vector3.Backward, Vector3.Up),
+                CubeMapFace.PositiveX => Matrix.CreateLookAt(origin, origin + Vector3.Right, Vector3.Up),
+                CubeMapFace.PositiveY => Matrix.CreateLookAt(origin, origin + Vector3.Up, Vector3.Backward),
+                CubeMapFace.PositiveZ => Matrix.CreateLookAt(origin, origin + Vector3.Forward, Vector3.Up),
+                _ => Matrix.CreateLookAt(origin, origin + Vector3.Forward, Vector3.Up),
+            };
+
+        }
     }
 
 }

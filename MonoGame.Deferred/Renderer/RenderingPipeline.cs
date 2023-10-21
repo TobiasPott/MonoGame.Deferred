@@ -394,7 +394,7 @@ namespace DeferredEngine.Renderer
                 {
                     _viewProjectionHasChanged = true;
                     _taaFx.SwapOffFrame();
-                    _taaFx.UpdateViewProjection(_matrices);
+                    _matrices.ApplyViewProjectionJitter(_taaFx.JitterMode, _taaFx.IsOffFrame, _taaFx.HaltonSequence);
                 }
 
                 _moduleStack.Lighting.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
