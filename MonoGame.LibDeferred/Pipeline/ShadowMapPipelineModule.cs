@@ -270,21 +270,17 @@ namespace DeferredEngine.Pipeline
             }
         }
 
-        public void SetMaterialSettings(MaterialEffect material, RenderType renderType)
+        public void SetMaterialSettings(MaterialEffect material)
         {
-            if (renderType == RenderType.ShadowOmnidirectional)
+            //Check if we have a mask texture
+            if (material.HasMask)
             {
-                //Check if we have a mask texture
-                if (material.HasMask)
-                {
-                    _pass = ShadowPasses.OmnidirectionalAlpha;
-                    _effectSetup.Param_MaskTexture.SetValue(material.Mask);
-                }
-                else
-                {
-                    _pass = ShadowPasses.Omnidirectional;
-                }
-
+                _pass = ShadowPasses.OmnidirectionalAlpha;
+                _effectSetup.Param_MaskTexture.SetValue(material.Mask);
+            }
+            else
+            {
+                _pass = ShadowPasses.Omnidirectional;
             }
         }
 

@@ -212,7 +212,7 @@ namespace DeferredEngine.Rendering
             => Draw(renderType, matrices.ViewProjection, matrices.View, context, renderModule);
         public void Draw(RenderType renderType, Matrix viewProjection, Matrix? view, RenderContext context, IRenderModule renderModule = null)
         {
-            SetBlendAndRasterizerState(renderType);
+            SetGraphicsDeviceStates(renderType);
 
             for (int matBatchIndex = 0; matBatchIndex < _batches.Count; matBatchIndex++)
             {
@@ -318,15 +318,13 @@ namespace DeferredEngine.Rendering
             return true;
         }
 
-        private void SetBlendAndRasterizerState(RenderType renderType)
+        private void SetGraphicsDeviceStates(RenderType renderType)
         {
             //Default, Opaque!
             if (renderType != RenderType.Forward)
             {
                 if (renderType != RenderType.ShadowOmnidirectional)
-                {
                     _graphicsDevice.SetStates(DepthStencilStateOption.KeepState, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
-                }
                 else //Need special rasterization
                 {
                     _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.KeepState, BlendStateOption.Opaque);
@@ -334,9 +332,7 @@ namespace DeferredEngine.Rendering
                 }
             }
             else //if (renderType == RenderType.alpha)
-            {
                 _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.NonPremultiplied);
-            }
         }
 
 
@@ -348,7 +344,7 @@ namespace DeferredEngine.Rendering
             }
             else if (renderType == RenderType.ShadowOmnidirectional)
             {
-                ((ShadowMapPipelineModule)renderModule).SetMaterialSettings(material, renderType);
+                ((ShadowMapPipelineModule)renderModule).SetMaterialSettings(material);
             }
             //if (renderType == RenderType.IdRender || renderType == RenderType.IdOutline)
             //{
