@@ -3,9 +3,19 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
+using Windows.Web.Syndication;
 
 namespace DeferredEngine.Rendering.PostProcessing
 {
+
+    public enum PipelineFxStage
+    {
+        Bloom,
+        TemporalAA,
+        PostProcessing,
+        ColorGrading
+    }
+
     public class PipelineFxStack : IDisposable
     {
         protected readonly BloomFx Bloom;
@@ -43,9 +53,22 @@ namespace DeferredEngine.Rendering.PostProcessing
         {
             TemporaAA.Matrices = matrices;
         }
-        public void DrawPostProcessing(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
+
+        public RenderTarget2D Draw(PipelineFxStage stage, RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
-            if (!RenderingSettings.g_PostProcessing) return;
+            return stage switch
+            {
+                PipelineFxStage.Bloom => DrawBloom(sourceRT, previousRT, destRT),
+                PipelineFxStage.TemporalAA => DrawTemporalAA(sourceRT, previousRT, destRT),
+                PipelineFxStage.PostProcessing => DrawPostProcessing(sourceRT, previousRT, destRT),
+                PipelineFxStage.ColorGrading => DrawColorGrading(sourceRT, previousRT, destRT),
+                _ => sourceRT,
+            };
+        }
+
+        private RenderTarget2D DrawPostProcessing(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
+        {
+            if (!RenderingSettings.g_PostProcessing) return sourceRT;
 
             Shaders.PostProcssing.Param_ScreenTexture.SetValue(sourceRT);
             _graphicsDevice.SetRenderTarget(destRT);
@@ -54,18 +77,21 @@ namespace DeferredEngine.Rendering.PostProcessing
             Shaders.PostProcssing.Effect.CurrentTechnique.Passes[0].Apply();
             _fullscreenTarget.Draw(_graphicsDevice);
 
+            return destRT;
             // ToDo: determine why post processing and color grading cannot be called independent from each other?
         }
-        public void DrawColorGrading(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
+        private RenderTarget2D DrawColorGrading(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
-            if (!RenderingSettings.g_PostProcessing) return;
+            if (!RenderingSettings.g_PostProcessing) return sourceRT;
 
             if (this.ColorGrading.Enabled)
                 destRT = this.ColorGrading.Draw(destRT);
 
             DrawTextureToScreenToFullScreen(destRT);
+            
+            return destRT;
         }
-        public RenderTarget2D DrawBloom(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
+        private RenderTarget2D DrawBloom(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
             if (this.Bloom.Enabled)
             {
@@ -90,7 +116,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         /// <summary>
         /// Combine the render with previous frames to get more information per sample and make the image anti-aliased / super sampled
         /// </summary>
-        public RenderTarget2D DrawTemporalAA(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
+        private RenderTarget2D DrawTemporalAA(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
         {
             if (!this.TemporaAA.Enabled)
                 return sourceRT;

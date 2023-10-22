@@ -156,7 +156,9 @@ namespace DeferredEngine.Rendering
 
             // Step: 02
             //Render ShadowMaps
-            DrawShadowMaps(meshBatcher, scene, camera);
+            _moduleStack.ShadowMap.Draw(meshBatcher, scene);
+            //Performance Profile
+            _profiler.SampleTimestamp(ref PipelineSamples.SDraw_Shadows);
 
             // Step: 03
             //Update SDFs
@@ -168,10 +170,16 @@ namespace DeferredEngine.Rendering
             // Step: 04
             //Update our view projection matrices if the camera moved
             UpdateViewProjection(meshBatcher, camera);
+            //Performance Profiler
+            _profiler.SampleTimestamp(ref PipelineSamples.SUpdate_ViewProjection);
+
 
             // Step: 05
             //Draw our meshes to the G Buffer
-            DrawGBuffer(meshBatcher);
+            _moduleStack.GBuffer.Draw(meshBatcher, _matrices);
+            //Performance Profiler
+            _profiler.SampleTimestamp(ref PipelineSamples.SDraw_GBuffer);
+
 
             // Step: 06
             //Deferred Decals
@@ -209,14 +217,14 @@ namespace DeferredEngine.Rendering
             // Step: 14
             //Compose the image and add information from previous frames to apply temporal super sampling
             _auxTargets.GetTemporalAARenderTargets(_fxStack.TemporaAA.IsOffFrame, out RenderTarget2D taaDestRT, out RenderTarget2D taaPreviousRT);
-            _currentOutput = _fxStack.DrawTemporalAA(_currentOutput, taaPreviousRT, taaDestRT);
+            _currentOutput = _fxStack.Draw(PipelineFxStage.TemporalAA, _currentOutput, taaPreviousRT, taaDestRT);
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_CombineTAA);
 
 
             // Step: 15
             //Do Bloom
-            _currentOutput = _fxStack.DrawBloom(_currentOutput, null, _auxTargets[MRT.BLOOM]);
+            _currentOutput = _fxStack.Draw(PipelineFxStage.Bloom, _currentOutput, null, _auxTargets[MRT.BLOOM]);
 
             // Step: 16
             //Draw the elements that we are hovering over with outlines
@@ -370,21 +378,6 @@ namespace DeferredEngine.Rendering
         }
 
         /// <summary>
-        /// Draw our shadow maps from the individual lights. Check if something has changed first, otherwise leave as it is
-        /// </summary>
-        private void DrawShadowMaps(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, Camera camera)
-        {
-            //Don't render for the first frame, we need a guideline first
-            if (_boundingFrustum == null)
-                UpdateViewProjection(meshBatcher, camera);
-
-            _moduleStack.ShadowMap.Draw(meshBatcher, scene);
-
-            //Performance Profile
-            _profiler.SampleTimestamp(ref PipelineSamples.SDraw_Shadows);
-        }
-
-        /// <summary>
         /// Create the projection matrices
         /// </summary>
         private void UpdateViewProjection(DynamicMeshBatcher meshBatcher, Camera camera)
@@ -410,9 +403,6 @@ namespace DeferredEngine.Rendering
 
                 _moduleStack.Lighting.UpdateViewProjection(_boundingFrustum, viewProjectionHasChanged, _matrices);
 
-                //_matrices.PreviousViewProjection = _matrices.ViewProjection;
-                //_matrices.InverseViewProjection = Matrix.Invert(_matrices.ViewProjection);
-
                 if (_boundingFrustum == null) _boundingFrustum = new BoundingFrustum(_matrices.StaticViewProjection);
                 else _boundingFrustum.Matrix = _matrices.StaticViewProjection;
 
@@ -423,8 +413,6 @@ namespace DeferredEngine.Rendering
             //We need to update whether or not entities are in our boundingFrustum and then cull them or not!
             meshBatcher.FrustumCulling(_boundingFrustum, viewProjectionHasChanged, camera.Position);
 
-            //Performance Profiler
-            _profiler.SampleTimestamp(ref PipelineSamples.SUpdate_ViewProjection);
         }
 
         /// <summary>
@@ -461,16 +449,6 @@ namespace DeferredEngine.Rendering
             Shaders.ReconstructDepth.Param_FrustumCorners.SetValue(_frustumCorners.ViewSpaceFrustum);
             _moduleStack.DirectionalLight.SetFrustumCorners(_frustumCorners.ViewSpaceFrustum);
             _fxStack.TemporaAA.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
-        }
-
-        /// <summary>
-        /// Draw all our meshes to the GBuffer - albedo, normal, depth - for further computation
-        /// </summary>
-        private void DrawGBuffer(DynamicMeshBatcher meshBatcher)
-        {
-            _moduleStack.GBuffer.Draw(meshBatcher, _matrices);
-            //Performance Profiler
-            _profiler.SampleTimestamp(ref PipelineSamples.SDraw_GBuffer);
         }
 
         /// <summary>
@@ -680,8 +658,8 @@ namespace DeferredEngine.Rendering
                     DrawTextureToScreenToFullScreen(currentTarget);
                     break;
                 default:
-                    _fxStack.DrawPostProcessing(currentTarget, null, _auxTargets[MRT.OUTPUT]);
-                    _fxStack.DrawColorGrading(null, null, _auxTargets[MRT.OUTPUT]);
+                    _fxStack.Draw(PipelineFxStage.PostProcessing, currentTarget, null, _auxTargets[MRT.OUTPUT]);
+                    _fxStack.Draw(PipelineFxStage.ColorGrading, null, null, _auxTargets[MRT.OUTPUT]);
                     break;
             }
 
