@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGame.GUI", "MonoGame.GU
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGame.LibDeferred", "MonoGame.LibDeferred\MonoGame.LibDeferred.csproj", "{CBCDF959-CE80-48AE-8BE1-426EC2606EFA}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "MonoGame.Shaders", "MonoGame.Shaders\MonoGame.Shaders.shproj", "{A0CDBD0E-3A41-42B7-9425-A838BC2C7383}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,5 +35,9 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9543BC8D-D66B-4E0E-B251-1D4EDE9B6A6F}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		MonoGame.Shaders\MonoGame.Shaders.projitems*{a0cdbd0e-3a41-42b7-9425-a838bc2c7383}*SharedItemsImports = 13
+		MonoGame.Shaders\MonoGame.Shaders.projitems*{c6295792-d1ef-4650-942f-c648d1fad640}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal
