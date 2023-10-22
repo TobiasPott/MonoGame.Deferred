@@ -44,7 +44,6 @@ namespace DeferredEngine.Rendering
         private PipelineFxStack _fxStack;
         private PipelineProfiler _profiler;
 
-        private SSReflectionFxSetup _ssrEffectSetup;
         private SSAmbientOcclusionFxSetup _ssaoEffectSetup;
 
         //Used for the view space directions in our shaders. Far edges of our view frustum
@@ -93,7 +92,6 @@ namespace DeferredEngine.Rendering
             _fxStack = new PipelineFxStack(content);
             _fxStack.SetPipelineMatrices(_matrices);
 
-            _ssrEffectSetup = new SSReflectionFxSetup();
             _ssaoEffectSetup = new SSAmbientOcclusionFxSetup();
         }
 
@@ -194,15 +192,15 @@ namespace DeferredEngine.Rendering
 
 
             if (_fxStack.TemporaAA.Enabled)
-                _ssrEffectSetup.Param_TargetMap.SetValue(_fxStack.TemporaAA.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2]);
+                _fxStack.SSReflection.TargetMap = _fxStack.TemporaAA.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2];
             else
-                _ssrEffectSetup.Param_TargetMap.SetValue(_auxTargets[MRT.COMPOSE]);
+                _fxStack.SSReflection.TargetMap = _auxTargets[MRT.COMPOSE];
+
             if (RenderingSettings.g_SSReflectionNoise)
-                _ssrEffectSetup.Param_Time.SetValue((float)gameTime.TotalGameTime.TotalSeconds % 1000);
-            _ssrEffectSetup.Param_Projection.SetValue(_matrices.Projection);
+                _fxStack.SSReflection.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
 
-
-            DrawScreenSpaceReflections(null, null, _auxTargets[MRT.SSFX_REFLECTION]);
+            _fxStack.SSReflection.Matrices = _matrices;
+            _fxStack.Draw(PipelineFxStage.SSReflection, null, null, _auxTargets[MRT.SSFX_REFLECTION]);
             // Profiler sample
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_SSFx_SSR);
 
@@ -380,13 +378,13 @@ namespace DeferredEngine.Rendering
                 _g_FarClip = RenderingSettings.g_FarPlane;
                 _moduleStack.FarClip = _g_FarClip;
 
-                _ssrEffectSetup.Param_FarClip.SetValue(_g_FarClip);
+                _fxStack.SSReflection.FarClip = _g_FarClip;
             }
 
             if (_g_SSReflectionNoise != RenderingSettings.g_SSReflectionNoise)
             {
                 _g_SSReflectionNoise = RenderingSettings.g_SSReflectionNoise;
-                if (!_g_SSReflectionNoise) _ssrEffectSetup.Param_Time.SetValue(0.0f);
+                if (!_g_SSReflectionNoise) _fxStack.SSReflection.Time = 0.0f;
             }
 
             if (_ssr != RenderingSettings.g_SSReflection)
@@ -469,11 +467,11 @@ namespace DeferredEngine.Rendering
             // swap 2 <-> 3
             (_frustumCorners.ViewSpaceFrustum[2], _frustumCorners.ViewSpaceFrustum[3]) = (_frustumCorners.ViewSpaceFrustum[3], _frustumCorners.ViewSpaceFrustum[2]);
 
-            _ssrEffectSetup.Param_FrustumCorners.SetValue(_frustumCorners.ViewSpaceFrustum);
             _ssaoEffectSetup.Param_FrustumCorners.SetValue(_frustumCorners.ViewSpaceFrustum);
             _moduleStack.Lighting.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
             _moduleStack.DirectionalLight.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
             _fxStack.TemporaAA.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
+            _fxStack.SSReflection.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
         }
 
         /// <summary>
@@ -502,10 +500,10 @@ namespace DeferredEngine.Rendering
             _graphicsDevice.SetRenderTarget(destRT);
             _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
 
-            _ssrEffectSetup.Param_Samples.SetValue(RenderingSettings.g_SSReflections_Samples);
-            _ssrEffectSetup.Param_SecondarySamples.SetValue(RenderingSettings.g_SSReflections_RefinementSamples);
-            _ssrEffectSetup.Effect.CurrentTechnique = RenderingSettings.g_SSReflectionTaa ? _ssrEffectSetup.Technique_Taa : _ssrEffectSetup.Technique_Default;
-            _ssrEffectSetup.Effect.CurrentTechnique.Passes[0].Apply();
+            //_ssrEffectSetup.Param_Samples.SetValue(RenderingSettings.g_SSReflections_Samples);
+            //_ssrEffectSetup.Param_SecondarySamples.SetValue(RenderingSettings.g_SSReflections_RefinementSamples);
+            //_ssrEffectSetup.Effect.CurrentTechnique = RenderingSettings.g_SSReflectionTaa ? _ssrEffectSetup.Technique_Taa : _ssrEffectSetup.Technique_Default;
+            //_ssrEffectSetup.Effect.CurrentTechnique.Passes[0].Apply();
             FullscreenTarget.Draw(_graphicsDevice);
 
         }
@@ -670,13 +668,15 @@ namespace DeferredEngine.Rendering
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  RENDERTARGET SETUP FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
-        private void SetUpRenderTargets(Vector2 resolution) => SetUpRenderTargets((int)resolution.X, (int)resolution.Y); 
+        private void SetUpRenderTargets(Vector2 resolution) => SetUpRenderTargets((int)resolution.X, (int)resolution.Y);
         private void SetUpRenderTargets(int width, int height)
         {
             float ssmultiplier = _supersampling;
 
             int targetWidth = (int)(width * ssmultiplier);
             int targetHeight = (int)(height * ssmultiplier);
+
+            Vector2 targetResolution = new Vector2(targetWidth, targetHeight);
 
             //Shaders.Billboard.Param_AspectRatio.SetValue((float)targetWidth / targetHeight);
 
@@ -685,15 +685,15 @@ namespace DeferredEngine.Rendering
             _lightingBufferTarget.Resize(targetWidth, targetHeight);
             _auxTargets.Resize(targetWidth, targetHeight);
 
-            _moduleStack.PointLight.Resolution = new Vector2(targetWidth, targetHeight);
+            _moduleStack.PointLight.Resolution = targetResolution;
 
             _moduleStack.Billboard.AspectRatio = (float)targetWidth / targetHeight;
             _moduleStack.IdAndOutline.SetUpRenderTarget(width, height);
 
-            _fxStack.TemporaAA.Resolution = new Vector2(targetWidth, targetHeight);
+            _fxStack.TemporaAA.Resolution = targetResolution;
+            _fxStack.SSReflection.Resolution = targetResolution;
 
-            _ssrEffectSetup.Param_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
-            _moduleStack.Environment.Resolution = new Vector2(targetWidth, targetHeight);
+            _moduleStack.Environment.Resolution = targetResolution;
 
             ///////////////////
             // HALF RESOLUTION
@@ -728,8 +728,8 @@ namespace DeferredEngine.Rendering
             _ssaoEffectSetup.Param_DepthMap.SetValue(_gBufferTarget.Depth);
             _ssaoEffectSetup.Param_SSAOMap.SetValue(_auxTargets[MRT.SSFX_AMBIENTOCCLUSION]);
 
-            _ssrEffectSetup.Param_NormalMap.SetValue(_gBufferTarget.Normal);
-            _ssrEffectSetup.Param_DepthMap.SetValue(_gBufferTarget.Depth);
+            _fxStack.SSReflection.NormalMap = _gBufferTarget.Normal;
+            _fxStack.SSReflection.DepthMap = _gBufferTarget.Depth;
 
             _fxStack.TemporaAA.DepthMap = _gBufferTarget.Depth;
         }
@@ -772,7 +772,6 @@ namespace DeferredEngine.Rendering
             _lightingBufferTarget?.Dispose();
             _auxTargets?.Dispose();
 
-            _ssrEffectSetup?.Dispose();
             _ssaoEffectSetup?.Dispose();
 
             _currentOutput?.Dispose();
