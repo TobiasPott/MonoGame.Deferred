@@ -82,6 +82,9 @@ namespace DeferredEngine.Rendering.SDF
         }
         public void Draw(Camera camera)
         {
+            if (!RenderingSettings.SDF.DrawDistance)
+                return;
+
             CameraPosition = camera.Position;
 
             if (RenderingSettings.SDF.DrawVolume)

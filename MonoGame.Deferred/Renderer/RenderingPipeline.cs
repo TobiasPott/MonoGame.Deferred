@@ -237,7 +237,7 @@ namespace DeferredEngine.Rendering
 
             // Step: 18
             //Draw signed distance field functions
-            DrawSDFs(camera);
+            _moduleStack.DistanceField.Draw(camera);
 
             // Step: 19
             //Additional editor elements that overlay our screen
@@ -612,13 +612,6 @@ namespace DeferredEngine.Rendering
             return _moduleStack.Forward.Draw(meshBatcher, input, _matrices);
         }
 
-
-        private void DrawSDFs(Camera camera)
-        {
-            if (!RenderingSettings.SDF.DrawDistance)
-                return;
-            _moduleStack.DistanceField.Draw(camera);
-        }
 
         /// <summary>
         /// Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
