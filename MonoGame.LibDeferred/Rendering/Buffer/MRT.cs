@@ -44,7 +44,7 @@ namespace DeferredEngine.Rendering
         {
             RenderTarget2DDefinition.Aux_Output, RenderTarget2DDefinition.Aux_Compose,
             RenderTarget2DDefinition.Aux_Decal, RenderTarget2DDefinition.SSFx_Bloom,
-            RenderTarget2DDefinition.SSFx_TAA_First, RenderTarget2DDefinition.SSFx_TAA_Second,
+            RenderTarget2DDefinition.SSFx_TAA_Even, RenderTarget2DDefinition.SSFx_TAA_Odd,
             RenderTarget2DDefinition.SSFx_Reflections
         };
         public class PipelineTargets : DynamicMultiRenderTarget

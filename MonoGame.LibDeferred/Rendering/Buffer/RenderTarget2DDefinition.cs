@@ -35,18 +35,18 @@ namespace DeferredEngine.Rendering
 
         public static readonly RenderTarget2DDefinition SSFx_Bloom = new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
 
-        public static readonly RenderTarget2DDefinition SSFx_TAA_First = new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-        public static readonly RenderTarget2DDefinition SSFx_TAA_Second = new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+        public static readonly RenderTarget2DDefinition SSFx_TAA_Even = new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+        public static readonly RenderTarget2DDefinition SSFx_TAA_Odd = new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
 
-        public static readonly RenderTarget2DDefinition SSFx_AO_Blur_Vertical = new RenderTarget2DDefinition(false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+        public static readonly RenderTarget2DDefinition SSFx_AO_Blur_V = new RenderTarget2DDefinition(false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
         // ToDo: Does the horizontal blur and final blur render target really needs the depth channel?
         // Half Size Targets (ToDo: Needs extension of the definition type to include super and sub sizing)
         //          blur final, blur horizontal, ambient occlusion
-        public static readonly RenderTarget2DDefinition SSFx_AO_Blur_Horizontal = new RenderTarget2DDefinition(false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents, ResamplingModes.Downsample_x1);
+        public static readonly RenderTarget2DDefinition SSFx_AO_Blur_H = new RenderTarget2DDefinition(false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents, ResamplingModes.Downsample_x1);
         public static readonly RenderTarget2DDefinition SSFx_AO_Blur_Final = new RenderTarget2DDefinition(false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents, ResamplingModes.Downsample_x1);
 
         public static readonly RenderTarget2DDefinition SSFx_Reflections = new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-        public static readonly RenderTarget2DDefinition SSFx_AmbientOcclusion = new RenderTarget2DDefinition(false, SurfaceFormat.HalfSingle, DepthFormat.None, 0, RenderTargetUsage.DiscardContents, ResamplingModes.Downsample_x1);
+        public static readonly RenderTarget2DDefinition SSFx_AO_Main = new RenderTarget2DDefinition(false, SurfaceFormat.HalfSingle, DepthFormat.None, 0, RenderTargetUsage.DiscardContents, ResamplingModes.Downsample_x1);
 
 
         public static readonly RenderTarget2DDefinition Aux_Id = new RenderTarget2DDefinition(false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
