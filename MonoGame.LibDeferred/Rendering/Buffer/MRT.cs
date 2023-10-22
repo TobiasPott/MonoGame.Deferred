@@ -22,19 +22,19 @@ namespace DeferredEngine.Rendering
         /// </summary>
         public const int BLOOM = 3;
 
-        /// <summary>
-        /// Index to the first temporal anti-aliasing render target
-        /// </summary>
-        public const int SSFX_TAA_1 = 4;
-        /// <summary>
-        /// Index to the second temporal anti-aliasing render target
-        /// </summary>
-        public const int SSFX_TAA_2 = 5;
+        ///// <summary>
+        ///// Index to the first temporal anti-aliasing render target
+        ///// </summary>
+        //public const int SSFX_TAA_1 = 4;
+        ///// <summary>
+        ///// Index to the second temporal anti-aliasing render target
+        ///// </summary>
+        //public const int SSFX_TAA_2 = 5;
 
-        /// <summary>
-        /// Index to the reflection render target
-        /// </summary>
-        public const int SSFX_REFLECTION = 6;
+        ///// <summary>
+        ///// Index to the reflection render target
+        ///// </summary>
+        //public const int SSFX_REFLECTION = 6;
 
 
         #endregion
@@ -44,26 +44,25 @@ namespace DeferredEngine.Rendering
         {
             RenderTarget2DDefinition.Aux_Output, RenderTarget2DDefinition.Aux_Compose,
             RenderTarget2DDefinition.Aux_Decal, RenderTarget2DDefinition.SSFx_Bloom,
-            RenderTarget2DDefinition.SSFx_TAA_Even, RenderTarget2DDefinition.SSFx_TAA_Odd,
-            RenderTarget2DDefinition.SSFx_Reflections
+            //RenderTarget2DDefinition.SSFx_TAA_Even, RenderTarget2DDefinition.SSFx_TAA_Odd,
         };
         public class PipelineTargets : DynamicMultiRenderTarget
         {
             public PipelineTargets(GraphicsDevice graphicsDevice, int width, int height) : base(graphicsDevice, width, height, MRT.PipelineDefinitions)
             { }
 
-            public void GetTemporalAARenderTargets(bool isOffFrame, out RenderTarget2D destRT, out RenderTarget2D previousRT)
-            {
-                destRT = !isOffFrame ? this[MRT.SSFX_TAA_1] : this[MRT.SSFX_TAA_2];
-                previousRT = isOffFrame ? this[MRT.SSFX_TAA_1] : this[MRT.SSFX_TAA_2];
-            }
-            public RenderTarget2D GetSSReflectionRenderTargets(bool isTaaEnabled, bool isOffFrame)
-            {
-                if (isTaaEnabled)
-                    return isOffFrame ? this[MRT.SSFX_TAA_1] : this[MRT.SSFX_TAA_2];
-                else
-                    return this[MRT.COMPOSE];
-            }
+            //public void GetTemporalAARenderTargets(bool isOffFrame, out RenderTarget2D destRT, out RenderTarget2D previousRT)
+            //{
+            //    destRT = !isOffFrame ? this[MRT.SSFX_TAA_1] : this[MRT.SSFX_TAA_2];
+            //    previousRT = isOffFrame ? this[MRT.SSFX_TAA_1] : this[MRT.SSFX_TAA_2];
+            //}
+            //public RenderTarget2D GetSSReflectionRenderTargets(bool isTaaEnabled, bool isOffFrame)
+            //{
+            //    if (isTaaEnabled)
+            //        return isOffFrame ? this[MRT.SSFX_TAA_1] : this[MRT.SSFX_TAA_2];
+            //    else
+            //        return this[MRT.COMPOSE];
+            //}
         }
 
 
