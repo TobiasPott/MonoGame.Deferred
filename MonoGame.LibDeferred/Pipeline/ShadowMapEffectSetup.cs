@@ -6,7 +6,7 @@ namespace DeferredEngine.Pipeline
     // Shadow Map
     public class ShadowMapEffectSetup : BaseFxSetup
     {
-        public Effect Effect;
+        public Effect Effect { get; protected set; }
 
         public EffectPass Pass_LinearPass { get; protected set; } // Linear = VS Depth -> used for directional lights
         public EffectPass Pass_DistancePass { get; protected set; } // Distance = distance(pixel, light) -> used for omnidirectional lights

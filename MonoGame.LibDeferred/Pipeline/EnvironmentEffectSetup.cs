@@ -7,9 +7,9 @@ namespace DeferredEngine.Pipeline
     // Deferred Environment
     public class EnvironmentEffectSetup : BaseFxSetup
     {
-        public Effect Effect = Globals.content.Load<Effect>("Shaders/Deferred/DeferredEnvironmentMap");
+        public Effect Effect { get; protected set; }
 
-        public EffectTechnique Technique_Sky { get; protected set; }
+    public EffectTechnique Technique_Sky { get; protected set; }
         public EffectTechnique Technique_Basic { get; protected set; }
 
         public EffectPass Pass_Sky { get; protected set; }
