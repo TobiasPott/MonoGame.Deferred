@@ -122,8 +122,7 @@ namespace DeferredEngine.Rendering
             //Apply some base settings to overwrite shader defaults with game settings defaults
             RenderingSettings.ApplySettings();
 
-            _ssrEffectSetup.Param_NoiseMap.SetValue(StaticAssets.Instance.NoiseMap);
-            SetUpRenderTargets(RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight, false);
+            SetUpRenderTargets(RenderingSettings.g_ScreenResolution);
 
         }
 
@@ -192,7 +191,18 @@ namespace DeferredEngine.Rendering
 
             // Step: 07
             //Draw Screen Space reflections to a different render target
-            DrawScreenSpaceReflections(gameTime, null, null, _auxTargets[MRT.SSFX_REFLECTION]);
+
+
+            if (_fxStack.TemporaAA.Enabled)
+                _ssrEffectSetup.Param_TargetMap.SetValue(_fxStack.TemporaAA.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2]);
+            else
+                _ssrEffectSetup.Param_TargetMap.SetValue(_auxTargets[MRT.COMPOSE]);
+            if (RenderingSettings.g_SSReflectionNoise)
+                _ssrEffectSetup.Param_Time.SetValue((float)gameTime.TotalGameTime.TotalSeconds % 1000);
+            _ssrEffectSetup.Param_Projection.SetValue(_matrices.Projection);
+
+
+            DrawScreenSpaceReflections(null, null, _auxTargets[MRT.SSFX_REFLECTION]);
             // Profiler sample
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_SSFx_SSR);
 
@@ -222,6 +232,9 @@ namespace DeferredEngine.Rendering
             // Step: 12
             //Compose the scene by combining our lighting data with the gbuffer data
             _currentOutput = DrawDeferredCompose(null, null, _auxTargets[MRT.COMPOSE]);
+            //Performance Profiler
+            _profiler.SampleTimestamp(ref PipelineSamples.SDraw_Compose);
+
 
             // Step: 13
             //Forward
@@ -481,27 +494,13 @@ namespace DeferredEngine.Rendering
         /// <summary>
         /// Draw Screen Space Reflections
         /// </summary>
-        private void DrawScreenSpaceReflections(GameTime gameTime, RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
+        private void DrawScreenSpaceReflections(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
             if (!RenderingSettings.g_SSReflection) return;
 
             //todo: more samples for more reflective materials!
             _graphicsDevice.SetRenderTarget(destRT);
             _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
-
-            if (_fxStack.TemporaAA.Enabled)
-            {
-                _ssrEffectSetup.Param_TargetMap.SetValue(_fxStack.TemporaAA.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2]);
-            }
-            else
-            {
-                _ssrEffectSetup.Param_TargetMap.SetValue(_auxTargets[MRT.COMPOSE]);
-            }
-
-            if (RenderingSettings.g_SSReflectionNoise)
-                _ssrEffectSetup.Param_Time.SetValue((float)gameTime.TotalGameTime.TotalSeconds % 1000);
-
-            _ssrEffectSetup.Param_Projection.SetValue(_matrices.Projection);
 
             _ssrEffectSetup.Param_Samples.SetValue(RenderingSettings.g_SSReflections_Samples);
             _ssrEffectSetup.Param_SecondarySamples.SetValue(RenderingSettings.g_SSReflections_RefinementSamples);
@@ -603,9 +602,6 @@ namespace DeferredEngine.Rendering
             _moduleStack.Deferred.UseSSAOMap = RenderingSettings.g_ssao_draw;
             _moduleStack.Deferred.Draw(destRT);
 
-            //Performance Profiler
-            _profiler.SampleTimestamp(ref PipelineSamples.SDraw_Compose);
-
             return destRT;
         }
 
@@ -674,7 +670,8 @@ namespace DeferredEngine.Rendering
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  RENDERTARGET SETUP FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
-        private void SetUpRenderTargets(int width, int height, bool onlyEssentials)
+        private void SetUpRenderTargets(Vector2 resolution) => SetUpRenderTargets((int)resolution.X, (int)resolution.Y); 
+        private void SetUpRenderTargets(int width, int height)
         {
             float ssmultiplier = _supersampling;
 
@@ -690,39 +687,37 @@ namespace DeferredEngine.Rendering
 
             _moduleStack.PointLight.Resolution = new Vector2(targetWidth, targetHeight);
 
-            if (!onlyEssentials)
-            {
-                _moduleStack.Billboard.AspectRatio = (float)targetWidth / targetHeight;
-                _moduleStack.IdAndOutline.SetUpRenderTarget(width, height);
+            _moduleStack.Billboard.AspectRatio = (float)targetWidth / targetHeight;
+            _moduleStack.IdAndOutline.SetUpRenderTarget(width, height);
 
-                _fxStack.TemporaAA.Resolution = new Vector2(targetWidth, targetHeight);
+            _fxStack.TemporaAA.Resolution = new Vector2(targetWidth, targetHeight);
 
-                _ssrEffectSetup.Param_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
-                _moduleStack.Environment.Resolution = new Vector2(targetWidth, targetHeight);
+            _ssrEffectSetup.Param_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
+            _moduleStack.Environment.Resolution = new Vector2(targetWidth, targetHeight);
 
-                ///////////////////
-                // HALF RESOLUTION
+            ///////////////////
+            // HALF RESOLUTION
 
-                targetWidth /= 2;
-                targetHeight /= 2;
+            targetWidth /= 2;
+            targetHeight /= 2;
 
-                _ssaoEffectSetup.Param_InverseResolution.SetValue(new Vector2(1.0f / targetWidth, 1.0f / targetHeight));
+            _ssaoEffectSetup.Param_InverseResolution.SetValue(new Vector2(1.0f / targetWidth, 1.0f / targetHeight));
 
 
-                Vector2 aspectRatio = new Vector2(Math.Min(1.0f, targetWidth / (float)targetHeight), Math.Min(1.0f, targetHeight / (float)targetWidth));
+            Vector2 aspectRatio = new Vector2(Math.Min(1.0f, targetWidth / (float)targetHeight), Math.Min(1.0f, targetHeight / (float)targetWidth));
 
-                _ssaoEffectSetup.Param_AspectRatio.SetValue(aspectRatio);
+            _ssaoEffectSetup.Param_AspectRatio.SetValue(aspectRatio);
 
-            }
 
-            UpdateRenderMapBindings(onlyEssentials);
+
+            UpdateRenderMapBindings();
         }
 
-        private void UpdateRenderMapBindings(bool onlyEssentials)
+        private void UpdateRenderMapBindings()
         {
             _moduleStack.SetGBufferParams(_gBufferTarget);
             // update directional light module
-            _moduleStack.DirectionalLight.SetScreenSpaceShadowMap(onlyEssentials ? _auxTargets[MRT.SSFX_BLUR_VERTICAL] : _auxTargets[MRT.SSFX_BLUR_FINAL]);
+            _moduleStack.DirectionalLight.SetScreenSpaceShadowMap(_auxTargets[MRT.SSFX_BLUR_FINAL]);
 
             _moduleStack.Environment.SSRMap = _auxTargets[MRT.SSFX_REFLECTION];
 

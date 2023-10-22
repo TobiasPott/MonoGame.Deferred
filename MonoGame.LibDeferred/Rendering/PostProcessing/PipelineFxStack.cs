@@ -12,7 +12,9 @@ namespace DeferredEngine.Rendering.PostProcessing
         Bloom,
         TemporalAA,
         PostProcessing,
-        ColorGrading
+        ColorGrading,
+        SSReflection,
+        SSAmbientOcclusion
     }
 
     public class PipelineFxStack : IDisposable
@@ -21,6 +23,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         public readonly TemporalAAFx TemporaAA;
         protected readonly ColorGradingFx ColorGrading;
         protected readonly PostProcessingFx PostProcessing;
+        public readonly SSReflectionFx SSReflection;
 
         //GaussianBlurFx _gaussianBlur;
 
@@ -36,6 +39,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             TemporaAA = new TemporalAAFx();
             ColorGrading = new ColorGradingFx(content);
             PostProcessing = new PostProcessingFx(content);
+            SSReflection = new SSReflectionFx(content);
             //_gaussianBlur = new GaussianBlurFx();
         }
         public void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
@@ -48,6 +52,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             TemporaAA.Initialize(graphicsDevice, _fullscreenTarget);
             ColorGrading.Initialize(graphicsDevice, _fullscreenTarget);
             PostProcessing.Initialize(graphicsDevice, _fullscreenTarget);
+            SSReflection.Initialize(graphicsDevice, _fullscreenTarget);
         }
 
         public void SetPipelineMatrices(PipelineMatrices matrices)
@@ -63,6 +68,7 @@ namespace DeferredEngine.Rendering.PostProcessing
                 PipelineFxStage.TemporalAA => DrawTemporalAA(sourceRT, previousRT, destRT),
                 PipelineFxStage.PostProcessing => DrawPostProcessing(sourceRT, previousRT, destRT),
                 PipelineFxStage.ColorGrading => DrawColorGrading(sourceRT, previousRT, destRT),
+                PipelineFxStage.SSReflection => SSReflection.Draw(sourceRT, previousRT, destRT),
                 _ => sourceRT,
             };
         }
@@ -137,6 +143,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             Bloom?.Dispose();
             TemporaAA?.Dispose();
             ColorGrading?.Dispose();
+            SSReflection?.Dispose();
             //_gaussianBlur?.Dispose();
 
         }

@@ -41,6 +41,9 @@ namespace DeferredEngine.Recources
 
             Technique_Default = Effect.Techniques["Default"];
             Technique_Taa = Effect.Techniques["TAA"];
+
+            // set default noise map
+            Param_NoiseMap.SetValue(StaticAssets.Instance.NoiseMap);
         }
 
         public override void Dispose()
