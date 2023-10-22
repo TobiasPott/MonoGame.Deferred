@@ -75,6 +75,13 @@ namespace DeferredEngine.Rendering
                 destRT = !isOffFrame ? this[MRT.SSFX_TAA_1] : this[MRT.SSFX_TAA_2];
                 previousRT = isOffFrame ? this[MRT.SSFX_TAA_1] : this[MRT.SSFX_TAA_2];
             }
+            public RenderTarget2D GetSSReflectionRenderTargets(bool isTaaEnabled, bool isOffFrame)
+            {
+                if (isTaaEnabled)
+                    return isOffFrame ? this[MRT.SSFX_TAA_1] : this[MRT.SSFX_TAA_2];
+                else
+                    return this[MRT.COMPOSE];
+            }
         }
 
 

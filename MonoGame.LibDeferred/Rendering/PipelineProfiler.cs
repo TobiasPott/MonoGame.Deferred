@@ -11,8 +11,8 @@ namespace DeferredEngine.Rendering
         public static long SDraw_Shadows;
         public static long SDraw_CubeMap;
         public static long SDraw_GBuffer;
-        public static long SDraw_SSFx;
-        public static long SDraw_BilateralBlur;
+        public static long SDraw_SSFx_SSAO;
+        public static long SDraw_SSFx_AO_BilateralBlur;
         public static long SDraw_EnvironmentMap;
         public static long SDraw_SSFx_SSR;
         public static long SDraw_Compose;

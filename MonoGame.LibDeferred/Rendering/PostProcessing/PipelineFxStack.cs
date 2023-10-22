@@ -1,4 +1,5 @@
-﻿using DeferredEngine.Recources;
+﻿using DeferredEngine.Entities;
+using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -19,6 +20,8 @@ namespace DeferredEngine.Rendering.PostProcessing
 
     public class PipelineFxStack : IDisposable
     {
+        public readonly SSAmbientOcclusionFxSetup _ssaoEffectSetup;
+
         protected readonly BloomFx Bloom;
         public readonly TemporalAAFx TemporaAA;
         protected readonly ColorGradingFx ColorGrading;
@@ -32,6 +35,34 @@ namespace DeferredEngine.Rendering.PostProcessing
         private SpriteBatch _spriteBatch;
         private FullscreenTriangleBuffer _fullscreenTarget;
 
+        public float FarClip
+        {
+            set
+            {
+                SSReflection.FarClip = value;
+               
+            }
+        }
+        public PipelineMatrices Matrices
+        {
+            set
+            {
+                TemporaAA.Matrices = value;
+                SSReflection.Matrices = value;
+            }
+        }
+
+        public Vector3[] FrustumCorners
+        {
+            set
+            {
+               _ssaoEffectSetup.Param_FrustumCorners.SetValue(value);
+               TemporaAA.FrustumCorners = value;
+               SSReflection.FrustumCorners = value;
+            }
+        }
+
+
 
         public PipelineFxStack(ContentManager content)
         {
@@ -41,6 +72,8 @@ namespace DeferredEngine.Rendering.PostProcessing
             PostProcessing = new PostProcessingFx(content);
             SSReflection = new SSReflectionFx(content);
             //_gaussianBlur = new GaussianBlurFx();
+            _ssaoEffectSetup = new SSAmbientOcclusionFxSetup();
+
         }
         public void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         {
@@ -53,11 +86,6 @@ namespace DeferredEngine.Rendering.PostProcessing
             ColorGrading.Initialize(graphicsDevice, _fullscreenTarget);
             PostProcessing.Initialize(graphicsDevice, _fullscreenTarget);
             SSReflection.Initialize(graphicsDevice, _fullscreenTarget);
-        }
-
-        public void SetPipelineMatrices(PipelineMatrices matrices)
-        {
-            TemporaAA.Matrices = matrices;
         }
 
         public RenderTarget2D Draw(PipelineFxStage stage, RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
@@ -124,6 +152,13 @@ namespace DeferredEngine.Rendering.PostProcessing
             return RenderingSettings.TAA.UseTonemapping ? sourceRT : destRT;
         }
 
+        public void SetGBufferParams(GBufferTarget gBufferTarget)
+        {
+            SSReflection.NormalMap = gBufferTarget.Normal;
+            SSReflection.DepthMap = gBufferTarget.Depth;
+
+            TemporaAA.DepthMap = gBufferTarget.Depth;
+        }
 
         private void DrawTextureToScreenToFullScreen(Texture2D source, BlendState blendState = null, RenderTarget2D destRT = null)
         {
@@ -143,6 +178,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             Bloom?.Dispose();
             TemporaAA?.Dispose();
             ColorGrading?.Dispose();
+            PostProcessing?.Dispose();
             SSReflection?.Dispose();
             //_gaussianBlur?.Dispose();
 
