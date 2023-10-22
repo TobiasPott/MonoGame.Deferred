@@ -199,11 +199,16 @@ namespace DeferredEngine.Rendering
 
             // Step: 08
             //SSAO
-            DrawScreenSpaceAmbientOcclusion(camera);
+            DrawSSAO(camera, null, null, _auxTargets[MRT.SSFX_AMBIENTOCCLUSION]);
+            //Performance Profiler
+            _profiler.SampleTimestamp(ref PipelineSamples.SDraw_SSFx);
 
             // Step: 09
             //Upsample/blur our SSAO / screen space shadows
-            DrawBilateralBlur();
+            DrawSSAOToBlur(_auxTargets[MRT.SSFX_AMBIENTOCCLUSION], null, _auxTargets[MRT.SSFX_BLUR_VERTICAL]);
+            DrawSSAOBilateralBlur();
+            //Performance Profiler
+            _profiler.SampleTimestamp(ref PipelineSamples.SDraw_BilateralBlur);
 
             // Step: 10
             //Light the scene
@@ -509,12 +514,12 @@ namespace DeferredEngine.Rendering
         /// <summary>
         /// Draw SSAO to a different rendertarget
         /// </summary>
-        private void DrawScreenSpaceAmbientOcclusion(Camera camera)
+        private void DrawSSAO(Camera camera, RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
         {
             // ToDo: @tpott: extract to own BaseFx derived type
             if (!RenderingSettings.g_ssao_draw) return;
 
-            _graphicsDevice.SetRenderTarget(_auxTargets[MRT.SSFX_AMBIENTOCCLUSION]);
+            _graphicsDevice.SetRenderTarget(destRT);
             _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.KeepState);
 
             _ssaoEffectSetup.SetCameraAndMatrices(camera.Position, _matrices);
@@ -530,24 +535,20 @@ namespace DeferredEngine.Rendering
             _ssaoEffectSetup.Effect.CurrentTechnique.Passes[0].Apply();
             FullscreenTarget.Draw(_graphicsDevice);
 
-
-            //Performance Profiler
-            _profiler.SampleTimestamp(ref PipelineSamples.SDraw_SSFx);
         }
 
+        private void DrawSSAOToBlur(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
+        {
+            _graphicsDevice.SetRenderTarget(destRT);
+            _spriteBatch.Begin(0, BlendState.Additive);
+            _spriteBatch.Draw(sourceRT, RenderingSettings.g_ScreenRect, Color.White);
+            _spriteBatch.End();
+        }
         /// <summary>
         /// Bilateral blur, to upsample our undersampled SSAO
         /// </summary>
-        private void DrawBilateralBlur()
+        private void DrawSSAOBilateralBlur()
         {
-            _graphicsDevice.SetRenderTarget(_auxTargets[MRT.SSFX_BLUR_VERTICAL]);
-
-            _spriteBatch.Begin(0, BlendState.Additive);
-
-            _spriteBatch.Draw(_auxTargets[MRT.SSFX_AMBIENTOCCLUSION], RenderingSettings.g_ScreenRect, Color.Red);
-
-            _spriteBatch.End();
-
             if (RenderingSettings.g_ssao_blur && RenderingSettings.g_ssao_draw)
             {
                 _graphicsDevice.SetRenderTarget(_auxTargets[MRT.SSFX_BLUR_HORIZONTAL]);
@@ -571,16 +572,11 @@ namespace DeferredEngine.Rendering
             else
             {
                 _graphicsDevice.SetRenderTarget(_auxTargets[MRT.SSFX_BLUR_FINAL]);
-
                 _spriteBatch.Begin(0, BlendState.Opaque, SamplerState.LinearClamp);
-
                 _spriteBatch.Draw(_auxTargets[MRT.SSFX_BLUR_VERTICAL], new Rectangle(0, 0, _auxTargets[MRT.SSFX_BLUR_FINAL].Width, _auxTargets[MRT.SSFX_BLUR_FINAL].Height), Color.White);
-
                 _spriteBatch.End();
             }
 
-            //Performance Profiler
-            _profiler.SampleTimestamp(ref PipelineSamples.SDraw_BilateralBlur);
         }
 
         /// <summary>

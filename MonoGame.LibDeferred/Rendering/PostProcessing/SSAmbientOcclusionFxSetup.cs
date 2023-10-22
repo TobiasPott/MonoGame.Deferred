@@ -31,9 +31,9 @@ namespace DeferredEngine.Recources
         public EffectTechnique Technique_BlurHorizontal { get; protected set; }
         public EffectTechnique Technique_BlurVertical { get; protected set; }
 
+
         public SSAmbientOcclusionFxSetup(string shaderPath = "Shaders/ScreenSpace/ScreenSpaceAO") : base(shaderPath)
         {
-
             Effect = Globals.content.Load<Effect>(shaderPath);
 
             Param_SSAOMap = Effect.Parameters["SSAOMap"];
