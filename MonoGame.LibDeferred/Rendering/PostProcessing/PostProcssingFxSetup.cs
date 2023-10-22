@@ -22,7 +22,6 @@ namespace DeferredEngine.Recources
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
 
-            Effect = Globals.content.Load<Effect>("shaders/postprocessing/postprocessing");
             Param_ScreenTexture = Effect.Parameters["ScreenTexture"];
             Param_ChromaticAbberationStrength = Effect.Parameters["ChromaticAbberationStrength"];
             Param_SCurveStrength = Effect.Parameters["SCurveStrength"];

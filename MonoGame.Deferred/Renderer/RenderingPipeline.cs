@@ -355,7 +355,6 @@ namespace DeferredEngine.Rendering
                 _moduleStack.FarClip = _g_FarClip;
 
                 Shaders.SSR.Param_FarClip.SetValue(_g_FarClip);
-                Shaders.ReconstructDepth.Param_FarClip.SetValue(_g_FarClip);
             }
 
             if (_g_SSReflectionNoise != RenderingSettings.g_SSReflectionNoise)
@@ -446,8 +445,8 @@ namespace DeferredEngine.Rendering
 
             Shaders.SSR.Param_FrustumCorners.SetValue(_frustumCorners.ViewSpaceFrustum);
             Shaders.SSAO.Param_FrustumCorners.SetValue(_frustumCorners.ViewSpaceFrustum);
-            Shaders.ReconstructDepth.Param_FrustumCorners.SetValue(_frustumCorners.ViewSpaceFrustum);
-            _moduleStack.DirectionalLight.SetFrustumCorners(_frustumCorners.ViewSpaceFrustum);
+            _moduleStack.Lighting.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
+            _moduleStack.DirectionalLight.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
             _fxStack.TemporaAA.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
         }
 
@@ -710,10 +709,6 @@ namespace DeferredEngine.Rendering
 
         private void UpdateRenderMapBindings(bool onlyEssentials)
         {
-            _moduleStack.Billboard.DepthMap = _gBufferTarget.Depth;
-
-            Shaders.ReconstructDepth.Param_DepthMap.SetValue(_gBufferTarget.Depth);
-
             _moduleStack.SetGBufferParams(_gBufferTarget);
             // update directional light module
             _moduleStack.DirectionalLight.SetScreenSpaceShadowMap(onlyEssentials ? _auxTargets[MRT.SSFX_BLUR_VERTICAL] : _auxTargets[MRT.SSFX_BLUR_FINAL]);

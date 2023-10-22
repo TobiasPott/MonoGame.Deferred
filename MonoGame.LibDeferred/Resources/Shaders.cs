@@ -7,21 +7,6 @@ namespace DeferredEngine.Recources
 
     public static partial class Shaders
     {
-        //A static file which contains all shaders
-        //Born out of need for quick thoughtless shader building
-        //I am working on making seperate shading modules instead and will slowly shorten this one.
-
-
-        //Depth Reconstruction
-        public static class ReconstructDepth
-        {
-            public static readonly Effect Effect = Globals.content.Load<Effect>("Shaders/ScreenSpace/ReconstructDepth");
-
-            public static readonly EffectParameter Param_DepthMap = Effect.Parameters["DepthMap"];
-            public static readonly EffectParameter Param_Projection = Effect.Parameters["Projection"];
-            public static readonly EffectParameter Param_FarClip = Effect.Parameters["FarClip"];
-            public static readonly EffectParameter Param_FrustumCorners = Effect.Parameters["FrustumCorners"];
-        }
 
         //ScreenSpaceReflection Effect
         public static class SSR

@@ -20,9 +20,16 @@ namespace DeferredEngine.Pipeline.Lighting
 
         private PipelineMatrices _matrices;
         private BlendState _lightBlendState;
+        private ReconstructDepthFxSetup _effectSetupReconstructDepth = new ReconstructDepthFxSetup();
 
         public PointLightPipelineModule PointLightRenderModule;
         public DirectionalLightPipelineModule DirectionalLightRenderModule;
+
+
+
+        public float FarClip { set { _effectSetupReconstructDepth.Param_FarClip.SetValue(value); } }
+        public Texture2D DepthMap { set { _effectSetupReconstructDepth.Param_DepthMap.SetValue(value); } }
+        public Vector3[] FrustumCorners { set { _effectSetupReconstructDepth.Param_FrustumCorners.SetValue(value); } }
 
 
         public LightingPipelineModule(ContentManager content, string shaderPath = "")
@@ -105,10 +112,10 @@ namespace DeferredEngine.Pipeline.Lighting
         public void ReconstructDepth()
         {
             if (_viewProjectionHasChanged)
-                Shaders.ReconstructDepth.Param_Projection.SetValue(_matrices.Projection);
+                _effectSetupReconstructDepth.Param_Projection.SetValue(_matrices.Projection);
 
             _graphicsDevice.SetState(DepthStencilStateOption.Default);
-            Shaders.ReconstructDepth.Effect.CurrentTechnique.Passes[0].Apply();
+            _effectSetupReconstructDepth.Effect.CurrentTechnique.Passes[0].Apply();
             _fullscreenTarget.Draw(_graphicsDevice);
         }
 

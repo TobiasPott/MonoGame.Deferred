@@ -37,6 +37,7 @@ namespace DeferredEngine.Rendering
                 Decal.FarClip = value;
                 PointLight.FarClip = value;
                 Billboard.FarClip = value;
+                Lighting.FarClip = value;
             }
         }
 
@@ -92,8 +93,8 @@ namespace DeferredEngine.Rendering
             Environment.SetGBufferParams(gBufferTarget);
 
             Decal.DepthMap = gBufferTarget.Depth;
-
             DistanceField.DepthMap = gBufferTarget.Depth;
+            Lighting.DepthMap = gBufferTarget.Depth;
 
             Deferred.SetGBufferParams(gBufferTarget);
         }

@@ -1,5 +1,4 @@
 ﻿using DeferredEngine.Rendering;
-using DeferredEngine.Rendering.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,8 +10,10 @@ namespace DeferredEngine.Pipeline.Lighting
     {
 
         private FullscreenTriangleBuffer _fullscreenTarget;
+
         private DirectionalLightEffectSetup _effectSetup = new DirectionalLightEffectSetup();
 
+        public Vector3[] FrustumCorners { set { _effectSetup.Param_FrustumCorners.SetValue(value); } }
 
         public DirectionalLightPipelineModule(ContentManager content, string shaderPath = "Shaders/Deferred/DeferredDirectionalLight")
             : base(content, shaderPath)
@@ -25,7 +26,7 @@ namespace DeferredEngine.Pipeline.Lighting
 
         }
 
-        public void SetFrustumCorners(Vector3[] currentFrustumCorners) => _effectSetup.Param_FrustumCorners.SetValue(currentFrustumCorners);
+
         public void SetScreenSpaceShadowMap(RenderTarget2D renderTarget2D) => _effectSetup.Param_SSShadowMap.SetValue(renderTarget2D);
         public void SetGBufferParams(GBufferTarget gBufferTarget)
         {
@@ -46,7 +47,7 @@ namespace DeferredEngine.Pipeline.Lighting
         /// </summary>
         public void DrawDirectionalLights(List<DirectionalLight> dirLights, Vector3 cameraPosition, PipelineMatrices matrices, bool viewProjectionHasChanged)
         {
-            if (dirLights.Count < 1) 
+            if (dirLights.Count < 1)
                 return;
             _graphicsDevice.SetStates(DepthStencilStateOption.None, RasterizerStateOption.CullCounterClockwise);
 
