@@ -43,15 +43,15 @@ namespace DeferredEngine.Rendering
         /// <summary>
         /// Index to the horizontal blur render target
         /// </summary>
-        public const int SSFX_BLUR_HORIZONTAL = 8;
+        public const int SSFX_AO_BLUR_HORIZONTAL = 8;
         /// <summary>
         /// Index to the vertical blur render target
         /// </summary>
-        public const int SSFX_BLUR_VERTICAL = 9;
+        public const int SSFX_AO_BLUR_VERTICAL = 9;
         /// <summary>
         /// Index to the final blur render target
         /// </summary>
-        public const int SSFX_BLUR_FINAL = 10;
+        public const int SSFX_AO_BLUR_FINAL = 10;
 
         #endregion
 
@@ -62,8 +62,8 @@ namespace DeferredEngine.Rendering
             RenderTarget2DDefinition.Aux_Decal, RenderTarget2DDefinition.SSFx_Bloom,
             RenderTarget2DDefinition.SSFx_TAA_First, RenderTarget2DDefinition.SSFx_TAA_Second,
             RenderTarget2DDefinition.SSFx_Reflections, RenderTarget2DDefinition.SSFx_AmbientOcclusion,
-            RenderTarget2DDefinition.SSFx_Blur_Vertical, RenderTarget2DDefinition.SSFx_Blur_Horizontal,
-            RenderTarget2DDefinition.SSFx_Blur_Final,
+            RenderTarget2DDefinition.SSFx_AO_Blur_Vertical, RenderTarget2DDefinition.SSFx_AO_Blur_Horizontal,
+            RenderTarget2DDefinition.SSFx_AO_Blur_Final,
         };
         public class PipelineTargets : DynamicMultiRenderTarget
         {
