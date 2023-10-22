@@ -42,6 +42,7 @@ namespace DeferredEngine.Recources
 
 
 
+
         //ScreenSpaceReflection Effect
         public static class SSR
         {

@@ -502,9 +502,9 @@ namespace DeferredEngine.Rendering
         /// <summary>
         /// Draw SSAO to a different rendertarget
         /// </summary>
-        /// <param name="camera"></param>
         private void DrawScreenSpaceAmbientOcclusion(Camera camera)
         {
+            // ToDo: @tpott: extract to own BaseFx derived type
             if (!RenderingSettings.g_ssao_draw) return;
 
             _graphicsDevice.SetRenderTarget(_auxTargets[MRT.SSFX_AMBIENTOCCLUSION]);

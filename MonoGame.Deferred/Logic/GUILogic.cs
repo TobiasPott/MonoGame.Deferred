@@ -222,30 +222,6 @@ namespace DeferredEngine.Logic
                 Toggle = RenderingSettings.TAA.UseTonemapping
             });
 
-            postprocessingList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 4, 2, "WhitePoint: ")
-            {
-                SliderProperty = typeof(RenderingSettings).GetProperty("WhitePoint"),
-                SliderValue = RenderingSettings.WhitePoint
-            });
-
-            postprocessingList.AddElement(new GuiSliderFloatText(defaultStyle, -8, 8, 2, "Exposure: ")
-            {
-                SliderProperty = typeof(RenderingSettings).GetProperty("Exposure"),
-                SliderValue = RenderingSettings.Exposure
-            });
-
-            postprocessingList.AddElement(new GuiSliderFloatText(defaultStyle, -1, 1, 2, "S-Curve: ")
-            {
-                SliderProperty = typeof(RenderingSettings).GetProperty("SCurveStrength"),
-                SliderValue = RenderingSettings.SCurveStrength
-            });
-
-            postprocessingList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 1, 2, "Chr. Abb.: ")
-            {
-                SliderProperty = typeof(RenderingSettings).GetProperty("ChromaticAbberationStrength"),
-                SliderValue = RenderingSettings.ChromaticAbberationStrength
-            });
-
             postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Color Grading")
             {
                 ToggleField = typeof(RenderingSettings).GetField("g_ColorGrading"),

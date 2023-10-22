@@ -6,6 +6,17 @@ using MonoGame.Ext;
 
 namespace DeferredEngine.Rendering.PostProcessing
 {
+
+    //enums
+    public enum BloomPresets
+    {
+        Wide,
+        Focussed,
+        Small,
+        SuperWide,
+        Cheap
+    }
+
     /// <summary>
     /// Bloom / Blur, 2016 TheKosmonaut
     /// 
@@ -39,7 +50,7 @@ namespace DeferredEngine.Rendering.PostProcessing
     /// 
     /// If you use ToneMapping you should apply Bloom before that step.
     /// </summary>
-    public partial class BloomFx : IDisposable
+    public partial class BloomFx : BaseFx
     {
 
         private static readonly float[] Wide_Strength = new float[] { 0.5f, 1, 2, 1, 2 };
@@ -85,8 +96,6 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         //Objects
         private BloomFxEffectSetup _effectSetup = new BloomFxEffectSetup();
-        private GraphicsDevice _graphicsDevice;
-        private FullscreenTriangleBuffer _fullscreenTarget;
 
 
         public bool Enabled { get => _enabled && RenderingSettings.Bloom.Enabled; set { _enabled = value; } }
@@ -119,25 +128,6 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         public BloomFx(ContentManager content)
         {
-            Load(content);
-        }
-        //Initialize graphicsDevice
-        public void Initialize(GraphicsDevice graphicsDevice, Vector2 resolution)
-        {
-            _resolution = resolution;
-
-            _fullscreenTarget = FullscreenTriangleBuffer.Instance;
-            _graphicsDevice = graphicsDevice;
-
-            _mipMaps = new DynamicMultiRenderTarget(_graphicsDevice, (int)resolution.X, (int)resolution.Y, new[] { Mip0_Definition, Mip1_Definition, Mip2_Definition, Mip3_Definition, Mip4_Definition, Mip5_Definition });
-        }
-
-        /// <summary>
-        /// Loads all needed components for the BloomEffect. This effect won't work without calling load
-        /// </summary>
-        /// <param name="content"></param>
-        public void Load(ContentManager content)
-        {
             //An interesting blendstate for merging the initial image with the bloom.
             //BlendStateBloom = new BlendState();
             //BlendStateBloom.ColorBlendFunction = BlendFunction.Add;
@@ -151,6 +141,16 @@ namespace DeferredEngine.Rendering.PostProcessing
             SetBloomPreset(BloomPresets.SuperWide);
 
             ApplyGameSettings();
+        }
+        //Initialize graphicsDevice
+        public void Initialize(GraphicsDevice graphicsDevice, Vector2 resolution)
+        {
+            _resolution = resolution;
+
+            _fullscreenTarget = FullscreenTriangleBuffer.Instance;
+            _graphicsDevice = graphicsDevice;
+
+            _mipMaps = new DynamicMultiRenderTarget(_graphicsDevice, (int)resolution.X, (int)resolution.Y, new[] { Mip0_Definition, Mip1_Definition, Mip2_Definition, Mip3_Definition, Mip4_Definition, Mip5_Definition });
         }
 
         /// <summary>
@@ -210,7 +210,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         /// Main draw function
         /// </summary>
         /// <param name="sourceRT">the image from which we want to extract bright parts and blur these</param>
-        public RenderTarget2D Draw(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
+        public override RenderTarget2D Draw(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
             //Check if we are initialized
             if (_graphicsDevice == null)
@@ -382,22 +382,11 @@ namespace DeferredEngine.Rendering.PostProcessing
         /// <summary>
         //Dispose our RenderTargets. This is not covered by the Garbage Collector so we have to do it manually
         /// </summary>
-        public void Dispose()
+        public override void Dispose()
         {
             _mipMaps?.Dispose();
-            _graphicsDevice?.Dispose();
             _effectSetup?.Dispose();
         }
     }
-
-    //enums
-    public enum BloomPresets
-    {
-        Wide,
-        Focussed,
-        Small,
-        SuperWide,
-        Cheap
-    };
 
 }

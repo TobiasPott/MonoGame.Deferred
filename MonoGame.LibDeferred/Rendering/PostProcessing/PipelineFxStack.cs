@@ -21,6 +21,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         protected readonly BloomFx Bloom;
         public readonly TemporalAAFx TemporaAA;
         protected readonly ColorGradingFx ColorGrading;
+        protected readonly PostProcessingFx PostProcessing;
 
         //GaussianBlurFx _gaussianBlur;
 
@@ -35,6 +36,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             Bloom = new BloomFx(content);
             TemporaAA = new TemporalAAFx();
             ColorGrading = new ColorGradingFx(content);
+            PostProcessing = new PostProcessingFx(content);
             //_gaussianBlur = new GaussianBlurFx();
         }
         public void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
@@ -46,7 +48,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             Bloom.Initialize(graphicsDevice, RenderingSettings.g_ScreenResolution);
             TemporaAA.Initialize(graphicsDevice, _fullscreenTarget);
             ColorGrading.Initialize(graphicsDevice, _fullscreenTarget);
-
+            PostProcessing.Initialize(graphicsDevice, _fullscreenTarget);
         }
 
         public void SetPipelineMatrices(PipelineMatrices matrices)
@@ -68,22 +70,13 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         private RenderTarget2D DrawPostProcessing(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
-            if (!RenderingSettings.g_PostProcessing) return sourceRT;
+            if (!this.PostProcessing.Enabled) 
+                return sourceRT;
 
-            Shaders.PostProcssing.Param_ScreenTexture.SetValue(sourceRT);
-            _graphicsDevice.SetRenderTarget(destRT);
-            _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.KeepState);
-
-            Shaders.PostProcssing.Effect.CurrentTechnique.Passes[0].Apply();
-            _fullscreenTarget.Draw(_graphicsDevice);
-
-            return destRT;
-            // ToDo: determine why post processing and color grading cannot be called independent from each other?
+            return this.PostProcessing.Draw(sourceRT, previousRT, destRT);
         }
         private RenderTarget2D DrawColorGrading(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
-            if (!RenderingSettings.g_PostProcessing) return sourceRT;
-
             if (this.ColorGrading.Enabled)
                 destRT = this.ColorGrading.Draw(destRT);
 
