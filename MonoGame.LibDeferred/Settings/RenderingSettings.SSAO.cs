@@ -1,4 +1,6 @@
-﻿namespace DeferredEngine.Recources
+﻿using SharpDX.Direct3D9;
+
+namespace DeferredEngine.Recources
 {
 
     public partial class RenderingSettings
@@ -37,7 +39,6 @@
             set
             {
                 _g_ssao_falloffmin = value;
-                Shaders.SSAO.Param_FalloffMin.SetValue(value);
             }
         }
 
@@ -48,7 +49,6 @@
             set
             {
                 _g_ssao_falloffmax = value;
-                Shaders.SSAO.Param_FalloffMax.SetValue(value);
             }
         }
 
@@ -59,7 +59,6 @@
             set
             {
                 _g_ssao_samples = value;
-                Shaders.SSAO.Param_Samples.SetValue(value);
             }
         }
 
@@ -70,7 +69,6 @@
             set
             {
                 _g_ssao_radius = value;
-                Shaders.SSAO.Param_SampleRadius.SetValue(value);
             }
         }
 
@@ -81,9 +79,7 @@
             set
             {
                 _g_ssao_strength = value;
-                Shaders.SSAO.Param_Strength.SetValue(value);
             }
         }
-
     }
 }

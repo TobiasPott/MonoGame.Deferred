@@ -10,7 +10,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
-using SharpDX.MediaFoundation;
 using System;
 using System.Collections.Generic;
 
@@ -46,6 +45,7 @@ namespace DeferredEngine.Rendering
         private PipelineProfiler _profiler;
 
         private SSReflectionFxSetup _ssrEffectSetup;
+        private SSAmbientOcclusionFxSetup _ssaoEffectSetup;
 
         //Used for the view space directions in our shaders. Far edges of our view frustum
         private FrustumCornerVertices _frustumCorners = new FrustumCornerVertices();
@@ -94,6 +94,7 @@ namespace DeferredEngine.Rendering
             _fxStack.SetPipelineMatrices(_matrices);
 
             _ssrEffectSetup = new SSReflectionFxSetup();
+            _ssaoEffectSetup = new SSAmbientOcclusionFxSetup();
         }
 
         /// <summary>
@@ -451,7 +452,7 @@ namespace DeferredEngine.Rendering
             (_frustumCorners.ViewSpaceFrustum[2], _frustumCorners.ViewSpaceFrustum[3]) = (_frustumCorners.ViewSpaceFrustum[3], _frustumCorners.ViewSpaceFrustum[2]);
 
             _ssrEffectSetup.Param_FrustumCorners.SetValue(_frustumCorners.ViewSpaceFrustum);
-            Shaders.SSAO.Param_FrustumCorners.SetValue(_frustumCorners.ViewSpaceFrustum);
+            _ssaoEffectSetup.Param_FrustumCorners.SetValue(_frustumCorners.ViewSpaceFrustum);
             _moduleStack.Lighting.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
             _moduleStack.DirectionalLight.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
             _fxStack.TemporaAA.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
@@ -516,10 +517,17 @@ namespace DeferredEngine.Rendering
             _graphicsDevice.SetRenderTarget(_auxTargets[MRT.SSFX_AMBIENTOCCLUSION]);
             _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.KeepState);
 
-            Shaders.SSAO.SetCameraAndMatrices(camera.Position, _matrices);
+            _ssaoEffectSetup.SetCameraAndMatrices(camera.Position, _matrices);
 
-            Shaders.SSAO.Effect.CurrentTechnique = Shaders.SSAO.Technique_SSAO;
-            Shaders.SSAO.Effect.CurrentTechnique.Passes[0].Apply();
+
+            _ssaoEffectSetup.Param_FalloffMin.SetValue(RenderingSettings.g_ssao_falloffmin);
+            _ssaoEffectSetup.Param_FalloffMax.SetValue(RenderingSettings.g_ssao_falloffmax);
+            _ssaoEffectSetup.Param_Samples.SetValue(RenderingSettings.g_ssao_samples);
+            _ssaoEffectSetup.Param_SampleRadius.SetValue(RenderingSettings.g_ssao_radius);
+            _ssaoEffectSetup.Param_Strength.SetValue(RenderingSettings.g_ssao_strength);
+
+            _ssaoEffectSetup.Effect.CurrentTechnique = _ssaoEffectSetup.Technique_SSAO;
+            _ssaoEffectSetup.Effect.CurrentTechnique.Passes[0].Apply();
             FullscreenTarget.Draw(_graphicsDevice);
 
 
@@ -545,17 +553,17 @@ namespace DeferredEngine.Rendering
                 _graphicsDevice.SetRenderTarget(_auxTargets[MRT.SSFX_BLUR_HORIZONTAL]);
                 _graphicsDevice.SetState(RasterizerStateOption.CullNone);
 
-                Shaders.SSAO.Param_InverseResolution.SetValue(new Vector2(1.0f / _auxTargets[MRT.SSFX_BLUR_VERTICAL].Width, 1.0f / _auxTargets[MRT.SSFX_BLUR_VERTICAL].Height) * 2);
-                Shaders.SSAO.Param_SSAOMap.SetValue(_auxTargets[MRT.SSFX_BLUR_VERTICAL]);
-                Shaders.SSAO.Technique_BlurVertical.Passes[0].Apply();
+                _ssaoEffectSetup.Param_InverseResolution.SetValue(new Vector2(1.0f / _auxTargets[MRT.SSFX_BLUR_VERTICAL].Width, 1.0f / _auxTargets[MRT.SSFX_BLUR_VERTICAL].Height) * 2);
+                _ssaoEffectSetup.Param_SSAOMap.SetValue(_auxTargets[MRT.SSFX_BLUR_VERTICAL]);
+                _ssaoEffectSetup.Technique_BlurVertical.Passes[0].Apply();
 
                 FullscreenTarget.Draw(_graphicsDevice);
 
                 _graphicsDevice.SetRenderTarget(_auxTargets[MRT.SSFX_BLUR_FINAL]);
 
-                Shaders.SSAO.Param_InverseResolution.SetValue(new Vector2(1.0f / _auxTargets[MRT.SSFX_BLUR_HORIZONTAL].Width, 1.0f / _auxTargets[MRT.SSFX_BLUR_HORIZONTAL].Height) * 0.5f);
-                Shaders.SSAO.Param_SSAOMap.SetValue(_auxTargets[MRT.SSFX_BLUR_HORIZONTAL]);
-                Shaders.SSAO.Technique_BlurHorizontal.Passes[0].Apply();
+                _ssaoEffectSetup.Param_InverseResolution.SetValue(new Vector2(1.0f / _auxTargets[MRT.SSFX_BLUR_HORIZONTAL].Width, 1.0f / _auxTargets[MRT.SSFX_BLUR_HORIZONTAL].Height) * 0.5f);
+                _ssaoEffectSetup.Param_SSAOMap.SetValue(_auxTargets[MRT.SSFX_BLUR_HORIZONTAL]);
+                _ssaoEffectSetup.Technique_BlurHorizontal.Passes[0].Apply();
 
                 FullscreenTarget.Draw(_graphicsDevice);
 
@@ -702,12 +710,12 @@ namespace DeferredEngine.Rendering
                 targetWidth /= 2;
                 targetHeight /= 2;
 
-                Shaders.SSAO.Param_InverseResolution.SetValue(new Vector2(1.0f / targetWidth, 1.0f / targetHeight));
+                _ssaoEffectSetup.Param_InverseResolution.SetValue(new Vector2(1.0f / targetWidth, 1.0f / targetHeight));
 
 
                 Vector2 aspectRatio = new Vector2(Math.Min(1.0f, targetWidth / (float)targetHeight), Math.Min(1.0f, targetHeight / (float)targetWidth));
 
-                Shaders.SSAO.Param_AspectRatio.SetValue(aspectRatio);
+                _ssaoEffectSetup.Param_AspectRatio.SetValue(aspectRatio);
 
             }
 
@@ -725,9 +733,9 @@ namespace DeferredEngine.Rendering
             _moduleStack.Deferred.SetLightingParams(_lightingBufferTarget);
             _moduleStack.Deferred.SetSSAOMap(_auxTargets[MRT.SSFX_BLUR_FINAL]);
 
-            Shaders.SSAO.Param_NormalMap.SetValue(_gBufferTarget.Normal);
-            Shaders.SSAO.Param_DepthMap.SetValue(_gBufferTarget.Depth);
-            Shaders.SSAO.Param_SSAOMap.SetValue(_auxTargets[MRT.SSFX_AMBIENTOCCLUSION]);
+            _ssaoEffectSetup.Param_NormalMap.SetValue(_gBufferTarget.Normal);
+            _ssaoEffectSetup.Param_DepthMap.SetValue(_gBufferTarget.Depth);
+            _ssaoEffectSetup.Param_SSAOMap.SetValue(_auxTargets[MRT.SSFX_AMBIENTOCCLUSION]);
 
             _ssrEffectSetup.Param_NormalMap.SetValue(_gBufferTarget.Normal);
             _ssrEffectSetup.Param_DepthMap.SetValue(_gBufferTarget.Depth);
@@ -772,6 +780,9 @@ namespace DeferredEngine.Rendering
             _gBufferTarget?.Dispose();
             _lightingBufferTarget?.Dispose();
             _auxTargets?.Dispose();
+
+            _ssrEffectSetup?.Dispose();
+            _ssaoEffectSetup?.Dispose();
 
             _currentOutput?.Dispose();
             _renderTargetCubeMap?.Dispose();
