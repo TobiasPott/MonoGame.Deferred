@@ -60,6 +60,7 @@ namespace DeferredEngine.Rendering
         private GBufferTarget _gBufferTarget;
         private LightingBufferTarget _lightingBufferTarget;
         private MRT.PipelineTargets _auxTargets;
+        private SSAOTargets _ssaoTargets;
 
         // Final output
         private RenderTarget2D _currentOutput;
@@ -105,6 +106,7 @@ namespace DeferredEngine.Rendering
             _gBufferTarget = new GBufferTarget(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
             _lightingBufferTarget = new LightingBufferTarget(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
             _auxTargets = new MRT.PipelineTargets(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
+            _ssaoTargets = new SSAOTargets(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
 
             _moduleStack.Initialize(graphicsDevice, _spriteBatch);
             _moduleStack.GBuffer.GBufferTarget = _gBufferTarget;
@@ -197,13 +199,13 @@ namespace DeferredEngine.Rendering
             // Step: 08
             //SSAO
             _fxStack._ssaoEffectSetup.SetCameraAndMatrices(camera.Position, _matrices);
-            DrawSSAO(null, null, _auxTargets[MRT.SSFX_AMBIENTOCCLUSION]);
+            DrawSSAO(null, null, _ssaoTargets.Main);
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_SSFx_SSAO);
 
             // Step: 09
             //Upsample/blur our SSAO / screen space shadows
-            DrawSSAOToBlur(_auxTargets[MRT.SSFX_AMBIENTOCCLUSION], null, _auxTargets[MRT.SSFX_AO_BLUR_VERTICAL]);
+            DrawSSAOToBlur(_ssaoTargets.Main, null, _ssaoTargets.Blur_V);
             DrawSSAOBilateralBlur();
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_SSFx_AO_BilateralBlur);
@@ -517,19 +519,19 @@ namespace DeferredEngine.Rendering
         {
             if (RenderingSettings.g_ssao_blur && RenderingSettings.g_ssao_draw)
             {
-                _graphicsDevice.SetRenderTarget(_auxTargets[MRT.SSFX_AO_BLUR_HORIZONTAL]);
+                _graphicsDevice.SetRenderTarget(_ssaoTargets.Blur_H);
                 _graphicsDevice.SetState(RasterizerStateOption.CullNone);
 
-                _fxStack._ssaoEffectSetup.Param_InverseResolution.SetValue(new Vector2(1.0f / _auxTargets[MRT.SSFX_AO_BLUR_VERTICAL].Width, 1.0f / _auxTargets[MRT.SSFX_AO_BLUR_VERTICAL].Height) * 2);
-                _fxStack._ssaoEffectSetup.Param_SSAOMap.SetValue(_auxTargets[MRT.SSFX_AO_BLUR_VERTICAL]);
+                _fxStack._ssaoEffectSetup.Param_InverseResolution.SetValue(new Vector2(1.0f / _ssaoTargets.Blur_V.Width, 1.0f / _ssaoTargets.Blur_V.Height) * 2);
+                _fxStack._ssaoEffectSetup.Param_SSAOMap.SetValue(_ssaoTargets.Blur_V);
                 _fxStack._ssaoEffectSetup.Technique_BlurVertical.Passes[0].Apply();
 
                 FullscreenTarget.Draw(_graphicsDevice);
 
-                _graphicsDevice.SetRenderTarget(_auxTargets[MRT.SSFX_AO_BLUR_FINAL]);
+                _graphicsDevice.SetRenderTarget(_ssaoTargets.Blur_Final);
 
-                _fxStack._ssaoEffectSetup.Param_InverseResolution.SetValue(new Vector2(1.0f / _auxTargets[MRT.SSFX_AO_BLUR_HORIZONTAL].Width, 1.0f / _auxTargets[MRT.SSFX_AO_BLUR_HORIZONTAL].Height) * 0.5f);
-                _fxStack._ssaoEffectSetup.Param_SSAOMap.SetValue(_auxTargets[MRT.SSFX_AO_BLUR_HORIZONTAL]);
+                _fxStack._ssaoEffectSetup.Param_InverseResolution.SetValue(new Vector2(1.0f / _ssaoTargets.Blur_H.Width, 1.0f / _ssaoTargets.Blur_H.Height) * 0.5f);
+                _fxStack._ssaoEffectSetup.Param_SSAOMap.SetValue(_ssaoTargets.Blur_H);
                 _fxStack._ssaoEffectSetup.Technique_BlurHorizontal.Passes[0].Apply();
 
                 FullscreenTarget.Draw(_graphicsDevice);
@@ -537,9 +539,9 @@ namespace DeferredEngine.Rendering
             }
             else
             {
-                _graphicsDevice.SetRenderTarget(_auxTargets[MRT.SSFX_AO_BLUR_FINAL]);
+                _graphicsDevice.SetRenderTarget(_ssaoTargets.Blur_Final);
                 _spriteBatch.Begin(0, BlendState.Opaque, SamplerState.LinearClamp);
-                _spriteBatch.Draw(_auxTargets[MRT.SSFX_AO_BLUR_VERTICAL], new Rectangle(0, 0, _auxTargets[MRT.SSFX_AO_BLUR_FINAL].Width, _auxTargets[MRT.SSFX_AO_BLUR_FINAL].Height), Color.White);
+                _spriteBatch.Draw(_ssaoTargets.Blur_V, new Rectangle(0, 0, _ssaoTargets.Blur_Final.Width, _ssaoTargets.Blur_Final.Height), Color.White);
                 _spriteBatch.End();
             }
 
@@ -612,10 +614,10 @@ namespace DeferredEngine.Rendering
                     DrawTextureToScreenToFullScreen(_lightingBufferTarget.Volume);
                     break;
                 case RenderModes.SSAO:
-                    DrawTextureToScreenToFullScreen(_auxTargets[MRT.SSFX_AMBIENTOCCLUSION]);
+                    DrawTextureToScreenToFullScreen(_ssaoTargets.Main);
                     break;
                 case RenderModes.SSBlur:
-                    DrawTextureToScreenToFullScreen(_auxTargets[MRT.SSFX_AO_BLUR_FINAL]);
+                    DrawTextureToScreenToFullScreen(_ssaoTargets.Blur_Final);
                     break;
                 case RenderModes.SSR:
                     DrawTextureToScreenToFullScreen(_auxTargets[MRT.SSFX_REFLECTION]);
@@ -686,16 +688,16 @@ namespace DeferredEngine.Rendering
         {
             _moduleStack.SetGBufferParams(_gBufferTarget);
             // update directional light module
-            _moduleStack.DirectionalLight.SetScreenSpaceShadowMap(_auxTargets[MRT.SSFX_AO_BLUR_FINAL]);
+            _moduleStack.DirectionalLight.SetScreenSpaceShadowMap(_ssaoTargets.Blur_Final);
 
             _moduleStack.Environment.SSRMap = _auxTargets[MRT.SSFX_REFLECTION];
 
             _moduleStack.Deferred.SetLightingParams(_lightingBufferTarget);
-            _moduleStack.Deferred.SetSSAOMap(_auxTargets[MRT.SSFX_AO_BLUR_FINAL]);
+            _moduleStack.Deferred.SetSSAOMap(_ssaoTargets.Blur_Final);
 
             _fxStack._ssaoEffectSetup.Param_NormalMap.SetValue(_gBufferTarget.Normal);
             _fxStack._ssaoEffectSetup.Param_DepthMap.SetValue(_gBufferTarget.Depth);
-            _fxStack._ssaoEffectSetup.Param_SSAOMap.SetValue(_auxTargets[MRT.SSFX_AMBIENTOCCLUSION]);
+            _fxStack._ssaoEffectSetup.Param_SSAOMap.SetValue(_ssaoTargets.Main);
 
             _fxStack.SetGBufferParams(_gBufferTarget);
         }

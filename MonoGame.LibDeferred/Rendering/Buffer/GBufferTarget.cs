@@ -21,7 +21,7 @@ namespace DeferredEngine.Rendering
         public RenderTarget2D Depth => _renderTargets[DEPTH];
 
         public GBufferTarget(GraphicsDevice graphicsDevice, int width, int height)
-            : base(graphicsDevice, width, height, 3)
+            : base(graphicsDevice, width, height, Definitions.Length)
         { }
 
         public override void Resize(int width, int height)
