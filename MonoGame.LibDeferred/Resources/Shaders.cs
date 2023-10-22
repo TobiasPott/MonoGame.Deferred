@@ -8,24 +8,6 @@ namespace DeferredEngine.Recources
     public static partial class Shaders
     {
 
-        //ScreenSpaceReflection Effect
-        public static class SSR
-        {
-            public static readonly Effect Effect = Globals.content.Load<Effect>("Shaders/ScreenSpace/ScreenSpaceReflections");
-
-            public static readonly EffectParameter Param_DepthMap = Effect.Parameters["DepthMap"];
-            public static readonly EffectParameter Param_NormalMap = Effect.Parameters["NormalMap"];
-            public static readonly EffectParameter Param_TargetMap = Effect.Parameters["TargetMap"];
-            public static readonly EffectParameter Param_Resolution = Effect.Parameters["resolution"];
-            public static readonly EffectParameter Param_Projection = Effect.Parameters["Projection"];
-            public static readonly EffectParameter Param_Time = Effect.Parameters["Time"];
-            public static readonly EffectParameter Param_FrustumCorners = Effect.Parameters["FrustumCorners"];
-            public static readonly EffectParameter Param_FarClip = Effect.Parameters["FarClip"];
-            public static readonly EffectParameter Param_NoiseMap = Effect.Parameters["NoiseMap"];
-
-            public static readonly EffectTechnique Technique_Default = Effect.Techniques["Default"];
-            public static readonly EffectTechnique Technique_Taa = Effect.Techniques["TAA"];
-        }
 
         //Screen Space Ambient Occlusion Effect
         public static class SSAO

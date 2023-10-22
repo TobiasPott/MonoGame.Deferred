@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
+using SharpDX.MediaFoundation;
 using System;
 using System.Collections.Generic;
 
@@ -43,6 +44,8 @@ namespace DeferredEngine.Rendering
         private PipelineModuleStack _moduleStack;
         private PipelineFxStack _fxStack;
         private PipelineProfiler _profiler;
+
+        private SSReflectionFxSetup _ssrEffectSetup;
 
         //Used for the view space directions in our shaders. Far edges of our view frustum
         private FrustumCornerVertices _frustumCorners = new FrustumCornerVertices();
@@ -90,6 +93,7 @@ namespace DeferredEngine.Rendering
             _fxStack = new PipelineFxStack(content);
             _fxStack.SetPipelineMatrices(_matrices);
 
+            _ssrEffectSetup = new SSReflectionFxSetup();
         }
 
         /// <summary>
@@ -117,7 +121,7 @@ namespace DeferredEngine.Rendering
             //Apply some base settings to overwrite shader defaults with game settings defaults
             RenderingSettings.ApplySettings();
 
-            Shaders.SSR.Param_NoiseMap.SetValue(StaticAssets.Instance.NoiseMap);
+            _ssrEffectSetup.Param_NoiseMap.SetValue(StaticAssets.Instance.NoiseMap);
             SetUpRenderTargets(RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight, false);
 
         }
@@ -187,7 +191,10 @@ namespace DeferredEngine.Rendering
 
             // Step: 07
             //Draw Screen Space reflections to a different render target
-            DrawScreenSpaceReflections(gameTime);
+            DrawScreenSpaceReflections(gameTime, null, null, _auxTargets[MRT.SSFX_REFLECTION]);
+            // Profiler sample
+            _profiler.SampleTimestamp(ref PipelineSamples.SDraw_SSFx_SSR);
+
 
             // Step: 08
             //SSAO
@@ -354,13 +361,13 @@ namespace DeferredEngine.Rendering
                 _g_FarClip = RenderingSettings.g_FarPlane;
                 _moduleStack.FarClip = _g_FarClip;
 
-                Shaders.SSR.Param_FarClip.SetValue(_g_FarClip);
+                _ssrEffectSetup.Param_FarClip.SetValue(_g_FarClip);
             }
 
             if (_g_SSReflectionNoise != RenderingSettings.g_SSReflectionNoise)
             {
                 _g_SSReflectionNoise = RenderingSettings.g_SSReflectionNoise;
-                if (!_g_SSReflectionNoise) Shaders.SSR.Param_Time.SetValue(0.0f);
+                if (!_g_SSReflectionNoise) _ssrEffectSetup.Param_Time.SetValue(0.0f);
             }
 
             if (_ssr != RenderingSettings.g_SSReflection)
@@ -443,7 +450,7 @@ namespace DeferredEngine.Rendering
             // swap 2 <-> 3
             (_frustumCorners.ViewSpaceFrustum[2], _frustumCorners.ViewSpaceFrustum[3]) = (_frustumCorners.ViewSpaceFrustum[3], _frustumCorners.ViewSpaceFrustum[2]);
 
-            Shaders.SSR.Param_FrustumCorners.SetValue(_frustumCorners.ViewSpaceFrustum);
+            _ssrEffectSetup.Param_FrustumCorners.SetValue(_frustumCorners.ViewSpaceFrustum);
             Shaders.SSAO.Param_FrustumCorners.SetValue(_frustumCorners.ViewSpaceFrustum);
             _moduleStack.Lighting.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
             _moduleStack.DirectionalLight.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
@@ -468,33 +475,33 @@ namespace DeferredEngine.Rendering
         /// <summary>
         /// Draw Screen Space Reflections
         /// </summary>
-        private void DrawScreenSpaceReflections(GameTime gameTime)
+        private void DrawScreenSpaceReflections(GameTime gameTime, RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
             if (!RenderingSettings.g_SSReflection) return;
 
             //todo: more samples for more reflective materials!
-            _graphicsDevice.SetRenderTarget(_auxTargets[MRT.SSFX_REFLECTION]);
+            _graphicsDevice.SetRenderTarget(destRT);
             _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
 
             if (_fxStack.TemporaAA.Enabled)
             {
-                Shaders.SSR.Param_TargetMap.SetValue(_fxStack.TemporaAA.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2]);
+                _ssrEffectSetup.Param_TargetMap.SetValue(_fxStack.TemporaAA.IsOffFrame ? _auxTargets[MRT.SSFX_TAA_1] : _auxTargets[MRT.SSFX_TAA_2]);
             }
             else
             {
-                Shaders.SSR.Param_TargetMap.SetValue(_auxTargets[MRT.COMPOSE]);
+                _ssrEffectSetup.Param_TargetMap.SetValue(_auxTargets[MRT.COMPOSE]);
             }
 
             if (RenderingSettings.g_SSReflectionNoise)
-                Shaders.SSR.Param_Time.SetValue((float)gameTime.TotalGameTime.TotalSeconds % 1000);
+                _ssrEffectSetup.Param_Time.SetValue((float)gameTime.TotalGameTime.TotalSeconds % 1000);
 
-            Shaders.SSR.Param_Projection.SetValue(_matrices.Projection);
+            _ssrEffectSetup.Param_Projection.SetValue(_matrices.Projection);
 
-            Shaders.SSR.Effect.CurrentTechnique.Passes[0].Apply();
+            _ssrEffectSetup.Param_Samples.SetValue(RenderingSettings.g_SSReflections_Samples);
+            _ssrEffectSetup.Param_SecondarySamples.SetValue(RenderingSettings.g_SSReflections_RefinementSamples);
+            _ssrEffectSetup.Effect.CurrentTechnique = RenderingSettings.g_SSReflectionTaa ? _ssrEffectSetup.Technique_Taa : _ssrEffectSetup.Technique_Default;
+            _ssrEffectSetup.Effect.CurrentTechnique.Passes[0].Apply();
             FullscreenTarget.Draw(_graphicsDevice);
-
-            // Profiler sample
-            _profiler.SampleTimestamp(ref PipelineSamples.SDraw_SSFx_SSR);
 
         }
 
@@ -686,7 +693,7 @@ namespace DeferredEngine.Rendering
 
                 _fxStack.TemporaAA.Resolution = new Vector2(targetWidth, targetHeight);
 
-                Shaders.SSR.Param_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
+                _ssrEffectSetup.Param_Resolution.SetValue(new Vector2(targetWidth, targetHeight));
                 _moduleStack.Environment.Resolution = new Vector2(targetWidth, targetHeight);
 
                 ///////////////////
@@ -722,8 +729,8 @@ namespace DeferredEngine.Rendering
             Shaders.SSAO.Param_DepthMap.SetValue(_gBufferTarget.Depth);
             Shaders.SSAO.Param_SSAOMap.SetValue(_auxTargets[MRT.SSFX_AMBIENTOCCLUSION]);
 
-            Shaders.SSR.Param_NormalMap.SetValue(_gBufferTarget.Normal);
-            Shaders.SSR.Param_DepthMap.SetValue(_gBufferTarget.Depth);
+            _ssrEffectSetup.Param_NormalMap.SetValue(_gBufferTarget.Normal);
+            _ssrEffectSetup.Param_DepthMap.SetValue(_gBufferTarget.Depth);
 
             _fxStack.TemporaAA.DepthMap = _gBufferTarget.Depth;
         }

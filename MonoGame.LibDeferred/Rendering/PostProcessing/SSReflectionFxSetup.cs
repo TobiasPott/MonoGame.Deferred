@@ -16,6 +16,8 @@ namespace DeferredEngine.Recources
         public EffectParameter Param_FrustumCorners { get; protected set; }
         public EffectParameter Param_FarClip { get; protected set; }
         public EffectParameter Param_NoiseMap { get; protected set; }
+        public EffectParameter Param_Samples { get; protected set; }
+        public EffectParameter Param_SecondarySamples { get; protected set; }
 
         public EffectTechnique Technique_Default { get; protected set; }
         public EffectTechnique Technique_Taa { get; protected set; }
@@ -33,6 +35,9 @@ namespace DeferredEngine.Recources
             Param_FrustumCorners = Effect.Parameters["FrustumCorners"];
             Param_FarClip = Effect.Parameters["FarClip"];
             Param_NoiseMap = Effect.Parameters["NoiseMap"];
+
+            Param_Samples = Effect.Parameters["Samples"];
+            Param_SecondarySamples = Effect.Parameters["SecondarySamples"];
 
             Technique_Default = Effect.Techniques["Default"];
             Technique_Taa = Effect.Techniques["TAA"];
