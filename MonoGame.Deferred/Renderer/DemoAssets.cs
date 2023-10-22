@@ -92,7 +92,6 @@ namespace DeferredEngine.Recources
             _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/chain_texture_ddn"));
             _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/chain_texture_mask"));
             _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/lion_ddn"));
-            _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/lion2_ddn"));
             _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/spnza_bricks_a_ddn"));
             _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/spnza_bricks_a_spec"));
             _sponzaTextures.Add(content.Load<Texture2D>("Sponza/textures/sponza_arch_ddn"));

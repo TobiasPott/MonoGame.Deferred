@@ -22,6 +22,8 @@
     <None Remove="Renderer\Helper\**" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Content\BEPUphysics.dll" />
+    <None Remove="Content\BEPUutilities.dll" />
     <None Remove="Content\Shaders.mgcb" />
   </ItemGroup>
   <ItemGroup>
