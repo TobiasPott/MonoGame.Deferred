@@ -36,6 +36,13 @@ namespace DeferredEngine.Rendering
         ///// </summary>
         public const int SSR_MAIN = 6;
 
+        /// <summary>
+        /// Index to the bloom render target
+        /// </summary>
+        public const int BLOOM_MAIN = 7;
+
+
+
 
         private static readonly RenderTarget2DDefinition[] Definitions = new RenderTarget2DDefinition[] {
             RenderTarget2DDefinition.SSFx_AO_Main,
@@ -43,7 +50,8 @@ namespace DeferredEngine.Rendering
             RenderTarget2DDefinition.SSFx_AO_Blur_H,
             RenderTarget2DDefinition.SSFx_AO_Blur_Final,
             RenderTarget2DDefinition.SSFx_TAA_Even, RenderTarget2DDefinition.SSFx_TAA_Odd,
-            RenderTarget2DDefinition.SSFx_Reflections
+            RenderTarget2DDefinition.SSFx_Reflections,
+            RenderTarget2DDefinition.SSFx_Bloom
         };
 
 
@@ -56,6 +64,7 @@ namespace DeferredEngine.Rendering
         public RenderTarget2D TAA_Odd => _renderTargets[TAA_ODD];
 
         public RenderTarget2D SSR_Main => _renderTargets[SSR_MAIN];
+        public RenderTarget2D Bloom_Main => _renderTargets[BLOOM_MAIN];
 
 
 
@@ -78,15 +87,15 @@ namespace DeferredEngine.Rendering
         }
         public void GetTemporalAARenderTargets(bool isOffFrame, out RenderTarget2D destRT, out RenderTarget2D previousRT)
         {
-            destRT = !isOffFrame ? this[TAA_EVEN] : this[TAA_ODD];
-            previousRT = isOffFrame ? this[TAA_EVEN] : this[TAA_ODD];
+            destRT = !isOffFrame ? this.TAA_Even : this.TAA_Odd;
+            previousRT = isOffFrame ? this.TAA_Even : this.TAA_Odd;
         }
         public RenderTarget2D GetSSReflectionRenderTargets(bool isTaaEnabled, bool isOffFrame)
         {
             if (isTaaEnabled)
-                return isOffFrame ? this[TAA_EVEN] : this[TAA_ODD];
+                return isOffFrame ? this.TAA_Even : this.TAA_Odd;
             else
-                return this[MRT.COMPOSE];
+                return this.SSR_Main; 
         }
 
     }

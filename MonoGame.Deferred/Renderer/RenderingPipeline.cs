@@ -59,7 +59,7 @@ namespace DeferredEngine.Rendering
         //Render targets
         private GBufferTarget _gBufferTarget;
         private LightingBufferTarget _lightingBufferTarget;
-        private MRT.PipelineTargets _auxTargets;
+        private PipelineTargets _auxTargets;
         private SSFxTargets _ssfxTargets;
 
         // Final output
@@ -105,7 +105,7 @@ namespace DeferredEngine.Rendering
 
             _gBufferTarget = new GBufferTarget(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
             _lightingBufferTarget = new LightingBufferTarget(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
-            _auxTargets = new MRT.PipelineTargets(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
+            _auxTargets = new PipelineTargets(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
             _ssfxTargets = new SSFxTargets(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
 
             _moduleStack.Initialize(graphicsDevice, _spriteBatch);
@@ -221,7 +221,7 @@ namespace DeferredEngine.Rendering
 
             // Step: 12
             //Compose the scene by combining our lighting data with the gbuffer data
-            _currentOutput = DrawDeferredCompose(null, null, _auxTargets[MRT.COMPOSE]);
+            _currentOutput = DrawDeferredCompose(null, null, _auxTargets[PipelineTargets.COMPOSE]);
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_Compose);
 
@@ -240,7 +240,7 @@ namespace DeferredEngine.Rendering
 
             // Step: 15
             //Do Bloom
-            _currentOutput = _fxStack.Draw(PipelineFxStage.Bloom, _currentOutput, null, _auxTargets[MRT.BLOOM]);
+            _currentOutput = _fxStack.Draw(PipelineFxStage.Bloom, _currentOutput, null, _ssfxTargets.Bloom_Main);
 
             // Step: 16
             //Draw the elements that we are hovering over with outlines
@@ -474,9 +474,9 @@ namespace DeferredEngine.Rendering
             if (!DecalRenderModule.g_EnableDecals) return;
 
             //First copy albedo to decal offtarget
-            DrawTextureToScreenToFullScreen(_gBufferTarget.Albedo, BlendState.Opaque, _auxTargets[MRT.DECAL]);
+            DrawTextureToScreenToFullScreen(_gBufferTarget.Albedo, BlendState.Opaque, _auxTargets[PipelineTargets.DECAL]);
 
-            DrawTextureToScreenToFullScreen(_auxTargets[MRT.DECAL], BlendState.Opaque, _gBufferTarget.Albedo);
+            DrawTextureToScreenToFullScreen(_auxTargets[PipelineTargets.DECAL], BlendState.Opaque, _gBufferTarget.Albedo);
 
             _moduleStack.Decal.Draw(decals, _matrices);
         }
@@ -626,8 +626,8 @@ namespace DeferredEngine.Rendering
                     DrawTextureToScreenToFullScreen(currentTarget);
                     break;
                 default:
-                    _fxStack.Draw(PipelineFxStage.PostProcessing, currentTarget, null, _auxTargets[MRT.OUTPUT]);
-                    _fxStack.Draw(PipelineFxStage.ColorGrading, null, null, _auxTargets[MRT.OUTPUT]);
+                    _fxStack.Draw(PipelineFxStage.PostProcessing, currentTarget, null, _auxTargets[PipelineTargets.OUTPUT]);
+                    _fxStack.Draw(PipelineFxStage.ColorGrading, null, null, _auxTargets[PipelineTargets.OUTPUT]);
                     break;
             }
 
