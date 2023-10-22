@@ -59,15 +59,6 @@ namespace DeferredEngine.Recources
 
         }
 
-        public void SetCameraAndMatrices(Vector3 cameraPosition, PipelineMatrices matrices)
-        {
-            Param_InverseViewProjection.SetValue(matrices.InverseViewProjection);
-            Param_Projection.SetValue(matrices.Projection);
-            Param_ViewProjection.SetValue(matrices.ViewProjection);
-
-            Param_CameraPosition.SetValue(cameraPosition);
-        }
-
         public override void Dispose()
         {
             Effect?.Dispose();

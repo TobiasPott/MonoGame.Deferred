@@ -1,5 +1,4 @@
-﻿using DeferredEngine.Entities;
-using DeferredEngine.Recources;
+﻿using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,13 +19,12 @@ namespace DeferredEngine.Rendering.PostProcessing
 
     public class PipelineFxStack : IDisposable
     {
-        public readonly SSAmbientOcclusionFxSetup _ssaoEffectSetup;
-
         protected readonly BloomFx Bloom;
         public readonly TemporalAAFx TemporaAA;
         protected readonly ColorGradingFx ColorGrading;
         protected readonly PostProcessingFx PostProcessing;
         public readonly SSReflectionFx SSReflection;
+        public readonly SSAmbientOcclustionFx SSAmbientOcclusion;
 
         //GaussianBlurFx _gaussianBlur;
 
@@ -35,12 +33,19 @@ namespace DeferredEngine.Rendering.PostProcessing
         private SpriteBatch _spriteBatch;
         private FullscreenTriangleBuffer _fullscreenTarget;
 
+        public SSFxTargets SSFxTargets
+        {
+            set
+            {
+                SSAmbientOcclusion.SSFxTargets = value;
+            }
+        }
         public float FarClip
         {
             set
             {
                 SSReflection.FarClip = value;
-               
+
             }
         }
         public PipelineMatrices Matrices
@@ -56,9 +61,9 @@ namespace DeferredEngine.Rendering.PostProcessing
         {
             set
             {
-               _ssaoEffectSetup.Param_FrustumCorners.SetValue(value);
-               TemporaAA.FrustumCorners = value;
-               SSReflection.FrustumCorners = value;
+                SSAmbientOcclusion.FrustumCorners = value;
+                TemporaAA.FrustumCorners = value;
+                SSReflection.FrustumCorners = value;
             }
         }
 
@@ -71,8 +76,8 @@ namespace DeferredEngine.Rendering.PostProcessing
             ColorGrading = new ColorGradingFx(content);
             PostProcessing = new PostProcessingFx(content);
             SSReflection = new SSReflectionFx(content);
+            SSAmbientOcclusion = new SSAmbientOcclustionFx(content);
             //_gaussianBlur = new GaussianBlurFx();
-            _ssaoEffectSetup = new SSAmbientOcclusionFxSetup();
 
         }
         public void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
@@ -86,6 +91,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             ColorGrading.Initialize(graphicsDevice, _fullscreenTarget);
             PostProcessing.Initialize(graphicsDevice, _fullscreenTarget);
             SSReflection.Initialize(graphicsDevice, _fullscreenTarget);
+            SSAmbientOcclusion.Initialize(graphicsDevice, spriteBatch, _fullscreenTarget);
         }
 
         public RenderTarget2D Draw(PipelineFxStage stage, RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
@@ -96,9 +102,10 @@ namespace DeferredEngine.Rendering.PostProcessing
                 PipelineFxStage.TemporalAA => DrawTemporalAA(sourceRT, previousRT, destRT),
                 PipelineFxStage.PostProcessing => DrawPostProcessing(sourceRT, previousRT, destRT),
                 PipelineFxStage.ColorGrading => DrawColorGrading(sourceRT, previousRT, destRT),
-                PipelineFxStage.SSReflection => SSReflection.Draw(sourceRT, previousRT, destRT),
+                PipelineFxStage.SSReflection => DrawSSReflection(sourceRT, previousRT, destRT),
+                PipelineFxStage.SSAmbientOcclusion => DrawSSAmbientOcclusion(sourceRT, previousRT, destRT),
                 _ => sourceRT,
-            };
+            }; ;
         }
 
         private RenderTarget2D DrawPostProcessing(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
@@ -146,10 +153,29 @@ namespace DeferredEngine.Rendering.PostProcessing
         {
             if (!this.TemporaAA.Enabled)
                 return sourceRT;
-
             this.TemporaAA.Draw(sourceRT, previousRT, destRT);
 
             return RenderingSettings.TAA.UseTonemapping ? sourceRT : destRT;
+        }
+
+        /// <summary>
+        /// Combine the render with previous frames to get more information per sample and make the image anti-aliased / super sampled
+        /// </summary>
+        private RenderTarget2D DrawSSReflection(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
+        {
+            if (!this.SSReflection.Enabled)
+                return sourceRT;
+            return this.SSReflection.Draw(sourceRT, previousRT, destRT);
+        }
+
+        /// <summary>
+        /// Combine the render with previous frames to get more information per sample and make the image anti-aliased / super sampled
+        /// </summary>
+        private RenderTarget2D DrawSSAmbientOcclusion(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
+        {
+            if (!this.SSAmbientOcclusion.Enabled)
+                return sourceRT;
+            return this.SSAmbientOcclusion.Draw(sourceRT, previousRT, destRT);
         }
 
         public void SetGBufferParams(GBufferTarget gBufferTarget)
@@ -158,6 +184,9 @@ namespace DeferredEngine.Rendering.PostProcessing
             SSReflection.DepthMap = gBufferTarget.Depth;
 
             TemporaAA.DepthMap = gBufferTarget.Depth;
+
+            SSAmbientOcclusion.NormalMap = gBufferTarget.Normal;
+            SSAmbientOcclusion.DepthMap = gBufferTarget.Depth;
         }
 
         private void DrawTextureToScreenToFullScreen(Texture2D source, BlendState blendState = null, RenderTarget2D destRT = null)
@@ -180,6 +209,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             ColorGrading?.Dispose();
             PostProcessing?.Dispose();
             SSReflection?.Dispose();
+            SSAmbientOcclusion?.Dispose();
             //_gaussianBlur?.Dispose();
 
         }
