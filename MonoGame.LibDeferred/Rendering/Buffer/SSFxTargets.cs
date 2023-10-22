@@ -95,7 +95,7 @@ namespace DeferredEngine.Rendering
             if (isTaaEnabled)
                 return isOffFrame ? this.TAA_Even : this.TAA_Odd;
             else
-                return this.SSR_Main; 
+                return null;
         }
 
     }

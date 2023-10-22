@@ -187,7 +187,8 @@ namespace DeferredEngine.Rendering
 
             // Step: 07
             //Draw Screen Space reflections to a different render target
-            _fxStack.SSReflection.TargetMap = _ssfxTargets.GetSSReflectionRenderTargets(_fxStack.TemporaAA.Enabled, _fxStack.TemporaAA.IsOffFrame);
+            RenderTarget2D ssrTargetMap = _ssfxTargets.GetSSReflectionRenderTargets(_fxStack.TemporaAA.Enabled, _fxStack.TemporaAA.IsOffFrame);
+            _fxStack.SSReflection.TargetMap = ssrTargetMap ?? _auxTargets[PipelineTargets.COMPOSE];
             if (RenderingSettings.g_SSReflectionNoise)
                 _fxStack.SSReflection.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
             _fxStack.Draw(PipelineFxStage.SSReflection, null, null, _ssfxTargets.SSR_Main);
