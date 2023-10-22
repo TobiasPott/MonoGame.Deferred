@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DeferredEngine.Recources
 {
     // Temporal Anti-Aliasing Effect
-    public class TemporalAAFxEffectSetup : EffectSetupBase
+    public class TemporalAAFxSetup : BaseFxSetup
     {
 
         public Effect Effect { get; protected set; }
@@ -25,7 +25,7 @@ namespace DeferredEngine.Recources
         public EffectParameter Param_UseTonemap { get; protected set; }
 
 
-        public TemporalAAFxEffectSetup(string shaderPath = "Shaders/TemporalAntiAliasing/TemporalAntiAliasing")
+        public TemporalAAFxSetup(string shaderPath = "Shaders/TemporalAntiAliasing/TemporalAntiAliasing")
               : base(shaderPath)
         {
             Effect = Globals.content.Load<Effect>(shaderPath);

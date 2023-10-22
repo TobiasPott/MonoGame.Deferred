@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Pipeline.Utilities
 {
-    public class BillboardEffectSetup : EffectSetupBase
+    public class BillboardEffectSetup : BaseFxSetup
     {
         public Effect Effect { get; protected set; }
 

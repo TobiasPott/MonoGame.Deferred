@@ -95,7 +95,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         public int BloomDownsamplePasses = 5;
 
         //Objects
-        private BloomFxEffectSetup _effectSetup = new BloomFxEffectSetup();
+        private BloomFxSetup _effectSetup = new BloomFxSetup();
 
 
         public bool Enabled { get => _enabled && RenderingSettings.Bloom.Enabled; set { _enabled = value; } }

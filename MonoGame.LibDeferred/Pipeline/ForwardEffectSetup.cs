@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DeferredEngine.Pipeline
 {
     // Forward
-    public class ForwardEffectSetup : EffectSetupBase
+    public class ForwardEffectSetup : BaseFxSetup
     {
         public Effect Effect { get; protected set; }
 

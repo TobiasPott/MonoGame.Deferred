@@ -7,7 +7,7 @@ namespace DeferredEngine.Pipeline.Lighting
 {
 
     //Directional light
-    public class DirectionalLightEffectSetup : EffectSetupBase
+    public class DirectionalLightEffectSetup : BaseFxSetup
     {
         public Effect Effect { get; protected set; }
 

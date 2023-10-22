@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Pipeline.Utilities
 {
-    public class IdAndOutlineEffectSetup : EffectSetupBase
+    public class IdAndOutlineEffectSetup : BaseFxSetup
     {
         private static IdAndOutlineEffectSetup _instance = null;
         public static IdAndOutlineEffectSetup Instance

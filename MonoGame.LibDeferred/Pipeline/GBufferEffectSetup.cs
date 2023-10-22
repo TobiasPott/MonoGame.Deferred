@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Pipeline
 {
-    public class GBufferEffectSetup : EffectSetupBase
+    public class GBufferEffectSetup : BaseFxSetup
     {
         public Effect Effect_GBuffer { get; protected set; }
         public Effect Effect_Clear { get; protected set; }

@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DeferredEngine.Pipeline.Utilities
 {
 
-    public class DecalEffectSetup : EffectSetupBase
+    public class DecalEffectSetup : BaseFxSetup
     {
         public Effect Effect { get; protected set; }
 

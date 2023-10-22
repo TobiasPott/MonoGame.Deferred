@@ -23,26 +23,6 @@ namespace DeferredEngine.Recources
             public static readonly EffectParameter Param_FrustumCorners = Effect.Parameters["FrustumCorners"];
         }
 
-
-        // PostProcessing
-
-        public static class PostProcssing
-        {
-            //Vignette and CA
-            public static readonly Effect Effect = Globals.content.Load<Effect>("shaders/postprocessing/postprocessing");
-            public static readonly EffectParameter Param_ScreenTexture = Effect.Parameters["ScreenTexture"];
-            public static readonly EffectParameter Param_ChromaticAbberationStrength = Effect.Parameters["ChromaticAbberationStrength"];
-            public static readonly EffectParameter Param_SCurveStrength = Effect.Parameters["SCurveStrength"];
-            public static readonly EffectParameter Param_WhitePoint = Effect.Parameters["WhitePoint"];
-            public static readonly EffectParameter Param_PowExposure = Effect.Parameters["PowExposure"];
-
-            public static readonly EffectTechnique Technique_VignetteChroma = Effect.Techniques["VignetteChroma"];
-            public static readonly EffectTechnique Technique_Base = Effect.Techniques["Base"];
-        }
-
-
-
-
         //ScreenSpaceReflection Effect
         public static class SSR
         {

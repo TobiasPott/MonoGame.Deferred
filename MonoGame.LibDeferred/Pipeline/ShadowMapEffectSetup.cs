@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DeferredEngine.Pipeline
 {
     // Shadow Map
-    public class ShadowMapEffectSetup : EffectSetupBase
+    public class ShadowMapEffectSetup : BaseFxSetup
     {
         public Effect Effect;
 

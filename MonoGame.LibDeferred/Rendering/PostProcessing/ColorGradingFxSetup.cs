@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DeferredEngine.Rendering.PostProcessing
 {
     // Color Grading Effect
-    public class ColorGradingFxEffectSetup : EffectSetupBase
+    public class ColorGradingFxSetup : BaseFxSetup
     {
 
         public Effect Effect { get; protected set; }
@@ -25,7 +25,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
 
 
-        public ColorGradingFxEffectSetup(string shaderPath = "Shaders/PostProcessing/ColorGrading")
+        public ColorGradingFxSetup(string shaderPath = "Shaders/PostProcessing/ColorGrading")
               : base(shaderPath)
         {
             Effect = Globals.content.Load<Effect>(shaderPath);

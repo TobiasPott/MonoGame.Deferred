@@ -31,10 +31,6 @@ namespace DeferredEngine.Recources
             ApplyDefaultsSSAO();
             ApplyDefaultsSSR();
 
-            //SCurveStrength = _sCurveStrength;
-            //Exposure = _exposure;
-            //ChromaticAbberationStrength = _chromaticAbberationStrength;
-
         }
 
     }

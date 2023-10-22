@@ -5,7 +5,7 @@ namespace DeferredEngine.Recources
 {
 
     //Hologram Effect
-    public class HologramEffectSetup : EffectSetupBase
+    public class HologramEffectSetup : BaseFxSetup
     {
         private static HologramEffectSetup _instance = null;
         public static HologramEffectSetup Instance

@@ -9,7 +9,7 @@ namespace DeferredEngine.Rendering.PostProcessing
     public class TemporalAAFx : BaseFx
     {
 
-        private TemporalAAFxEffectSetup _effectSetup = new TemporalAAFxEffectSetup();
+        private TemporalAAFxSetup _effectSetup = new TemporalAAFxSetup();
         private bool _enabled = true;
         private bool _useTonemapping = true;
         private HaltonSequence _haltonSequence = new HaltonSequence();

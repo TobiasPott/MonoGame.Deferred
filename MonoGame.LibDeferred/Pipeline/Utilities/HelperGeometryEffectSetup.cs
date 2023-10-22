@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DeferredEngine.Pipeline.Utilities
 {
 
-    public class HelperGeometryEffectSetup : EffectSetupBase
+    public class HelperGeometryEffectSetup : BaseFxSetup
     {
 
         //Lines

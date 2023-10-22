@@ -5,7 +5,7 @@ namespace DeferredEngine.Recources
 {
 
     //Gaussian Blur
-    public class GaussianBlurFxEffectSetup : EffectSetupBase
+    public class GaussianBlurFxSetup : BaseFxSetup
     {
 
         public Effect Effect { get; protected set; }
@@ -21,7 +21,7 @@ namespace DeferredEngine.Recources
         public EffectParameter Param_TargetMap { get; protected set; }
 
 
-        public GaussianBlurFxEffectSetup(string shaderPath = "Shaders/ScreenSpace/GaussianBlur")
+        public GaussianBlurFxSetup(string shaderPath = "Shaders/ScreenSpace/GaussianBlur")
               : base(shaderPath)
         {
             Effect = Globals.content.Load<Effect>(shaderPath);

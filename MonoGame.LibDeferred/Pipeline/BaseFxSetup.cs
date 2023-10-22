@@ -1,10 +1,10 @@
 ﻿namespace DeferredEngine.Pipeline
 {
-    public abstract class EffectSetupBase : IDisposable
+    public abstract class BaseFxSetup : IDisposable
     {
         public string ShaderPath { get; protected set; }
 
-        public EffectSetupBase(string shaderPath)
+        public BaseFxSetup(string shaderPath)
         {
             ShaderPath = shaderPath;
         }

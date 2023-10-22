@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Recources
 {
-    public class PostProcssingFxEffectSetup : EffectSetupBase
+    public class PostProcssingFxSetup : BaseFxSetup
     {
         //Vignette and CA
         public Effect Effect { get; protected set; }
@@ -18,7 +18,7 @@ namespace DeferredEngine.Recources
         public EffectTechnique Technique_Base { get; protected set; }
 
 
-        public PostProcssingFxEffectSetup(string shaderPath = "shaders/postprocessing/postprocessing") : base(shaderPath)
+        public PostProcssingFxSetup(string shaderPath = "shaders/postprocessing/postprocessing") : base(shaderPath)
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
 

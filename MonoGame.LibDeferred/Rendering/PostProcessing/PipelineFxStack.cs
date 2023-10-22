@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
-using Windows.Web.Syndication;
 
 namespace DeferredEngine.Rendering.PostProcessing
 {
@@ -70,7 +69,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         private RenderTarget2D DrawPostProcessing(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
-            if (!this.PostProcessing.Enabled) 
+            if (!this.PostProcessing.Enabled)
                 return sourceRT;
 
             return this.PostProcessing.Draw(sourceRT, previousRT, destRT);
@@ -81,7 +80,7 @@ namespace DeferredEngine.Rendering.PostProcessing
                 destRT = this.ColorGrading.Draw(destRT);
 
             DrawTextureToScreenToFullScreen(destRT);
-            
+
             return destRT;
         }
         private RenderTarget2D DrawBloom(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
@@ -90,7 +89,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             {
                 Texture2D bloom = this.Bloom.Draw(sourceRT, null, null);
 
-                _graphicsDevice.SetRenderTargets(destRT); // _auxTargets[MRT.BLOOM]);
+                _graphicsDevice.SetRenderTargets(destRT);
                 _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
 
                 _spriteBatch.Draw(sourceRT, RenderingSettings.g_ScreenRect, Color.White);
@@ -98,7 +97,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
                 _spriteBatch.End();
 
-                return destRT; // _auxTargets[MRT.BLOOM];
+                return destRT;
             }
             else
             {

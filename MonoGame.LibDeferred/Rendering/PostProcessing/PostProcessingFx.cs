@@ -13,7 +13,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         public bool Enabled { get => _enabled && RenderingSettings.g_PostProcessing; set { _enabled = value; } }
 
 
-        private PostProcssingFxEffectSetup _effectSetup = new PostProcssingFxEffectSetup();
+        private PostProcssingFxSetup _effectSetup = new PostProcssingFxSetup();
 
 
         // PostProcessing

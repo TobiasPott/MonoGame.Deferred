@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Rendering.SDF
 {
-    public class DistanceFieldEffectSetup : EffectSetupBase
+    public class DistanceFieldEffectSetup : BaseFxSetup
     {
         public Effect Effect { get; protected set; }
 

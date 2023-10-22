@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Rendering.PostProcessing
 {
-    public class BloomFxEffectSetup : EffectSetupBase
+    public class BloomFxSetup : BaseFxSetup
     {
 
         public Effect Effect { get; protected set; }
@@ -29,7 +29,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
 
 
-        public BloomFxEffectSetup(string shaderPath = "Shaders/BloomFilter/Bloom")
+        public BloomFxSetup(string shaderPath = "Shaders/BloomFilter/Bloom")
               : base(shaderPath)
         {
             Effect = Globals.content.Load<Effect>(shaderPath);

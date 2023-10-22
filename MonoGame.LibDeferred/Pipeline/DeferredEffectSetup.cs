@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Pipeline
 {
-    public class DeferredEffectSetup : EffectSetupBase
+    public class DeferredEffectSetup : BaseFxSetup
     {
         private static DeferredEffectSetup _instance;
         public static DeferredEffectSetup Instance

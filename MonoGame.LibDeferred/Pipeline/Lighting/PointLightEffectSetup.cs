@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DeferredEngine.Pipeline.Lighting
 {
 
-    public class PointLightEffectSetup : EffectSetupBase
+    public class PointLightEffectSetup : BaseFxSetup
     {
         public Effect Effect { get; protected set; }
 
