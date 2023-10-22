@@ -18,9 +18,8 @@ namespace DeferredEngine.Rendering.PostProcessing
     /// </summary>
     public partial class ColorGradingFx : BaseFx
     {
+        protected override bool GetEnabled() => _enabled && RenderingSettings.g_ColorGrading;
 
-        private bool _enabled = true;
-        public bool Enabled { get => _enabled && RenderingSettings.g_ColorGrading; set { _enabled = value; } }
 
         private int _size;
         private RenderTarget2D _renderTarget;

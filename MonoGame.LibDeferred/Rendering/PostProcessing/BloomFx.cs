@@ -77,28 +77,27 @@ namespace DeferredEngine.Rendering.PostProcessing
         private static readonly RenderTarget2DDefinition Mip5_Definition = new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x5);
 
 
-        //RenderTargets
-        private DynamicMultiRenderTarget _mipMaps;
+        protected override bool GetEnabled() => _enabled && RenderingSettings.Bloom.Enabled;
 
 
-        private bool _enabled = true;
+
         private Vector2 _resolution;
         //Preset variables for different mip levels
         private readonly float[] _radius = new float[5];
         private readonly float[] _strength = new float[5];
 
-
         private float _radiusMultiplier = 1.0f;
-
 
         public bool BloomUseLuminance = true;
         public int BloomDownsamplePasses = 5;
 
         //Objects
         private BloomFxSetup _effectSetup = new BloomFxSetup();
+        //RenderTargets
+        private DynamicMultiRenderTarget _mipMaps;
 
 
-        public bool Enabled { get => _enabled && RenderingSettings.Bloom.Enabled; set { _enabled = value; } }
+
         public BloomPresets BloomPreset { set { SetBloomPreset(value); } }
 
 

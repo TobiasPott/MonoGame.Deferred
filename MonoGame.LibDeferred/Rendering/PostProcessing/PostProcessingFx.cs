@@ -9,8 +9,7 @@ namespace DeferredEngine.Rendering.PostProcessing
     public partial class PostProcessingFx : BaseFx
     {
 
-        private bool _enabled = true;
-        public bool Enabled { get => _enabled && RenderingSettings.g_PostProcessing; set { _enabled = value; } }
+        protected override bool GetEnabled() => _enabled && RenderingSettings.g_PostProcessing;
 
 
         private PostProcssingFxSetup _effectSetup = new PostProcssingFxSetup();

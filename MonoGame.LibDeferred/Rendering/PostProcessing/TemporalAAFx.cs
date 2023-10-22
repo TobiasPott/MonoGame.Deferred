@@ -9,13 +9,13 @@ namespace DeferredEngine.Rendering.PostProcessing
     public class TemporalAAFx : BaseFx
     {
 
+
+
         private TemporalAAFxSetup _effectSetup = new TemporalAAFxSetup();
-        private bool _enabled = true;
         private bool _useTonemapping = true;
         private HaltonSequence _haltonSequence = new HaltonSequence();
 
 
-        public bool Enabled { get => _enabled && RenderingSettings.TAA.Enabled; set { _enabled = value; } }
         public PipelineMatrices Matrices { get; set; }
         public bool IsOffFrame { get; protected set; } = true;
         public int JitterMode = 2;
@@ -35,6 +35,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         public TemporalAAFx()
         { }
 
+        protected override bool GetEnabled() => _enabled && RenderingSettings.TAA.Enabled;
         public void SwapOffFrame()
         { IsOffFrame = !IsOffFrame; }
 

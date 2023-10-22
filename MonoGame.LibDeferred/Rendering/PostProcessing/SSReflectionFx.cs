@@ -10,10 +10,6 @@ namespace DeferredEngine.Rendering.PostProcessing
     public partial class SSReflectionFx : BaseFx
     {
 
-        private bool _enabled = true;
-        public bool Enabled { get => _enabled && RenderingSettings.g_SSReflection; set { _enabled = value; } }
-
-
         private SSReflectionFxSetup _effectSetup = new SSReflectionFxSetup();
 
         public PipelineMatrices Matrices { get; set; }
@@ -36,6 +32,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         {
         }
 
+        protected override bool GetEnabled() => _enabled && RenderingSettings.g_SSReflection;
         /// <summary>
         /// returns a modified image with color grading applied.
         /// </summary>

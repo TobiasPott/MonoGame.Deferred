@@ -7,6 +7,9 @@ namespace DeferredEngine.Rendering.PostProcessing
     [Obsolete($"{nameof(GaussianBlurFx)} is unused and needs refactoring when the rendering pipeline is modularized.")]
     public class GaussianBlurFx : BaseFx
     {
+        protected override bool GetEnabled() => _enabled;
+
+
         private GaussianBlurFxSetup _effectSetup = new GaussianBlurFxSetup();
 
         private RenderTarget2D _rt2562;

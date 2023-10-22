@@ -4,10 +4,19 @@ namespace DeferredEngine.Rendering.PostProcessing
 {
     public abstract class BaseFx : IDisposable
     {
+        protected bool _enabled = true;
+        public bool Enabled { get => GetEnabled(); set { _enabled = value; } }
+        /// <summary>
+        /// returns the final enabled state of this instance (may include global or context flags)
+        /// </summary>
+        /// <returns></returns>
+        protected virtual bool GetEnabled() => _enabled;
+
+
         protected GraphicsDevice _graphicsDevice;
         protected FullscreenTriangleBuffer _fullscreenTarget;
 
-        
+
         public virtual void Initialize(GraphicsDevice graphicsDevice, FullscreenTriangleBuffer fullscreenTarget)
         {
             _graphicsDevice = graphicsDevice;
