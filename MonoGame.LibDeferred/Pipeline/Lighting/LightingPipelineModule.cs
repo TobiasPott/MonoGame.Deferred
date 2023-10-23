@@ -1,10 +1,8 @@
 ﻿using DeferredEngine.Entities;
-using DeferredEngine.Recources;
 using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Ext;
 
 namespace DeferredEngine.Pipeline.Lighting
 {
@@ -12,31 +10,20 @@ namespace DeferredEngine.Pipeline.Lighting
     {
         public static int g_UseDepthStencilLightCulling = 1; //None, Depth, Depth+Stencil
 
-
-        private FullscreenTriangleBuffer _fullscreenTarget;
-
         private bool _useDepthStencilLightCulling;
         private bool _viewProjectionHasChanged;
 
         private PipelineMatrices _matrices;
         private BlendState _lightBlendState;
-        private ReconstructDepthFxSetup _effectSetupReconstructDepth = new ReconstructDepthFxSetup();
 
         public PointLightPipelineModule PointLightRenderModule;
         public DirectionalLightPipelineModule DirectionalLightRenderModule;
-
-
-
-        public float FarClip { set { _effectSetupReconstructDepth.Param_FarClip.SetValue(value); } }
-        public Texture2D DepthMap { set { _effectSetupReconstructDepth.Param_DepthMap.SetValue(value); } }
-        public Vector3[] FrustumCorners { set { _effectSetupReconstructDepth.Param_FrustumCorners.SetValue(value); } }
+        public DepthReconstructPipelineModule DepthPipelineModule;
 
 
         public LightingPipelineModule(ContentManager content, string shaderPath = "")
             : base(content, shaderPath)
         {
-            _fullscreenTarget = FullscreenTriangleBuffer.Instance;
-
             _lightBlendState = new BlendState
             {
                 AlphaSourceBlend = Blend.One,
@@ -79,8 +66,8 @@ namespace DeferredEngine.Pipeline.Lighting
                 _graphicsDevice.SetRenderTarget(renderTargetDiffuse);
                 _graphicsDevice.Clear(ClearOptions.DepthBuffer, new Color(0, 0, 0, 0.0f), 1, 0);
                 _graphicsDevice.Clear(ClearOptions.Stencil, new Color(0, 0, 0, 0.0f), 1, 0);
-                ReconstructDepth();
-
+                //ReconstructDepth();
+                DepthPipelineModule.ReconstructDepth();
                 _useDepthStencilLightCulling = true;
             }
             else
@@ -108,15 +95,6 @@ namespace DeferredEngine.Pipeline.Lighting
             PointLightRenderModule.Draw(scene.PointLights, cameraOrigin, _matrices, _viewProjectionHasChanged);
             DirectionalLightRenderModule.DrawDirectionalLights(scene.DirectionalLights, cameraOrigin, _matrices, _viewProjectionHasChanged);
 
-        }
-        public void ReconstructDepth()
-        {
-            if (_viewProjectionHasChanged)
-                _effectSetupReconstructDepth.Param_Projection.SetValue(_matrices.Projection);
-
-            _graphicsDevice.SetState(DepthStencilStateOption.Default);
-            _effectSetupReconstructDepth.Effect.CurrentTechnique.Passes[0].Apply();
-            _fullscreenTarget.Draw(_graphicsDevice);
         }
 
         public override void Dispose()

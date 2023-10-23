@@ -5,6 +5,7 @@ using DeferredEngine.Rendering.RenderModules.Default;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Ext;
 
 namespace DeferredEngine.Pipeline
 {
@@ -38,23 +39,13 @@ namespace DeferredEngine.Pipeline
         /// <summary>
         /// Draw forward shaded, alpha blended materials. Very basic and unoptimized algorithm. Can be improved to use tiling in future.
         /// </summary>
-        public RenderTarget2D Draw(DynamicMeshBatcher meshBatcher, RenderTarget2D output, PipelineMatrices matrices)
+        public void Draw(DynamicMeshBatcher meshBatcher, PipelineMatrices matrices)
         {
-            //_graphicsDevice.SetState(DepthStencilStateOption.Default);
-
             if (meshBatcher.CheckRequiresRedraw(RenderType.Forward, false, false))
-                meshBatcher.Draw(RenderType.Forward, matrices, RenderContext.Default, renderModule: this);
-
-            return output;
+                meshBatcher.Draw(RenderType.Forward, matrices, RenderContext.Default, this);
         }
 
-        public void PrepareDraw(Camera camera, List<PointLight> pointLights, BoundingFrustum frustum)
-        {
-            SetupLighting(camera, pointLights, frustum);
-
-        }
-
-        private void SetupLighting(Camera camera, List<PointLight> pointLights, BoundingFrustum frustum)
+        public void SetupLighting(Camera camera, List<PointLight> pointLights, BoundingFrustum frustum)
         {
             int count = pointLights.Count > 40 ? MAXLIGHTS : pointLights.Count;
 

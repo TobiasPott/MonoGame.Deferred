@@ -13,8 +13,8 @@ namespace DeferredEngine.Rendering.PostProcessing
         private SSReflectionFxSetup _effectSetup = new SSReflectionFxSetup();
 
         public PipelineMatrices Matrices { get; set; }
+
         public float Time { set { _effectSetup.Param_Time.SetValue(value); } }
-        public RenderTarget2D TargetMap { set { _effectSetup.Param_TargetMap.SetValue(value); } }
         public float FarClip { set { _effectSetup.Param_FarClip.SetValue(value); } }
 
         public Vector3[] FrustumCorners { set { _effectSetup.Param_FrustumCorners.SetValue(value); } }
@@ -22,6 +22,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         public RenderTarget2D DepthMap { set { _effectSetup.Param_DepthMap.SetValue(value); } }
         public RenderTarget2D NormalMap { set { _effectSetup.Param_NormalMap.SetValue(value); } }
+        public RenderTarget2D TargetMap { set { _effectSetup.Param_TargetMap.SetValue(value); } }
 
 
 

@@ -17,6 +17,8 @@ namespace DeferredEngine.Rendering
 
         public readonly DirectionalLightPipelineModule DirectionalLight;
         public readonly PointLightPipelineModule PointLight;
+
+        public readonly DepthReconstructPipelineModule DepthReconstruct;
         public readonly LightingPipelineModule Lighting;
 
         public readonly EnvironmentPipelineModule Environment;
@@ -37,7 +39,7 @@ namespace DeferredEngine.Rendering
                 Decal.FarClip = value;
                 PointLight.FarClip = value;
                 Billboard.FarClip = value;
-                Lighting.FarClip = value;
+                DepthReconstruct.FarClip = value;
             }
         }
 
@@ -50,7 +52,8 @@ namespace DeferredEngine.Rendering
 
             DirectionalLight = new DirectionalLightPipelineModule(content, "Shaders/Deferred/DeferredDirectionalLight");
             PointLight = new PointLightPipelineModule(content, "Shaders/Deferred/DeferredPointLight");
-            Lighting = new LightingPipelineModule(content) { PointLightRenderModule = PointLight, DirectionalLightRenderModule = DirectionalLight };
+            DepthReconstruct = new DepthReconstructPipelineModule(content, "Shaders/ScreenSpace/ReconstructDepth");
+            Lighting = new LightingPipelineModule(content) { PointLightRenderModule = PointLight, DirectionalLightRenderModule = DirectionalLight, DepthPipelineModule = DepthReconstruct };
             Environment = new EnvironmentPipelineModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
 
             Decal = new DecalRenderModule();
@@ -72,6 +75,7 @@ namespace DeferredEngine.Rendering
 
             DirectionalLight.Initialize(graphicsDevice, spriteBatch);
             PointLight.Initialize(graphicsDevice, spriteBatch);
+            DepthReconstruct.Initialize(graphicsDevice, spriteBatch);
             Lighting.Initialize(graphicsDevice, spriteBatch);
             Environment.Initialize(graphicsDevice, spriteBatch);
 
@@ -94,7 +98,7 @@ namespace DeferredEngine.Rendering
 
             Decal.DepthMap = gBufferTarget.Depth;
             DistanceField.DepthMap = gBufferTarget.Depth;
-            Lighting.DepthMap = gBufferTarget.Depth;
+            DepthReconstruct.DepthMap = gBufferTarget.Depth;
 
             Deferred.SetGBufferParams(gBufferTarget);
         }

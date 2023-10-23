@@ -51,7 +51,7 @@ namespace DeferredEngine.Rendering
 
         //Checkvariables to see which console variables have changed from the frame before
         private float _g_FarClip;
-        private float _supersampling = 1;
+        private int _supersampling = 1;
         private bool _prevSSReflectionEnabled = true;
         private bool _g_SSReflectionNoise;
 
@@ -85,6 +85,7 @@ namespace DeferredEngine.Rendering
             _matrices = new PipelineMatrices();
 
             _moduleStack = new PipelineModuleStack(content);
+            _moduleStack.DepthReconstruct.Matrices = _matrices;
             _profiler = new PipelineProfiler();
 
             _fxStack = new PipelineFxStack(content);
@@ -298,7 +299,7 @@ namespace DeferredEngine.Rendering
             if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
             {
                 if (IdAndOutlineRenderModule.e_DrawOutlines)
-                    DrawTextureToScreenToFullScreen(_moduleStack.IdAndOutline.GetRenderTarget2D(), BlendState.Additive);
+                    _graphicsDevice.Blit(_spriteBatch, _moduleStack.IdAndOutline.GetRenderTarget2D(), null, BlendState.Additive);
 
                 this.DrawEditorPasses(scene, _matrices, gizmoContext, EditorPasses.Billboard | EditorPasses.IdAndOutline);
 
@@ -461,7 +462,8 @@ namespace DeferredEngine.Rendering
             // swap 2 <-> 3
             (_frustumCorners.ViewSpaceFrustum[2], _frustumCorners.ViewSpaceFrustum[3]) = (_frustumCorners.ViewSpaceFrustum[3], _frustumCorners.ViewSpaceFrustum[2]);
 
-            _moduleStack.Lighting.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
+            _moduleStack.DepthReconstruct.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
+            //_moduleStack.Lighting.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
             _moduleStack.DirectionalLight.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
             _fxStack.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
         }
@@ -474,78 +476,11 @@ namespace DeferredEngine.Rendering
             if (!DecalRenderModule.g_EnableDecals) return;
 
             //First copy albedo to decal offtarget
-            DrawTextureToScreenToFullScreen(_gBufferTarget.Albedo, BlendState.Opaque, _auxTargets[PipelineTargets.DECAL]);
-
-            DrawTextureToScreenToFullScreen(_auxTargets[PipelineTargets.DECAL], BlendState.Opaque, _gBufferTarget.Albedo);
+            _graphicsDevice.Blit(_spriteBatch, _gBufferTarget.Albedo, _auxTargets[PipelineTargets.DECAL], _supersampling);
+            _graphicsDevice.Blit(_spriteBatch, _auxTargets[PipelineTargets.DECAL], _gBufferTarget.Albedo, _supersampling);
 
             _moduleStack.Decal.Draw(decals, _matrices);
         }
-
-        ///// <summary>
-        ///// Draw SSAO to a different rendertarget
-        ///// </summary>
-        //private void DrawSSAO(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
-        //{
-        //    // ToDo: @tpott: extract to own BaseFx derived type
-        //    if (!RenderingSettings.g_ssao_draw) return;
-
-        //    _graphicsDevice.SetRenderTarget(destRT);
-        //    _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.KeepState);
-
-
-        //    _fxStack._ssaoEffectSetup.Param_FalloffMin.SetValue(RenderingSettings.g_ssao_falloffmin);
-        //    _fxStack._ssaoEffectSetup.Param_FalloffMax.SetValue(RenderingSettings.g_ssao_falloffmax);
-        //    _fxStack._ssaoEffectSetup.Param_Samples.SetValue(RenderingSettings.g_ssao_samples);
-        //    _fxStack._ssaoEffectSetup.Param_SampleRadius.SetValue(RenderingSettings.g_ssao_radius);
-        //    _fxStack._ssaoEffectSetup.Param_Strength.SetValue(RenderingSettings.g_ssao_strength);
-
-        //    _fxStack._ssaoEffectSetup.Effect.CurrentTechnique = _fxStack._ssaoEffectSetup.Technique_SSAO;
-        //    _fxStack._ssaoEffectSetup.Effect.CurrentTechnique.Passes[0].Apply();
-        //    FullscreenTarget.Draw(_graphicsDevice);
-
-        //}
-
-        //private void DrawSSAOToBlur(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
-        //{
-        //    _graphicsDevice.SetRenderTarget(destRT);
-        //    _spriteBatch.Begin(0, BlendState.Additive);
-        //    _spriteBatch.Draw(sourceRT, RenderingSettings.g_ScreenRect, Color.White);
-        //    _spriteBatch.End();
-        //}
-        ///// <summary>
-        ///// Bilateral blur, to upsample our undersampled SSAO
-        ///// </summary>
-        //private void DrawSSAOBilateralBlur()
-        //{
-        //    if (RenderingSettings.g_ssao_blur && RenderingSettings.g_ssao_draw)
-        //    {
-        //        _graphicsDevice.SetRenderTarget(_ssfxTargets.AO_Blur_H);
-        //        _graphicsDevice.SetState(RasterizerStateOption.CullNone);
-
-        //        _fxStack._ssaoEffectSetup.Param_InverseResolution.SetValue(new Vector2(1.0f / _ssfxTargets.AO_Blur_V.Width, 1.0f / _ssfxTargets.AO_Blur_V.Height) * 2);
-        //        _fxStack._ssaoEffectSetup.Param_SSAOMap.SetValue(_ssfxTargets.AO_Blur_V);
-        //        _fxStack._ssaoEffectSetup.Technique_BlurVertical.Passes[0].Apply();
-
-        //        FullscreenTarget.Draw(_graphicsDevice);
-
-        //        _graphicsDevice.SetRenderTarget(_ssfxTargets.AO_Blur_Final);
-
-        //        _fxStack._ssaoEffectSetup.Param_InverseResolution.SetValue(new Vector2(1.0f / _ssfxTargets.AO_Blur_H.Width, 1.0f / _ssfxTargets.AO_Blur_H.Height) * 0.5f);
-        //        _fxStack._ssaoEffectSetup.Param_SSAOMap.SetValue(_ssfxTargets.AO_Blur_H);
-        //        _fxStack._ssaoEffectSetup.Technique_BlurHorizontal.Passes[0].Apply();
-
-        //        FullscreenTarget.Draw(_graphicsDevice);
-
-        //    }
-        //    else
-        //    {
-        //        _graphicsDevice.SetRenderTarget(_ssfxTargets.AO_Blur_Final);
-        //        _spriteBatch.Begin(0, BlendState.Opaque, SamplerState.LinearClamp);
-        //        _spriteBatch.Draw(_ssfxTargets.AO_Blur_V, new Rectangle(0, 0, _ssfxTargets.AO_Blur_Final.Width, _ssfxTargets.AO_Blur_Final.Height), Color.White);
-        //        _spriteBatch.End();
-        //    }
-
-        //}
 
         /// <summary>
         /// Apply our environment cubemap to the renderer
@@ -575,16 +510,16 @@ namespace DeferredEngine.Rendering
         }
 
 
-        private RenderTarget2D DrawForward(RenderTarget2D input, DynamicMeshBatcher meshBatcher, Camera camera, List<PointLight> pointLights)
+        private RenderTarget2D DrawForward(RenderTarget2D destRT, DynamicMeshBatcher meshBatcher, Camera camera, List<PointLight> pointLights)
         {
             if (!ForwardPipelineModule.g_EnableForward)
-                return input;
+                return destRT;
 
-            _graphicsDevice.SetRenderTarget(input);
-            _moduleStack.Lighting.ReconstructDepth();
-
-            _moduleStack.Forward.PrepareDraw(camera, pointLights, _boundingFrustum);
-            return _moduleStack.Forward.Draw(meshBatcher, input, _matrices);
+            _graphicsDevice.SetRenderTarget(destRT);
+            _moduleStack.DepthReconstruct.ReconstructDepth();
+            _moduleStack.Forward.SetupLighting(camera, pointLights, _boundingFrustum);
+            _moduleStack.Forward.Draw(meshBatcher, _matrices);
+            return destRT;
         }
 
 
@@ -596,34 +531,34 @@ namespace DeferredEngine.Rendering
             switch (RenderingSettings.g_RenderMode)
             {
                 case RenderModes.Albedo:
-                    DrawTextureToScreenToFullScreen(_gBufferTarget.Albedo);
+                    BlitTo(_gBufferTarget.Albedo);
                     break;
                 case RenderModes.Normal:
-                    DrawTextureToScreenToFullScreen(_gBufferTarget.Normal);
+                    BlitTo(_gBufferTarget.Normal);
                     break;
                 case RenderModes.Depth:
-                    DrawTextureToScreenToFullScreen(_gBufferTarget.Depth);
+                    BlitTo(_gBufferTarget.Depth);
                     break;
                 case RenderModes.Diffuse:
-                    DrawTextureToScreenToFullScreen(_lightingBufferTarget.Diffuse);
+                    BlitTo(_lightingBufferTarget.Diffuse);
                     break;
                 case RenderModes.Specular:
-                    DrawTextureToScreenToFullScreen(_lightingBufferTarget.Specular);
+                    BlitTo(_lightingBufferTarget.Specular);
                     break;
                 case RenderModes.Volumetric:
-                    DrawTextureToScreenToFullScreen(_lightingBufferTarget.Volume);
+                    BlitTo(_lightingBufferTarget.Volume);
                     break;
                 case RenderModes.SSAO:
-                    DrawTextureToScreenToFullScreen(_ssfxTargets.AO_Main);
+                    BlitTo(_ssfxTargets.AO_Main);
                     break;
                 case RenderModes.SSBlur:
-                    DrawTextureToScreenToFullScreen(_ssfxTargets.AO_Blur_Final);
+                    BlitTo(_ssfxTargets.AO_Blur_Final);
                     break;
                 case RenderModes.SSR:
-                    DrawTextureToScreenToFullScreen(_ssfxTargets.SSR_Main);
+                    BlitTo(_ssfxTargets.SSR_Main);
                     break;
                 case RenderModes.HDR:
-                    DrawTextureToScreenToFullScreen(currentTarget);
+                    BlitTo(currentTarget);
                     break;
                 default:
                     _fxStack.Draw(PipelineFxStage.PostProcessing, currentTarget, null, _auxTargets[PipelineTargets.OUTPUT]);
@@ -642,14 +577,10 @@ namespace DeferredEngine.Rendering
         private void SetUpRenderTargets(Vector2 resolution) => SetUpRenderTargets((int)resolution.X, (int)resolution.Y);
         private void SetUpRenderTargets(int width, int height)
         {
-            float ssmultiplier = _supersampling;
-
-            int targetWidth = (int)(width * ssmultiplier);
-            int targetHeight = (int)(height * ssmultiplier);
+            int targetWidth = (int)(width * _supersampling);
+            int targetHeight = (int)(height * _supersampling);
 
             Vector2 targetResolution = new Vector2(targetWidth, targetHeight);
-
-            //Shaders.Billboard.Param_AspectRatio.SetValue((float)targetWidth / targetHeight);
 
             // Update multi render target size
             _gBufferTarget.Resize(targetWidth, targetHeight);
@@ -672,9 +603,9 @@ namespace DeferredEngine.Rendering
             targetWidth /= 2;
             targetHeight /= 2;
 
+            Vector2 aspectRatios = new Vector2(Math.Min(1.0f, targetWidth / (float)targetHeight), Math.Min(1.0f, targetHeight / (float)targetWidth));
             _fxStack.SSAmbientOcclusion.InverseResolution = new Vector2(1.0f / targetWidth, 1.0f / targetHeight);
-            Vector2 aspectRatio = new Vector2(Math.Min(1.0f, targetWidth / (float)targetHeight), Math.Min(1.0f, targetHeight / (float)targetWidth));
-            _fxStack.SSAmbientOcclusion.AspectRatios = aspectRatio;
+            _fxStack.SSAmbientOcclusion.AspectRatios = aspectRatios;
 
 
             UpdateRenderMapBindings();
@@ -698,25 +629,10 @@ namespace DeferredEngine.Rendering
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         //  HELPER FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        private void DrawTextureToScreenToCube(RenderTarget2D texture, RenderTargetCube target, CubeMapFace? face)
+        private void BlitTo(Texture2D source, RenderTarget2D destRT = null)
         {
-            if (face != null)
-                _graphicsDevice.SetRenderTarget(target, (CubeMapFace)face);
-            _spriteBatch.Begin(0, BlendState.Opaque, SamplerState.PointClamp);
-            _spriteBatch.Draw(texture, new Rectangle(0, 0, texture.Width, texture.Height), Color.White);
-            _spriteBatch.End();
+            _graphicsDevice.Blit(_spriteBatch, source, destRT, _supersampling);
         }
-        private void DrawTextureToScreenToFullScreen(Texture2D texture, BlendState blendState = null, RenderTarget2D output = null)
-        {
-            if (blendState == null) blendState = BlendState.Opaque;
-
-            RenderingSettings.GetDestinationRectangle(texture.GetAspect(), out Rectangle destRectangle);
-            _graphicsDevice.SetRenderTarget(output);
-            _spriteBatch.Begin(0, blendState, _supersampling > 1 ? SamplerState.LinearWrap : SamplerState.PointClamp);
-            _spriteBatch.Draw(texture, destRectangle, Color.White);
-            _spriteBatch.End();
-        }
-
 
 
         public void Dispose()
@@ -734,6 +650,7 @@ namespace DeferredEngine.Rendering
             _currentOutput?.Dispose();
             _renderTargetCubeMap?.Dispose();
         }
+
     }
 
 }
