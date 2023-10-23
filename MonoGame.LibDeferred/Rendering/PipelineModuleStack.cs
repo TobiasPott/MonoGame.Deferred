@@ -2,7 +2,6 @@
 using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Pipeline.Utilities;
 using DeferredEngine.Rendering.SDF;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 
@@ -43,18 +42,18 @@ namespace DeferredEngine.Rendering
             }
         }
 
-        public PipelineModuleStack(ContentManager content)
+        public PipelineModuleStack()
         {
-            GBuffer = new GBufferPipelineModule(content, "Shaders/GbufferSetup/GBuffer");
-            Deferred = new DeferredPipelineModule(content, "Shaders/Deferred/DeferredCompose");
-            Forward = new ForwardPipelineModule(content, "Shaders/forward/forward");
-            ShadowMap = new ShadowMapPipelineModule(content, "Shaders/Shadow/ShadowMap");
+            GBuffer = new GBufferPipelineModule();
+            Deferred = new DeferredPipelineModule();
+            Forward = new ForwardPipelineModule();
+            ShadowMap = new ShadowMapPipelineModule();
 
-            DirectionalLight = new DirectionalLightPipelineModule(content, "Shaders/Deferred/DeferredDirectionalLight");
-            PointLight = new PointLightPipelineModule(content, "Shaders/Deferred/DeferredPointLight");
-            DepthReconstruct = new DepthReconstructPipelineModule(content, "Shaders/ScreenSpace/ReconstructDepth");
-            Lighting = new LightingPipelineModule(content) { PointLightRenderModule = PointLight, DirectionalLightRenderModule = DirectionalLight, DepthPipelineModule = DepthReconstruct };
-            Environment = new EnvironmentPipelineModule(content, "Shaders/Deferred/DeferredEnvironmentMap");
+            DirectionalLight = new DirectionalLightPipelineModule();
+            PointLight = new PointLightPipelineModule();
+            DepthReconstruct = new DepthReconstructPipelineModule();
+            Lighting = new LightingPipelineModule() { PointLightRenderModule = PointLight, DirectionalLightRenderModule = DirectionalLight, DepthPipelineModule = DepthReconstruct };
+            Environment = new EnvironmentPipelineModule();
 
             Decal = new DecalRenderModule();
             Helper = new HelperRenderModule();

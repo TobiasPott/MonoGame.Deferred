@@ -11,19 +11,15 @@ namespace DeferredEngine.Pipeline
         protected GraphicsDevice _graphicsDevice;
         protected SpriteBatch _spriteBatch;
 
-        public PipelineModule(ContentManager content, string shaderPath)
-        {
-            Load(content, shaderPath);
-        }
+        public PipelineModule()
+        { }
         public virtual void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         {
             _graphicsDevice = graphicsDevice;
             _spriteBatch = spriteBatch;
         }
 
-        protected abstract void Load(ContentManager content, string shaderPath);
         public abstract void Dispose();
-
 
         public virtual void Draw(DynamicMeshBatcher meshBatcher)
         {

@@ -48,8 +48,8 @@ namespace DeferredEngine.Pipeline
         { set { _effectSetup.Param_UseSDFAO.SetValue(value); } }
 
 
-        public EnvironmentPipelineModule(ContentManager content, string shaderPath)
-            : base(content, shaderPath)
+        public EnvironmentPipelineModule()
+            : base()
         {
             this.FireflyReduction = RenderingSettings.g_SSReflection_FireflyReduction;
             this.FireflyThreshold = RenderingSettings.g_SSReflection_FireflyThreshold;
@@ -94,10 +94,6 @@ namespace DeferredEngine.Pipeline
             base.Initialize(graphicsDevice, spriteBatch);
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
         }
-
-        protected override void Load(ContentManager content, string shaderPath)
-        { }
-
 
         public void DrawEnvironmentMap(Camera camera, Matrix view, GameTime gameTime)
         {

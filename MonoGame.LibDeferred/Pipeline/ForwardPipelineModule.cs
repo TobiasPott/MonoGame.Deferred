@@ -25,16 +25,14 @@ namespace DeferredEngine.Pipeline
         private ForwardEffectSetup _effectSetup = new ForwardEffectSetup();
 
 
-        public ForwardPipelineModule(ContentManager content, string shaderPath = "Shaders/forward/forward")
-            : base(content, shaderPath)
+        public ForwardPipelineModule()
+            : base()
         { }
 
         //public override void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         //{
         //    base.Initialize(graphicsDevice, spriteBatch);
         //}
-        protected override void Load(ContentManager content, string shaderPath = "Shaders/forward/forward")
-        { }
 
         /// <summary>
         /// Draw forward shaded, alpha blended materials. Very basic and unoptimized algorithm. Can be improved to use tiling in future.

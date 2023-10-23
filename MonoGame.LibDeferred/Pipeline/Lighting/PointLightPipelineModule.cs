@@ -28,8 +28,8 @@ namespace DeferredEngine.Pipeline.Lighting
         public Vector2 Resolution { set { _effectSetup.Param_Resolution.SetValue(value); } }
 
 
-        public PointLightPipelineModule(ContentManager content, string shaderPath)
-            : base(content, shaderPath)
+        public PointLightPipelineModule()
+            : base()
         {
             _stencilCullPass1 = new DepthStencilState()
             {
@@ -65,11 +65,6 @@ namespace DeferredEngine.Pipeline.Lighting
                 StencilMask = 0,
 
             };
-
-        }
-
-        protected override void Load(ContentManager content, string shaderPath)
-        {
 
         }
 

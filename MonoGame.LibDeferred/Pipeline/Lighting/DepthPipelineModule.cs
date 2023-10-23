@@ -20,17 +20,13 @@ namespace DeferredEngine.Pipeline.Lighting
         public Vector3[] FrustumCorners { set { _effectSetup.Param_FrustumCorners.SetValue(value); } }
 
 
-        public DepthReconstructPipelineModule(ContentManager content, string shaderPath = "Shaders/ScreenSpace/ReconstructDepth")
-            : base(content, shaderPath)
+        public DepthReconstructPipelineModule()
+            : base()
         {
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
 
         }
 
-        protected override void Load(ContentManager content, string shaderPath)
-        {
-
-        }
 
 
         public void ReconstructDepth()

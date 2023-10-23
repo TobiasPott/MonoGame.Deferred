@@ -27,16 +27,13 @@ namespace DeferredEngine.Pipeline
             OmnidirectionalAlpha
         };
 
-        public ShadowMapPipelineModule(ContentManager content, string shaderPath = "Shaders/Shadow/ShadowMap")
-            : base(content, shaderPath) { }
+        public ShadowMapPipelineModule()
+            : base() { }
 
         //public override void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         //{
         //    base.Initialize(graphicsDevice, spriteBatch);
         //}
-
-        protected override void Load(ContentManager content, string shaderPath = "Shaders/Shadow/ShadowMap")
-        { }
 
         public void Draw(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene)
         {

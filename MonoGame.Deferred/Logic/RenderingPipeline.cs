@@ -84,7 +84,7 @@ namespace DeferredEngine.Rendering
         {
             _matrices = new PipelineMatrices();
 
-            _moduleStack = new PipelineModuleStack(content);
+            _moduleStack = new PipelineModuleStack();
             _moduleStack.DepthReconstruct.Matrices = _matrices;
             _profiler = new PipelineProfiler();
 

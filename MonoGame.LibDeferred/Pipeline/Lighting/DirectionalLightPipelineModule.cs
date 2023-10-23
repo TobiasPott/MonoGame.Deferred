@@ -15,16 +15,12 @@ namespace DeferredEngine.Pipeline.Lighting
 
         public Vector3[] FrustumCorners { set { _effectSetup.Param_FrustumCorners.SetValue(value); } }
 
-        public DirectionalLightPipelineModule(ContentManager content, string shaderPath = "Shaders/Deferred/DeferredDirectionalLight")
-            : base(content, shaderPath)
+        public DirectionalLightPipelineModule()
+            : base()
         {
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
         }
 
-        protected override void Load(ContentManager content, string shaderPath)
-        {
-
-        }
 
 
         public void SetScreenSpaceShadowMap(RenderTarget2D renderTarget2D) => _effectSetup.Param_SSShadowMap.SetValue(renderTarget2D);

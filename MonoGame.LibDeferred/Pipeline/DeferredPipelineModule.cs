@@ -34,11 +34,9 @@ namespace DeferredEngine.Pipeline
         }
 
 
-        public DeferredPipelineModule(ContentManager content, string shaderPath)
-            : base(content, shaderPath)
-        {
-            Load(content, shaderPath);
-        }
+        public DeferredPipelineModule()
+            : base()
+        { }
 
         public override void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         {
@@ -47,10 +45,6 @@ namespace DeferredEngine.Pipeline
             _effectSetup.Param_UseSSAO.SetValue(true);
             _effectSetup.Effect_Compose.CurrentTechnique = _colorSpace == DeferredColorSpace.Linear ? _effectSetup.Technique_Linear : _effectSetup.Technique_NonLinear;
         }
-
-        protected override void Load(ContentManager content, string shaderPath = "Shaders/Deferred/DeferredCompose")
-        { }
-
 
 
         /// <summary>

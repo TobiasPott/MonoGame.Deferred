@@ -26,17 +26,14 @@ namespace DeferredEngine.Pipeline
         public bool ClearGBuffer { get; set; } = true;
 
 
-        public GBufferPipelineModule(ContentManager content, string shaderPath)
-            : base(content, shaderPath)
+        public GBufferPipelineModule()
+            : base()
         { }
 
         public override void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         {
             base.Initialize(graphicsDevice, spriteBatch);
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
-        }
-        protected override void Load(ContentManager content, string shaderPath)
-        {
         }
         public void Draw(DynamicMeshBatcher meshBatcher, PipelineMatrices matrices)
         {

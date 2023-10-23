@@ -21,8 +21,8 @@ namespace DeferredEngine.Pipeline.Lighting
         public DepthReconstructPipelineModule DepthPipelineModule;
 
 
-        public LightingPipelineModule(ContentManager content, string shaderPath = "")
-            : base(content, shaderPath)
+        public LightingPipelineModule()
+            : base()
         {
             _lightBlendState = new BlendState
             {
@@ -31,11 +31,6 @@ namespace DeferredEngine.Pipeline.Lighting
                 ColorDestinationBlend = Blend.One,
                 AlphaDestinationBlend = Blend.One
             };
-        }
-
-        protected override void Load(ContentManager content, string shaderPath)
-        {
-
         }
 
 
