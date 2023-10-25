@@ -98,7 +98,7 @@ namespace MonoGame.Ext
 
             RenderingSettings.GetDestinationRectangle(source.GetAspect(), out Rectangle destRectangle);
             graphicsDevice.SetRenderTarget(destRT);
-            spriteBatch.Begin(0, BlendState.Opaque, supersampling > 1 ? SamplerState.LinearWrap : SamplerState.PointClamp);
+            spriteBatch.Begin(0, blendState, supersampling > 1 ? SamplerState.LinearWrap : SamplerState.PointClamp);
             spriteBatch.Draw(source, destRectangle, Color.White);
             spriteBatch.End();
         }
