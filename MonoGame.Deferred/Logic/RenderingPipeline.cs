@@ -176,7 +176,9 @@ namespace DeferredEngine.Rendering
 
             // Step: 04
             //Update our view projection matrices if the camera moved
-            UpdateViewProjection(meshBatcher, camera);
+            if (UpdateViewProjection(meshBatcher, camera))
+                // Compute the frustum corners for cheap view direction computation in shaders
+                UpdateFrustumCorners(_boundingFrustum, camera);
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SUpdate_ViewProjection);
 
@@ -384,7 +386,7 @@ namespace DeferredEngine.Rendering
             {
                 _graphicsDevice.SetRenderTarget(_ssfxTargets.SSR_Main);
                 _graphicsDevice.Clear(new Color(0, 0, 0, 0.0f));
-                
+
                 _prevSSReflectionEnabled = SSReflectionFx.g_Enabled;
             }
 
@@ -396,7 +398,7 @@ namespace DeferredEngine.Rendering
         /// <summary>
         /// Create the projection matrices
         /// </summary>
-        private void UpdateViewProjection(DynamicMeshBatcher meshBatcher, Camera camera)
+        private bool UpdateViewProjection(DynamicMeshBatcher meshBatcher, Camera camera)
         {
             // ToDo: @tpott: This boolean flag controls general update and draw, though it should only determine if matrices and such should be updated
             //      if a frame should be drawn is a conditioned layered on top of this and may be required regardless of camera change
@@ -422,13 +424,11 @@ namespace DeferredEngine.Rendering
                 if (_boundingFrustum == null) _boundingFrustum = new BoundingFrustum(_matrices.StaticViewProjection);
                 else _boundingFrustum.Matrix = _matrices.StaticViewProjection;
 
-                // Compute the frustum corners for cheap view direction computation in shaders
-                ComputeFrustumCorners(_boundingFrustum, camera);
             }
 
             //We need to update whether or not entities are in our boundingFrustum and then cull them or not!
             meshBatcher.FrustumCulling(_boundingFrustum, viewProjectionHasChanged, camera.Position);
-
+            return viewProjectionHasChanged;
         }
 
         /// <summary>
@@ -438,12 +438,12 @@ namespace DeferredEngine.Rendering
         /// Read here for more information
         /// http://mynameismjp.wordpress.com/2009/03/10/reconstructing-position-from-depth/
         /// </summary>
-        private void ComputeFrustumCorners(BoundingFrustum cameraFrustum, Camera camera)
+        private void UpdateFrustumCorners(BoundingFrustum cameraFrustum, Camera camera)
         {
             _frustumCorners.FromFrustum(cameraFrustum, _matrices.View);
             _frustumCorners.UpdateFrustumCorners(camera.Position);
             _frustumCorners.SwapCorners();
-            
+
             //World Space Corners
             _moduleStack.FrustumCornersWS = _frustumCorners.WorldSpaceFrustum;
             //View Space Corners
