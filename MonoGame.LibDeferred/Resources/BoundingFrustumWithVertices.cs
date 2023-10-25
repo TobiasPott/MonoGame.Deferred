@@ -13,22 +13,30 @@ namespace DeferredEngine.Recources
         public readonly Vector3[] ViewSpaceFrustum = new Vector3[4];
 
 
-        public void FromFrustum(BoundingFrustum frustum, Matrix? view)
+        public void UpdateVertices(Matrix? view, Vector3? worldOffset = null)
         {
-            frustum.GetCorners(WorldSpace);
+            Frustum.GetCorners(WorldSpace);
             if(view.HasValue)
                 WorldSpace.Transform(view.Value, ViewSpace); //put the frustum into view space
+            if(worldOffset.HasValue)
+                /*this part is used for volume projection*/
+                //World Space Corners - Camera Position
+                for (int i = 0; i < 4; i++) //take only the 4 farthest points
+                {
+                    WorldSpaceFrustum[i] = WorldSpace[i + 4] - worldOffset.Value;
+                    ViewSpaceFrustum[i] = ViewSpace[i + 4];
+                }
         }
-        public void UpdateFrustumCorners(Vector3 worldOffset)
-        {
-            /*this part is used for volume projection*/
-            //World Space Corners - Camera Position
-            for (int i = 0; i < 4; i++) //take only the 4 farthest points
-            {
-                WorldSpaceFrustum[i] = WorldSpace[i + 4] - worldOffset;
-                ViewSpaceFrustum[i] = ViewSpace[i + 4];
-            }
-        }
+        //public void UpdateFrustumCorners(Vector3 worldOffset)
+        //{
+        //    /*this part is used for volume projection*/
+        //    //World Space Corners - Camera Position
+        //    for (int i = 0; i < 4; i++) //take only the 4 farthest points
+        //    {
+        //        WorldSpaceFrustum[i] = WorldSpace[i + 4] - worldOffset;
+        //        ViewSpaceFrustum[i] = ViewSpace[i + 4];
+        //    }
+        //}
         public void SwapCorners()
         {
             // swap 2 <-> 3

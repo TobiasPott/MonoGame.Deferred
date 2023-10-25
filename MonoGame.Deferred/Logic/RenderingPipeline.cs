@@ -100,7 +100,6 @@ namespace DeferredEngine.Rendering
             _graphicsDevice = graphicsDevice;
             _spriteBatch = new SpriteBatch(graphicsDevice);
 
-
             _gBufferTarget = new GBufferTarget(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
             _lightingBufferTarget = new LightingBufferTarget(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
             _auxTargets = new PipelineTargets(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
@@ -111,8 +110,6 @@ namespace DeferredEngine.Rendering
 
             _fxStack.Initialize(graphicsDevice, _spriteBatch);
             _fxStack.SSFxTargets = _ssfxTargets;
-
-            _frustum.Frustum.Matrix = _matrices.ViewProjection;
 
             SetUpRenderTargets(RenderingSettings.g_ScreenResolution);
 
@@ -175,7 +172,7 @@ namespace DeferredEngine.Rendering
             //Update our view projection matrices if the camera moved
             if (UpdateViewProjection(meshBatcher, camera))
                 // Compute the frustum corners for cheap view direction computation in shaders
-                UpdateFrustumCorners(_frustum.Frustum, camera);
+                UpdateFrustumCorners(camera);
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SUpdate_ViewProjection);
 
@@ -432,10 +429,9 @@ namespace DeferredEngine.Rendering
         /// Read here for more information
         /// http://mynameismjp.wordpress.com/2009/03/10/reconstructing-position-from-depth/
         /// </summary>
-        private void UpdateFrustumCorners(BoundingFrustum cameraFrustum, Camera camera)
+        private void UpdateFrustumCorners(Camera camera)
         {
-            _frustum.FromFrustum(cameraFrustum, _matrices.View);
-            _frustum.UpdateFrustumCorners(camera.Position);
+            _frustum.UpdateVertices(_matrices.View, camera.Position);
             _frustum.SwapCorners();
 
             //World Space Corners
