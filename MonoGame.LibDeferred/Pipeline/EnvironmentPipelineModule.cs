@@ -96,11 +96,10 @@ namespace DeferredEngine.Pipeline
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
         }
 
-        public void DrawEnvironmentMap(Camera camera, Matrix view, GameTime gameTime)
+        public void DrawEnvironmentMap(Camera camera, Matrix view)
         {
             CameraPositionWS = camera.Position;
 
-            Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
 
             _effectSetup.Param_TransposeView.SetValue(Matrix.Transpose(view));
             _effectSetup.Pass_Basic.Apply();

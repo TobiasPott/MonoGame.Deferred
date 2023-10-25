@@ -144,6 +144,10 @@ namespace DeferredEngine.Rendering
 
             _moduleStack.DistanceField.UpdateSdfGenerator(scene.Entities);
             _moduleStack.Lighting.UpdateGameTime(gameTime);
+            if (SSReflectionFx.g_Noise)
+                _fxStack.SSReflection.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
+            _moduleStack.Environment.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
+
 
             //Reset the stat counter, so we can count stats/information for this frame only
             ResetStats();
@@ -151,6 +155,9 @@ namespace DeferredEngine.Rendering
             // Step: 01
             //Check if we changed some drastic stuff for which we need to reload some elements
             CheckRenderChanges();
+            //Performance Profiler
+            _profiler.Timestamp();
+
 
             // Step: 04
             //Update our view projection matrices if the camera moved
@@ -168,7 +175,7 @@ namespace DeferredEngine.Rendering
         /// <summary>
         /// Main Draw function of the game
         /// </summary>
-        public ObjectHoverContext Draw(Camera camera, DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GizmoDrawContext gizmoContext, GameTime gameTime)
+        public void Draw(Camera camera, DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GizmoDrawContext gizmoContext)
         {
             // Step: 02
             //Render ShadowMaps
@@ -205,8 +212,6 @@ namespace DeferredEngine.Rendering
             //Draw Screen Space reflections to a different render target
             RenderTarget2D ssrTargetMap = _ssfxTargets.GetSSReflectionRenderTargets(_fxStack.TemporaAA.Enabled, _fxStack.TemporaAA.IsOffFrame);
             _fxStack.SSReflection.TargetMap = ssrTargetMap ?? _auxTargets[PipelineTargets.COMPOSE];
-            if (SSReflectionFx.g_Noise)
-                _fxStack.SSReflection.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
             _fxStack.Draw(PipelineFxStage.SSReflection, null, null, _ssfxTargets.SSR_Main);
             // Profiler sample
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_SSFx_SSR);
@@ -229,7 +234,7 @@ namespace DeferredEngine.Rendering
             if (RenderingSettings.EnvironmentMapping.Enabled)
             {
                 _moduleStack.Environment.SetEnvironmentProbe(scene.EnvProbe);
-                _moduleStack.Environment.DrawEnvironmentMap(camera, _matrices.View, gameTime);
+                _moduleStack.Environment.DrawEnvironmentMap(camera, _matrices.View);
                 //Performance Profiler
                 _profiler.SampleTimestamp(ref PipelineSamples.SDraw_EnvironmentMap);
             }
@@ -294,6 +299,12 @@ namespace DeferredEngine.Rendering
             //Performance Profiler
             _profiler.Sample(ref PipelineSamples.SDraw_TotalRender);
 
+        }
+        /// <summary>
+        /// Main Draw function of the game
+        /// </summary>
+        public ObjectHoverContext GetHoverContext()
+        {
             //return data we have recovered from the editor id, so we know what entity gets hovered/clicked on and can manipulate in the update function
             return new ObjectHoverContext
             {
@@ -303,7 +314,6 @@ namespace DeferredEngine.Rendering
             };
 
         }
-
         private bool IsSDFUsed(List<PointLight> pointLights)
         {
             for (var index = 0; index < pointLights.Count; index++)
@@ -397,9 +407,6 @@ namespace DeferredEngine.Rendering
 
                 _prevSSReflectionEnabled = SSReflectionFx.g_Enabled;
             }
-
-            //Performance Profiler
-            _profiler.Timestamp();
 
         }
 

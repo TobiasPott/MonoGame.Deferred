@@ -4,8 +4,8 @@ using DeferredEngine.Recources;
 using DeferredEngine.Rendering;
 using DeferredEngine.Rendering.RenderModules.Default;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using DirectionalLight = DeferredEngine.Pipeline.Lighting.DirectionalLight;
 
 namespace DeferredEngine.Pipeline
 {
@@ -177,7 +177,7 @@ namespace DeferredEngine.Pipeline
         /// <summary>
         /// Only one shadow map needed for a directional light
         /// </summary>
-        private void CreateShadowMapDirectionalLight(Pipeline.Lighting.DirectionalLight light, int shadowResolution, DynamicMeshBatcher meshBatcher)
+        private void CreateShadowMapDirectionalLight(DirectionalLight light, int shadowResolution, DynamicMeshBatcher meshBatcher)
         {
             //Create a renderTarget if we don't have one yet
             if (light.ShadowMap == null)
