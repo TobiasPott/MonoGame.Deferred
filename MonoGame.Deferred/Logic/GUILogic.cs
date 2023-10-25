@@ -220,14 +220,14 @@ namespace DeferredEngine.Logic
 
             postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Temporal AA")
             {
-                ToggleField = typeof(RenderingSettings.TAA).GetField(nameof(RenderingSettings.TAA.g_Enabled)),
-                Toggle = RenderingSettings.TAA.g_Enabled
+                ToggleField = typeof(TemporalAAFx).GetField(nameof(TemporalAAFx.g_Enabled)),
+                Toggle = TemporalAAFx.g_Enabled
             });
 
             postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Tonemap TAA")
             {
-                ToggleField = typeof(RenderingSettings.TAA).GetField(nameof(RenderingSettings.TAA.g_UseTonemapping)),
-                Toggle = RenderingSettings.TAA.g_UseTonemapping
+                ToggleField = typeof(TemporalAAFx).GetField(nameof(TemporalAAFx.g_UseTonemapping)),
+                Toggle = TemporalAAFx.g_UseTonemapping
             });
 
 
