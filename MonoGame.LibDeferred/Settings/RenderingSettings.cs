@@ -32,8 +32,7 @@ namespace DeferredEngine.Recources
         public static bool g_CpuCulling = true;
 
 
-
-        public static NotifiedProperty<float> g_FarClip = new NotifiedProperty<float>(500);
+        public static NotifiedProperty<float> g_FarClip = new NotifiedProperty<float>(-1);
 
     }
 
@@ -47,15 +46,13 @@ namespace DeferredEngine.Recources
             _value = value;
         }
 
-        public bool Set(T value)
+        public void Set(T value)
         {
-            if (Equals(value, _value))
+            if (!Equals(value, _value))
             {
                 _value = value;
                 this.Changed?.Invoke(value);
-                return true;
             }
-            return false;
         }
 
         public static implicit operator T(NotifiedProperty<T> property)

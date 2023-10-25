@@ -8,9 +8,10 @@ namespace DeferredEngine.Rendering.PostProcessing
 {
 
     public partial class SSReflectionFx : BaseFx
-    {       
+    {
         // SSR
-        public static bool g_Enabled { get; set; } = true;
+        public static NotifiedProperty<bool> gg_Enabled = new NotifiedProperty<bool>(true);
+        public static bool g_Enabled { get => gg_Enabled; set => gg_Enabled.Set(value); }
         public static bool g_FireflyReduction { get; set; } = true;
 
 

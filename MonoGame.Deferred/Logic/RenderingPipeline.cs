@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using DirectionalLight = DeferredEngine.Pipeline.Lighting.DirectionalLight;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -117,6 +118,17 @@ namespace DeferredEngine.Rendering
 
             RenderingSettings.g_FarClip.Changed += FarClip_OnChanged;
             RenderingSettings.g_FarClip.Set(500);
+            SSReflectionFx.gg_Enabled.Changed += SSR_Enabled_Changed;
+        }
+
+        private void SSR_Enabled_Changed(bool enabled)
+        {
+            // clear SSReflection buffer if disabled/enabled
+            if (!enabled)
+            {
+                _graphicsDevice.SetRenderTarget(_ssfxTargets.SSR_Main);
+                _graphicsDevice.Clear(new Color(0, 0, 0, 0.0f));
+            }
         }
 
         private void FarClip_OnChanged(float farClip)
@@ -399,14 +411,14 @@ namespace DeferredEngine.Rendering
             }
 
 
-            // clear SSReflection buffer if disabled
-            if (_prevSSReflectionEnabled != SSReflectionFx.g_Enabled)
-            {
-                _graphicsDevice.SetRenderTarget(_ssfxTargets.SSR_Main);
-                _graphicsDevice.Clear(new Color(0, 0, 0, 0.0f));
+            //// clear SSReflection buffer if disabled
+            //if (_prevSSReflectionEnabled != SSReflectionFx.gg_Enabled)
+            //{
+            //    _graphicsDevice.SetRenderTarget(_ssfxTargets.SSR_Main);
+            //    _graphicsDevice.Clear(new Color(0, 0, 0, 0.0f));
 
-                _prevSSReflectionEnabled = SSReflectionFx.g_Enabled;
-            }
+            //    _prevSSReflectionEnabled = SSReflectionFx.gg_Enabled;
+            //}
 
         }
 
