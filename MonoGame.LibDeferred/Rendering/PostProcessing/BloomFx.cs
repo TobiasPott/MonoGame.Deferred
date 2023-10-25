@@ -92,7 +92,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         public int BloomDownsamplePasses = 5;
 
         //Objects
-        private BloomFxSetup _effectSetup = new BloomFxSetup();
+        private BloomFxSetup _fxSetup = new BloomFxSetup();
         //RenderTargets
         private DynamicMultiRenderTarget _mipMaps;
 
@@ -101,7 +101,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         public BloomPresets BloomPreset { set { SetBloomPreset(value); } }
 
 
-        private Texture2D BloomScreenTexture { set { _effectSetup.Param_ScreenTexture.SetValue(value); } }
+        private Texture2D BloomScreenTexture { set { _fxSetup.Param_ScreenTexture.SetValue(value); } }
 
         private Vector2 _bloomInverseResolution;
         private Vector2 BloomInverseResolution
@@ -112,15 +112,15 @@ namespace DeferredEngine.Rendering.PostProcessing
                 if (value != _bloomInverseResolution)
                 {
                     _bloomInverseResolution = value;
-                    _effectSetup.Param_InverseResolution.SetValue(_bloomInverseResolution);
+                    _fxSetup.Param_InverseResolution.SetValue(_bloomInverseResolution);
                 }
             }
         }
-        private float BloomRadius { set { _effectSetup.Param_Radius.SetValue(value * _radiusMultiplier); } }
+        private float BloomRadius { set { _fxSetup.Param_Radius.SetValue(value * _radiusMultiplier); } }
 
-        private float BloomStrength { set { _effectSetup.Param_Strength.SetValue(value); } }
-        public float BloomStreakLength { set { _effectSetup.Param_StreakLength.SetValue(value); } }
-        public float BloomThreshold { set { _effectSetup.Param_Threshold.SetValue(value); } }
+        private float BloomStrength { set { _fxSetup.Param_Strength.SetValue(value); } }
+        public float BloomStreakLength { set { _fxSetup.Param_StreakLength.SetValue(value); } }
+        public float BloomThreshold { set { _fxSetup.Param_Threshold.SetValue(value); } }
 
 
 
@@ -223,8 +223,8 @@ namespace DeferredEngine.Rendering.PostProcessing
             BloomScreenTexture = sourceRT;
             BloomInverseResolution = Vector2.One / _resolution;
 
-            if (BloomUseLuminance) _effectSetup.Pass_ExtractLuminance.Apply();
-            else _effectSetup.Pass_Extract.Apply();
+            if (BloomUseLuminance) _fxSetup.Pass_ExtractLuminance.Apply();
+            else _fxSetup.Pass_Extract.Apply();
             _fullscreenTarget.Draw(_graphicsDevice);
 
             //Now downsample to the next lower mip texture
@@ -236,7 +236,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
                 BloomScreenTexture = _mipMaps[0];
                 //Pass
-                _effectSetup.Pass_Downsample.Apply();
+                _fxSetup.Pass_Downsample.Apply();
                 _fullscreenTarget.Draw(_graphicsDevice);
 
                 if (BloomDownsamplePasses > 1)
@@ -249,7 +249,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
                     BloomScreenTexture = _mipMaps[1];
                     //Pass
-                    _effectSetup.Pass_Downsample.Apply();
+                    _fxSetup.Pass_Downsample.Apply();
                     _fullscreenTarget.Draw(_graphicsDevice);
 
                     if (BloomDownsamplePasses > 2)
@@ -261,7 +261,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
                         BloomScreenTexture = _mipMaps[2];
                         //Pass
-                        _effectSetup.Pass_Downsample.Apply();
+                        _fxSetup.Pass_Downsample.Apply();
                         _fullscreenTarget.Draw(_graphicsDevice);
 
                         if (BloomDownsamplePasses > 3)
@@ -273,7 +273,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
                             BloomScreenTexture = _mipMaps[3];
                             //Pass
-                            _effectSetup.Pass_Downsample.Apply();
+                            _fxSetup.Pass_Downsample.Apply();
                             _fullscreenTarget.Draw(_graphicsDevice);
 
                             if (BloomDownsamplePasses > 4)
@@ -285,7 +285,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
                                 BloomScreenTexture = _mipMaps[4];
                                 //Pass
-                                _effectSetup.Pass_Downsample.Apply();
+                                _fxSetup.Pass_Downsample.Apply();
                                 _fullscreenTarget.Draw(_graphicsDevice);
 
                                 ChangeBlendState();
@@ -296,7 +296,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
                                 BloomStrength = _strength[4];
                                 BloomRadius = _radius[4];
-                                _effectSetup.Pass_Upsample.Apply();
+                                _fxSetup.Pass_Upsample.Apply();
                                 _fullscreenTarget.Draw(_graphicsDevice);
 
                                 BloomInverseResolution /= 2;
@@ -310,7 +310,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
                             BloomStrength = _strength[3];
                             BloomRadius = _radius[3];
-                            _effectSetup.Pass_Upsample.Apply();
+                            _fxSetup.Pass_Upsample.Apply();
                             _fullscreenTarget.Draw(_graphicsDevice);
 
                             BloomInverseResolution /= 2;
@@ -325,7 +325,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
                         BloomStrength = _strength[2];
                         BloomRadius = _radius[2];
-                        _effectSetup.Pass_Upsample.Apply();
+                        _fxSetup.Pass_Upsample.Apply();
                         _fullscreenTarget.Draw(_graphicsDevice);
 
                         BloomInverseResolution /= 2;
@@ -340,7 +340,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
                     BloomStrength = _strength[1];
                     BloomRadius = _radius[1];
-                    _effectSetup.Pass_Upsample.Apply();
+                    _fxSetup.Pass_Upsample.Apply();
                     _fullscreenTarget.Draw(_graphicsDevice);
 
                     BloomInverseResolution /= 2;
@@ -355,7 +355,7 @@ namespace DeferredEngine.Rendering.PostProcessing
                 BloomStrength = _strength[0];
                 BloomRadius = _radius[0];
 
-                _effectSetup.Pass_Upsample.Apply();
+                _fxSetup.Pass_Upsample.Apply();
                 _fullscreenTarget.Draw(_graphicsDevice);
             }
 
@@ -384,7 +384,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         public override void Dispose()
         {
             _mipMaps?.Dispose();
-            _effectSetup?.Dispose();
+            _fxSetup?.Dispose();
         }
     }
 

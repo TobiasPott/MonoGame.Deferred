@@ -117,7 +117,7 @@ namespace DeferredEngine.Logic
 
             for (int i = 0; i < 10; i++)
             {
-                MaterialEffect test = _assets.SilverMaterial.Clone();
+                MaterialEffect test = new MaterialEffect(_assets.SilverMaterial);
                 test.Roughness = i / 9.0f + 0.1f;
                 test.Metallic = 1;
                 AddEntity(model: StaticAssets.Instance.IsoSphere,

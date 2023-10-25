@@ -12,7 +12,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         protected override bool GetEnabled() => _enabled && RenderingSettings.g_PostProcessing;
 
 
-        private PostProcssingFxSetup _effectSetup = new PostProcssingFxSetup();
+        private PostProcssingFxSetup _fxSetup = new PostProcssingFxSetup();
 
 
         // PostProcessing
@@ -23,8 +23,8 @@ namespace DeferredEngine.Rendering.PostProcessing
             set
             {
                 _chromaticAbberationStrength = value;
-                _effectSetup.Param_ChromaticAbberationStrength.SetValue(_chromaticAbberationStrength);
-                _effectSetup.Effect.CurrentTechnique = _chromaticAbberationStrength <= 0 ? _effectSetup.Technique_Base : _effectSetup.Technique_VignetteChroma;
+                _fxSetup.Param_ChromaticAbberationStrength.SetValue(_chromaticAbberationStrength);
+                _fxSetup.Effect.CurrentTechnique = _chromaticAbberationStrength <= 0 ? _fxSetup.Technique_Base : _fxSetup.Technique_VignetteChroma;
             }
         }
 
@@ -35,7 +35,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             set
             {
                 _sCurveStrength = value;
-                _effectSetup.Param_SCurveStrength.SetValue(_sCurveStrength);
+                _fxSetup.Param_SCurveStrength.SetValue(_sCurveStrength);
             }
         }
 
@@ -46,7 +46,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             set
             {
                 _whitePoint = value;
-                _effectSetup.Param_WhitePoint.SetValue(_whitePoint);
+                _fxSetup.Param_WhitePoint.SetValue(_whitePoint);
             }
         }
 
@@ -57,7 +57,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             set
             {
                 _exposure = value;
-                _effectSetup.Param_PowExposure.SetValue((float)Math.Pow(2, _exposure));
+                _fxSetup.Param_PowExposure.SetValue((float)Math.Pow(2, _exposure));
             }
         }
 
@@ -77,11 +77,11 @@ namespace DeferredEngine.Rendering.PostProcessing
             if (!this.Enabled)
                 return sourceRT;
 
-            _effectSetup.Param_ScreenTexture.SetValue(sourceRT);
+            _fxSetup.Param_ScreenTexture.SetValue(sourceRT);
             _graphicsDevice.SetRenderTarget(destRT);
             _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.KeepState);
 
-            _effectSetup.Effect.CurrentTechnique.Passes[0].Apply();
+            _fxSetup.Effect.CurrentTechnique.Passes[0].Apply();
             _fullscreenTarget.Draw(_graphicsDevice);
 
             return destRT;
@@ -89,7 +89,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         public override void Dispose()
         {
-            _effectSetup?.Dispose();
+            _fxSetup?.Dispose();
         }
 
 

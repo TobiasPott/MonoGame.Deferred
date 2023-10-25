@@ -25,17 +25,17 @@ namespace DeferredEngine.Rendering.PostProcessing
 
 
 
-        private SSAmbientOcclusionFxSetup _effectSetup = new SSAmbientOcclusionFxSetup();
+        private SSAmbientOcclusionFxSetup _fxSetup = new SSAmbientOcclusionFxSetup();
 
         public PipelineMatrices Matrices { get; set; }
 
         public Vector2 AspectRatios
-        { set { _effectSetup.Param_AspectRatio.SetValue(value); } }
-        public Vector2 InverseResolution { set { _effectSetup.Param_InverseResolution.SetValue(value); } }
-        public Vector3[] FrustumCorners { set { _effectSetup.Param_FrustumCorners.SetValue(value); } }
+        { set { _fxSetup.Param_AspectRatio.SetValue(value); } }
+        public Vector2 InverseResolution { set { _fxSetup.Param_InverseResolution.SetValue(value); } }
+        public Vector3[] FrustumCorners { set { _fxSetup.Param_FrustumCorners.SetValue(value); } }
 
-        public RenderTarget2D DepthMap { set { _effectSetup.Param_DepthMap.SetValue(value); } }
-        public RenderTarget2D NormalMap { set { _effectSetup.Param_NormalMap.SetValue(value); } }
+        public RenderTarget2D DepthMap { set { _fxSetup.Param_DepthMap.SetValue(value); } }
+        public RenderTarget2D NormalMap { set { _fxSetup.Param_NormalMap.SetValue(value); } }
 
 
         private SSFxTargets _ssfxTargets;
@@ -44,7 +44,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             set
             {
                 _ssfxTargets = value;
-                _effectSetup.Param_SSAOMap.SetValue(value?.AO_Main);
+                _fxSetup.Param_SSAOMap.SetValue(value?.AO_Main);
             }
         }
         private SpriteBatch _spriteBatch;
@@ -84,14 +84,14 @@ namespace DeferredEngine.Rendering.PostProcessing
             _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.KeepState);
 
 
-            _effectSetup.Param_FalloffMin.SetValue(SSAmbientOcclustionFx.g_ssao_falloffmin);
-            _effectSetup.Param_FalloffMax.SetValue(SSAmbientOcclustionFx.g_ssao_falloffmax);
-            _effectSetup.Param_Samples.SetValue(SSAmbientOcclustionFx.g_ssao_samples);
-            _effectSetup.Param_SampleRadius.SetValue(SSAmbientOcclustionFx.g_ssao_radius);
-            _effectSetup.Param_Strength.SetValue(SSAmbientOcclustionFx.g_ssao_strength);
+            _fxSetup.Param_FalloffMin.SetValue(SSAmbientOcclustionFx.g_ssao_falloffmin);
+            _fxSetup.Param_FalloffMax.SetValue(SSAmbientOcclustionFx.g_ssao_falloffmax);
+            _fxSetup.Param_Samples.SetValue(SSAmbientOcclustionFx.g_ssao_samples);
+            _fxSetup.Param_SampleRadius.SetValue(SSAmbientOcclustionFx.g_ssao_radius);
+            _fxSetup.Param_Strength.SetValue(SSAmbientOcclustionFx.g_ssao_strength);
 
-            _effectSetup.Effect.CurrentTechnique = _effectSetup.Technique_SSAO;
-            _effectSetup.Effect.CurrentTechnique.Passes[0].Apply();
+            _fxSetup.Effect.CurrentTechnique = _fxSetup.Technique_SSAO;
+            _fxSetup.Effect.CurrentTechnique.Passes[0].Apply();
             _fullscreenTarget.Draw(_graphicsDevice);
 
             DrawSSAOToBlur();
@@ -117,17 +117,17 @@ namespace DeferredEngine.Rendering.PostProcessing
                 _graphicsDevice.SetRenderTarget(_ssfxTargets.AO_Blur_H);
                 _graphicsDevice.SetState(RasterizerStateOption.CullNone);
 
-                _effectSetup.Param_InverseResolution.SetValue(new Vector2(1.0f / _ssfxTargets.AO_Blur_V.Width, 1.0f / _ssfxTargets.AO_Blur_V.Height) * 2);
-                _effectSetup.Param_SSAOMap.SetValue(_ssfxTargets.AO_Blur_V);
-                _effectSetup.Technique_BlurVertical.Passes[0].Apply();
+                _fxSetup.Param_InverseResolution.SetValue(new Vector2(1.0f / _ssfxTargets.AO_Blur_V.Width, 1.0f / _ssfxTargets.AO_Blur_V.Height) * 2);
+                _fxSetup.Param_SSAOMap.SetValue(_ssfxTargets.AO_Blur_V);
+                _fxSetup.Technique_BlurVertical.Passes[0].Apply();
 
                 _fullscreenTarget.Draw(_graphicsDevice);
 
                 _graphicsDevice.SetRenderTarget(_ssfxTargets.AO_Blur_Final);
 
-                _effectSetup.Param_InverseResolution.SetValue(new Vector2(1.0f / _ssfxTargets.AO_Blur_H.Width, 1.0f / _ssfxTargets.AO_Blur_H.Height) * 0.5f);
-                _effectSetup.Param_SSAOMap.SetValue(_ssfxTargets.AO_Blur_H);
-                _effectSetup.Technique_BlurHorizontal.Passes[0].Apply();
+                _fxSetup.Param_InverseResolution.SetValue(new Vector2(1.0f / _ssfxTargets.AO_Blur_H.Width, 1.0f / _ssfxTargets.AO_Blur_H.Height) * 0.5f);
+                _fxSetup.Param_SSAOMap.SetValue(_ssfxTargets.AO_Blur_H);
+                _fxSetup.Technique_BlurHorizontal.Passes[0].Apply();
 
                 _fullscreenTarget.Draw(_graphicsDevice);
 
@@ -144,17 +144,17 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         public void SetCameraAndMatrices(Vector3 cameraPosition, PipelineMatrices matrices)
         {
-            _effectSetup.Param_InverseViewProjection.SetValue(matrices.InverseViewProjection);
-            _effectSetup.Param_Projection.SetValue(matrices.Projection);
-            _effectSetup.Param_ViewProjection.SetValue(matrices.ViewProjection);
+            _fxSetup.Param_InverseViewProjection.SetValue(matrices.InverseViewProjection);
+            _fxSetup.Param_Projection.SetValue(matrices.Projection);
+            _fxSetup.Param_ViewProjection.SetValue(matrices.ViewProjection);
 
-            _effectSetup.Param_CameraPosition.SetValue(cameraPosition);
+            _fxSetup.Param_CameraPosition.SetValue(cameraPosition);
         }
 
 
         public override void Dispose()
         {
-            _effectSetup?.Dispose();
+            _fxSetup?.Dispose();
         }
 
 

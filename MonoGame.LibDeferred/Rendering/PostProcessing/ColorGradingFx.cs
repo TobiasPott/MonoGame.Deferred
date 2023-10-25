@@ -25,7 +25,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         private RenderTarget2D _renderTarget;
 
         private Texture2D _lookupTable;
-        private ColorGradingFxSetup _effectSetup = new ColorGradingFxSetup();
+        private ColorGradingFxSetup _fxSetup = new ColorGradingFxSetup();
         public enum LUTSizes { Size16, Size32 };
 
 
@@ -34,10 +34,10 @@ namespace DeferredEngine.Rendering.PostProcessing
             set
             {
                 _lookupTable = value;
-                _effectSetup.Param_LUT.SetValue(value);
+                _fxSetup.Param_LUT.SetValue(value);
                 int size = (_lookupTable.Width == 64) ? 16 : 32;
-                _effectSetup.Param_Size.SetValue((float)size);
-                _effectSetup.Param_SizeRoot.SetValue((float)(size == 16 ? 4 : 8));
+                _fxSetup.Param_Size.SetValue((float)size);
+                _fxSetup.Param_SizeRoot.SetValue((float)(size == 16 ? 4 : 8));
 
             }
         }
@@ -51,7 +51,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         public ColorGradingFx(ContentManager content, string shaderPath = "Shaders/PostProcessing/ColorGrading")
         {
             _lookupTable = content.Load<Texture2D>("Shaders/PostProcessing/lut");
-            _effectSetup.Param_LUT.SetValue(_lookupTable);
+            _fxSetup.Param_LUT.SetValue(_lookupTable);
         }
 
 
@@ -69,8 +69,8 @@ namespace DeferredEngine.Rendering.PostProcessing
             _graphicsDevice.SetRenderTarget(_renderTarget);
             _graphicsDevice.SetState(BlendStateOption.Opaque);
 
-            _effectSetup.Param_InputTexture.SetValue(sourceRT);
-            this.Draw(_effectSetup.Pass_ApplyLUT);
+            _fxSetup.Param_InputTexture.SetValue(sourceRT);
+            this.Draw(_fxSetup.Pass_ApplyLUT);
             return _renderTarget;
         }
 
@@ -89,10 +89,10 @@ namespace DeferredEngine.Rendering.PostProcessing
             _graphicsDevice.SetRenderTarget(_renderTarget);
 
 
-            _effectSetup.Param_Size.SetValue((float)(lutsize == LUTSizes.Size16 ? 16 : 32));
-            _effectSetup.Param_SizeRoot.SetValue((float)(lutsize == LUTSizes.Size16 ? 4 : 8));
+            _fxSetup.Param_Size.SetValue((float)(lutsize == LUTSizes.Size16 ? 16 : 32));
+            _fxSetup.Param_SizeRoot.SetValue((float)(lutsize == LUTSizes.Size16 ? 4 : 8));
 
-            this.Draw(_effectSetup.Pass_CreateLUT);
+            this.Draw(_fxSetup.Pass_CreateLUT);
 
             //Save this texture
             Stream stream = File.Create(relativeFilePath);
@@ -102,7 +102,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         public override void Dispose()
         {
-            _effectSetup?.Dispose();
+            _fxSetup?.Dispose();
             _renderTarget?.Dispose();
         }
 

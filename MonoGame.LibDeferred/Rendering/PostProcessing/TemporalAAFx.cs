@@ -14,7 +14,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
 
 
-        private TemporalAAFxSetup _effectSetup = new TemporalAAFxSetup();
+        private TemporalAAFxSetup _fxSetup = new TemporalAAFxSetup();
         private bool _useTonemapping = true;
         private HaltonSequence _haltonSequence = new HaltonSequence();
 
@@ -23,14 +23,14 @@ namespace DeferredEngine.Rendering.PostProcessing
         public bool IsOffFrame { get; protected set; } = true;
         public int JitterMode = 2;
 
-        public Vector3[] FrustumCorners { set { _effectSetup.Param_FrustumCorners.SetValue(value); } }
-        public Vector2 Resolution { set { _effectSetup.Param_Resolution.SetValue(value); } }
-        public RenderTarget2D DepthMap { set { _effectSetup.Param_DepthMap.SetValue(value); } }
+        public Vector3[] FrustumCorners { set { _fxSetup.Param_FrustumCorners.SetValue(value); } }
+        public Vector2 Resolution { set { _fxSetup.Param_Resolution.SetValue(value); } }
+        public RenderTarget2D DepthMap { set { _fxSetup.Param_DepthMap.SetValue(value); } }
 
         public bool UseTonemap
         {
             get { return _useTonemapping && TemporalAAFx.g_UseTonemapping; }
-            set { _useTonemapping = value; _effectSetup.Param_UseTonemap.SetValue(value); }
+            set { _useTonemapping = value; _fxSetup.Param_UseTonemap.SetValue(value); }
         }
         public HaltonSequence HaltonSequence => _haltonSequence;
 
@@ -47,17 +47,17 @@ namespace DeferredEngine.Rendering.PostProcessing
             _graphicsDevice.SetRenderTarget(destRT);
             _graphicsDevice.SetState(BlendStateOption.Opaque);
 
-            _effectSetup.Param_UpdateMap.SetValue(sourceRT);
-            _effectSetup.Param_AccumulationMap.SetValue(previousRT);
-            _effectSetup.Param_CurrentToPrevious.SetValue(Matrices.CurrentViewToPreviousViewProjection);
+            _fxSetup.Param_UpdateMap.SetValue(sourceRT);
+            _fxSetup.Param_AccumulationMap.SetValue(previousRT);
+            _fxSetup.Param_CurrentToPrevious.SetValue(Matrices.CurrentViewToPreviousViewProjection);
 
-            this.Draw(_effectSetup.Pass_TemporalAA);
+            this.Draw(_fxSetup.Pass_TemporalAA);
 
             if (UseTonemap)
             {
                 _graphicsDevice.SetRenderTarget(sourceRT);
-                _effectSetup.Param_UpdateMap.SetValue(destRT);
-                this.Draw(_effectSetup.Pass_TonemapInverse);
+                _fxSetup.Param_UpdateMap.SetValue(destRT);
+                this.Draw(_fxSetup.Pass_TonemapInverse);
             }
 
             return destRT;
@@ -65,7 +65,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         public override void Dispose()
         {
-            _effectSetup?.Dispose();
+            _fxSetup?.Dispose();
         }
 
     }

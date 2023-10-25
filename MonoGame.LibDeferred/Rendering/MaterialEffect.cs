@@ -20,13 +20,6 @@ namespace DeferredEngine.Recources
 
         public bool HasShadow = true;
 
-        public bool HasAlbedoMap;
-        public bool HasRoughnessMap;
-        public bool HasMask;
-        public bool HasNormalMap;
-        public bool HasMetallicMap;
-        public bool HasDisplacementMap;
-
 
         public Vector3 DiffuseColor = Color.Gray.ToVector3();
 
@@ -37,14 +30,21 @@ namespace DeferredEngine.Recources
 
         public float Roughness { get { return _roughness; } set { _roughness = Math.Max(value, 0.001f); } }
 
+        public bool HasAlbedoMap { get; protected set; }
+        public bool HasRoughnessMap { get; protected set; }
+        public bool HasMask { get; protected set; }
+        public bool HasNormalMap { get; protected set; }
+        public bool HasMetallicMap { get; protected set; }
+        public bool HasDisplacementMap { get; protected set; }
+
+
         public Texture2D AlbedoMap
         {
             get { return _albedoMap; }
             set
             {
-                if (value == null) return;
                 _albedoMap = value;
-                HasAlbedoMap = true;
+                HasAlbedoMap = _albedoMap != null;
             }
         }
 
@@ -53,9 +53,8 @@ namespace DeferredEngine.Recources
             get { return _roughnessMap; }
             set
             {
-                if (value == null) return;
                 _roughnessMap = value;
-                HasRoughnessMap = true;
+                HasRoughnessMap = _albedoMap != null;
             }
         }
 
@@ -64,9 +63,8 @@ namespace DeferredEngine.Recources
             get { return _metallicMap; }
             set
             {
-                if (value == null) return;
                 _metallicMap = value;
-                HasMetallicMap = true;
+                HasMetallicMap = _metallicMap != null;
             }
         }
 
@@ -75,9 +73,8 @@ namespace DeferredEngine.Recources
             get { return _normalMap; }
             set
             {
-                if (value == null) return;
                 _normalMap = value;
-                HasNormalMap = true;
+                HasNormalMap = _normalMap != null;
             }
         }
 
@@ -86,9 +83,8 @@ namespace DeferredEngine.Recources
             get { return _displacementMap; }
             set
             {
-                if (value == null) return;
                 _displacementMap = value;
-                HasDisplacementMap = true;
+                HasDisplacementMap = _displacementMap != null;
             }
         }
 
@@ -97,9 +93,8 @@ namespace DeferredEngine.Recources
             get { return _mask; }
             set
             {
-                if (value == null) return;
                 _mask = value;
-                HasMask = true;
+                HasMask = _mask != null;
             }
         }
 
@@ -161,12 +156,10 @@ namespace DeferredEngine.Recources
         }
 
         public MaterialEffect(GraphicsDevice graphicsDevice, byte[] effectCode) : base(graphicsDevice, effectCode)
-        {
-        }
+        { }
 
         public MaterialEffect(GraphicsDevice graphicsDevice, byte[] effectCode, int index, int count) : base(graphicsDevice, effectCode, index, count)
-        {
-        }
+        { }
 
 
         public bool Equals(MaterialEffect b)
@@ -204,10 +197,5 @@ namespace DeferredEngine.Recources
             return true;
         }
 
-        public override MaterialEffect Clone()
-        {
-            return new MaterialEffect(this);
-
-        }
     }
 }

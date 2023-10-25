@@ -10,7 +10,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         protected override bool GetEnabled() => _enabled;
 
 
-        private GaussianBlurFxSetup _effectSetup = new GaussianBlurFxSetup();
+        private GaussianBlurFxSetup _fxSetup = new GaussianBlurFxSetup();
 
         private RenderTarget2D _rt2562;
         private RenderTarget2D _rt5122;
@@ -49,14 +49,14 @@ namespace DeferredEngine.Rendering.PostProcessing
             _graphicsDevice.SetRenderTarget(renderTargetBlur);
 
             Vector2 invRes = new Vector2(1.0f / size, 1.0f / size);
-            _effectSetup.Param_InverseResolution.SetValue(invRes);
-            _effectSetup.Param_TargetMap.SetValue(sourceRT);
+            _fxSetup.Param_InverseResolution.SetValue(invRes);
+            _fxSetup.Param_TargetMap.SetValue(sourceRT);
 
-            this.Draw(_effectSetup.Pass_Horizontal);
+            this.Draw(_fxSetup.Pass_Horizontal);
 
             _graphicsDevice.SetRenderTarget(sourceRT);
-            _effectSetup.Param_TargetMap.SetValue(renderTargetBlur);
-            this.Draw(_effectSetup.Pass_Vertical);
+            _fxSetup.Param_TargetMap.SetValue(renderTargetBlur);
+            this.Draw(_fxSetup.Pass_Vertical);
 
             return sourceRT;
         }
@@ -74,13 +74,13 @@ namespace DeferredEngine.Rendering.PostProcessing
             _graphicsDevice.SetRenderTarget(renderTargetBlur);
 
             Vector2 invRes = new Vector2(1.0f / size, 1.0f / size);
-            _effectSetup.Param_InverseResolution.SetValue(invRes);
-            _effectSetup.Param_TargetMap.SetValue(outputCube);
-            this.Draw(_effectSetup.Pass_Horizontal);
+            _fxSetup.Param_InverseResolution.SetValue(invRes);
+            _fxSetup.Param_TargetMap.SetValue(outputCube);
+            this.Draw(_fxSetup.Pass_Horizontal);
 
             _graphicsDevice.SetRenderTarget(outputCube, cubeFace);
-            _effectSetup.Param_TargetMap.SetValue(renderTargetBlur);
-            this.Draw(_effectSetup.Pass_Vertical);
+            _fxSetup.Param_TargetMap.SetValue(renderTargetBlur);
+            this.Draw(_fxSetup.Pass_Vertical);
 
             return outputCube;
         }
