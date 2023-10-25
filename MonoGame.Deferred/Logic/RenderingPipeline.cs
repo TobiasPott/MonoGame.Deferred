@@ -45,10 +45,7 @@ namespace DeferredEngine.Rendering
         private PipelineProfiler _profiler;
 
         //Used for the view space directions in our shaders. Far edges of our view frustum
-        private FrustumCornerVertices _frustumCorners = new FrustumCornerVertices();
-
-        //Bounding Frusta of our view projection, to calculate which objects are inside the view
-        private BoundingFrustum _boundingFrustum;
+        private BoundingFrustumWithVertices _frustum = new BoundingFrustumWithVertices();
 
         //Checkvariables to see which console variables have changed from the frame before
         //private float _g_FarClip;
@@ -115,7 +112,7 @@ namespace DeferredEngine.Rendering
             _fxStack.Initialize(graphicsDevice, _spriteBatch);
             _fxStack.SSFxTargets = _ssfxTargets;
 
-            _boundingFrustum = new BoundingFrustum(_matrices.ViewProjection);
+            _frustum.Frustum.Matrix = _matrices.ViewProjection;
 
             SetUpRenderTargets(RenderingSettings.g_ScreenResolution);
 
@@ -178,7 +175,7 @@ namespace DeferredEngine.Rendering
             //Update our view projection matrices if the camera moved
             if (UpdateViewProjection(meshBatcher, camera))
                 // Compute the frustum corners for cheap view direction computation in shaders
-                UpdateFrustumCorners(_boundingFrustum, camera);
+                UpdateFrustumCorners(_frustum.Frustum, camera);
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SUpdate_ViewProjection);
 
@@ -419,15 +416,12 @@ namespace DeferredEngine.Rendering
                     _matrices.ApplyViewProjectionJitter(_fxStack.TemporaAA.JitterMode, _fxStack.TemporaAA.IsOffFrame, _fxStack.TemporaAA.HaltonSequence);
                 }
 
-                _moduleStack.Lighting.UpdateViewProjection(_boundingFrustum, viewProjectionHasChanged, _matrices);
-
-                if (_boundingFrustum == null) _boundingFrustum = new BoundingFrustum(_matrices.StaticViewProjection);
-                else _boundingFrustum.Matrix = _matrices.StaticViewProjection;
-
+                _moduleStack.Lighting.UpdateViewProjection(_frustum.Frustum, viewProjectionHasChanged, _matrices);
+                _frustum.Frustum.Matrix = _matrices.StaticViewProjection;
             }
 
             //We need to update whether or not entities are in our boundingFrustum and then cull them or not!
-            meshBatcher.FrustumCulling(_boundingFrustum, viewProjectionHasChanged, camera.Position);
+            meshBatcher.FrustumCulling(_frustum.Frustum, viewProjectionHasChanged, camera.Position);
             return viewProjectionHasChanged;
         }
 
@@ -440,15 +434,15 @@ namespace DeferredEngine.Rendering
         /// </summary>
         private void UpdateFrustumCorners(BoundingFrustum cameraFrustum, Camera camera)
         {
-            _frustumCorners.FromFrustum(cameraFrustum, _matrices.View);
-            _frustumCorners.UpdateFrustumCorners(camera.Position);
-            _frustumCorners.SwapCorners();
+            _frustum.FromFrustum(cameraFrustum, _matrices.View);
+            _frustum.UpdateFrustumCorners(camera.Position);
+            _frustum.SwapCorners();
 
             //World Space Corners
-            _moduleStack.FrustumCornersWS = _frustumCorners.WorldSpaceFrustum;
+            _moduleStack.FrustumCornersWS = _frustum.WorldSpaceFrustum;
             //View Space Corners
-            _moduleStack.FrustumCornersVS = _frustumCorners.ViewSpaceFrustum;
-            _fxStack.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
+            _moduleStack.FrustumCornersVS = _frustum.ViewSpaceFrustum;
+            _fxStack.FrustumCorners = _frustum.ViewSpaceFrustum;
         }
 
         /// <summary>
@@ -500,7 +494,7 @@ namespace DeferredEngine.Rendering
 
             _graphicsDevice.SetRenderTarget(destRT);
             _moduleStack.DepthReconstruct.ReconstructDepth();
-            _moduleStack.Forward.SetupLighting(camera, pointLights, _boundingFrustum);
+            _moduleStack.Forward.SetupLighting(camera, pointLights, _frustum.Frustum);
             _moduleStack.Forward.Draw(meshBatcher, _matrices);
             return destRT;
         }
@@ -571,6 +565,7 @@ namespace DeferredEngine.Rendering
             _auxTargets.Resize(targetWidth, targetHeight);
 
             _moduleStack.PointLight.Resolution = targetResolution;
+            _moduleStack.Environment.Resolution = targetResolution;
 
             _moduleStack.Billboard.AspectRatio = (float)targetWidth / targetHeight;
             _moduleStack.IdAndOutline.SetUpRenderTarget(width, height);
@@ -578,7 +573,6 @@ namespace DeferredEngine.Rendering
             _fxStack.TemporaAA.Resolution = targetResolution;
             _fxStack.SSReflection.Resolution = targetResolution;
 
-            _moduleStack.Environment.Resolution = targetResolution;
 
             ///////////////////
             // HALF RESOLUTION

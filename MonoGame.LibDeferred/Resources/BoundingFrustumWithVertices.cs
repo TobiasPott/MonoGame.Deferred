@@ -3,9 +3,10 @@ using MonoGame.Ext;
 
 namespace DeferredEngine.Recources
 {
-    public class FrustumCornerVertices
+    public class BoundingFrustumWithVertices
     {
         //Used for the view space directions in our shaders. Far edges of our view frustum
+        public readonly BoundingFrustum Frustum = new BoundingFrustum(Matrix.Identity);
         public readonly Vector3[] WorldSpace = new Vector3[8];
         public readonly Vector3[] ViewSpace = new Vector3[8];
         public readonly Vector3[] WorldSpaceFrustum = new Vector3[4];
