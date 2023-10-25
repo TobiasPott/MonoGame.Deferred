@@ -51,7 +51,7 @@ namespace DeferredEngine.Rendering
         private BoundingFrustum _boundingFrustum;
 
         //Checkvariables to see which console variables have changed from the frame before
-        private float _g_FarClip;
+        //private float _g_FarClip;
         private int _supersampling = 1;
         private bool _prevSSReflectionEnabled = true;
         private bool _g_SSReflectionNoise;
@@ -118,6 +118,15 @@ namespace DeferredEngine.Rendering
             _boundingFrustum = new BoundingFrustum(_matrices.ViewProjection);
 
             SetUpRenderTargets(RenderingSettings.g_ScreenResolution);
+
+            RenderingSettings.g_FarClip.Changed += FarClip_OnChanged;
+            RenderingSettings.g_FarClip.Set(500);
+        }
+
+        private void FarClip_OnChanged(float farClip)
+        {
+            _moduleStack.FarClip = farClip;
+            _fxStack.FarClip = farClip;
         }
 
         /// <summary>
@@ -362,13 +371,6 @@ namespace DeferredEngine.Rendering
         /// <param name="dirLights"></param>
         private void CheckRenderChanges()
         {
-            if (Math.Abs(_g_FarClip - RenderingSettings.g_FarPlane) > 0.0001f)
-            {
-                _g_FarClip = RenderingSettings.g_FarPlane;
-
-                _moduleStack.FarClip = _g_FarClip;
-                _fxStack.FarClip = _g_FarClip;
-            }
 
             if (_g_SSReflectionNoise != SSReflectionFx.g_SSReflectionNoise)
             {
@@ -382,7 +384,7 @@ namespace DeferredEngine.Rendering
             {
                 _graphicsDevice.SetRenderTarget(_ssfxTargets.SSR_Main);
                 _graphicsDevice.Clear(new Color(0, 0, 0, 0.0f));
-
+                
                 _prevSSReflectionEnabled = SSReflectionFx.g_SSReflection;
             }
 

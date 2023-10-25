@@ -1,4 +1,6 @@
-﻿using DeferredEngine.Rendering;
+﻿using DeferredEngine.Recources.Helper;
+using DeferredEngine.Rendering;
+using System.Text;
 
 namespace DeferredEngine.Recources
 {
@@ -26,9 +28,36 @@ namespace DeferredEngine.Recources
 
 
 
+        public static NotifiedProperty<float> g_FarClip = new NotifiedProperty<float>(500);
 
-        public static float g_FarPlane { get; set; } = 500;
-        public static event Action<float> OnFarClipChanged;
+    }
+
+    public class NotifiedProperty<T>
+    {
+        public event Action<T> Changed;
+        private T _value;
+        public T Value { get => _value; set => this.Set(value); }
+        public NotifiedProperty(T value)
+        {
+            _value = value;
+        }
+
+        public bool Set(T value)
+        {
+            if (Equals(value, _value))
+            {
+                _value = value;
+                this.Changed?.Invoke(value);
+                return true;
+            }
+            return false;
+        }
+
+        public static implicit operator T(NotifiedProperty<T> property)
+        {
+            return property._value;
+        }
+
     }
 
 }
