@@ -40,7 +40,7 @@ namespace DeferredEngine.Rendering.SDF
         private int _signedDistanceFieldDefinitionsCount = 0;
 
 
-        public Vector3[] FrustumCornersWorldSpace { set { _effectSetup.Param_FrustumCorners.SetValue(value); } }
+        public Vector3[] FrustumCornersWS { set { _effectSetup.Param_FrustumCorners.SetValue(value); } }
         public Vector3 CameraPosition { set { _effectSetup.Param_CameraPositon.SetValue(value); } }
         public Texture2D DepthMap { set { _effectSetup.Param_DepthMap.SetValue(value); } }
 

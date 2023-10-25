@@ -1,7 +1,9 @@
 ﻿using DeferredEngine.Pipeline;
 using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Pipeline.Utilities;
+using DeferredEngine.Rendering.PostProcessing;
 using DeferredEngine.Rendering.SDF;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 
@@ -41,6 +43,24 @@ namespace DeferredEngine.Rendering
                 DepthReconstruct.FarClip = value;
             }
         }
+        public Vector3[] FrustumCornersWS
+        {
+            set
+            {
+                DistanceField.FrustumCornersWS = value;
+                Environment.FrustumCornersWS = value;
+            }
+        }
+        public Vector3[] FrustumCornersVS
+        {
+            set
+            {
+                DepthReconstruct.FrustumCorners = value;
+                DirectionalLight.FrustumCorners = value;
+            }
+        }
+
+
 
         public PipelineModuleStack()
         {

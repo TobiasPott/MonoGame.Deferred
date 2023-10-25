@@ -440,29 +440,14 @@ namespace DeferredEngine.Rendering
         /// </summary>
         private void ComputeFrustumCorners(BoundingFrustum cameraFrustum, Camera camera)
         {
-            cameraFrustum.GetCorners(_frustumCorners.WorldSpace);
-            Extensions.Transform(_frustumCorners.WorldSpace, _matrices.View, _frustumCorners.ViewSpace); //put the frustum into view space
-
-            /*this part is used for volume projection*/
-            //World Space Corners - Camera Position
-            for (int i = 0; i < 4; i++) //take only the 4 farthest points
-            {
-                _frustumCorners.WorldSpaceFrustum[i] = _frustumCorners.WorldSpace[i + 4] - camera.Position;
-                _frustumCorners.ViewSpaceFrustum[i] = _frustumCorners.ViewSpace[i + 4];
-            }
-            // swap 2 <-> 3
-            (_frustumCorners.WorldSpaceFrustum[2], _frustumCorners.WorldSpaceFrustum[3]) = (_frustumCorners.WorldSpaceFrustum[3], _frustumCorners.WorldSpaceFrustum[2]);
-
-            _moduleStack.DistanceField.FrustumCornersWorldSpace = _frustumCorners.WorldSpaceFrustum;
-            _moduleStack.Environment.FrustumCornersWS = _frustumCorners.WorldSpaceFrustum;
-
+            _frustumCorners.FromFrustum(cameraFrustum, _matrices.View);
+            _frustumCorners.UpdateFrustumCorners(camera.Position);
+            _frustumCorners.SwapCorners();
+            
+            //World Space Corners
+            _moduleStack.FrustumCornersWS = _frustumCorners.WorldSpaceFrustum;
             //View Space Corners
-            // swap 2 <-> 3
-            (_frustumCorners.ViewSpaceFrustum[2], _frustumCorners.ViewSpaceFrustum[3]) = (_frustumCorners.ViewSpaceFrustum[3], _frustumCorners.ViewSpaceFrustum[2]);
-
-            _moduleStack.DepthReconstruct.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
-            //_moduleStack.Lighting.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
-            _moduleStack.DirectionalLight.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
+            _moduleStack.FrustumCornersVS = _frustumCorners.ViewSpaceFrustum;
             _fxStack.FrustumCorners = _frustumCorners.ViewSpaceFrustum;
         }
 
