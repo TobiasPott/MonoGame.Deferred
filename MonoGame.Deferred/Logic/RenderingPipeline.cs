@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 using System;
 using System.Collections.Generic;
+using DirectionalLight = DeferredEngine.Pipeline.Lighting.DirectionalLight;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //    MAIN RENDER FUNCTIONS, TheKosmonaut 2016
@@ -149,7 +150,7 @@ namespace DeferredEngine.Rendering
 
             // Step: 01
             //Check if we changed some drastic stuff for which we need to reload some elements
-            CheckRenderChanges(scene);
+            CheckRenderChanges();
 
             // Step: 02
             //Render ShadowMaps
@@ -359,9 +360,8 @@ namespace DeferredEngine.Rendering
         /// Check whether any GameSettings have changed that need setup
         /// </summary>
         /// <param name="dirLights"></param>
-        private void CheckRenderChanges(EntitySceneGroup scene)
+        private void CheckRenderChanges()
         {
-            List<Pipeline.Lighting.DirectionalLight> dirLights = scene.DirectionalLights;
             if (Math.Abs(_g_FarClip - RenderingSettings.g_FarPlane) > 0.0001f)
             {
                 _g_FarClip = RenderingSettings.g_FarPlane;

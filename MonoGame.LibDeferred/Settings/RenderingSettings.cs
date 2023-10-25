@@ -22,9 +22,13 @@ namespace DeferredEngine.Recources
 
         //Settings
         public static RenderModes g_RenderMode = RenderModes.Deferred;
-        public static float g_FarPlane = 500;
         public static bool g_CpuCulling = true;
 
 
+
+
+        public static float g_FarPlane { get; set; } = 500;
+        public static event Action<float> OnFarClipChanged;
     }
+
 }
