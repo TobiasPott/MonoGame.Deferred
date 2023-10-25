@@ -1,6 +1,7 @@
 ﻿using DeferredEngine.Entities;
 using DeferredEngine.Recources;
 using DeferredEngine.Rendering;
+using DeferredEngine.Rendering.PostProcessing;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -51,8 +52,8 @@ namespace DeferredEngine.Pipeline
         public EnvironmentPipelineModule()
             : base()
         {
-            this.FireflyReduction = RenderingSettings.g_SSReflection_FireflyReduction;
-            this.FireflyThreshold = RenderingSettings.g_SSReflection_FireflyThreshold;
+            this.FireflyReduction = SSReflectionFx.g_SSReflection_FireflyReduction;
+            this.FireflyThreshold = SSReflectionFx.g_SSReflection_FireflyThreshold;
         }
 
         public void SetGBufferParams(GBufferTarget gBufferTarget)

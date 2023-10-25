@@ -3,9 +3,11 @@ using DeferredEngine.Entities;
 using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Pipeline.Utilities;
 using DeferredEngine.Recources;
+using DeferredEngine.Rendering.PostProcessing;
 using HelperSuite.GUI;
 using HelperSuite.GUIHelper;
 using Microsoft.Xna.Framework;
+using System.Reflection;
 using System.Text;
 
 namespace DeferredEngine.Logic
@@ -210,23 +212,24 @@ namespace DeferredEngine.Logic
             GuiListToggle postprocessingList = new GuiListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
             optionList.AddElement(postprocessingList);
 
+            postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Color Grading")
+            {
+                ToggleField = typeof(RenderingSettings).GetField(nameof(RenderingSettings.g_ColorGrading)),
+                Toggle = RenderingSettings.g_ColorGrading
+            });
+
             postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Temporal AA")
             {
-                ToggleField = typeof(RenderingSettings.TAA).GetField("Enabled"),
-                Toggle = RenderingSettings.TAA.Enabled
+                ToggleField = typeof(RenderingSettings.TAA).GetField(nameof(RenderingSettings.TAA.g_Enabled)),
+                Toggle = RenderingSettings.TAA.g_Enabled
             });
 
             postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Tonemap TAA")
             {
-                ToggleField = typeof(RenderingSettings.TAA).GetField("UseTonemapping"),
-                Toggle = RenderingSettings.TAA.UseTonemapping
+                ToggleField = typeof(RenderingSettings.TAA).GetField(nameof(RenderingSettings.TAA.g_UseTonemapping)),
+                Toggle = RenderingSettings.TAA.g_UseTonemapping
             });
 
-            postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Color Grading")
-            {
-                ToggleField = typeof(RenderingSettings).GetField("g_ColorGrading"),
-                Toggle = RenderingSettings.g_ColorGrading
-            });
 
             /////////////////////////////////////////////////////////////////
             //SSR
@@ -241,44 +244,44 @@ namespace DeferredEngine.Logic
 
             ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable SSR")
             {
-                ToggleProperty = typeof(RenderingSettings).GetProperty("g_SSReflection"),
-                Toggle = RenderingSettings.g_SSReflection
+                ToggleProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_SSReflection)),
+                Toggle = SSReflectionFx.g_SSReflection
             });
 
             ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Stochastic distr.")
             {
-                ToggleProperty = typeof(RenderingSettings).GetProperty("g_SSReflectionTaa"),
-                Toggle = RenderingSettings.g_SSReflectionTaa
+                ToggleProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_SSReflectionTaa)),
+                Toggle = SSReflectionFx.g_SSReflectionTaa
             });
 
             ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Temporal Noise")
             {
-                ToggleField = typeof(RenderingSettings).GetField("g_SSReflectionNoise"),
-                Toggle = RenderingSettings.g_SSReflectionNoise
+                ToggleField = typeof(SSReflectionFx).GetField(nameof(SSReflectionFx.g_SSReflectionNoise)),
+                Toggle = SSReflectionFx.g_SSReflectionNoise
             });
 
             ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Firefly Reduction")
             {
-                ToggleProperty = typeof(RenderingSettings).GetProperty("g_SSReflection_FireflyReduction"),
-                Toggle = RenderingSettings.g_SSReflection_FireflyReduction
+                ToggleProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_SSReflection_FireflyReduction)),
+                Toggle = SSReflectionFx.g_SSReflection_FireflyReduction
             });
 
             ssrList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 5, 2, "Firefly Threshold ")
             {
-                SliderProperty = typeof(RenderingSettings).GetProperty("g_SSReflection_FireflyThreshold"),
-                SliderValue = RenderingSettings.g_SSReflection_FireflyThreshold
+                SliderProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_SSReflection_FireflyThreshold)),
+                SliderValue = SSReflectionFx.g_SSReflection_FireflyThreshold
             });
 
             ssrList.AddElement(new GuiSliderIntText(defaultStyle, 1, 100, 1, "Samples: ")
             {
-                SliderProperty = typeof(RenderingSettings).GetProperty("g_SSReflections_Samples"),
-                SliderValue = RenderingSettings.g_SSReflections_Samples
+                SliderProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_SSReflections_Samples)),
+                SliderValue = SSReflectionFx.g_SSReflections_Samples
             });
 
             ssrList.AddElement(new GuiSliderIntText(defaultStyle, 1, 100, 1, "Search Samples: ")
             {
-                SliderProperty = typeof(RenderingSettings).GetProperty("g_SSReflections_RefinementSamples"),
-                SliderValue = RenderingSettings.g_SSReflections_RefinementSamples
+                SliderProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_SSReflections_RefinementSamples)),
+                SliderValue = SSReflectionFx.g_SSReflections_RefinementSamples
             });
 
             /////////////////////////////////////////////////////////////////
@@ -294,32 +297,32 @@ namespace DeferredEngine.Logic
 
             ssaoList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable SSAO")
             {
-                ToggleProperty = typeof(RenderingSettings).GetProperty("g_ssao_draw"),
-                Toggle = RenderingSettings.g_ssao_draw
+                ToggleProperty = typeof(SSAmbientOcclustionFx).GetProperty(nameof(SSAmbientOcclustionFx.g_ssao_draw)),
+                Toggle = SSAmbientOcclustionFx.g_ssao_draw
             });
 
             ssaoList.AddElement(new GUITextBlockToggle(defaultStyle, "SSAO Blur: ")
             {
-                ToggleField = typeof(RenderingSettings).GetField("g_ssao_blur"),
-                Toggle = RenderingSettings.g_ssao_blur
+                ToggleField = typeof(SSAmbientOcclustionFx).GetField(nameof(SSAmbientOcclustionFx.g_ssao_blur)),
+                Toggle = SSAmbientOcclustionFx.g_ssao_blur
             });
 
             ssaoList.AddElement(new GuiSliderIntText(defaultStyle, 1, 32, 1, "SSAO Samples: ")
             {
-                SliderProperty = typeof(RenderingSettings).GetProperty("g_ssao_samples"),
-                SliderValue = RenderingSettings.g_ssao_samples
+                SliderProperty = typeof(SSAmbientOcclustionFx).GetProperty(nameof(SSAmbientOcclustionFx.g_ssao_samples)),
+                SliderValue = SSAmbientOcclustionFx.g_ssao_samples
             });
 
             ssaoList.AddElement(new GuiSliderFloatText(defaultStyle, 1, 100, 2, "Sample Radius: ")
             {
-                SliderProperty = typeof(RenderingSettings).GetProperty("g_ssao_radius"),
-                SliderValue = RenderingSettings.g_ssao_radius
+                SliderProperty = typeof(SSAmbientOcclustionFx).GetProperty(nameof(SSAmbientOcclustionFx.g_ssao_radius)),
+                SliderValue = SSAmbientOcclustionFx.g_ssao_radius
             });
 
             ssaoList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 4, 1, "SSAO Strength: ")
             {
-                SliderProperty = typeof(RenderingSettings).GetProperty("g_ssao_strength"),
-                SliderValue = RenderingSettings.g_ssao_strength
+                SliderProperty = typeof(SSAmbientOcclustionFx).GetProperty(nameof(SSAmbientOcclustionFx.g_ssao_strength)),
+                SliderValue = SSAmbientOcclustionFx.g_ssao_strength
             });
 
             /////////////////////////////////////////////////////////////////

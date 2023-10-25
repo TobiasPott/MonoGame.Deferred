@@ -8,7 +8,25 @@ namespace DeferredEngine.Rendering.PostProcessing
 {
 
     public partial class SSReflectionFx : BaseFx
-    {
+    {       
+        // SSR
+        public static bool g_SSReflection { get; set; } = true;
+        public static bool g_SSReflection_FireflyReduction { get; set; } = true;
+
+
+
+        public static float g_SSReflection_FireflyThreshold { get; set; } = 1.75f;
+
+
+        public static bool g_SSReflectionNoise { get; set; } = true;
+        public static bool g_SSReflectionTaa { get; set; } = true;
+
+        //5 and 5 are good, 3 and 3 are cheap
+        public static int g_SSReflections_Samples { get; set; } = 3;
+        public static int g_SSReflections_RefinementSamples { get; set; } = 3;
+
+
+
 
         private SSReflectionFxSetup _effectSetup = new SSReflectionFxSetup();
 
@@ -33,7 +51,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         {
         }
 
-        protected override bool GetEnabled() => _enabled && RenderingSettings.g_SSReflection;
+        protected override bool GetEnabled() => _enabled && SSReflectionFx.g_SSReflection;
         /// <summary>
         /// returns a modified image with color grading applied.
         /// </summary>
@@ -48,10 +66,10 @@ namespace DeferredEngine.Rendering.PostProcessing
 
             _effectSetup.Param_Projection.SetValue(this.Matrices.Projection);
 
-            _effectSetup.Param_Samples.SetValue(RenderingSettings.g_SSReflections_Samples);
-            _effectSetup.Param_SecondarySamples.SetValue(RenderingSettings.g_SSReflections_RefinementSamples);
+            _effectSetup.Param_Samples.SetValue(SSReflectionFx.g_SSReflections_Samples);
+            _effectSetup.Param_SecondarySamples.SetValue(SSReflectionFx.g_SSReflections_RefinementSamples);
             
-            _effectSetup.Effect.CurrentTechnique = RenderingSettings.g_SSReflectionTaa ? _effectSetup.Technique_Taa : _effectSetup.Technique_Default;
+            _effectSetup.Effect.CurrentTechnique = SSReflectionFx.g_SSReflectionTaa ? _effectSetup.Technique_Taa : _effectSetup.Technique_Default;
             _effectSetup.Effect.CurrentTechnique.Passes[0].Apply();
             _fullscreenTarget.Draw(_graphicsDevice);
 

@@ -26,12 +26,5 @@ namespace DeferredEngine.Recources
         public static bool g_CpuCulling = true;
 
 
-        public static void ApplySettings()
-        {
-            ApplyDefaultsSSAO();
-            ApplyDefaultsSSR();
-
-        }
-
     }
 }

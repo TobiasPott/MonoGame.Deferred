@@ -7,8 +7,8 @@
         //Temporal Anti-Aliasing
         public static class TAA
         {
-            public static bool Enabled = true;
-            public static bool UseTonemapping = true;
+            public static bool g_Enabled { get; set; } = true;
+            public static bool g_UseTonemapping { get; set; } = true;
 
         }
 

@@ -26,7 +26,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         public bool UseTonemap
         {
-            get { return _useTonemapping && RenderingSettings.TAA.UseTonemapping; }
+            get { return _useTonemapping && RenderingSettings.TAA.g_UseTonemapping; }
             set { _useTonemapping = value; _effectSetup.Param_UseTonemap.SetValue(value); }
         }
         public HaltonSequence HaltonSequence => _haltonSequence;
@@ -35,7 +35,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         public TemporalAAFx()
         { }
 
-        protected override bool GetEnabled() => _enabled && RenderingSettings.TAA.Enabled;
+        protected override bool GetEnabled() => _enabled && RenderingSettings.TAA.g_Enabled;
         public void SwapOffFrame()
         { IsOffFrame = !IsOffFrame; }
 

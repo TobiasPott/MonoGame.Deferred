@@ -116,11 +116,7 @@ namespace DeferredEngine.Rendering
 
             _boundingFrustum = new BoundingFrustum(_matrices.ViewProjection);
 
-            //Apply some base settings to overwrite shader defaults with game settings defaults
-            RenderingSettings.ApplySettings();
-
             SetUpRenderTargets(RenderingSettings.g_ScreenResolution);
-
         }
 
         /// <summary>
@@ -190,7 +186,7 @@ namespace DeferredEngine.Rendering
             //Draw Screen Space reflections to a different render target
             RenderTarget2D ssrTargetMap = _ssfxTargets.GetSSReflectionRenderTargets(_fxStack.TemporaAA.Enabled, _fxStack.TemporaAA.IsOffFrame);
             _fxStack.SSReflection.TargetMap = ssrTargetMap ?? _auxTargets[PipelineTargets.COMPOSE];
-            if (RenderingSettings.g_SSReflectionNoise)
+            if (SSReflectionFx.g_SSReflectionNoise)
                 _fxStack.SSReflection.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
             _fxStack.Draw(PipelineFxStage.SSReflection, null, null, _ssfxTargets.SSR_Main);
             // Profiler sample
@@ -374,20 +370,20 @@ namespace DeferredEngine.Rendering
                 _fxStack.FarClip = _g_FarClip;
             }
 
-            if (_g_SSReflectionNoise != RenderingSettings.g_SSReflectionNoise)
+            if (_g_SSReflectionNoise != SSReflectionFx.g_SSReflectionNoise)
             {
-                _g_SSReflectionNoise = RenderingSettings.g_SSReflectionNoise;
+                _g_SSReflectionNoise = SSReflectionFx.g_SSReflectionNoise;
                 if (!_g_SSReflectionNoise) _fxStack.SSReflection.Time = 0.0f;
             }
 
 
             // clear SSReflection buffer if disabled
-            if (_prevSSReflectionEnabled != RenderingSettings.g_SSReflection)
+            if (_prevSSReflectionEnabled != SSReflectionFx.g_SSReflection)
             {
                 _graphicsDevice.SetRenderTarget(_ssfxTargets.SSR_Main);
                 _graphicsDevice.Clear(new Color(0, 0, 0, 0.0f));
 
-                _prevSSReflectionEnabled = RenderingSettings.g_SSReflection;
+                _prevSSReflectionEnabled = SSReflectionFx.g_SSReflection;
             }
 
             //Performance Profiler
@@ -503,7 +499,7 @@ namespace DeferredEngine.Rendering
         private RenderTarget2D DrawDeferredCompose(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
         {
             // ToDo: @tpott: hacky way to disable ssao when disabled on global scale (GUI is insufficient here)
-            _moduleStack.Deferred.UseSSAOMap = RenderingSettings.g_ssao_draw;
+            _moduleStack.Deferred.UseSSAOMap = SSAmbientOcclustionFx.g_ssao_draw;
             _moduleStack.Deferred.Draw(destRT);
 
             return destRT;

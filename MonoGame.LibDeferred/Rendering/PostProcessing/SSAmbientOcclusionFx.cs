@@ -9,9 +9,20 @@ namespace DeferredEngine.Rendering.PostProcessing
 
     public partial class SSAmbientOcclustionFx : BaseFx
     {
+        //Screen Space Ambient Occlusion
+        public static bool g_ssao_blur { get; set; } = true;
 
-        private bool _enabled = true;
-        public bool Enabled { get => _enabled && RenderingSettings.g_ssao_draw; set { _enabled = value; } }
+        public static bool g_ssao_draw { get; set; } = true;
+
+        public static float g_ssao_falloffmin { get; set; } = 0.001f;
+        public static float g_ssao_falloffmax { get; set; } = 0.03f;
+        public static int g_ssao_samples { get; set; } = 8;
+        public static float g_ssao_radius { get; set; } = 30.0f;
+        public static float g_ssao_strength { get; set; } = 0.5f;
+
+
+        protected override bool GetEnabled() => _enabled && SSAmbientOcclustionFx.g_ssao_draw;
+
 
 
         private SSAmbientOcclusionFxSetup _effectSetup = new SSAmbientOcclusionFxSetup();
@@ -73,11 +84,11 @@ namespace DeferredEngine.Rendering.PostProcessing
             _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.KeepState);
 
 
-            _effectSetup.Param_FalloffMin.SetValue(RenderingSettings.g_ssao_falloffmin);
-            _effectSetup.Param_FalloffMax.SetValue(RenderingSettings.g_ssao_falloffmax);
-            _effectSetup.Param_Samples.SetValue(RenderingSettings.g_ssao_samples);
-            _effectSetup.Param_SampleRadius.SetValue(RenderingSettings.g_ssao_radius);
-            _effectSetup.Param_Strength.SetValue(RenderingSettings.g_ssao_strength);
+            _effectSetup.Param_FalloffMin.SetValue(SSAmbientOcclustionFx.g_ssao_falloffmin);
+            _effectSetup.Param_FalloffMax.SetValue(SSAmbientOcclustionFx.g_ssao_falloffmax);
+            _effectSetup.Param_Samples.SetValue(SSAmbientOcclustionFx.g_ssao_samples);
+            _effectSetup.Param_SampleRadius.SetValue(SSAmbientOcclustionFx.g_ssao_radius);
+            _effectSetup.Param_Strength.SetValue(SSAmbientOcclustionFx.g_ssao_strength);
 
             _effectSetup.Effect.CurrentTechnique = _effectSetup.Technique_SSAO;
             _effectSetup.Effect.CurrentTechnique.Passes[0].Apply();
@@ -101,7 +112,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         /// </summary>
         public void DrawSSAOBilateralBlur()
         {
-            if (RenderingSettings.g_ssao_blur && this.Enabled)
+            if (SSAmbientOcclustionFx.g_ssao_blur && this.Enabled)
             {
                 _graphicsDevice.SetRenderTarget(_ssfxTargets.AO_Blur_H);
                 _graphicsDevice.SetState(RasterizerStateOption.CullNone);

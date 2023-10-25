@@ -155,7 +155,7 @@ namespace DeferredEngine.Rendering.PostProcessing
                 return sourceRT;
             this.TemporaAA.Draw(sourceRT, previousRT, destRT);
 
-            return RenderingSettings.TAA.UseTonemapping ? sourceRT : destRT;
+            return RenderingSettings.TAA.g_UseTonemapping ? sourceRT : destRT;
         }
 
         /// <summary>
