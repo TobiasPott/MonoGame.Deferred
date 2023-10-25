@@ -113,6 +113,7 @@ namespace DeferredEngine.Rendering
             _fxStack.SSFxTargets = _ssfxTargets;
 
             SetUpRenderTargets(RenderingSettings.g_ScreenResolution);
+            UpdateRenderTargetBindings();
 
             RenderingSettings.g_FarClip.Changed += FarClip_OnChanged;
             RenderingSettings.g_FarClip.Set(500);
@@ -124,18 +125,6 @@ namespace DeferredEngine.Rendering
             _fxStack.FarClip = farClip;
         }
 
-        /// <summary>
-        /// Update our function
-        /// </summary>
-        public void Update(GameTime gameTime, bool isActive, EntitySceneGroup scene)
-        {
-            if (!isActive)
-                return;
-
-            _moduleStack.DistanceField.UpdateSdfGenerator(scene.Entities);
-            _moduleStack.Lighting.UpdateGameTime(gameTime);
-        }
-
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  RENDER FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -144,11 +133,18 @@ namespace DeferredEngine.Rendering
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         //  MAIN DRAW FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////
+
         /// <summary>
-        /// Main Draw function of the game
+        /// Update our function
         /// </summary>
-        public ObjectHoverContext Draw(Camera camera, DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GizmoDrawContext gizmoContext, GameTime gameTime)
+        public void Update(Camera camera, DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GameTime gameTime, bool isActive)
         {
+            if (!isActive)
+                return;
+
+            _moduleStack.DistanceField.UpdateSdfGenerator(scene.Entities);
+            _moduleStack.Lighting.UpdateGameTime(gameTime);
+
             //Reset the stat counter, so we can count stats/information for this frame only
             ResetStats();
 
@@ -158,13 +154,22 @@ namespace DeferredEngine.Rendering
 
             // Step: 04
             //Update our view projection matrices if the camera moved
-            if (UpdateViewProjection(meshBatcher, camera))
+            if (UpdateViewProjection(camera))
+            {
+                //We need to update whether or not entities are in our boundingFrustum and then cull them or not!
+                meshBatcher.FrustumCulling(_frustum.Frustum, camera.HasChanged, camera.Position);
                 // Compute the frustum corners for cheap view direction computation in shaders
                 UpdateFrustumCorners(camera);
+            }
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SUpdate_ViewProjection);
 
-
+        }
+        /// <summary>
+        /// Main Draw function of the game
+        /// </summary>
+        public ObjectHoverContext Draw(Camera camera, DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GizmoDrawContext gizmoContext, GameTime gameTime)
+        {
             // Step: 02
             //Render ShadowMaps
             _moduleStack.ShadowMap.Draw(meshBatcher, scene);
@@ -214,13 +219,6 @@ namespace DeferredEngine.Rendering
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_SSFx_SSAO);
 
-            // Step: 09
-            ////Upsample/blur our SSAO / screen space shadows
-            //_fxStack.SSAmbientOcclusion.DrawSSAOToBlur();
-            //_fxStack.SSAmbientOcclusion.DrawSSAOBilateralBlur();
-            //Performance Profiler
-            //_profiler.SampleTimestamp(ref PipelineSamples.SDraw_SSFx_AO_BilateralBlur);
-
             // Step: 10
             //Light the scene
             //_moduleStack.Lighting.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
@@ -228,18 +226,32 @@ namespace DeferredEngine.Rendering
 
             // Step: 11
             //Draw the environment cube map as a fullscreen effect on all meshes
-            DrawEnvironmentMap(scene.EnvProbe, camera, gameTime);
+            if (RenderingSettings.EnvironmentMapping.Enabled)
+            {
+                _moduleStack.Environment.SetEnvironmentProbe(scene.EnvProbe);
+                _moduleStack.Environment.DrawEnvironmentMap(camera, _matrices.View, gameTime);
+                //Performance Profiler
+                _profiler.SampleTimestamp(ref PipelineSamples.SDraw_EnvironmentMap);
+            }
+
 
             // Step: 12
             //Compose the scene by combining our lighting data with the gbuffer data
-            _currentOutput = DrawDeferredCompose(null, null, _auxTargets[PipelineTargets.COMPOSE]);
+            DrawDeferredCompose(null, null, _auxTargets[PipelineTargets.COMPOSE]);
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_Compose);
 
-
             // Step: 13
             //Forward
-            _currentOutput = DrawForward(_currentOutput, meshBatcher, camera, scene.PointLights);
+            if (ForwardPipelineModule.g_EnableForward)
+            {
+                _graphicsDevice.SetRenderTarget(_auxTargets[PipelineTargets.COMPOSE]);
+                _moduleStack.DepthReconstruct.ReconstructDepth();
+                _moduleStack.Forward.SetupLighting(camera, scene.PointLights, _frustum.Frustum);
+                _moduleStack.Forward.Draw(meshBatcher, _matrices);
+            }
+            _currentOutput = _auxTargets[PipelineTargets.COMPOSE];
+
 
             // Step: 14
             //Compose the image and add information from previous frames to apply temporal super sampling
@@ -260,7 +272,7 @@ namespace DeferredEngine.Rendering
 
             // Step: 17
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
-            RenderMode(_currentOutput);
+            DrawRenderMode(_currentOutput, null, _auxTargets[PipelineTargets.OUTPUT]);
 
             // Step: 18
             //Draw signed distance field functions
@@ -268,7 +280,7 @@ namespace DeferredEngine.Rendering
 
             // Step: 19
             //Additional editor elements that overlay our screen
-            RenderEditorOverlays(gizmoContext, scene);
+            DrawEditorOverlays(gizmoContext, scene);
 
             // Step: 20
             //Draw debug geometry
@@ -304,7 +316,7 @@ namespace DeferredEngine.Rendering
             return false;
         }
 
-        private void RenderEditorOverlays(GizmoDrawContext gizmoContext, EntitySceneGroup scene)
+        private void DrawEditorOverlays(GizmoDrawContext gizmoContext, EntitySceneGroup scene)
         {
             if (RenderingSettings.e_IsEditorEnabled && RenderingSettings.e_EnableSelection)
             {
@@ -336,7 +348,7 @@ namespace DeferredEngine.Rendering
 
         }
 
-        public void DrawEditorPasses(EntitySceneGroup scene, PipelineMatrices matrices, GizmoDrawContext gizmoContext,
+        private void DrawEditorPasses(EntitySceneGroup scene, PipelineMatrices matrices, GizmoDrawContext gizmoContext,
             EditorPasses passes = EditorPasses.Billboard | EditorPasses.IdAndOutline)
         {
             // render directly to the output buffer
@@ -394,7 +406,7 @@ namespace DeferredEngine.Rendering
         /// <summary>
         /// Create the projection matrices
         /// </summary>
-        private bool UpdateViewProjection(DynamicMeshBatcher meshBatcher, Camera camera)
+        private bool UpdateViewProjection(Camera camera)
         {
             // ToDo: @tpott: This boolean flag controls general update and draw, though it should only determine if matrices and such should be updated
             //      if a frame should be drawn is a conditioned layered on top of this and may be required regardless of camera change
@@ -419,8 +431,6 @@ namespace DeferredEngine.Rendering
                 _frustum.Frustum.Matrix = _matrices.StaticViewProjection;
             }
 
-            //We need to update whether or not entities are in our boundingFrustum and then cull them or not!
-            meshBatcher.FrustumCulling(_frustum.Frustum, viewProjectionHasChanged, camera.Position);
             return viewProjectionHasChanged;
         }
 
@@ -450,21 +460,6 @@ namespace DeferredEngine.Rendering
         }
 
         /// <summary>
-        /// Apply our environment cubemap to the renderer
-        /// </summary>
-        private void DrawEnvironmentMap(EnvironmentProbe envProbe, Camera camera, GameTime gameTime)
-        {
-            if (!RenderingSettings.EnvironmentMapping.Enabled) return;
-
-            _moduleStack.Environment.SetEnvironmentProbe(envProbe);
-            _moduleStack.Environment.DrawEnvironmentMap(camera, _matrices.View, gameTime);
-
-            //Performance Profiler
-            _profiler.SampleTimestamp(ref PipelineSamples.SDraw_EnvironmentMap);
-
-        }
-
-        /// <summary>
         /// Compose the render by combining the albedo channel with the light channels
         /// </summary>
         private RenderTarget2D DrawDeferredCompose(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
@@ -477,23 +472,10 @@ namespace DeferredEngine.Rendering
         }
 
 
-        private RenderTarget2D DrawForward(RenderTarget2D destRT, DynamicMeshBatcher meshBatcher, Camera camera, List<PointLight> pointLights)
-        {
-            if (!ForwardPipelineModule.g_EnableForward)
-                return destRT;
-
-            _graphicsDevice.SetRenderTarget(destRT);
-            _moduleStack.DepthReconstruct.ReconstructDepth();
-            _moduleStack.Forward.SetupLighting(camera, pointLights, _frustum.Frustum);
-            _moduleStack.Forward.Draw(meshBatcher, _matrices);
-            return destRT;
-        }
-
-
         /// <summary>
         /// Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
         /// </summary>
-        private void RenderMode(RenderTarget2D currentTarget)
+        private void DrawRenderMode(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
         {
             switch (RenderingSettings.g_RenderMode)
             {
@@ -525,11 +507,11 @@ namespace DeferredEngine.Rendering
                     BlitTo(_ssfxTargets.SSR_Main);
                     break;
                 case RenderModes.HDR:
-                    BlitTo(currentTarget);
+                    BlitTo(sourceRT);
                     break;
                 default:
-                    _fxStack.Draw(PipelineFxStage.PostProcessing, currentTarget, null, _auxTargets[PipelineTargets.OUTPUT]);
-                    _fxStack.Draw(PipelineFxStage.ColorGrading, null, null, _auxTargets[PipelineTargets.OUTPUT]);
+                    _fxStack.Draw(PipelineFxStage.PostProcessing, sourceRT, null, destRT);
+                    _fxStack.Draw(PipelineFxStage.ColorGrading, destRT, null, null);
                     break;
             }
 
@@ -541,11 +523,10 @@ namespace DeferredEngine.Rendering
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  RENDERTARGET SETUP FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
-        private void SetUpRenderTargets(Vector2 resolution) => SetUpRenderTargets((int)resolution.X, (int)resolution.Y);
-        private void SetUpRenderTargets(int width, int height)
+        private void SetUpRenderTargets(Vector2 resolution)
         {
-            int targetWidth = (int)(width * _supersampling);
-            int targetHeight = (int)(height * _supersampling);
+            int targetWidth = (int)(resolution.X * _supersampling);
+            int targetHeight = (int)(resolution.Y * _supersampling);
 
             Vector2 targetResolution = new Vector2(targetWidth, targetHeight);
 
@@ -558,7 +539,7 @@ namespace DeferredEngine.Rendering
             _moduleStack.Environment.Resolution = targetResolution;
 
             _moduleStack.Billboard.AspectRatio = (float)targetWidth / targetHeight;
-            _moduleStack.IdAndOutline.SetUpRenderTarget(width, height);
+            _moduleStack.IdAndOutline.SetUpRenderTarget(targetResolution);
 
             _fxStack.TemporaAA.Resolution = targetResolution;
             _fxStack.SSReflection.Resolution = targetResolution;
@@ -573,12 +554,9 @@ namespace DeferredEngine.Rendering
             Vector2 aspectRatios = new Vector2(Math.Min(1.0f, targetWidth / (float)targetHeight), Math.Min(1.0f, targetHeight / (float)targetWidth));
             _fxStack.SSAmbientOcclusion.InverseResolution = new Vector2(1.0f / targetWidth, 1.0f / targetHeight);
             _fxStack.SSAmbientOcclusion.AspectRatios = aspectRatios;
-
-
-            UpdateRenderMapBindings();
         }
 
-        private void UpdateRenderMapBindings()
+        private void UpdateRenderTargetBindings()
         {
             _moduleStack.SetGBufferParams(_gBufferTarget);
             // update directional light module

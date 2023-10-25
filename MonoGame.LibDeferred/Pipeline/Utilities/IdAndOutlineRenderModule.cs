@@ -68,11 +68,11 @@ namespace DeferredEngine.Pipeline.Utilities
         }
 
 
-        public void SetUpRenderTarget(int width, int height)
+        public void SetUpRenderTarget(Vector2 resolution)
         {
             if (_renderTarget != null)
                 _renderTarget.Dispose();
-            _renderTarget = RenderTarget2DDefinition.Aux_Id.CreateRenderTarget(_graphicsDevice, width, height);
+            _renderTarget = RenderTarget2DDefinition.Aux_Id.CreateRenderTarget(_graphicsDevice, resolution);
         }
 
         public void Draw(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, PipelineMatrices matrices, GizmoDrawContext drawContext, bool mouseMoved)

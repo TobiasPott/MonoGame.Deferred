@@ -20,8 +20,8 @@ namespace HelperSuite.GUI
 
         protected float _sliderPercent;
 
-        protected float _sliderValue;
-        public virtual float SliderValue
+        private float _sliderValue;
+        public float SliderValue
         {
             get { return _sliderValue; }
             set

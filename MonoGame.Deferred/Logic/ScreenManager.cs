@@ -41,17 +41,6 @@ namespace DeferredEngine.Logic
             _guiRenderer.Initialize(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
         }
 
-        //Update per frame
-        public void Update(GameTime gameTime, bool isActive)
-        {
-            _guiLogic.Update(gameTime, isActive, _editorLogic.SelectedObject);
-            _editorLogic.Update(gameTime, _sceneLogic.Scene, _objectHoverContext, _sceneLogic.MeshBatcher);
-            _sceneLogic.Update(gameTime, isActive);
-            _renderer.Update(gameTime, isActive, _sceneLogic.Scene);
-
-            _debug.Update(gameTime);
-        }
-
         //Load content
 
         public void Load(ContentManager content, GraphicsDevice graphicsDevice)
@@ -78,6 +67,16 @@ namespace DeferredEngine.Logic
             content.Dispose();
         }
 
+        //Update per frame
+        public void Update(GameTime gameTime, bool isActive)
+        {
+            _guiLogic.Update(gameTime, isActive, _editorLogic.SelectedObject);
+            _editorLogic.Update(gameTime, _sceneLogic.Scene, _objectHoverContext, _sceneLogic.MeshBatcher);
+            _sceneLogic.Update(gameTime, isActive);
+            _renderer.Update(_sceneLogic.Camera, _sceneLogic.MeshBatcher, _sceneLogic.Scene, gameTime, isActive);
+
+            _debug.Update(gameTime);
+        }
 
         public void Draw(GameTime gameTime)
         {

@@ -256,7 +256,7 @@ namespace DeferredEngine.Logic
 
             ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Temporal Noise")
             {
-                ToggleField = typeof(SSReflectionFx).GetField(nameof(SSReflectionFx.g_Noise)),
+                ToggleProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_Noise)),
                 Toggle = SSReflectionFx.g_Noise
             });
 

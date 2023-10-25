@@ -118,11 +118,11 @@ namespace DeferredEngine.Rendering.PostProcessing
         private RenderTarget2D DrawColorGrading(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
             if (this.ColorGrading.Enabled)
-                destRT = this.ColorGrading.Draw(destRT);
+                sourceRT = this.ColorGrading.Draw(sourceRT, null, null);
 
-            DrawTextureToScreenToFullScreen(destRT);
+            DrawTextureToScreenToFullScreen(sourceRT);
 
-            return destRT;
+            return sourceRT;
         }
         private RenderTarget2D DrawBloom(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {

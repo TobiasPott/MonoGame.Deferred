@@ -13,12 +13,26 @@ namespace HelperSuite.GUI
         public int StepSize = 1;
 
 
-        protected override void UpdateText()
+        public int _sliderValue;
+        public int SliderValue
+        {
+            get { return _sliderValue; }
+            set
+            {
+                _sliderValue = value;
+                _sliderPercent = (float)(_sliderValue - MinValue) / (MaxValue - MinValue);
+
+                UpdateText();
+            }
+        }
+
+        private void UpdateText()
         {
             _textBlock.Text.Clear();
             _textBlock.Text.Append(baseText);
             _textBlock.Text.Concat(_sliderValue);
         }
+
 
         public GuiSliderIntText(GUIStyle guiStyle, int min, int max, int stepSize, String text) : this(
             position: Vector2.Zero,
