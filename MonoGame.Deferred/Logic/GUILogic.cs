@@ -244,44 +244,44 @@ namespace DeferredEngine.Logic
 
             ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable SSR")
             {
-                ToggleProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_SSReflection)),
-                Toggle = SSReflectionFx.g_SSReflection
+                ToggleProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_Enabled)),
+                Toggle = SSReflectionFx.g_Enabled
             });
 
             ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Stochastic distr.")
             {
-                ToggleProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_SSReflectionTaa)),
-                Toggle = SSReflectionFx.g_SSReflectionTaa
+                ToggleProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_UseTaa)),
+                Toggle = SSReflectionFx.g_UseTaa
             });
 
             ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Temporal Noise")
             {
-                ToggleField = typeof(SSReflectionFx).GetField(nameof(SSReflectionFx.g_SSReflectionNoise)),
-                Toggle = SSReflectionFx.g_SSReflectionNoise
+                ToggleField = typeof(SSReflectionFx).GetField(nameof(SSReflectionFx.g_Noise)),
+                Toggle = SSReflectionFx.g_Noise
             });
 
             ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Firefly Reduction")
             {
-                ToggleProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_SSReflection_FireflyReduction)),
-                Toggle = SSReflectionFx.g_SSReflection_FireflyReduction
+                ToggleProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_FireflyReduction)),
+                Toggle = SSReflectionFx.g_FireflyReduction
             });
 
             ssrList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 5, 2, "Firefly Threshold ")
             {
-                SliderProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_SSReflection_FireflyThreshold)),
-                SliderValue = SSReflectionFx.g_SSReflection_FireflyThreshold
+                SliderProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_FireflyThreshold)),
+                SliderValue = SSReflectionFx.g_FireflyThreshold
             });
 
             ssrList.AddElement(new GuiSliderIntText(defaultStyle, 1, 100, 1, "Samples: ")
             {
-                SliderProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_SSReflections_Samples)),
-                SliderValue = SSReflectionFx.g_SSReflections_Samples
+                SliderProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_Samples)),
+                SliderValue = SSReflectionFx.g_Samples
             });
 
             ssrList.AddElement(new GuiSliderIntText(defaultStyle, 1, 100, 1, "Search Samples: ")
             {
-                SliderProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_SSReflections_RefinementSamples)),
-                SliderValue = SSReflectionFx.g_SSReflections_RefinementSamples
+                SliderProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_RefinementSamples)),
+                SliderValue = SSReflectionFx.g_RefinementSamples
             });
 
             /////////////////////////////////////////////////////////////////

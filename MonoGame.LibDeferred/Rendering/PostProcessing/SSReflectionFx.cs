@@ -10,20 +10,20 @@ namespace DeferredEngine.Rendering.PostProcessing
     public partial class SSReflectionFx : BaseFx
     {       
         // SSR
-        public static bool g_SSReflection { get; set; } = true;
-        public static bool g_SSReflection_FireflyReduction { get; set; } = true;
+        public static bool g_Enabled { get; set; } = true;
+        public static bool g_FireflyReduction { get; set; } = true;
 
 
 
-        public static float g_SSReflection_FireflyThreshold { get; set; } = 1.75f;
+        public static float g_FireflyThreshold { get; set; } = 1.75f;
 
 
-        public static bool g_SSReflectionNoise { get; set; } = true;
-        public static bool g_SSReflectionTaa { get; set; } = true;
+        public static bool g_Noise { get; set; } = true;
+        public static bool g_UseTaa { get; set; } = true;
 
         //5 and 5 are good, 3 and 3 are cheap
-        public static int g_SSReflections_Samples { get; set; } = 3;
-        public static int g_SSReflections_RefinementSamples { get; set; } = 3;
+        public static int g_Samples { get; set; } = 3;
+        public static int g_RefinementSamples { get; set; } = 3;
 
 
 
@@ -51,7 +51,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         {
         }
 
-        protected override bool GetEnabled() => _enabled && SSReflectionFx.g_SSReflection;
+        protected override bool GetEnabled() => _enabled && SSReflectionFx.g_Enabled;
         /// <summary>
         /// returns a modified image with color grading applied.
         /// </summary>
@@ -66,10 +66,10 @@ namespace DeferredEngine.Rendering.PostProcessing
 
             _fxSetup.Param_Projection.SetValue(this.Matrices.Projection);
 
-            _fxSetup.Param_Samples.SetValue(SSReflectionFx.g_SSReflections_Samples);
-            _fxSetup.Param_SecondarySamples.SetValue(SSReflectionFx.g_SSReflections_RefinementSamples);
+            _fxSetup.Param_Samples.SetValue(SSReflectionFx.g_Samples);
+            _fxSetup.Param_SecondarySamples.SetValue(SSReflectionFx.g_RefinementSamples);
             
-            _fxSetup.Effect.CurrentTechnique = SSReflectionFx.g_SSReflectionTaa ? _fxSetup.Technique_Taa : _fxSetup.Technique_Default;
+            _fxSetup.Effect.CurrentTechnique = SSReflectionFx.g_UseTaa ? _fxSetup.Technique_Taa : _fxSetup.Technique_Default;
             _fxSetup.Effect.CurrentTechnique.Passes[0].Apply();
             _fullscreenTarget.Draw(_graphicsDevice);
 

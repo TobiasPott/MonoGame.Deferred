@@ -52,8 +52,8 @@ namespace DeferredEngine.Pipeline
         public EnvironmentPipelineModule()
             : base()
         {
-            this.FireflyReduction = SSReflectionFx.g_SSReflection_FireflyReduction;
-            this.FireflyThreshold = SSReflectionFx.g_SSReflection_FireflyThreshold;
+            this.FireflyReduction = SSReflectionFx.g_FireflyReduction;
+            this.FireflyThreshold = SSReflectionFx.g_FireflyThreshold;
         }
 
         public void SetGBufferParams(GBufferTarget gBufferTarget)

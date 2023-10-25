@@ -196,7 +196,7 @@ namespace DeferredEngine.Rendering
             //Draw Screen Space reflections to a different render target
             RenderTarget2D ssrTargetMap = _ssfxTargets.GetSSReflectionRenderTargets(_fxStack.TemporaAA.Enabled, _fxStack.TemporaAA.IsOffFrame);
             _fxStack.SSReflection.TargetMap = ssrTargetMap ?? _auxTargets[PipelineTargets.COMPOSE];
-            if (SSReflectionFx.g_SSReflectionNoise)
+            if (SSReflectionFx.g_Noise)
                 _fxStack.SSReflection.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
             _fxStack.Draw(PipelineFxStage.SSReflection, null, null, _ssfxTargets.SSR_Main);
             // Profiler sample
@@ -372,20 +372,20 @@ namespace DeferredEngine.Rendering
         private void CheckRenderChanges()
         {
 
-            if (_g_SSReflectionNoise != SSReflectionFx.g_SSReflectionNoise)
+            if (_g_SSReflectionNoise != SSReflectionFx.g_Noise)
             {
-                _g_SSReflectionNoise = SSReflectionFx.g_SSReflectionNoise;
+                _g_SSReflectionNoise = SSReflectionFx.g_Noise;
                 if (!_g_SSReflectionNoise) _fxStack.SSReflection.Time = 0.0f;
             }
 
 
             // clear SSReflection buffer if disabled
-            if (_prevSSReflectionEnabled != SSReflectionFx.g_SSReflection)
+            if (_prevSSReflectionEnabled != SSReflectionFx.g_Enabled)
             {
                 _graphicsDevice.SetRenderTarget(_ssfxTargets.SSR_Main);
                 _graphicsDevice.Clear(new Color(0, 0, 0, 0.0f));
                 
-                _prevSSReflectionEnabled = SSReflectionFx.g_SSReflection;
+                _prevSSReflectionEnabled = SSReflectionFx.g_Enabled;
             }
 
             //Performance Profiler
