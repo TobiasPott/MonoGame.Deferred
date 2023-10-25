@@ -1,7 +1,6 @@
 ﻿using DeferredEngine.Pipeline;
 using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Pipeline.Utilities;
-using DeferredEngine.Rendering.PostProcessing;
 using DeferredEngine.Rendering.SDF;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

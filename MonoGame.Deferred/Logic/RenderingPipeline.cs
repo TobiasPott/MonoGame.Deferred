@@ -155,6 +155,15 @@ namespace DeferredEngine.Rendering
             //Check if we changed some drastic stuff for which we need to reload some elements
             CheckRenderChanges();
 
+            // Step: 04
+            //Update our view projection matrices if the camera moved
+            if (UpdateViewProjection(meshBatcher, camera))
+                // Compute the frustum corners for cheap view direction computation in shaders
+                UpdateFrustumCorners(camera);
+            //Performance Profiler
+            _profiler.SampleTimestamp(ref PipelineSamples.SUpdate_ViewProjection);
+
+
             // Step: 02
             //Render ShadowMaps
             _moduleStack.ShadowMap.Draw(meshBatcher, scene);
@@ -167,15 +176,6 @@ namespace DeferredEngine.Rendering
             {
                 _moduleStack.DistanceField.UpdateDistanceFieldTransformations(scene.Entities);
             }
-
-            // Step: 04
-            //Update our view projection matrices if the camera moved
-            if (UpdateViewProjection(meshBatcher, camera))
-                // Compute the frustum corners for cheap view direction computation in shaders
-                UpdateFrustumCorners(camera);
-            //Performance Profiler
-            _profiler.SampleTimestamp(ref PipelineSamples.SUpdate_ViewProjection);
-
 
             // Step: 05
             //Draw our meshes to the G Buffer
@@ -432,7 +432,6 @@ namespace DeferredEngine.Rendering
         private void UpdateFrustumCorners(Camera camera)
         {
             _frustum.UpdateVertices(_matrices.View, camera.Position);
-            _frustum.SwapCorners();
 
             //World Space Corners
             _moduleStack.FrustumCornersWS = _frustum.WorldSpaceFrustum;
