@@ -1,9 +1,8 @@
-﻿using System;
-using System.Reflection;
-using System.Text;
-using HelperSuite.GUIHelper;
+﻿using HelperSuite.GUIHelper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Reflection;
+using System.Text;
 
 namespace HelperSuite.GUI
 {
@@ -15,30 +14,29 @@ namespace HelperSuite.GUI
         protected const float SliderIndicatorBorder = 10;
         protected const float SliderBaseHeight = 5;
 
-        private Vector2 SliderPosition;
         private Vector2 _tempPosition = Vector2.One;
 
         protected Vector2 SliderDimensions;
 
         protected float _sliderPercent;
 
-        private float _sliderValue;
-        public float SliderValue
+        protected float _sliderValue;
+        public virtual float SliderValue
         {
             get { return _sliderValue; }
             set
             {
                 _sliderValue = value;
-                _sliderPercent = (_sliderValue - MinValue)/(MaxValue - MinValue);
+                _sliderPercent = (_sliderValue - MinValue) / (MaxValue - MinValue);
                 UpdateText();
             }
         }
 
-        public float MaxValue = 1; 
+        public float MaxValue = 1;
         public float MinValue;
 
         protected Color _sliderColor;
-        
+
         //TextBlock associated
         protected GUITextBlock _textBlock;
         private uint roundDecimals = 1;
@@ -50,7 +48,7 @@ namespace HelperSuite.GUI
         public Object SliderObject;
 
         public GuiSliderFloatText(GUIStyle guiStyle, float min, float max, uint decimals, String text) : this(
-            position: Vector2.Zero, 
+            position: Vector2.Zero,
             sliderDimensions: new Vector2(guiStyle.DimensionsStyle.X, 35),
             textdimensions: new Vector2(guiStyle.DimensionsStyle.X, 20),
             min: min,
@@ -72,7 +70,7 @@ namespace HelperSuite.GUI
         {
             _textBlock = new GUITextBlock(position, textdimensions, text, font, blockColor, sliderColor, textAlignment, textBorder, layer, alignment, ParentDimensions);
 
-            Dimensions = sliderDimensions + _textBlock.Dimensions*Vector2.UnitY;
+            Dimensions = sliderDimensions + _textBlock.Dimensions * Vector2.UnitY;
             SliderDimensions = sliderDimensions;
             _sliderColor = sliderColor;
             MinValue = min;
@@ -145,9 +143,9 @@ namespace HelperSuite.GUI
                 float lowerx = bound1.X + SliderIndicatorBorder;
                 float upperx = bound2.X - SliderIndicatorBorder;
 
-                _sliderPercent = MathHelper.Clamp((mousePosition.X - lowerx)/(upperx - lowerx), 0, 1);
+                _sliderPercent = MathHelper.Clamp((mousePosition.X - lowerx) / (upperx - lowerx), 0, 1);
 
-                _sliderValue = _sliderPercent*(MaxValue - MinValue) + MinValue;
+                _sliderValue = _sliderPercent * (MaxValue - MinValue) + MinValue;
 
                 UpdateText();
 
@@ -166,7 +164,7 @@ namespace HelperSuite.GUI
             }
         }
 
-        private void UpdateText()
+        protected virtual void UpdateText()
         {
             _textBlock.Text.Clear();
             _textBlock.Text.Append(baseText);
@@ -177,16 +175,16 @@ namespace HelperSuite.GUI
         {
             _textBlock.Draw(guiRenderer, parentPosition, mousePosition);
 
-            _tempPosition = parentPosition + Position + _textBlock.Dimensions*Vector2.UnitY;
+            _tempPosition = parentPosition + Position + _textBlock.Dimensions * Vector2.UnitY;
             guiRenderer.DrawQuad(_tempPosition, SliderDimensions, BlockColor);
-            
-            Vector2 slideDimensions = new Vector2(SliderDimensions.X - SliderIndicatorBorder*2, SliderBaseHeight);
+
+            Vector2 slideDimensions = new Vector2(SliderDimensions.X - SliderIndicatorBorder * 2, SliderBaseHeight);
             guiRenderer.DrawQuad(_tempPosition + new Vector2(SliderIndicatorBorder,
-                SliderDimensions.Y* 0.5f - SliderBaseHeight * 0.5f), slideDimensions, Color.DarkGray);
+                SliderDimensions.Y * 0.5f - SliderBaseHeight * 0.5f), slideDimensions, Color.DarkGray);
 
             //slideDimensions = new Vector2(slideDimensions.X + SliderIndicatorSize* 0.5f, slideDimensions.Y);
-            guiRenderer.DrawQuad(_tempPosition + new Vector2(SliderIndicatorBorder - SliderIndicatorSize* 0.5f,
-                 SliderDimensions.Y * 0.5f - SliderIndicatorSize * 0.5f) + _sliderPercent*slideDimensions * Vector2.UnitX, new Vector2(SliderIndicatorSize, SliderIndicatorSize), _sliderColor);
+            guiRenderer.DrawQuad(_tempPosition + new Vector2(SliderIndicatorBorder - SliderIndicatorSize * 0.5f,
+                 SliderDimensions.Y * 0.5f - SliderIndicatorSize * 0.5f) + _sliderPercent * slideDimensions * Vector2.UnitX, new Vector2(SliderIndicatorSize, SliderIndicatorSize), _sliderColor);
         }
     }
 }

@@ -1,9 +1,8 @@
-﻿using System;
-using System.Reflection;
-using System.Text;
-using HelperSuite.GUIHelper;
+﻿using HelperSuite.GUIHelper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Reflection;
+using System.Text;
 
 namespace HelperSuite.GUI
 {
@@ -13,20 +12,8 @@ namespace HelperSuite.GUI
         public int MinValueInt = 0;
         public int StepSize = 1;
 
-        public int _sliderValue;
-        public int SliderValue
-        {
-            get { return _sliderValue; }
-            set
-            {
-                _sliderValue = value;
-                _sliderPercent = (float)(_sliderValue - MinValue) / (MaxValue - MinValue);
 
-                UpdateText();
-            }
-        }
-
-        private void UpdateText()
+        protected override void UpdateText()
         {
             _textBlock.Text.Clear();
             _textBlock.Text.Append(baseText);
@@ -34,7 +21,7 @@ namespace HelperSuite.GUI
         }
 
         public GuiSliderIntText(GUIStyle guiStyle, int min, int max, int stepSize, String text) : this(
-            position: Vector2.Zero, 
+            position: Vector2.Zero,
             sliderDimensions: new Vector2(guiStyle.DimensionsStyle.X, 35),
             textdimensions: new Vector2(guiStyle.DimensionsStyle.X, 20),
             min: min,

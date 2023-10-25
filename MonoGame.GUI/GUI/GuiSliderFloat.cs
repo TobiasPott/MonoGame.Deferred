@@ -16,8 +16,6 @@ namespace HelperSuite.GUI
         protected const float SliderIndicatorBorder = 10;
         protected const float SliderBaseHeight = 5;
 
-        private Vector2 SliderPosition;
-
         protected float _sliderPercent;
 
         private float _sliderValue;

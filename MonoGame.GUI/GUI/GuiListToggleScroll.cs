@@ -1,5 +1,4 @@
-﻿using System;
-using HelperSuite.GUIHelper;
+﻿using HelperSuite.GUIHelper;
 using Microsoft.Xna.Framework;
 
 namespace HelperSuite.GUI
@@ -16,11 +15,9 @@ namespace HelperSuite.GUI
         protected Color SliderColor = Color.DimGray;
         protected Color SliderHoveredColor = HoverColor;
 
-        protected Vector2 ParentDimensions;
-
         protected bool ScrollBarEnabled = false;
         protected bool ScrollBarHovered = false;
-        
+
         protected float ScrollTranslation = 0;
 
         protected float ScrollTotalHeight = 0;
@@ -97,14 +94,14 @@ namespace HelperSuite.GUI
                             IsEngaged = true;
 
                             // to percent
-                            percentScroll = (mousePosition.Y - bound1.Y)/(bound2.Y - bound1.Y);
+                            percentScroll = (mousePosition.Y - bound1.Y) / (bound2.Y - bound1.Y);
 
                             //Now get clamp to slider size
-                            float minClamp = 1/percentOverscroll/2;
-                            percentScroll = (MathHelper.Clamp(percentScroll, minClamp, 1 - minClamp) - minClamp)/
-                                            (1 - minClamp*2);
+                            float minClamp = 1 / percentOverscroll / 2;
+                            percentScroll = (MathHelper.Clamp(percentScroll, minClamp, 1 - minClamp) - minClamp) /
+                                            (1 - minClamp * 2);
 
-                            ScrollTranslation = -percentScroll*(ListHeight - ScrollTotalHeight);
+                            ScrollTranslation = -percentScroll * (ListHeight - ScrollTotalHeight);
 
                         }
                     }
@@ -197,7 +194,7 @@ namespace HelperSuite.GUI
 
                     if (ScrollTranslation + height < ParentDimensions.Y)
                     {
-                        child.Draw(guiRenderer, initialPosition + height*Vector2.UnitY, mousePosition);
+                        child.Draw(guiRenderer, initialPosition + height * Vector2.UnitY, mousePosition);
                     }
                     height += _children[index].Dimensions.Y;
                 }
@@ -222,8 +219,8 @@ namespace HelperSuite.GUI
                 guiRenderer.DrawQuad(parentPosition + Position + _toggleDimensions * Vector2.UnitX, new Vector2(Scrollwidth, ScrollTotalHeight), ScrollBarEnabled ? ScrollBarEnabledColor : ScrollBarDisabledColor);
 
                 //Scrollbar
-                if(ScrollBarEnabled)
-                guiRenderer.DrawQuad(parentPosition + Position + _toggleDimensions * Vector2.UnitX + percentScroll*(ScrollTotalHeight-SliderHeight)*Vector2.UnitY, new Vector2(Scrollwidth, SliderHeight), ScrollBarHovered ? SliderHoveredColor : SliderColor);
+                if (ScrollBarEnabled)
+                    guiRenderer.DrawQuad(parentPosition + Position + _toggleDimensions * Vector2.UnitX + percentScroll * (ScrollTotalHeight - SliderHeight) * Vector2.UnitY, new Vector2(Scrollwidth, SliderHeight), ScrollBarHovered ? SliderHoveredColor : SliderColor);
 
             }
 

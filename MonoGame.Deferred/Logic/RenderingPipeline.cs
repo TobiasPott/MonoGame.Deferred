@@ -247,7 +247,7 @@ namespace DeferredEngine.Rendering
 
             // Step: 16
             //Draw the elements that we are hovering over with outlines
-            if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
+            if (RenderingSettings.e_IsEditorEnabled && RenderingSettings.e_EnableSelection)
                 _moduleStack.IdAndOutline.Draw(meshBatcher, scene, _matrices, gizmoContext, EditorLogic.Instance.HasMouseMoved);
 
             // Step: 17
@@ -298,7 +298,7 @@ namespace DeferredEngine.Rendering
 
         private void RenderEditorOverlays(GizmoDrawContext gizmoContext, EntitySceneGroup scene)
         {
-            if (RenderingSettings.e_IsEditorEnabled && RenderingStats.e_EnableSelection)
+            if (RenderingSettings.e_IsEditorEnabled && RenderingSettings.e_EnableSelection)
             {
                 if (IdAndOutlineRenderModule.e_DrawOutlines)
                     _graphicsDevice.Blit(_spriteBatch, _moduleStack.IdAndOutline.GetRenderTarget2D(), null, BlendState.Additive);
@@ -351,13 +351,7 @@ namespace DeferredEngine.Rendering
         /// </summary>
         private void ResetStats()
         {
-            RenderingStats.MaterialDraws = 0;
-            RenderingStats.MeshDraws = 0;
-            RenderingStats.LightsDrawn = 0;
-            RenderingStats.shadowMaps = 0;
-            RenderingStats.activeShadowMaps = 0;
-            RenderingStats.EmissiveMeshDraws = 0;
-
+            RenderingStats.ResetStats();
             _profiler.Reset();
         }
 

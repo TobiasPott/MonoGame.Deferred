@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using Microsoft.Xna.Framework;
 
 namespace HelperSuite.GUIHelper //StringBuilderII
 {
@@ -178,7 +177,7 @@ namespace HelperSuite.GUIHelper //StringBuilderII
                 return;
             }
             int place = 100;
-            if (num >= place*10)
+            if (num >= place * 10)
             {
                 // just append it
                 sb.Append(num);
@@ -191,10 +190,10 @@ namespace HelperSuite.GUIHelper //StringBuilderII
                 if (num >= place)
                 {
                     addzeros = true;
-                    int modulator = place*10;
-                    int val = num%modulator;
-                    int dc = val/place;
-                    sb.Append((char) (dc + 48));
+                    int modulator = place * 10;
+                    int val = num % modulator;
+                    int dc = val / place;
+                    sb.Append((char)(dc + 48));
                 }
                 else
                 {
@@ -203,7 +202,7 @@ namespace HelperSuite.GUIHelper //StringBuilderII
                         sb.Append('0');
                     }
                 }
-                place = (int) (place*.1);
+                place = (int)(place * .1);
             }
         }
 
@@ -224,7 +223,7 @@ namespace HelperSuite.GUIHelper //StringBuilderII
             }
 
             int place = 10000;
-            if (num >= place*10)
+            if (num >= place * 10)
             {
                 // just append it, if its this big, this isn't a science calculator, its a edge case.
                 sb.Append(num);
@@ -237,10 +236,10 @@ namespace HelperSuite.GUIHelper //StringBuilderII
                 if (num >= place)
                 {
                     addzeros = true;
-                    int modulator = place*10;
-                    int val = num%modulator;
-                    int dc = val/place;
-                    sb.Append((char) (dc + 48));
+                    int modulator = place * 10;
+                    int val = num % modulator;
+                    int dc = val / place;
+                    sb.Append((char)(dc + 48));
                 }
                 else
                 {
@@ -249,7 +248,7 @@ namespace HelperSuite.GUIHelper //StringBuilderII
                         sb.Append('0');
                     }
                 }
-                place = (int) (place*.1);
+                place = (int)(place * .1);
             }
         }
 
@@ -269,7 +268,7 @@ namespace HelperSuite.GUIHelper //StringBuilderII
             }
 
             int place = 1000000000;
-            if (value >= place*10)
+            if (value >= place * 10)
             {
                 // just append it
                 sb.Append(value);
@@ -283,10 +282,10 @@ namespace HelperSuite.GUIHelper //StringBuilderII
                 if (n >= place)
                 {
                     addzeros = true;
-                    int modulator = place*10;
-                    int val = n%modulator;
-                    int dc = val/place;
-                    sb.Append((char) (dc + 48));
+                    int modulator = place * 10;
+                    int val = n % modulator;
+                    int dc = val / place;
+                    sb.Append((char)(dc + 48));
                 }
                 else
                 {
@@ -295,7 +294,7 @@ namespace HelperSuite.GUIHelper //StringBuilderII
                         sb.Append('0');
                     }
                 }
-                place = (int) (place*.1);
+                place = (int)(place * .1);
             }
         }
 
@@ -315,7 +314,7 @@ namespace HelperSuite.GUIHelper //StringBuilderII
             }
 
             long place = 10000000000000000L;
-            if (value >= place*10)
+            if (value >= place * 10)
             {
                 // just append it,
                 sb.Append(value);
@@ -329,10 +328,10 @@ namespace HelperSuite.GUIHelper //StringBuilderII
                 if (n >= place)
                 {
                     addzeros = true;
-                    long modulator = place*10L;
-                    long val = n%modulator;
-                    long dc = val/place;
-                    sb.Append((char) (dc + 48));
+                    long modulator = place * 10L;
+                    long val = n % modulator;
+                    long dc = val / place;
+                    sb.Append((char)(dc + 48));
                 }
                 else
                 {
@@ -341,7 +340,7 @@ namespace HelperSuite.GUIHelper //StringBuilderII
                         sb.Append('0');
                     }
                 }
-                place = (long) (place*.1);
+                place = (long)(place * .1);
             }
         }
 
@@ -361,24 +360,24 @@ namespace HelperSuite.GUIHelper //StringBuilderII
             }
 
             int place = 100000000;
-            if (value >= place*10)
+            if (value >= place * 10)
             {
                 // just append it, if its this big its a edge case.
                 sb.Append(value);
                 return;
             }
             // part 1 pull integer digits
-            int n = (int) (value);
+            int n = (int)(value);
             bool addzeros = false;
             while (place > 0)
             {
                 if (n >= place)
                 {
                     addzeros = true;
-                    int modulator = place*10;
-                    int val = n%modulator;
-                    int dc = val/place;
-                    sb.Append((char) (dc + 48));
+                    int modulator = place * 10;
+                    int val = n % modulator;
+                    int dc = val / place;
+                    sb.Append((char)(dc + 48));
                 }
                 else
                 {
@@ -387,7 +386,7 @@ namespace HelperSuite.GUIHelper //StringBuilderII
                         sb.Append('0');
                     }
                 }
-                place = (int) (place*.1);
+                place = (int)(place * .1);
             }
 
             // ok lets try again
@@ -403,16 +402,16 @@ namespace HelperSuite.GUIHelper //StringBuilderII
             {
                 if (nd > placed)
                 {
-                    float modulator = placed*10;
-                    float val = nd%modulator;
-                    float dc = val/placed;
-                    sb.Append((char) (dc + 48));
+                    float modulator = placed * 10;
+                    float val = nd % modulator;
+                    float dc = val / placed;
+                    sb.Append((char)(dc + 48));
                 }
                 else
                 {
-                   sb.Append('0');
+                    sb.Append('0');
                 }
-                placed = placed*.1f;
+                placed = placed * .1f;
             }
         }
 
@@ -433,24 +432,24 @@ namespace HelperSuite.GUIHelper //StringBuilderII
             }
 
             long place = 10000000000000000L;
-            if (number >= place*10)
+            if (number >= place * 10)
             {
                 // just append it, if its this big its a edge case.
                 sb.Append(number);
                 return;
             }
             // part 1 pull integer digits
-            long n = (long) (number);
+            long n = (long)(number);
             bool addzeros = false;
             while (place > 0)
             {
                 if (n >= place)
                 {
                     addzeros = true;
-                    long modulator = place*10L;
-                    long val = n%modulator;
-                    long dc = val/place;
-                    sb.Append((char) (dc + 48));
+                    long modulator = place * 10L;
+                    long val = n % modulator;
+                    long dc = val / place;
+                    sb.Append((char)(dc + 48));
                 }
                 else
                 {
@@ -459,7 +458,7 @@ namespace HelperSuite.GUIHelper //StringBuilderII
                         sb.Append('0');
                     }
                 }
-                place = (long) (place*.1);
+                place = (long)(place * .1);
             }
 
             // the decimal part
@@ -475,10 +474,10 @@ namespace HelperSuite.GUIHelper //StringBuilderII
             {
                 if (nd > placed)
                 {
-                    double modulator = placed*10;
-                    double val = nd%modulator;
-                    double dc = val/placed;
-                    sb.Append((char) (dc + 48));
+                    double modulator = placed * 10;
+                    double val = nd % modulator;
+                    double dc = val / placed;
+                    sb.Append((char)(dc + 48));
                 }
                 else
                 {
@@ -487,7 +486,7 @@ namespace HelperSuite.GUIHelper //StringBuilderII
                         sb.Append('0');
                     }
                 }
-                placed = placed*.1;
+                placed = placed * .1;
             }
         }
 
@@ -507,24 +506,24 @@ namespace HelperSuite.GUIHelper //StringBuilderII
             }
 
             int place = 100000000;
-            if (value >= place*10)
+            if (value >= place * 10)
             {
                 // just append it, if its this big its a edge case.
                 sb.Append(value);
                 return;
             }
             // part 1 pull integer digits
-            int n = (int) (value);
+            int n = (int)(value);
             bool addzeros = false;
             while (place > 0)
             {
                 if (n >= place)
                 {
                     addzeros = true;
-                    int modulator = place*10;
-                    int val = n%modulator;
-                    int dc = val/place;
-                    sb.Append((char) (dc + 48));
+                    int modulator = place * 10;
+                    int val = n % modulator;
+                    int dc = val / place;
+                    sb.Append((char)(dc + 48));
                 }
                 else
                 {
@@ -533,7 +532,7 @@ namespace HelperSuite.GUIHelper //StringBuilderII
                         sb.Append('0');
                     }
                 }
-                place = (int) (place*.1);
+                place = (int)(place * .1);
             }
 
             // ok lets try again
@@ -546,10 +545,10 @@ namespace HelperSuite.GUIHelper //StringBuilderII
             {
                 if (nd > placed)
                 {
-                    float modulator = placed*10;
-                    float val = nd%modulator;
-                    float dc = val/placed;
-                    sb.Append((char) (dc + 48));
+                    float modulator = placed * 10;
+                    float val = nd % modulator;
+                    float dc = val / placed;
+                    sb.Append((char)(dc + 48));
                 }
                 else
                 {
@@ -558,7 +557,7 @@ namespace HelperSuite.GUIHelper //StringBuilderII
                         sb.Append('0');
                     }
                 }
-                placed = placed*.1f;
+                placed = placed * .1f;
             }
         }
 
@@ -577,24 +576,24 @@ namespace HelperSuite.GUIHelper //StringBuilderII
                 return;
             }
             long place = 10000000000000000L;
-            if (number >= place*10)
+            if (number >= place * 10)
             {
                 // just append it, if its this big its a edge case.
                 sb.Append(number);
                 return;
             }
             // part 1 pull integer digits
-            long n = (long) (number);
+            long n = (long)(number);
             bool addzeros = false;
             while (place > 0)
             {
                 if (n >= place)
                 {
                     addzeros = true;
-                    long modulator = place*10L;
-                    long val = n%modulator;
-                    long dc = val/place;
-                    sb.Append((char) (dc + 48));
+                    long modulator = place * 10L;
+                    long val = n % modulator;
+                    long dc = val / place;
+                    sb.Append((char)(dc + 48));
                 }
                 else
                 {
@@ -603,7 +602,7 @@ namespace HelperSuite.GUIHelper //StringBuilderII
                         sb.Append('0');
                     }
                 }
-                place = (long) (place*.1);
+                place = (long)(place * .1);
             }
 
             // ok lets try again
@@ -616,10 +615,10 @@ namespace HelperSuite.GUIHelper //StringBuilderII
             {
                 if (nd > placed)
                 {
-                    double modulator = placed*10;
-                    double val = nd%modulator;
-                    double dc = val/placed;
-                    sb.Append((char) (dc + 48));
+                    double modulator = placed * 10;
+                    double val = nd % modulator;
+                    double dc = val / placed;
+                    sb.Append((char)(dc + 48));
                 }
                 else
                 {
@@ -628,7 +627,7 @@ namespace HelperSuite.GUIHelper //StringBuilderII
                         sb.Append('0');
                     }
                 }
-                placed = placed*.1;
+                placed = placed * .1;
             }
         }
 
@@ -668,50 +667,50 @@ namespace HelperSuite.GUIHelper //StringBuilderII
 
     //http://www.gavpugh.com* 0.5f010/04/01/xnac-avoiding-garbage-when-working-with-stringbuilder/
     public static class StringBuilderExtensions
+    {
+        // These digits are here in a static array to support hex with simple, easily-understandable code. 
+        // Since A-Z don't sit next to 0-9 in the ascii table.
+        private static readonly char[] ms_digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+
+        private static readonly uint ms_default_decimal_places = 5; //< Matches standard .NET formatting dp's
+        private static readonly char ms_default_pad_char = '0';
+
+        //! Convert a given unsigned integer value to a string and concatenate onto the stringbuilder. Any base value allowed.
+        public static StringBuilder Concat(this StringBuilder string_builder, uint uint_val, uint pad_amount, char pad_char, uint base_val)
         {
-            // These digits are here in a static array to support hex with simple, easily-understandable code. 
-            // Since A-Z don't sit next to 0-9 in the ascii table.
-            private static readonly char[] ms_digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+            Debug.Assert(pad_amount >= 0);
+            Debug.Assert(base_val > 0 && base_val <= 16);
 
-            private static readonly uint ms_default_decimal_places = 5; //< Matches standard .NET formatting dp's
-            private static readonly char ms_default_pad_char = '0';
+            // Calculate length of integer when written out
+            uint length = 0;
+            uint length_calc = uint_val;
 
-            //! Convert a given unsigned integer value to a string and concatenate onto the stringbuilder. Any base value allowed.
-            public static StringBuilder Concat(this StringBuilder string_builder, uint uint_val, uint pad_amount, char pad_char, uint base_val)
+            do
             {
-                Debug.Assert(pad_amount >= 0);
-                Debug.Assert(base_val > 0 && base_val <= 16);
-
-                // Calculate length of integer when written out
-                uint length = 0;
-                uint length_calc = uint_val;
-
-                do
-                {
-                    length_calc /= base_val;
-                    length++;
-                }
-                while (length_calc > 0);
-
-                // Pad out space for writing.
-                string_builder.Append(pad_char, (int)Math.Max(pad_amount, length));
-
-                int strpos = string_builder.Length;
-
-                // We're writing backwards, one character at a time.
-                while (length > 0)
-                {
-                    strpos--;
-
-                    // Lookup from static char array, to cover hex values too
-                    string_builder[strpos] = ms_digits[uint_val % base_val];
-
-                    uint_val /= base_val;
-                    length--;
-                }
-
-                return string_builder;
+                length_calc /= base_val;
+                length++;
             }
+            while (length_calc > 0);
+
+            // Pad out space for writing.
+            string_builder.Append(pad_char, (int)Math.Max(pad_amount, length));
+
+            int strpos = string_builder.Length;
+
+            // We're writing backwards, one character at a time.
+            while (length > 0)
+            {
+                strpos--;
+
+                // Lookup from static char array, to cover hex values too
+                string_builder[strpos] = ms_digits[uint_val % base_val];
+
+                uint_val /= base_val;
+                length--;
+            }
+
+            return string_builder;
+        }
 
 
         public static StringBuilder AppendColor(this StringBuilder string_builder, Color color)
@@ -746,148 +745,148 @@ namespace HelperSuite.GUIHelper //StringBuilderII
 
         //! Convert a given unsigned integer value to a string and concatenate onto the stringbuilder. Assume no padding and base ten.
         public static StringBuilder Concat(this StringBuilder string_builder, uint uint_val)
+        {
+            string_builder.Concat(uint_val, 0, ms_default_pad_char, 10);
+            return string_builder;
+        }
+
+        //! Convert a given unsigned integer value to a string and concatenate onto the stringbuilder. Assume base ten.
+        public static StringBuilder Concat(this StringBuilder string_builder, uint uint_val, uint pad_amount)
+        {
+            string_builder.Concat(uint_val, pad_amount, ms_default_pad_char, 10);
+            return string_builder;
+        }
+
+        //! Convert a given unsigned integer value to a string and concatenate onto the stringbuilder. Assume base ten.
+        public static StringBuilder Concat(this StringBuilder string_builder, uint uint_val, uint pad_amount, char pad_char)
+        {
+            string_builder.Concat(uint_val, pad_amount, pad_char, 10);
+            return string_builder;
+        }
+
+        //! Convert a given signed integer value to a string and concatenate onto the stringbuilder. Any base value allowed.
+        public static StringBuilder Concat(this StringBuilder string_builder, int int_val, uint pad_amount, char pad_char, uint base_val)
+        {
+            Debug.Assert(pad_amount >= 0);
+            Debug.Assert(base_val > 0 && base_val <= 16);
+
+            // Deal with negative numbers
+            if (int_val < 0)
             {
-                string_builder.Concat(uint_val, 0, ms_default_pad_char, 10);
-                return string_builder;
+                string_builder.Append('-');
+                uint uint_val = uint.MaxValue - ((uint)int_val) + 1; //< This is to deal with Int32.MinValue
+                string_builder.Concat(uint_val, pad_amount, pad_char, base_val);
+            }
+            else
+            {
+                string_builder.Concat((uint)int_val, pad_amount, pad_char, base_val);
             }
 
-            //! Convert a given unsigned integer value to a string and concatenate onto the stringbuilder. Assume base ten.
-            public static StringBuilder Concat(this StringBuilder string_builder, uint uint_val, uint pad_amount)
-            {
-                string_builder.Concat(uint_val, pad_amount, ms_default_pad_char, 10);
-                return string_builder;
-            }
+            return string_builder;
+        }
 
-            //! Convert a given unsigned integer value to a string and concatenate onto the stringbuilder. Assume base ten.
-            public static StringBuilder Concat(this StringBuilder string_builder, uint uint_val, uint pad_amount, char pad_char)
-            {
-                string_builder.Concat(uint_val, pad_amount, pad_char, 10);
-                return string_builder;
-            }
+        //! Convert a given signed integer value to a string and concatenate onto the stringbuilder. Assume no padding and base ten.
+        public static StringBuilder Concat(this StringBuilder string_builder, int int_val)
+        {
+            string_builder.Concat(int_val, 0, ms_default_pad_char, 10);
+            return string_builder;
+        }
 
-            //! Convert a given signed integer value to a string and concatenate onto the stringbuilder. Any base value allowed.
-            public static StringBuilder Concat(this StringBuilder string_builder, int int_val, uint pad_amount, char pad_char, uint base_val)
-            {
-                Debug.Assert(pad_amount >= 0);
-                Debug.Assert(base_val > 0 && base_val <= 16);
+        //! Convert a given signed integer value to a string and concatenate onto the stringbuilder. Assume base ten.
+        public static StringBuilder Concat(this StringBuilder string_builder, int int_val, uint pad_amount)
+        {
+            string_builder.Concat(int_val, pad_amount, ms_default_pad_char, 10);
+            return string_builder;
+        }
 
-                // Deal with negative numbers
-                if (int_val < 0)
+        //! Convert a given signed integer value to a string and concatenate onto the stringbuilder. Assume base ten.
+        public static StringBuilder Concat(this StringBuilder string_builder, int int_val, uint pad_amount, char pad_char)
+        {
+            string_builder.Concat(int_val, pad_amount, pad_char, 10);
+            return string_builder;
+        }
+
+        //! Convert a given float value to a string and concatenate onto the stringbuilder
+        public static StringBuilder Concat(this StringBuilder string_builder, float float_val, uint decimal_places, uint pad_amount, char pad_char)
+        {
+            Debug.Assert(pad_amount >= 0);
+
+            if (float_val < 0)
+                string_builder.Append('-');
+
+            if (decimal_places == 0)
+            {
+                // No decimal places, just round up and print it as an int
+
+                // Agh, Math.Floor() just works on doubles/decimals. Don't want to cast! Let's do this the old-fashioned way.
+                int int_val;
+                if (float_val >= 0.0f)
                 {
-                    string_builder.Append('-');
-                    uint uint_val = uint.MaxValue - ((uint)int_val) + 1; //< This is to deal with Int32.MinValue
-                    string_builder.Concat(uint_val, pad_amount, pad_char, base_val);
+                    // Round up
+                    int_val = (int)(float_val + 0.5f);
                 }
                 else
                 {
-                    string_builder.Concat((uint)int_val, pad_amount, pad_char, base_val);
+                    // Round down for negative numbers
+                    int_val = (int)(float_val - 0.5f);
                 }
 
-                return string_builder;
-            }
-
-            //! Convert a given signed integer value to a string and concatenate onto the stringbuilder. Assume no padding and base ten.
-            public static StringBuilder Concat(this StringBuilder string_builder, int int_val)
-            {
-                string_builder.Concat(int_val, 0, ms_default_pad_char, 10);
-                return string_builder;
-            }
-
-            //! Convert a given signed integer value to a string and concatenate onto the stringbuilder. Assume base ten.
-            public static StringBuilder Concat(this StringBuilder string_builder, int int_val, uint pad_amount)
-            {
-                string_builder.Concat(int_val, pad_amount, ms_default_pad_char, 10);
-                return string_builder;
-            }
-
-            //! Convert a given signed integer value to a string and concatenate onto the stringbuilder. Assume base ten.
-            public static StringBuilder Concat(this StringBuilder string_builder, int int_val, uint pad_amount, char pad_char)
-            {
                 string_builder.Concat(int_val, pad_amount, pad_char, 10);
-                return string_builder;
             }
-
-            //! Convert a given float value to a string and concatenate onto the stringbuilder
-            public static StringBuilder Concat(this StringBuilder string_builder, float float_val, uint decimal_places, uint pad_amount, char pad_char)
+            else
             {
-                Debug.Assert(pad_amount >= 0);
+                int int_part = (int)Math.Abs(float_val);
 
-                if (float_val < 0)
-                    string_builder.Append('-');
+                // First part is easy, just cast to an integer
+                string_builder.Concat(int_part, pad_amount, pad_char, 10);
 
-                if (decimal_places == 0)
+                // Decimal point
+                string_builder.Append('.');
+
+                // Work out remainder we need to print after the d.p.
+                float remainder = Math.Abs(float_val - int_part);
+
+                // Multiply up to become an int that we can print
+                do
                 {
-                    // No decimal places, just round up and print it as an int
+                    remainder *= 10;
+                    decimal_places--;
 
-                    // Agh, Math.Floor() just works on doubles/decimals. Don't want to cast! Let's do this the old-fashioned way.
-                    int int_val;
-                    if (float_val >= 0.0f)
-                    {
-                        // Round up
-                        int_val = (int)(float_val + 0.5f);
-                    }
-                    else
-                    {
-                        // Round down for negative numbers
-                        int_val = (int)(float_val - 0.5f);
-                    }
-
-                    string_builder.Concat(int_val, pad_amount, pad_char, 10);
-                }
-                else
-                {
-                    int int_part = (int)Math.Abs(float_val);
-
-                    // First part is easy, just cast to an integer
-                    string_builder.Concat(int_part, pad_amount, pad_char, 10);
-
-                    // Decimal point
-                    string_builder.Append('.');
-
-                    // Work out remainder we need to print after the d.p.
-                    float remainder = Math.Abs(float_val - int_part);
-
-                    // Multiply up to become an int that we can print
-                    do
-                    {
-                        remainder *= 10;
-                        decimal_places--;
-
-                        if(remainder<1)
+                    if (remainder < 1)
                         string_builder.Concat((uint)0, 0, '0', 10);
 
                 }
-                    while (decimal_places > 0);
+                while (decimal_places > 0);
 
-                    // Round up. It's guaranteed to be a positive number, so no extra work required here.
-                    remainder += 0.5f;
+                // Round up. It's guaranteed to be a positive number, so no extra work required here.
+                remainder += 0.5f;
 
-                    // All done, print that as an int!
-                    string_builder.Concat((uint)remainder, 0, '0', 10);
-                }
-                return string_builder;
+                // All done, print that as an int!
+                string_builder.Concat((uint)remainder, 0, '0', 10);
             }
+            return string_builder;
+        }
 
-            //! Convert a given float value to a string and concatenate onto the stringbuilder. Assumes five decimal places, and no padding.
-            public static StringBuilder Concat(this StringBuilder string_builder, float float_val)
-            {
-                string_builder.Concat(float_val, ms_default_decimal_places, 0, ms_default_pad_char);
-                return string_builder;
-            }
+        //! Convert a given float value to a string and concatenate onto the stringbuilder. Assumes five decimal places, and no padding.
+        public static StringBuilder Concat(this StringBuilder string_builder, float float_val)
+        {
+            string_builder.Concat(float_val, ms_default_decimal_places, 0, ms_default_pad_char);
+            return string_builder;
+        }
 
-            //! Convert a given float value to a string and concatenate onto the stringbuilder. Assumes no padding.
-            public static StringBuilder Concat(this StringBuilder string_builder, float float_val, uint decimal_places)
-            {
-                string_builder.Concat(float_val, decimal_places, 0, ms_default_pad_char);
-                return string_builder;
-            }
+        //! Convert a given float value to a string and concatenate onto the stringbuilder. Assumes no padding.
+        public static StringBuilder Concat(this StringBuilder string_builder, float float_val, uint decimal_places)
+        {
+            string_builder.Concat(float_val, decimal_places, 0, ms_default_pad_char);
+            return string_builder;
+        }
 
-            //! Convert a given float value to a string and concatenate onto the stringbuilder.
-            public static StringBuilder Concat(this StringBuilder string_builder, float float_val, uint decimal_places, uint pad_amount)
-            {
-                string_builder.Concat(float_val, decimal_places, pad_amount, ms_default_pad_char);
-                return string_builder;
-            }
-        
+        //! Convert a given float value to a string and concatenate onto the stringbuilder.
+        public static StringBuilder Concat(this StringBuilder string_builder, float float_val, uint decimal_places, uint pad_amount)
+        {
+            string_builder.Concat(float_val, decimal_places, pad_amount, ms_default_pad_char);
+            return string_builder;
+        }
+
     }
 }

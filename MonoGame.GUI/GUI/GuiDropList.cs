@@ -1,23 +1,20 @@
-﻿using System;
-using System.Text;
-using HelperSuite.GUIHelper;
+﻿using HelperSuite.GUIHelper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Text;
 
 namespace HelperSuite.GUI
 {
     public class GuiDropList : GUITextBlock
     {
         public bool Toggle;
-        
+
         private static readonly float ButtonBorder = 2;
 
         private static readonly Color HoverColor = Color.LightGray;
 
-        private static readonly int HoverImageWidth = 250;
-
         private Vector2 _declarationTextDimensions;
-        
+
         private bool _isHovered;
 
         private bool _isToggled = false;
@@ -26,7 +23,7 @@ namespace HelperSuite.GUI
 
         //Load
         private StringBuilder _selectedOptionName = new StringBuilder(100);
-        
+
         public GuiDropList(GUIStyle style, string text) : this(
             position: Vector2.Zero,
             dimensions: style.DimensionsStyle,
@@ -60,7 +57,7 @@ namespace HelperSuite.GUI
             //Let's check wrap!
 
             //FontWrap(ref textDimension, Dimensions);
-            
+
             _fontPosition = Dimensions * 0.5f * Vector2.UnitY + _textBorder * Vector2.UnitX - _declarationTextDimensions * 0.5f * Vector2.UnitY;
         }
 
@@ -71,13 +68,13 @@ namespace HelperSuite.GUI
                 //Max length
                 Vector2 textDimensions = TextFont.MeasureString(_selectedOptionName);
 
-                float characterLength = textDimensions.X/_selectedOptionName.Length;
+                float characterLength = textDimensions.X / _selectedOptionName.Length;
 
                 Vector2 buttonLeft = (_declarationTextDimensions + _fontPosition * 1.5f) * Vector2.UnitX;
-                Vector2 spaceAvailable = Dimensions - 2*Vector2.One*ButtonBorder - buttonLeft -
-                                         (2 + _textBorder.X)*Vector2.UnitX;
+                Vector2 spaceAvailable = Dimensions - 2 * Vector2.One * ButtonBorder - buttonLeft -
+                                         (2 + _textBorder.X) * Vector2.UnitX;
 
-                int characters = (int) (spaceAvailable.X/characterLength);
+                int characters = (int)(spaceAvailable.X / characterLength);
 
                 _selectedOptionName.Length = characters < _selectedOptionName.Length ? characters : _selectedOptionName.Length;
             }
@@ -86,21 +83,21 @@ namespace HelperSuite.GUI
 
         public override void Draw(GUIRenderer.GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
         {
-            Vector2 buttonLeft = (_declarationTextDimensions + _fontPosition * 1.2f)*Vector2.UnitX;
+            Vector2 buttonLeft = (_declarationTextDimensions + _fontPosition * 1.2f) * Vector2.UnitX;
             guiRenderer.DrawQuad(parentPosition + Position, Dimensions, BlockColor);
-            guiRenderer.DrawQuad(parentPosition + Position + buttonLeft + Vector2.One * ButtonBorder, Dimensions - 2*Vector2.One*ButtonBorder - buttonLeft - (2+_textBorder.X)*Vector2.UnitX, _isHovered ? HoverColor : Color.DimGray);
-            
+            guiRenderer.DrawQuad(parentPosition + Position + buttonLeft + Vector2.One * ButtonBorder, Dimensions - 2 * Vector2.One * ButtonBorder - buttonLeft - (2 + _textBorder.X) * Vector2.UnitX, _isHovered ? HoverColor : Color.DimGray);
+
             guiRenderer.DrawText(parentPosition + Position + _fontPosition, Text, TextFont, TextColor);
 
             //Description
             guiRenderer.DrawText(parentPosition + Position + buttonLeft + new Vector2(4, _fontPosition.Y), _selectedOptionName, TextFont, TextColor);
-            
+
         }
 
         public override void Update(GameTime gameTime, Vector2 mousePosition, Vector2 parentPosition)
         {
             _isHovered = false;
-            
+
             Vector2 bound1 = Position + parentPosition;
             Vector2 bound2 = bound1 + Dimensions;
 
@@ -119,5 +116,5 @@ namespace HelperSuite.GUI
         }
 
     }
-    
+
 }

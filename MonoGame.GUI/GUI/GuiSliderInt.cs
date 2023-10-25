@@ -1,7 +1,6 @@
-﻿using System;
-using System.Reflection;
-using HelperSuite.GUIHelper;
+﻿using HelperSuite.GUIHelper;
 using Microsoft.Xna.Framework;
+using System.Reflection;
 
 namespace HelperSuite.GUI
 {
@@ -23,7 +22,7 @@ namespace HelperSuite.GUI
         }
 
         public GuiSliderInt(GUIStyle guiStyle, int min, int max, int stepSize) : this(
-            position: Vector2.Zero, 
+            position: Vector2.Zero,
             dimensions: new Vector2(guiStyle.DimensionsStyle.X, 35),
             min: min,
             max: max,
@@ -89,9 +88,9 @@ namespace HelperSuite.GUI
 
                 _sliderPercent = MathHelper.Clamp((mousePosition.X - lowerx) / (upperx - lowerx), 0, 1);
 
-                _sliderValue =  (int) Math.Round(_sliderPercent * (float)(MaxValue - MinValue) + MinValue) / StepSize * StepSize;
+                _sliderValue = (int)Math.Round(_sliderPercent * (float)(MaxValue - MinValue) + MinValue) / StepSize * StepSize;
 
-                _sliderPercent = (float)(_sliderValue - MinValueInt)/( MaxValueInt - MinValueInt);
+                _sliderPercent = (float)(_sliderValue - MinValueInt) / (MaxValueInt - MinValueInt);
 
                 if (SliderObject != null)
                 {

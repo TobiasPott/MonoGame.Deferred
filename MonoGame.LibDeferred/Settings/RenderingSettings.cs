@@ -1,12 +1,17 @@
-﻿using DeferredEngine.Recources.Helper;
+﻿using Deferred.Utilities;
 using DeferredEngine.Rendering;
-using System.Text;
 
 namespace DeferredEngine.Recources
 {
 
     public static partial class RenderingSettings
     {
+
+        public static bool e_EnableSelection = false;
+        public static GizmoModes e_gizmoMode = GizmoModes.Translation;
+        public static bool e_LocalTransformation = false;
+
+
         //debug
         public static bool e_DrawBoundingBox = true;
         public static bool d_Drawlines = false;

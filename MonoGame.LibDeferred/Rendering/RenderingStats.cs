@@ -12,13 +12,22 @@ namespace DeferredEngine.Recources
         public static int activeShadowMaps = 0;
         public static int EmissiveMeshDraws = 0;
 
+        public static float sdf_load = 0;
+
 
         public static bool UIIsHovered;
 
-        public static bool e_EnableSelection = false;
-        public static GizmoModes e_gizmoMode = GizmoModes.Translation;
-        public static bool e_LocalTransformation = false;
 
-        public static float sdf_load = 0;
+        public static void ResetStats()
+        {
+            sdf_load = 0.0f;
+            MaterialDraws = 0;
+            MeshDraws = 0;
+            LightsDrawn = 0;
+            shadowMaps = 0;
+            activeShadowMaps = 0;
+            EmissiveMeshDraws = 0;
+        }
+
     }
 }

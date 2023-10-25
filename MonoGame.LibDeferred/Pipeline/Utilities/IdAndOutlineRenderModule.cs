@@ -137,7 +137,7 @@ namespace DeferredEngine.Pipeline.Utilities
 
             Vector3 position = gizmoContext.SelectedObjectPosition;
             GizmoModes gizmoMode = gizmoContext.GizmoMode;
-            Matrix rotation = (RenderingStats.e_LocalTransformation || gizmoContext.GizmoMode == GizmoModes.Scale) ? gizmoContext.SelectedObject.RotationMatrix : Matrix.Identity;
+            Matrix rotation = (RenderingSettings.e_LocalTransformation || gizmoContext.GizmoMode == GizmoModes.Scale) ? gizmoContext.SelectedObject.RotationMatrix : Matrix.Identity;
 
             DrawTransformGizmoAxis(_graphicsDevice, position, rotation, AxisAngles[0], this.HoveredId == ID_AXIS_X ? 1.5f : 1.0f, axisColors[0], staticViewProjection, gizmoMode);
             DrawTransformGizmoAxis(_graphicsDevice, position, rotation, AxisAngles[1], this.HoveredId == ID_AXIS_Y ? 1.5f : 1.0f, axisColors[1], staticViewProjection, gizmoMode);
