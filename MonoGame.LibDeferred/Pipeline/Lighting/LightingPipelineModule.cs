@@ -1,7 +1,6 @@
 ﻿using DeferredEngine.Entities;
 using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Pipeline.Lighting
@@ -19,6 +18,11 @@ namespace DeferredEngine.Pipeline.Lighting
         public PointLightPipelineModule PointLightRenderModule;
         public DirectionalLightPipelineModule DirectionalLightRenderModule;
         public DepthReconstructPipelineModule DepthPipelineModule;
+
+
+
+        private LightingBufferTarget _lightingBufferTarget;
+        public LightingBufferTarget LightingBufferTarget { set { _lightingBufferTarget = value; } }
 
 
         public LightingPipelineModule()
@@ -52,13 +56,12 @@ namespace DeferredEngine.Pipeline.Lighting
         /// <summary>
         /// Draw our lights to the diffuse/specular/volume buffer
         /// </summary>
-        public void DrawLights(EntitySceneGroup scene, Vector3 cameraOrigin, RenderTargetBinding[] renderTargetLightBinding,
-            RenderTarget2D renderTargetDiffuse)
+        public void DrawLights(EntitySceneGroup scene, Vector3 cameraOrigin)
         {
             //Reconstruct Depth
             if (LightingPipelineModule.g_UseDepthStencilLightCulling > 0)
             {
-                _graphicsDevice.SetRenderTarget(renderTargetDiffuse);
+                _graphicsDevice.SetRenderTarget(_lightingBufferTarget.Diffuse);
                 _graphicsDevice.Clear(ClearOptions.DepthBuffer, new Color(0, 0, 0, 0.0f), 1, 0);
                 _graphicsDevice.Clear(ClearOptions.Stencil, new Color(0, 0, 0, 0.0f), 1, 0);
                 //ReconstructDepth();
@@ -70,7 +73,7 @@ namespace DeferredEngine.Pipeline.Lighting
                 if (_useDepthStencilLightCulling)
                 {
                     _useDepthStencilLightCulling = false;
-                    _graphicsDevice.SetRenderTarget(renderTargetDiffuse);
+                    _graphicsDevice.SetRenderTarget(_lightingBufferTarget.Diffuse);
                     _graphicsDevice.Clear(ClearOptions.DepthBuffer, new Color(0, 0, 0, 0.0f), 1, 0);
                 }
             }
@@ -83,7 +86,7 @@ namespace DeferredEngine.Pipeline.Lighting
             //Shaders.deferredPointLightParameter_VolumeTexScale.SetValue(volumeTex.Scale);
             //Shaders.deferredPointLightParameter_VolumeTexSizeParam.SetValue(volumeTex.Size);
 
-            _graphicsDevice.SetRenderTargets(renderTargetLightBinding);
+            _graphicsDevice.SetRenderTargets(_lightingBufferTarget.Bindings);
             _graphicsDevice.Clear(ClearOptions.Target, new Color(0, 0, 0, 0.0f), 1, 0);
             _graphicsDevice.BlendState = _lightBlendState;
 

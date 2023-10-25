@@ -107,6 +107,7 @@ namespace DeferredEngine.Rendering
 
             _moduleStack.Initialize(graphicsDevice, _spriteBatch);
             _moduleStack.GBuffer.GBufferTarget = _gBufferTarget;
+            _moduleStack.Lighting.LightingBufferTarget = _lightingBufferTarget;
 
             _fxStack.Initialize(graphicsDevice, _spriteBatch);
             _fxStack.SSFxTargets = _ssfxTargets;
@@ -186,7 +187,14 @@ namespace DeferredEngine.Rendering
 
             // Step: 06
             //Deferred Decals
-            DrawDecals(scene.Decals);
+            if (DecalRenderModule.g_EnableDecals)
+            {
+                //First copy albedo to decal offtarget
+                _graphicsDevice.Blit(_spriteBatch, _gBufferTarget.Albedo, _auxTargets[PipelineTargets.DECAL], _supersampling);
+                _graphicsDevice.Blit(_spriteBatch, _auxTargets[PipelineTargets.DECAL], _gBufferTarget.Albedo, _supersampling);
+
+                _moduleStack.Decal.Draw(scene.Decals, _matrices);
+            }
 
             // Step: 07
             //Draw Screen Space reflections to a different render target
@@ -216,7 +224,7 @@ namespace DeferredEngine.Rendering
             // Step: 10
             //Light the scene
             //_moduleStack.Lighting.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
-            _moduleStack.Lighting.DrawLights(scene, camera.Position, _lightingBufferTarget.Bindings, _lightingBufferTarget.Diffuse);
+            _moduleStack.Lighting.DrawLights(scene, camera.Position);
 
             // Step: 11
             //Draw the environment cube map as a fullscreen effect on all meshes
@@ -439,13 +447,6 @@ namespace DeferredEngine.Rendering
         /// </summary>
         private void DrawDecals(List<Decal> decals)
         {
-            if (!DecalRenderModule.g_EnableDecals) return;
-
-            //First copy albedo to decal offtarget
-            _graphicsDevice.Blit(_spriteBatch, _gBufferTarget.Albedo, _auxTargets[PipelineTargets.DECAL], _supersampling);
-            _graphicsDevice.Blit(_spriteBatch, _auxTargets[PipelineTargets.DECAL], _gBufferTarget.Albedo, _supersampling);
-
-            _moduleStack.Decal.Draw(decals, _matrices);
         }
 
         /// <summary>

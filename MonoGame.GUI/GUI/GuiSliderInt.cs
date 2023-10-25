@@ -11,7 +11,7 @@ namespace HelperSuite.GUI
         public int StepSize = 1;
 
         public int _sliderValue;
-        public int SliderValue
+        public new int SliderValue
         {
             get { return _sliderValue; }
             set

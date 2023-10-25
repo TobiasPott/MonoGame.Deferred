@@ -97,8 +97,8 @@ namespace DeferredEngine.Logic
             });
             _leftSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Local: ")
             {
-                ToggleField = typeof(RenderingStats).GetField("e_LocalTransformation"),
-                Toggle = RenderingStats.e_LocalTransformation
+                ToggleField = typeof(RenderingSettings).GetField(nameof(RenderingSettings.e_LocalTransformation)),
+                Toggle = RenderingSettings.e_LocalTransformation
             });
             _leftSideList.Alignment = GUIStyle.GUIAlignment.BottomLeft;
 
@@ -112,8 +112,8 @@ namespace DeferredEngine.Logic
 
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Editor")
             {
-                ToggleField = typeof(RenderingStats).GetField("e_EnableSelection"),
-                Toggle = RenderingStats.e_EnableSelection
+                ToggleField = typeof(RenderingSettings).GetField(nameof(RenderingSettings.e_EnableSelection)),
+                Toggle = RenderingSettings.e_EnableSelection
             });
 
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Highlight Meshes")
@@ -369,7 +369,7 @@ namespace DeferredEngine.Logic
 
         public void ChangeGizmoMode(GizmoModes mode)
         {
-            RenderingStats.e_gizmoMode = mode;
+            RenderingSettings.e_gizmoMode = mode;
 
             UpdateGizmoSelection(mode);
         }
@@ -419,9 +419,9 @@ namespace DeferredEngine.Logic
             RenderingStats.UIIsHovered = false;
             if (!isActive || !RenderingSettings.e_IsEditorEnabled || !RenderingSettings.ui_IsUIEnabled) return;
 
-            if (RenderingStats.e_gizmoMode != _gizmoModePrevious)
+            if (RenderingSettings.e_gizmoMode != _gizmoModePrevious)
             {
-                _gizmoModePrevious = RenderingStats.e_gizmoMode;
+                _gizmoModePrevious = RenderingSettings.e_gizmoMode;
                 UpdateGizmoSelection(_gizmoModePrevious);
             }
 
@@ -433,7 +433,7 @@ namespace DeferredEngine.Logic
                 RenderingStats.UIIsHovered = true;
             }
 
-            _leftSideList.IsHidden = !RenderingStats.e_EnableSelection;
+            _leftSideList.IsHidden = !RenderingSettings.e_EnableSelection;
 
             if (selectedObject != null)
             {
