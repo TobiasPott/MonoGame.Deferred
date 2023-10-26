@@ -54,6 +54,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             {
                 TemporaAA.Matrices = value;
                 SSReflection.Matrices = value;
+                SSAmbientOcclusion.Matrices = value;
             }
         }
 

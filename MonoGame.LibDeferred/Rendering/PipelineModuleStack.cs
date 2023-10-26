@@ -25,8 +25,8 @@ namespace DeferredEngine.Rendering
         public readonly DistanceFieldRenderModule DistanceField;
 
         public readonly DecalRenderModule Decal;
-        public readonly HelperRenderModule Helper;
 
+        public readonly HelperRenderModule Helper;
         public readonly BillboardRenderModule Billboard;
         public readonly IdAndOutlineRenderModule IdAndOutline;
 
@@ -65,8 +65,15 @@ namespace DeferredEngine.Rendering
                 DepthReconstruct.Matrices = value;
                 GBuffer.Matrices = value;
                 Decal.Matrices = value;
+                Lighting.Matrices = value;
                 Environment.Matrices = value;
                 Forward.Matrices = value;
+                PointLight.Matrices = value;
+                DirectionalLight.Matrices = value;
+
+                Helper.Matrices = value;
+                IdAndOutline.Matrices = value;
+                Billboard.Matrices = value;
             }
         }
 
@@ -109,12 +116,12 @@ namespace DeferredEngine.Rendering
             Lighting.Initialize(graphicsDevice, spriteBatch);
             Environment.Initialize(graphicsDevice, spriteBatch);
 
-            Decal.Initialize(graphicsDevice);
-            Helper.Initialize(graphicsDevice);
+            Decal.Initialize(graphicsDevice, spriteBatch);
+            Helper.Initialize(graphicsDevice, spriteBatch);
             DistanceField.Initialize(graphicsDevice, spriteBatch);
 
-            Billboard.Initialize(graphicsDevice);
-            IdAndOutline.Initialize(graphicsDevice);
+            Billboard.Initialize(graphicsDevice, spriteBatch);
+            IdAndOutline.Initialize(graphicsDevice, spriteBatch);
 
         }
 

@@ -12,8 +12,6 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using DirectionalLight = DeferredEngine.Pipeline.Lighting.DirectionalLight;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //    MAIN RENDER FUNCTIONS, TheKosmonaut 2016
@@ -27,6 +25,7 @@ namespace DeferredEngine.Rendering
     {
         Billboard = 1,
         IdAndOutline = 2,
+        Helper = 4,
     }
 
     public partial class RenderingPipeline : IDisposable
@@ -171,8 +170,9 @@ namespace DeferredEngine.Rendering
 
             // Step: 04
             //Update our view projection matrices if the camera moved
-            if (UpdateViewProjection(camera))
+            if (camera.HasChanged)
             {
+                UpdateViewProjection(camera);
                 //We need to update whether or not entities are in our boundingFrustum and then cull them or not!
                 meshBatcher.FrustumCulling(_frustum.Frustum, camera.HasChanged, camera.Position);
                 // Compute the frustum corners for cheap view direction computation in shaders
@@ -227,7 +227,7 @@ namespace DeferredEngine.Rendering
 
             // Step: 08
             //SSAO
-            _fxStack.SSAmbientOcclusion.SetCameraAndMatrices(camera.Position, _matrices);
+            _fxStack.SSAmbientOcclusion.SetCamera(camera.Position);
             _fxStack.Draw(PipelineFxStage.SSAmbientOcclusion, null, null, _ssfxTargets.AO_Main);
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_SSFx_SSAO);
@@ -235,14 +235,14 @@ namespace DeferredEngine.Rendering
             // Step: 10
             //Light the scene
             //_moduleStack.Lighting.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
-            _moduleStack.Lighting.DrawLights(scene, camera.Position);
+            _moduleStack.Lighting.DrawLights(scene, camera.Position, camera.HasChanged);
 
             // Step: 11
             //Draw the environment cube map as a fullscreen effect on all meshes
             if (RenderingSettings.EnvironmentMapping.Enabled)
             {
                 _moduleStack.Environment.SetEnvironmentProbe(scene.EnvProbe);
-                _moduleStack.Environment.DrawEnvironmentMap(camera, _matrices.View);
+                _moduleStack.Environment.DrawEnvironmentMap(camera);
                 //Performance Profiler
                 _profiler.SampleTimestamp(ref PipelineSamples.SDraw_EnvironmentMap);
             }
@@ -283,7 +283,7 @@ namespace DeferredEngine.Rendering
             // Step: 16
             //Draw the elements that we are hovering over with outlines
             if (RenderingSettings.e_IsEditorEnabled && RenderingSettings.e_EnableSelection)
-                _moduleStack.IdAndOutline.Draw(meshBatcher, scene, _matrices, gizmoContext, EditorLogic.Instance.HasMouseMoved);
+                _moduleStack.IdAndOutline.Draw(meshBatcher, scene, gizmoContext, EditorLogic.Instance.HasMouseMoved);
 
             // Step: 17
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
@@ -299,8 +299,8 @@ namespace DeferredEngine.Rendering
 
             // Step: 20
             //Draw debug geometry
-            _moduleStack.Helper.ViewProjection = _matrices.StaticViewProjection;
-            _moduleStack.Helper.Draw();
+            DrawEditorPasses(scene, gizmoContext, EditorPasses.Helper);
+
 
             // Step: 21
             //Set up the frustum culling for the next frame
@@ -316,12 +316,7 @@ namespace DeferredEngine.Rendering
         public ObjectHoverContext GetHoverContext()
         {
             //return data we have recovered from the editor id, so we know what entity gets hovered/clicked on and can manipulate in the update function
-            return new ObjectHoverContext
-            {
-                HoveredId = _moduleStack.IdAndOutline.HoveredId,
-                ViewMatrix = _matrices.View,
-                ProjectionMatrix = _matrices.Projection
-            };
+            return new ObjectHoverContext(_moduleStack.IdAndOutline.HoveredId, _matrices);
 
         }
         private bool IsSDFUsed(List<PointLight> pointLights)
@@ -343,13 +338,13 @@ namespace DeferredEngine.Rendering
                 if (IdAndOutlineRenderModule.e_DrawOutlines)
                     _graphicsDevice.Blit(_spriteBatch, _moduleStack.IdAndOutline.GetRenderTarget2D(), null, BlendState.Additive);
 
-                this.DrawEditorPasses(scene, _matrices, gizmoContext, EditorPasses.Billboard | EditorPasses.IdAndOutline);
+                this.DrawEditorPasses(scene, gizmoContext, EditorPasses.Billboard | EditorPasses.IdAndOutline);
 
                 if (gizmoContext.SelectedObject != null)
                 {
                     if (gizmoContext.SelectedObject is Decal decal)
                     {
-                        _moduleStack.Decal.DrawOutlines(decal, _matrices);
+                        _moduleStack.Decal.DrawOutlines(decal);
                     }
                     if (RenderingSettings.e_DrawBoundingBox
                         && gizmoContext.SelectedObject is ModelEntity entity)
@@ -368,7 +363,7 @@ namespace DeferredEngine.Rendering
 
         }
 
-        private void DrawEditorPasses(EntitySceneGroup scene, PipelineMatrices matrices, GizmoDrawContext gizmoContext,
+        private void DrawEditorPasses(EntitySceneGroup scene, GizmoDrawContext gizmoContext,
             EditorPasses passes = EditorPasses.Billboard | EditorPasses.IdAndOutline)
         {
             // render directly to the output buffer
@@ -376,9 +371,12 @@ namespace DeferredEngine.Rendering
             _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
 
             if (passes.HasFlag(EditorPasses.Billboard))
-                _moduleStack.Billboard.DrawEditorBillboards(scene, matrices, gizmoContext);
+                _moduleStack.Billboard.DrawEditorBillboards(scene, gizmoContext);
             if (passes.HasFlag(EditorPasses.IdAndOutline))
-                _moduleStack.IdAndOutline.DrawTransformGizmos(matrices, gizmoContext, IdAndOutlineRenderModule.Pass.Color);
+                _moduleStack.IdAndOutline.DrawTransformGizmos(gizmoContext, IdAndOutlineRenderModule.Pass.Color);
+            if(passes.HasFlag(EditorPasses.Helper))
+                _moduleStack.Helper.Draw();
+
         }
 
 
@@ -408,47 +406,35 @@ namespace DeferredEngine.Rendering
                 if (!_g_SSReflectionNoise) _fxStack.SSReflection.Time = 0.0f;
             }
 
-
-            //// clear SSReflection buffer if disabled
-            //if (_prevSSReflectionEnabled != SSReflectionFx.gg_Enabled)
-            //{
-            //    _graphicsDevice.SetRenderTarget(_ssfxTargets.SSR_Main);
-            //    _graphicsDevice.Clear(new Color(0, 0, 0, 0.0f));
-
-            //    _prevSSReflectionEnabled = SSReflectionFx.gg_Enabled;
-            //}
-
         }
 
         /// <summary>
         /// Create the projection matrices
         /// </summary>
-        private bool UpdateViewProjection(Camera camera)
+        private void UpdateViewProjection(Camera camera)
         {
             // ToDo: @tpott: This boolean flag controls general update and draw, though it should only determine if matrices and such should be updated
             //      if a frame should be drawn is a conditioned layered on top of this and may be required regardless of camera change
-            bool viewProjectionHasChanged = camera.HasChanged;
+            bool hasChanged = camera.HasChanged;
 
             //If the camera didn't do anything we don't need to update this stuff
-            if (viewProjectionHasChanged)
+            if (camera.HasChanged)
             {
                 //View matrix
                 _matrices.SetFromCamera(camera);
-                _moduleStack.PointLight.InverseView = _matrices.InverseView;
 
                 //Temporal AA - alternate frames for temporal anti-aliasing
                 if (_fxStack.TemporaAA.Enabled)
                 {
-                    viewProjectionHasChanged = true;
+                    hasChanged = true;
                     _fxStack.TemporaAA.SwapOffFrame();
                     _matrices.ApplyViewProjectionJitter(_fxStack.TemporaAA.JitterMode, _fxStack.TemporaAA.IsOffFrame, _fxStack.TemporaAA.HaltonSequence);
                 }
 
-                _moduleStack.Lighting.UpdateViewProjection(_frustum.Frustum, viewProjectionHasChanged, _matrices);
+                _moduleStack.Lighting.UpdateViewProjection(_frustum.Frustum, hasChanged);
                 _frustum.Frustum.Matrix = _matrices.StaticViewProjection;
             }
 
-            return viewProjectionHasChanged;
         }
 
         /// <summary>

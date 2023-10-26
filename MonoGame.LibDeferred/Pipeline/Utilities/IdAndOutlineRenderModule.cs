@@ -10,7 +10,7 @@ using MonoGame.Ext;
 
 namespace DeferredEngine.Pipeline.Utilities
 {
-    public partial class IdAndOutlineRenderModule
+    public partial class IdAndOutlineRenderModule : PipelineModule
     {
         public static bool e_DrawOutlines = true;
 
@@ -48,19 +48,17 @@ namespace DeferredEngine.Pipeline.Utilities
         }
 
 
-        public BillboardRenderModule BillboardRenderer;
         private Color[] _readbackIdColor = new Color[1];
-        private GraphicsDevice _graphicsDevice;
 
         private RenderTarget2D _renderTarget;
         private RenderContext _renderContext = new RenderContext() { Flags = RenderFlags.Outlined };
 
+        public BillboardRenderModule BillboardRenderer;
         public int HoveredId;
 
-        public void Initialize(GraphicsDevice graphicsDevice)
-        {
-            _graphicsDevice = graphicsDevice;
-        }
+        public IdAndOutlineRenderModule()
+            :base()
+        { }
 
         public RenderTarget2D GetRenderTarget2D()
         {
@@ -75,7 +73,7 @@ namespace DeferredEngine.Pipeline.Utilities
             _renderTarget = RenderTarget2DDefinition.Aux_Id.CreateRenderTarget(_graphicsDevice, resolution);
         }
 
-        public void Draw(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, PipelineMatrices matrices, GizmoDrawContext drawContext, bool mouseMoved)
+        public void Draw(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GizmoDrawContext drawContext, bool mouseMoved)
         {
             if (drawContext.GizmoTransformationMode)
             {
@@ -85,10 +83,10 @@ namespace DeferredEngine.Pipeline.Utilities
             }
 
             if (mouseMoved)
-                DrawIds(meshBatcher, scene, matrices, drawContext);
+                DrawIds(meshBatcher, scene, this.Matrices, drawContext);
 
             if (IdAndOutlineRenderModule.e_DrawOutlines)
-                DrawOutlines(meshBatcher, matrices, drawContext, HoveredId, mouseMoved);
+                DrawOutlines(meshBatcher, this.Matrices, drawContext, HoveredId, mouseMoved);
         }
 
         private void DrawIds(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, PipelineMatrices matrices, GizmoDrawContext gizmoContext)
@@ -103,10 +101,10 @@ namespace DeferredEngine.Pipeline.Utilities
             //Now onto the billboards
             // ToDo: @tpott: Consider moving Billboards into entities like Decals (but with different effect?! O.o)
 
-            BillboardRenderer?.DrawSceneBillboards(scene, matrices);
+            BillboardRenderer?.DrawSceneBillboards(scene);
 
             //Now onto the gizmos
-            DrawTransformGizmos(matrices, gizmoContext, Pass.Id);
+            DrawTransformGizmos(gizmoContext, Pass.Id);
 
             Rectangle sourceRectangle = new Rectangle(Mouse.GetState().X, Mouse.GetState().Y, 1, 1);
             try
@@ -123,12 +121,12 @@ namespace DeferredEngine.Pipeline.Utilities
         }
 
 
-        public void DrawTransformGizmos(PipelineMatrices matrices, GizmoDrawContext gizmoContext, Pass pass = Pass.Color)
+        public void DrawTransformGizmos(GizmoDrawContext gizmoContext, Pass pass = Pass.Color)
         {
             if (pass == Pass.Color)
-                DrawTransformGizmo(matrices.StaticViewProjection, gizmoContext, AxisColors);
+                DrawTransformGizmo(this.Matrices.StaticViewProjection, gizmoContext, AxisColors);
             else
-                DrawTransformGizmo(matrices.StaticViewProjection, gizmoContext, AxisIdColors);
+                DrawTransformGizmo(this.Matrices.StaticViewProjection, gizmoContext, AxisIdColors);
         }
 
         private void DrawTransformGizmo(Matrix staticViewProjection, GizmoDrawContext gizmoContext, Color[] axisColors)
@@ -209,5 +207,9 @@ namespace DeferredEngine.Pipeline.Utilities
 
         }
 
+        public override void Dispose()
+        {
+            _renderTarget?.Dispose();
+        }
     }
 }

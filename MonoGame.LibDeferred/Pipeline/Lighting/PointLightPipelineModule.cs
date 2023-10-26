@@ -1,7 +1,6 @@
 ﻿using DeferredEngine.Recources;
 using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 
@@ -24,7 +23,6 @@ namespace DeferredEngine.Pipeline.Lighting
         public GameTime GameTime { set { _gameTime = value; } }
 
         public float FarClip { set { _effectSetup.Param_FarClip.SetValue(value); } }
-        public Matrix InverseView { set { _effectSetup.Param_InverseView.SetValue(value); } }
         public Vector2 Resolution { set { _effectSetup.Param_Resolution.SetValue(value); } }
 
 
@@ -92,7 +90,7 @@ namespace DeferredEngine.Pipeline.Lighting
         /// <summary>
         /// Draw the point lights, set up some stuff first
         /// </summary>
-        public void Draw(List<PointLight> pointLights, Vector3 cameraOrigin, PipelineMatrices matrices, bool viewProjectionHasChanged)
+        public void Draw(List<PointLight> pointLights, Vector3 cameraOrigin, bool viewProjectionHasChanged)
         {
             if (pointLights.Count < 1) return;
 
@@ -102,6 +100,7 @@ namespace DeferredEngine.Pipeline.Lighting
 
             if (PointLightPipelineModule.g_VolumetricLights && _gameTime != null)
                 _effectSetup.Param_Time.SetValue((float)_gameTime.TotalGameTime.TotalSeconds % 1000);
+            _effectSetup.Param_InverseView.SetValue(Matrices.InverseView);
 
             int primitiveCount = meshpart.PrimitiveCount;
             int vertexOffset = meshpart.VertexOffset;
@@ -109,7 +108,7 @@ namespace DeferredEngine.Pipeline.Lighting
 
             for (int index = 0; index < pointLights.Count; index++)
             {
-                DrawPointLight(pointLights[index], cameraOrigin, vertexOffset, startIndex, primitiveCount, viewProjectionHasChanged, matrices.View, matrices.ViewProjection);
+                DrawPointLight(pointLights[index], cameraOrigin, vertexOffset, startIndex, primitiveCount, viewProjectionHasChanged, this.Matrices.View, this.Matrices.ViewProjection);
             }
         }
 
@@ -152,7 +151,7 @@ namespace DeferredEngine.Pipeline.Lighting
                 //draw front faces
                 _graphicsDevice.DepthStencilState = _stencilCullPass1;
                 _graphicsDevice.SetState(RasterizerStateOption.CullCounterClockwise);
-                
+
                 _effectSetup.Pass_WriteStencil.Apply();
 
                 _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, vertexOffset, startIndex, primitiveCount);
@@ -170,7 +169,7 @@ namespace DeferredEngine.Pipeline.Lighting
             {
                 ApplyShader(light);
                 //If we are inside compute the backfaces, otherwise frontfaces of the sphere
-                bool isDepthRead = LightingPipelineModule.g_UseDepthStencilLightCulling > 0 && !light.IsVolumetric && inside < 0;              
+                bool isDepthRead = LightingPipelineModule.g_UseDepthStencilLightCulling > 0 && !light.IsVolumetric && inside < 0;
                 _graphicsDevice.SetStates(isDepthRead ? DepthStencilStateOption.DepthRead : DepthStencilStateOption.None,
                     inside > 0 ? RasterizerStateOption.CullClockwise : RasterizerStateOption.CullCounterClockwise, BlendStateOption.KeepState);
 

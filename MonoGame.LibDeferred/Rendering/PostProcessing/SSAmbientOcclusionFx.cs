@@ -141,11 +141,11 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         }
 
-        public void SetCameraAndMatrices(Vector3 cameraPosition, PipelineMatrices matrices)
+        public void SetCamera(Vector3 cameraPosition)
         {
-            _fxSetup.Param_InverseViewProjection.SetValue(matrices.InverseViewProjection);
-            _fxSetup.Param_Projection.SetValue(matrices.Projection);
-            _fxSetup.Param_ViewProjection.SetValue(matrices.ViewProjection);
+            _fxSetup.Param_InverseViewProjection.SetValue(this.Matrices.InverseViewProjection);
+            _fxSetup.Param_Projection.SetValue(this.Matrices.Projection);
+            _fxSetup.Param_ViewProjection.SetValue(this.Matrices.ViewProjection);
 
             _fxSetup.Param_CameraPosition.SetValue(cameraPosition);
         }

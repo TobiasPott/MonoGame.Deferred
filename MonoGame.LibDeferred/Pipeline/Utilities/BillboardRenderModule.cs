@@ -12,10 +12,9 @@ using System.Diagnostics;
 
 namespace DeferredEngine.Pipeline.Utilities
 {
-    public partial class BillboardRenderModule
+    public partial class BillboardRenderModule : PipelineModule
     {
 
-        private GraphicsDevice _graphicsDevice;
 
         public IdAndOutlineRenderModule IdAndOutlineRenderer;
         private BillboardEffectSetup _effectSetup = new BillboardEffectSetup();
@@ -27,14 +26,14 @@ namespace DeferredEngine.Pipeline.Utilities
         public float AspectRatio
         { set { _effectSetup.Param_AspectRatio.SetValue(value); } }
 
-        public void Initialize(GraphicsDevice graphicsDevice)
+        public override void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         {
-            _graphicsDevice = graphicsDevice;
+            base.Initialize(graphicsDevice, spriteBatch);
             _billboardBuffer = new BillboardBuffer(Color.White, graphicsDevice);
         }
 
 
-        public void DrawSceneBillboards(EntitySceneGroup scene, PipelineMatrices matrices)
+        public void DrawSceneBillboards(EntitySceneGroup scene)
         {
             _graphicsDevice.SetState(RasterizerStateOption.CullCounterClockwise);
             _graphicsDevice.SetVertexBuffer(_billboardBuffer.VertexBuffer);
@@ -45,29 +44,29 @@ namespace DeferredEngine.Pipeline.Utilities
 
             List<Decal> decals = scene.Decals;
             List<PointLight> pointLights = scene.PointLights;
-            List<Pipeline.Lighting.DirectionalLight> dirLights = scene.DirectionalLights;
+            List<Lighting.DirectionalLight> dirLights = scene.DirectionalLights;
 
             for (int index = 0; index < decals.Count; index++)
             {
                 var decal = decals[index];
-                DrawSceneBillboard(decal.World, matrices, decal.Id);
+                DrawSceneBillboard(decal.World, this.Matrices, decal.Id);
             }
 
             for (int index = 0; index < pointLights.Count; index++)
             {
                 var light = pointLights[index];
-                DrawSceneBillboard(light.World, matrices, light.Id);
+                DrawSceneBillboard(light.World, this.Matrices, light.Id);
             }
 
             for (int index = 0; index < dirLights.Count; index++)
             {
                 var light = dirLights[index];
-                DrawSceneBillboard(light.World, matrices, light.Id);
+                DrawSceneBillboard(light.World, this.Matrices, light.Id);
             }
 
             Debug.WriteLine("DrawSceneBillboards: " + this + " => " + scene.EnvProbe.World);
             _effectSetup.Param_Texture.SetValue(StaticAssets.Instance.IconEnvmap);
-            DrawSceneBillboard(scene.EnvProbe.World, matrices, scene.EnvProbe.Id);
+            DrawSceneBillboard(scene.EnvProbe.World, this.Matrices, scene.EnvProbe.Id);
 
         }
         private void DrawSceneBillboard(Matrix world, PipelineMatrices matrices, int id)
@@ -81,7 +80,7 @@ namespace DeferredEngine.Pipeline.Utilities
 
 
 
-        public void DrawEditorBillboards(EntitySceneGroup scene, PipelineMatrices matrices, GizmoDrawContext gizmoContext)
+        public void DrawEditorBillboards(EntitySceneGroup scene, GizmoDrawContext gizmoContext)
         {
             _graphicsDevice.SetState(RasterizerStateOption.CullCounterClockwise);
             _graphicsDevice.SetVertexBuffer(_billboardBuffer.VertexBuffer);
@@ -94,13 +93,13 @@ namespace DeferredEngine.Pipeline.Utilities
             List<Decal> decals = scene.Decals;
             _effectSetup.Param_Texture.SetValue(StaticAssets.Instance.IconDecal);
             for (int i = 0; i < decals.Count; i++)
-                DrawEditorBillboard(decals[i], matrices, gizmoContext);
+                DrawEditorBillboard(decals[i], gizmoContext);
 
             // Point Lights
             List<PointLight> pointLights = scene.PointLights;
             _effectSetup.Param_Texture.SetValue(StaticAssets.Instance.IconLight);
             for (int i = 0; i < pointLights.Count; i++)
-                DrawEditorBillboard(pointLights[i], matrices, gizmoContext);
+                DrawEditorBillboard(pointLights[i], gizmoContext);
 
             //DirectionalLights
             List<Pipeline.Lighting.DirectionalLight> dirLights = scene.DirectionalLights;
@@ -108,7 +107,7 @@ namespace DeferredEngine.Pipeline.Utilities
             for (int i = 0; i < dirLights.Count; i++)
             {
                 Pipeline.Lighting.DirectionalLight light = dirLights[i];
-                DrawEditorBillboard(light, matrices, gizmoContext);
+                DrawEditorBillboard(light, gizmoContext);
 
                 helperManager.AddLineStartDir(light.Position, light.Direction * 10, 1, Color.Black, light.Color);
 
@@ -130,14 +129,14 @@ namespace DeferredEngine.Pipeline.Utilities
             if (scene.EnvProbe != null)
             {
                 _effectSetup.Param_Texture.SetValue(StaticAssets.Instance.IconEnvmap);
-                DrawEditorBillboard(scene.EnvProbe, matrices, gizmoContext);
+                DrawEditorBillboard(scene.EnvProbe, gizmoContext);
             }
         }
-        private void DrawEditorBillboard(TransformableObject billboardObject, PipelineMatrices matrices, GizmoDrawContext gizmoContext)
+        private void DrawEditorBillboard(TransformableObject billboardObject, GizmoDrawContext gizmoContext)
         {
             Matrix world = Matrix.CreateTranslation(billboardObject.Position);
-            _effectSetup.Param_WorldViewProj.SetValue(world * matrices.StaticViewProjection);
-            _effectSetup.Param_WorldView.SetValue(world * matrices.View);
+            _effectSetup.Param_WorldViewProj.SetValue(world * this.Matrices.StaticViewProjection);
+            _effectSetup.Param_WorldView.SetValue(world * this.Matrices.View);
 
             if (billboardObject.Id == IdAndOutlineRenderer.HoveredId)
                 _effectSetup.Param_IdColor.SetValue(Color.White.ToVector3());
@@ -152,7 +151,9 @@ namespace DeferredEngine.Pipeline.Utilities
                 _effectSetup.Param_IdColor.SetValue(Color.Gray.ToVector3());
         }
 
-
-
+        public override void Dispose()
+        {
+            _effectSetup?.Dispose();
+        }
     }
 }
