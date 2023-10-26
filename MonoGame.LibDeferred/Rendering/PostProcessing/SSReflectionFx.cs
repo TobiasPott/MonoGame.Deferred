@@ -19,7 +19,8 @@ namespace DeferredEngine.Rendering.PostProcessing
         public static float g_FireflyThreshold { get; set; } = 1.75f;
 
 
-        public static bool g_Noise { get; set; } = true;
+        public static NotifiedProperty<bool> gg_Noise = new NotifiedProperty<bool>(true);
+        public static bool g_Noise { get => gg_Noise; set => gg_Noise.Set(value); }
         public static bool g_UseTaa { get; set; } = true;
 
         //5 and 5 are good, 3 and 3 are cheap
@@ -50,6 +51,12 @@ namespace DeferredEngine.Rendering.PostProcessing
         /// </summary>
         public SSReflectionFx(ContentManager content)
         {
+            gg_Noise.Changed += Global_Noise_Changed;
+        }
+
+        private void Global_Noise_Changed(bool enabled)
+        {
+            Time = 0.0f;
         }
 
         protected override bool GetEnabled() => _enabled && SSReflectionFx.g_Enabled;

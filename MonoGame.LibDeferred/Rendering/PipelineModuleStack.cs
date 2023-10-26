@@ -76,6 +76,23 @@ namespace DeferredEngine.Rendering
                 Billboard.Matrices = value;
             }
         }
+        public SSFxTargets SSFxTargets
+        {
+            set
+            {
+                DirectionalLight.SetScreenSpaceShadowMap(value.AO_Blur_Final);
+                Environment.SSRMap = value.SSR_Main;
+                Deferred.SetSSAOMap(value.AO_Blur_Final);
+            }
+        }
+        public LightingBufferTarget LightingBufferTarget
+        {
+            set
+            {
+                Lighting.LightingBufferTarget = value;
+                Deferred.SetLightingParams(value);
+            }
+        }
 
 
 
@@ -127,6 +144,7 @@ namespace DeferredEngine.Rendering
 
         public void SetGBufferParams(GBufferTarget gBufferTarget)
         {
+            GBuffer.GBufferTarget = gBufferTarget;
             Billboard.DepthMap = gBufferTarget.Depth;
 
             PointLight.SetGBufferParams(gBufferTarget);

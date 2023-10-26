@@ -48,9 +48,7 @@ namespace DeferredEngine.Rendering
         private BoundingFrustumWithVertices _frustum = new BoundingFrustumWithVertices();
 
         //Checkvariables to see which console variables have changed from the frame before
-        //private float _g_FarClip;
         private int _supersampling = 1;
-        private bool _g_SSReflectionNoise;
 
         //Render targets
         private GBufferTarget _gBufferTarget;
@@ -60,10 +58,6 @@ namespace DeferredEngine.Rendering
 
         // Final output
         private RenderTarget2D _currentOutput;
-
-        //Cubemap
-        private RenderTargetCube _renderTargetCubeMap;
-
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  FUNCTIONS
@@ -155,7 +149,7 @@ namespace DeferredEngine.Rendering
 
             _moduleStack.DistanceField.UpdateSdfGenerator(scene.Entities);
             _moduleStack.Lighting.UpdateGameTime(gameTime);
-            if (SSReflectionFx.g_Noise)
+            if (SSReflectionFx.gg_Noise)
                 _fxStack.SSReflection.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
             _moduleStack.Environment.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
 
@@ -400,11 +394,11 @@ namespace DeferredEngine.Rendering
         private void CheckRenderChanges()
         {
 
-            if (_g_SSReflectionNoise != SSReflectionFx.g_Noise)
-            {
-                _g_SSReflectionNoise = SSReflectionFx.g_Noise;
-                if (!_g_SSReflectionNoise) _fxStack.SSReflection.Time = 0.0f;
-            }
+            //if (_g_SSReflectionNoise != SSReflectionFx.g_Noise)
+            //{
+            //    _g_SSReflectionNoise = SSReflectionFx.g_Noise;
+            //    if (!_g_SSReflectionNoise) _fxStack.SSReflection.Time = 0.0f;
+            //}
 
         }
 
@@ -577,7 +571,6 @@ namespace DeferredEngine.Rendering
             _auxTargets?.Dispose();
 
             _currentOutput?.Dispose();
-            _renderTargetCubeMap?.Dispose();
         }
 
     }
