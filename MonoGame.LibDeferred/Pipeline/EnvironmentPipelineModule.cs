@@ -1,9 +1,7 @@
 ﻿using DeferredEngine.Entities;
-using DeferredEngine.Recources;
 using DeferredEngine.Rendering;
 using DeferredEngine.Rendering.PostProcessing;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 
@@ -20,8 +18,8 @@ namespace DeferredEngine.Pipeline
         { set { _effectSetup.Param_SSRMap.SetValue(value); } }
         public Vector3[] FrustumCornersWS
         { set { _effectSetup.Param_FrustumCorners.SetValue(value); } }
-        public Vector3 CameraPositionWS
-        { set { _effectSetup.Param_CameraPositionWS.SetValue(value); } }
+        //public Vector3 CameraPositionWS
+        //{ set { _effectSetup.Param_CameraPositionWS.SetValue(value); } }
         public Vector2 Resolution
         { set { _effectSetup.Param_Resolution.SetValue(value); } }
         public float Time
@@ -96,12 +94,15 @@ namespace DeferredEngine.Pipeline
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
         }
 
-        public void Draw(Camera camera) => DrawEnvironmentMap(camera);
-        private void DrawEnvironmentMap(Camera camera)
+        public void SetViewPosition(Vector3 viewPosition)
         {
-            CameraPositionWS = camera.Position;
+            _effectSetup.Param_CameraPositionWS.SetValue(viewPosition);
+        }
 
 
+        public void Draw() => DrawEnvironmentMap();
+        private void DrawEnvironmentMap()
+        {
             _effectSetup.Param_TransposeView.SetValue(Matrix.Transpose(this.Matrices.View));
             _effectSetup.Pass_Basic.Apply();
 

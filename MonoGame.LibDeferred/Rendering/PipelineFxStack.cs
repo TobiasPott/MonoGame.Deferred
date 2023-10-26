@@ -153,6 +153,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         {
             if (!this.TemporaAA.Enabled)
                 return sourceRT;
+
             this.TemporaAA.Draw(sourceRT, previousRT, destRT);
 
             return TemporalAAFx.g_UseTonemapping ? sourceRT : destRT;

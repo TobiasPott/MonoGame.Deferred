@@ -208,9 +208,14 @@ namespace DeferredEngine.Rendering
                 //First copy albedo to decal offtarget
                 _graphicsDevice.Blit(_spriteBatch, _gBufferTarget.Albedo, _auxTargets[PipelineTargets.DECAL]);
                 _graphicsDevice.Blit(_spriteBatch, _auxTargets[PipelineTargets.DECAL], _gBufferTarget.Albedo);
-                _moduleStack.Decal.Draw(scene.Decals);
+                _moduleStack.Decal.Draw(scene);
             }
+            //// Step: 10
+            ////Light the scene
+            //// ToDo: PRIO I: Extract camera.HasChanged and Position and move to reference inside the module
+            //_moduleStack.Lighting.Draw(scene, camera.Position, camera.HasChanged);
 
+            // STAGE: PreLighting-SSFx
             // Step: 07
             //Draw Screen Space reflections to a different render target
             RenderTarget2D ssrTargetMap = _ssfxTargets.GetSSReflectionRenderTargets(_fxStack.TemporaAA.Enabled, _fxStack.TemporaAA.IsOffFrame);
@@ -219,7 +224,7 @@ namespace DeferredEngine.Rendering
             // Profiler sample
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_SSFx_SSR);
 
-
+            // STAGE: PreLighting-SSFx
             // Step: 08
             //SSAO
             _fxStack.SSAmbientOcclusion.SetViewPosition(camera.Position);
@@ -227,17 +232,21 @@ namespace DeferredEngine.Rendering
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_SSFx_SSAO);
 
+            // STAGE: Lighting
             // Step: 10
             //Light the scene
-            //_moduleStack.Lighting.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
+            //// ToDo: PRIO I: Extract camera.HasChanged and Position and move to reference inside the module
             _moduleStack.Lighting.Draw(scene, camera.Position, camera.HasChanged);
 
+            // ToDo: PRIO II: Is Environment module actually part of lighting? (unsure ahout the sky part though)
+            //              I mmight need to split it into Environment and Sky
             // Step: 11
             //Draw the environment cube map as a fullscreen effect on all meshes
             if (RenderingSettings.EnvironmentMapping.Enabled)
             {
                 _moduleStack.Environment.SetEnvironmentProbe(scene.EnvProbe);
-                _moduleStack.Environment.Draw(camera);
+                _moduleStack.Environment.SetViewPosition(camera.Position);
+                _moduleStack.Environment.Draw();
                 //Performance Profiler
                 _profiler.SampleTimestamp(ref PipelineSamples.SDraw_EnvironmentMap);
             }
@@ -245,7 +254,8 @@ namespace DeferredEngine.Rendering
 
             // Step: 12
             //Compose the scene by combining our lighting data with the gbuffer data
-            // ToDo: @tpott: hacky way to disable ssao when disabled on global scale (GUI is insufficient here)
+            // ToDo: PRIO III: @tpott: hacky way to disable ssao when disabled on global scale (GUI is insufficient here)
+            //      Add NotifiedProperty with wrapper property for UI
             _moduleStack.Deferred.UseSSAOMap = SSAmbientOcclustionFx.g_ssao_draw;
             _moduleStack.Deferred.Draw(_auxTargets[PipelineTargets.COMPOSE]);
             //Performance Profiler
@@ -260,13 +270,11 @@ namespace DeferredEngine.Rendering
                 _moduleStack.Forward.SetupLighting(camera, scene.PointLights, _frustum.Frustum);
                 _moduleStack.Forward.Draw(meshBatcher);
             }
-            _currentOutput = _auxTargets[PipelineTargets.COMPOSE];
-
 
             // Step: 14
             //Compose the image and add information from previous frames to apply temporal super sampling
             _ssfxTargets.GetTemporalAARenderTargets(_fxStack.TemporaAA.IsOffFrame, out RenderTarget2D taaDestRT, out RenderTarget2D taaPreviousRT);
-            _currentOutput = _fxStack.Draw(PipelineFxStage.TemporalAA, _currentOutput, taaPreviousRT, taaDestRT);
+            _currentOutput = _fxStack.Draw(PipelineFxStage.TemporalAA, _auxTargets[PipelineTargets.COMPOSE], taaPreviousRT, taaDestRT);
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_CombineTAA);
 

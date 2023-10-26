@@ -496,7 +496,7 @@ namespace DeferredEngine.Logic
                         _objectSlider0.SetText(new StringBuilder("Radius: "));
 
                         _objectSlider1.MinValue = 0.01f;
-                        _objectSlider1.MaxValue = 1000;
+                        _objectSlider1.MaxValue = 300;
 
                         _objectSlider1.SetField(selectedObject, "Intensity");
                         _objectSlider1.SetText(new StringBuilder("Intensity: "));
@@ -524,7 +524,7 @@ namespace DeferredEngine.Logic
                         _objectToggle2.Text = new StringBuilder("Cast Shadows");
 
                         _objectSlider1.MinValue = 0.01f;
-                        _objectSlider1.MaxValue = 1000;
+                        _objectSlider1.MaxValue = 300;
 
                         _objectSlider1.SetField(selectedObject, "Intensity");
                         _objectSlider1.SetText(new StringBuilder("Intensity: "));
