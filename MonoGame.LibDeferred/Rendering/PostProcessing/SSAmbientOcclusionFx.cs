@@ -7,7 +7,7 @@ using MonoGame.Ext;
 namespace DeferredEngine.Rendering.PostProcessing
 {
 
-    public partial class SSAmbientOcclustionFx : BasePostFx
+    public partial class SSAmbientOcclustionFx : PostFx
     {
         //Screen Space Ambient Occlusion
         public static bool g_ssao_blur { get; set; } = true;

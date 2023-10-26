@@ -6,7 +6,7 @@ using MonoGame.Ext;
 namespace DeferredEngine.Rendering.PostProcessing
 {
 
-    public partial class PostProcessingFx : BasePostFx
+    public partial class PostProcessingFx : PostFx
     {
 
         protected override bool GetEnabled() => _enabled && RenderingSettings.g_PostProcessing;

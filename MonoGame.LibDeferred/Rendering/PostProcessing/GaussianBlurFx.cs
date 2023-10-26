@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DeferredEngine.Rendering.PostProcessing
 {
     [Obsolete($"{nameof(GaussianBlurFx)} is unused and needs refactoring when the rendering pipeline is modularized.")]
-    public class GaussianBlurFx : BasePostFx
+    public class GaussianBlurFx : PostFx
     {
         protected override bool GetEnabled() => _enabled;
 

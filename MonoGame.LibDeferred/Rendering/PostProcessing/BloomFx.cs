@@ -52,7 +52,7 @@ namespace DeferredEngine.Rendering.PostProcessing
     /// If you use ToneMapping you should apply Bloom before that step.
     /// </summary>
     /// 
-    public partial class BloomFx : BasePostFx
+    public partial class BloomFx : PostFx
     {
 
 

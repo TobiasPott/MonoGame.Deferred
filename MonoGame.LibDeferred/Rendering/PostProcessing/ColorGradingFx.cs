@@ -17,7 +17,7 @@ namespace DeferredEngine.Rendering.PostProcessing
     /// You can use Draw() to apply the color grading / color correction to an image and use the returned texture for output.
     /// You can use CreateLUT to create default Look-up tables with unmodified colors.
     /// </summary>
-    public partial class ColorGradingFx : BasePostFx
+    public partial class ColorGradingFx : PostFx
     {
         protected override bool GetEnabled() => _enabled && RenderingSettings.g_ColorGrading;
 
