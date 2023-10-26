@@ -10,7 +10,7 @@ namespace DeferredEngine.Pipeline.Lighting
 
         private FullscreenTriangleBuffer _fullscreenTarget;
 
-        private DirectionalLightEffectSetup _effectSetup = new DirectionalLightEffectSetup();
+        private DirectionalLightFxSetup _effectSetup = new DirectionalLightFxSetup();
 
         public Vector3[] FrustumCorners { set { _effectSetup.Param_FrustumCorners.SetValue(value); } }
 

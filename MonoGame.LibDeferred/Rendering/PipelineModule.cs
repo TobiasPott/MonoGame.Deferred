@@ -5,6 +5,12 @@ using System.Runtime.CompilerServices;
 namespace DeferredEngine.Pipeline
 {
 
+    public interface IPipelineModule : IDisposable
+    {
+        PipelineMatrices Matrices { get; set; }
+        void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch);
+    }
+
     public abstract class PipelineModule : IDisposable
     {
         protected GraphicsDevice _graphicsDevice;

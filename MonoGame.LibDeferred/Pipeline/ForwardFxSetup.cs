@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DeferredEngine.Pipeline
 {
     // Forward
-    public class ForwardEffectSetup : BaseFxSetup
+    public class ForwardFxSetup : BaseFxSetup
     {
         public Effect Effect { get; protected set; }
 
@@ -20,7 +20,7 @@ namespace DeferredEngine.Pipeline
         public EffectParameter Param_LightColor { get; protected set; }
         public EffectParameter Param_CameraPositionWS { get; protected set; }
 
-        public ForwardEffectSetup(string shaderPath = "Shaders/forward/forward") : base(shaderPath)
+        public ForwardFxSetup(string shaderPath = "Shaders/forward/forward") : base(shaderPath)
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
 

@@ -17,7 +17,7 @@ namespace DeferredEngine.Pipeline
         private ShadowPasses _pass;
 
         private BoundingFrustum _boundingFrustumShadow;
-        private ShadowMapEffectSetup _effectSetup = new ShadowMapEffectSetup();
+        private ShadowMapSetup _effectSetup = new ShadowMapSetup();
 
 
         private enum ShadowPasses

@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DeferredEngine.Pipeline
 {
     // Shadow Map
-    public class ShadowMapEffectSetup : BaseFxSetup
+    public class ShadowMapSetup : BaseFxSetup
     {
         public Effect Effect { get; protected set; }
 
@@ -20,7 +20,7 @@ namespace DeferredEngine.Pipeline
         public EffectParameter Param_SizeBias { get; protected set; }
         public EffectParameter Param_MaskTexture { get; protected set; }
 
-        public ShadowMapEffectSetup(string shaderPath = "Shaders/Shadow/ShadowMap") : base(shaderPath)
+        public ShadowMapSetup(string shaderPath = "Shaders/Shadow/ShadowMap") : base(shaderPath)
         {
             Effect = Globals.content.Load<Effect>("Shaders/Shadow/ShadowMap");
 

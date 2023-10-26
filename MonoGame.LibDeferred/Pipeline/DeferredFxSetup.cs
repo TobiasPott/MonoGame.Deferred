@@ -3,15 +3,15 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Pipeline
 {
-    public class DeferredEffectSetup : BaseFxSetup
+    public class DeferredFxSetup : BaseFxSetup
     {
-        private static DeferredEffectSetup _instance;
-        public static DeferredEffectSetup Instance
+        private static DeferredFxSetup _instance;
+        public static DeferredFxSetup Instance
         {
             get
             {
                 if (_instance == null)
-                    _instance = new DeferredEffectSetup();
+                    _instance = new DeferredFxSetup();
                 return _instance;
             }
         }
@@ -36,7 +36,7 @@ namespace DeferredEngine.Pipeline
         //public EffectParameter Param_SSRMap { get; protected set; } // Unused
 
 
-        public DeferredEffectSetup(string shaderPath = "Shaders/Deferred/DeferredCompose", string shaderPathClear = "Shaders/Deferred/DeferredClear") : base(shaderPath)
+        public DeferredFxSetup(string shaderPath = "Shaders/Deferred/DeferredCompose", string shaderPathClear = "Shaders/Deferred/DeferredClear") : base(shaderPath)
         {
             Effect_Compose = Globals.content.Load<Effect>(shaderPath);
             Effect_Clear = Globals.content.Load<Effect>(shaderPathClear);

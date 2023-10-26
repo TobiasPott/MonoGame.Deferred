@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DeferredEngine.Pipeline
 {
     // Deferred Environment
-    public class EnvironmentEffectSetup : BaseFxSetup
+    public class EnvironmentFxSetup : BaseFxSetup
     {
         public Effect Effect { get; protected set; }
 
@@ -45,7 +45,7 @@ namespace DeferredEngine.Pipeline
         public EffectParameter Param_UseSDFAO { get; protected set; }
 
 
-        public EnvironmentEffectSetup(string shaderPath = "Shaders/Deferred/DeferredEnvironmentMap") : base(shaderPath)
+        public EnvironmentFxSetup(string shaderPath = "Shaders/Deferred/DeferredEnvironmentMap") : base(shaderPath)
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
 

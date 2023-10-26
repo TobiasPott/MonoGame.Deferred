@@ -309,7 +309,7 @@ namespace DeferredEngine.Rendering
             {
                 _graphicsDevice.DepthStencilState = DepthWriteState;
 
-                DeferredEffectSetup.Instance.Pass_Clear.Apply();
+                DeferredFxSetup.Instance.Pass_Clear.Apply();
                 _fullscreenTarget.Draw(_graphicsDevice);
                 _graphicsDevice.SetState(DepthStencilStateOption.Default);
             }

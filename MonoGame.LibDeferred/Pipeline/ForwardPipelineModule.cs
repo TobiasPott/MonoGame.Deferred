@@ -19,7 +19,7 @@ namespace DeferredEngine.Pipeline
         private float[] LightIntensity;
         private Vector3[] LightColor;
 
-        private ForwardEffectSetup _effectSetup = new ForwardEffectSetup();
+        private ForwardFxSetup _effectSetup = new ForwardFxSetup();
 
 
         public ForwardPipelineModule()

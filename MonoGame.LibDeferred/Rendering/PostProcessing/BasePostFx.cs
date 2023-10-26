@@ -2,7 +2,7 @@
 
 namespace DeferredEngine.Rendering.PostProcessing
 {
-    public abstract class BaseFx : IDisposable
+    public abstract class BasePostFx : IDisposable
     {
         protected bool _enabled = true;
         public bool Enabled { get => GetEnabled(); set { _enabled = value; } }

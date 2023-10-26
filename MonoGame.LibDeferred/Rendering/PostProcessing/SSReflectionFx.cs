@@ -7,7 +7,7 @@ using MonoGame.Ext;
 namespace DeferredEngine.Rendering.PostProcessing
 {
 
-    public partial class SSReflectionFx : BaseFx
+    public partial class SSReflectionFx : BasePostFx
     {
         // SSR
         public static NotifiedProperty<bool> gg_Enabled = new NotifiedProperty<bool>(true);

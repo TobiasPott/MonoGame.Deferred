@@ -14,7 +14,7 @@ namespace DeferredEngine.Pipeline
     {
 
         private FullscreenTriangleBuffer _fullscreenTarget;
-        private EnvironmentEffectSetup _effectSetup = new EnvironmentEffectSetup();
+        private EnvironmentFxSetup _effectSetup = new EnvironmentFxSetup();
 
         public Texture2D SSRMap
         { set { _effectSetup.Param_SSRMap.SetValue(value); } }

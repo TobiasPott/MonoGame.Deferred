@@ -11,7 +11,7 @@ namespace DeferredEngine.Pipeline.Lighting
         public static bool g_VolumetricLights = true;
 
 
-        private PointLightEffectSetup _effectSetup = new PointLightEffectSetup();
+        private PointLightFxSetup _effectSetup = new PointLightFxSetup();
         private BoundingFrustum _frustum;
         private GameTime _gameTime;
 
