@@ -1,5 +1,7 @@
 ﻿using Deferred.Utilities;
 using DeferredEngine.Rendering;
+using Microsoft.VisualBasic.FileIO;
+using System.Reflection;
 
 namespace DeferredEngine.Recources
 {
@@ -60,6 +62,11 @@ namespace DeferredEngine.Recources
             return property._value;
         }
 
+
+        public PropertyInfo GetValuePropertyInfo()
+        {
+            return this.GetType().GetProperty("Value");
+        }
     }
 
 }

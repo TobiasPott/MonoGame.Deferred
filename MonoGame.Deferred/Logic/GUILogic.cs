@@ -244,7 +244,8 @@ namespace DeferredEngine.Logic
 
             ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable SSR")
             {
-                ToggleProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_Enabled)),
+                ToggleProperty = SSReflectionFx.g_Enabled.GetValuePropertyInfo(),
+                ToggleObject = SSReflectionFx.g_Enabled,
                 Toggle = SSReflectionFx.g_Enabled
             });
 
@@ -256,9 +257,11 @@ namespace DeferredEngine.Logic
 
             ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Temporal Noise")
             {
-                ToggleProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_Noise)),
+                ToggleProperty = SSReflectionFx.g_Noise.GetValuePropertyInfo(),
+                ToggleObject = SSReflectionFx.g_Noise,
                 Toggle = SSReflectionFx.g_Noise
             });
+
 
             ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Firefly Reduction")
             {
@@ -274,13 +277,15 @@ namespace DeferredEngine.Logic
 
             ssrList.AddElement(new GuiSliderIntText(defaultStyle, 1, 100, 1, "Samples: ")
             {
-                SliderProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_Samples)),
+                SliderProperty = SSReflectionFx.g_Samples.GetValuePropertyInfo(),
+                SliderObject = SSReflectionFx.g_Samples,
                 SliderValue = SSReflectionFx.g_Samples
-            });
+            }); ;
 
             ssrList.AddElement(new GuiSliderIntText(defaultStyle, 1, 100, 1, "Search Samples: ")
             {
-                SliderProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_RefinementSamples)),
+                SliderProperty = SSReflectionFx.g_RefinementSamples.GetValuePropertyInfo(),
+                SliderObject = SSReflectionFx.g_RefinementSamples,
                 SliderValue = SSReflectionFx.g_RefinementSamples
             });
 

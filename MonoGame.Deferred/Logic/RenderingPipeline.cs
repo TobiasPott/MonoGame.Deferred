@@ -112,7 +112,7 @@ namespace DeferredEngine.Rendering
 
             RenderingSettings.g_FarClip.Changed += FarClip_OnChanged;
             RenderingSettings.g_FarClip.Set(500);
-            SSReflectionFx.gg_Enabled.Changed += SSR_Enabled_Changed;
+            SSReflectionFx.g_Enabled.Changed += SSR_Enabled_Changed;
             RenderingSettings.Bloom.Threshold = 0.0f;
         }
 
@@ -151,7 +151,7 @@ namespace DeferredEngine.Rendering
 
             _moduleStack.DistanceField.UpdateSdfGenerator(scene.Entities);
             _moduleStack.Lighting.UpdateGameTime(gameTime);
-            if (SSReflectionFx.gg_Noise)
+            if (SSReflectionFx.g_Noise)
                 _fxStack.SSReflection.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
             _moduleStack.Environment.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
 
@@ -210,10 +210,6 @@ namespace DeferredEngine.Rendering
                 _moduleStack.Decal.Blit(_auxTargets[PipelineTargets.DECAL], _gBufferTarget.Albedo);
                 _moduleStack.Decal.Draw(scene);
             }
-            //// Step: 10
-            ////Light the scene
-            //// ToDo: PRIO I: Extract camera.HasChanged and Position and move to reference inside the module
-            //_moduleStack.Lighting.Draw(scene, camera.Position, camera.HasChanged);
 
             // STAGE: PreLighting-SSFx
             // Step: 07
