@@ -51,7 +51,6 @@ namespace DeferredEngine.Rendering
         //Checkvariables to see which console variables have changed from the frame before
         //private float _g_FarClip;
         private int _supersampling = 1;
-        private bool _prevSSReflectionEnabled = true;
         private bool _g_SSReflectionNoise;
 
         //Render targets
@@ -84,7 +83,7 @@ namespace DeferredEngine.Rendering
             _matrices = new PipelineMatrices();
 
             _moduleStack = new PipelineModuleStack();
-            _moduleStack.DepthReconstruct.Matrices = _matrices;
+            _moduleStack.Matrices = _matrices;
             _profiler = new PipelineProfiler();
 
             _fxStack = new PipelineFxStack(content);
@@ -119,6 +118,7 @@ namespace DeferredEngine.Rendering
             RenderingSettings.g_FarClip.Changed += FarClip_OnChanged;
             RenderingSettings.g_FarClip.Set(500);
             SSReflectionFx.gg_Enabled.Changed += SSR_Enabled_Changed;
+            RenderingSettings.Bloom.Threshold = 0.0f;
         }
 
         private void SSR_Enabled_Changed(bool enabled)
@@ -163,13 +163,11 @@ namespace DeferredEngine.Rendering
 
             //Reset the stat counter, so we can count stats/information for this frame only
             ResetStats();
-
             // Step: 01
             //Check if we changed some drastic stuff for which we need to reload some elements
             CheckRenderChanges();
             //Performance Profiler
             _profiler.Timestamp();
-
 
             // Step: 04
             //Update our view projection matrices if the camera moved
@@ -198,13 +196,11 @@ namespace DeferredEngine.Rendering
             // Step: 03
             //Update SDFs
             if (IsSDFUsed(scene.PointLights))
-            {
                 _moduleStack.DistanceField.UpdateDistanceFieldTransformations(scene.Entities);
-            }
 
             // Step: 05
             //Draw our meshes to the G Buffer
-            _moduleStack.GBuffer.Draw(meshBatcher, _matrices);
+            _moduleStack.GBuffer.Draw(meshBatcher);
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_GBuffer);
 
@@ -217,7 +213,7 @@ namespace DeferredEngine.Rendering
                 _graphicsDevice.Blit(_spriteBatch, _gBufferTarget.Albedo, _auxTargets[PipelineTargets.DECAL], _supersampling);
                 _graphicsDevice.Blit(_spriteBatch, _auxTargets[PipelineTargets.DECAL], _gBufferTarget.Albedo, _supersampling);
 
-                _moduleStack.Decal.Draw(scene.Decals, _matrices);
+                _moduleStack.Decal.Draw(scene.Decals);
             }
 
             // Step: 07
@@ -254,7 +250,9 @@ namespace DeferredEngine.Rendering
 
             // Step: 12
             //Compose the scene by combining our lighting data with the gbuffer data
-            DrawDeferredCompose(null, null, _auxTargets[PipelineTargets.COMPOSE]);
+            // ToDo: @tpott: hacky way to disable ssao when disabled on global scale (GUI is insufficient here)
+            _moduleStack.Deferred.UseSSAOMap = SSAmbientOcclustionFx.g_ssao_draw;
+            _moduleStack.Deferred.Draw(_auxTargets[PipelineTargets.COMPOSE]);
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_Compose);
 
@@ -265,7 +263,7 @@ namespace DeferredEngine.Rendering
                 _graphicsDevice.SetRenderTarget(_auxTargets[PipelineTargets.COMPOSE]);
                 _moduleStack.DepthReconstruct.ReconstructDepth();
                 _moduleStack.Forward.SetupLighting(camera, scene.PointLights, _frustum.Frustum);
-                _moduleStack.Forward.Draw(meshBatcher, _matrices);
+                _moduleStack.Forward.Draw(meshBatcher);
             }
             _currentOutput = _auxTargets[PipelineTargets.COMPOSE];
 
@@ -469,25 +467,6 @@ namespace DeferredEngine.Rendering
             //View Space Corners
             _moduleStack.FrustumCornersVS = _frustum.ViewSpaceFrustum;
             _fxStack.FrustumCorners = _frustum.ViewSpaceFrustum;
-        }
-
-        /// <summary>
-        /// Draw deferred Decals
-        /// </summary>
-        private void DrawDecals(List<Decal> decals)
-        {
-        }
-
-        /// <summary>
-        /// Compose the render by combining the albedo channel with the light channels
-        /// </summary>
-        private RenderTarget2D DrawDeferredCompose(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
-        {
-            // ToDo: @tpott: hacky way to disable ssao when disabled on global scale (GUI is insufficient here)
-            _moduleStack.Deferred.UseSSAOMap = SSAmbientOcclustionFx.g_ssao_draw;
-            _moduleStack.Deferred.Draw(destRT);
-
-            return destRT;
         }
 
 

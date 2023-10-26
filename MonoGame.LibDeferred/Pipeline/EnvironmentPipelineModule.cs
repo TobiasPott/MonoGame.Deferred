@@ -96,12 +96,12 @@ namespace DeferredEngine.Pipeline
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
         }
 
-        public void DrawEnvironmentMap(Camera camera, Matrix view)
+        public void DrawEnvironmentMap(Camera camera)
         {
             CameraPositionWS = camera.Position;
 
 
-            _effectSetup.Param_TransposeView.SetValue(Matrix.Transpose(view));
+            _effectSetup.Param_TransposeView.SetValue(Matrix.Transpose(this.Matrices.View));
             _effectSetup.Pass_Basic.Apply();
 
             _graphicsDevice.SetStates(DepthStencilStateOption.None, RasterizerStateOption.CullCounterClockwise);
