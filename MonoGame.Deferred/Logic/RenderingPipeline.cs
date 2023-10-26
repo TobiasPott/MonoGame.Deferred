@@ -99,14 +99,17 @@ namespace DeferredEngine.Rendering
             _ssfxTargets = new SSFxTargets(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
 
             _moduleStack.Initialize(graphicsDevice, _spriteBatch);
-            _moduleStack.GBuffer.GBufferTarget = _gBufferTarget;
-            _moduleStack.Lighting.LightingBufferTarget = _lightingBufferTarget;
+            _moduleStack.SetGBufferParams(_gBufferTarget);
+            _moduleStack.LightingBufferTarget = _lightingBufferTarget;
+            _moduleStack.SSFxTargets = _ssfxTargets;
 
             _fxStack.Initialize(graphicsDevice, _spriteBatch);
+            _fxStack.SetGBufferParams(_gBufferTarget);
             _fxStack.SSFxTargets = _ssfxTargets;
 
+            // update directional light module
             SetUpRenderTargets(RenderingSettings.g_ScreenResolution);
-            UpdateRenderTargetBindings();
+
 
             RenderingSettings.g_FarClip.Changed += FarClip_OnChanged;
             RenderingSettings.g_FarClip.Set(500);
@@ -156,10 +159,7 @@ namespace DeferredEngine.Rendering
 
             //Reset the stat counter, so we can count stats/information for this frame only
             ResetStats();
-            // Step: 01
-            //Check if we changed some drastic stuff for which we need to reload some elements
-            CheckRenderChanges();
-            //Performance Profiler
+            //Performance Profiler Reset
             _profiler.Timestamp();
 
             // Step: 04
@@ -388,21 +388,6 @@ namespace DeferredEngine.Rendering
         }
 
         /// <summary>
-        /// Check whether any GameSettings have changed that need setup
-        /// </summary>
-        /// <param name="dirLights"></param>
-        private void CheckRenderChanges()
-        {
-
-            //if (_g_SSReflectionNoise != SSReflectionFx.g_Noise)
-            //{
-            //    _g_SSReflectionNoise = SSReflectionFx.g_Noise;
-            //    if (!_g_SSReflectionNoise) _fxStack.SSReflection.Time = 0.0f;
-            //}
-
-        }
-
-        /// <summary>
         /// Create the projection matrices
         /// </summary>
         private void UpdateViewProjection(Camera camera)
@@ -532,20 +517,6 @@ namespace DeferredEngine.Rendering
             Vector2 aspectRatios = new Vector2(Math.Min(1.0f, targetWidth / (float)targetHeight), Math.Min(1.0f, targetHeight / (float)targetWidth));
             _fxStack.SSAmbientOcclusion.InverseResolution = new Vector2(1.0f / targetWidth, 1.0f / targetHeight);
             _fxStack.SSAmbientOcclusion.AspectRatios = aspectRatios;
-        }
-
-        private void UpdateRenderTargetBindings()
-        {
-            _moduleStack.SetGBufferParams(_gBufferTarget);
-            // update directional light module
-            _moduleStack.DirectionalLight.SetScreenSpaceShadowMap(_ssfxTargets.AO_Blur_Final);
-
-            _moduleStack.Environment.SSRMap = _ssfxTargets.SSR_Main;
-
-            _moduleStack.Deferred.SetLightingParams(_lightingBufferTarget);
-            _moduleStack.Deferred.SetSSAOMap(_ssfxTargets.AO_Blur_Final);
-
-            _fxStack.SetGBufferParams(_gBufferTarget);
         }
 
 
