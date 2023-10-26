@@ -1,5 +1,6 @@
 ﻿using DeferredEngine.Entities;
 using DeferredEngine.Recources;
+using DeferredEngine.Rendering;
 using HelperSuite.GUIRenderer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -17,13 +18,16 @@ namespace DeferredEngine.Logic
         //  VARIABLES
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        private Rendering.RenderingPipeline _renderer;
-        private GUIRenderer _guiRenderer;
+        private RenderingPipeline _renderer;
         private MainSceneLogic _sceneLogic;
+        private GUIRenderer _guiRenderer;
         private GUILogic _guiLogic;
         private EditorLogic _editorLogic;
-        private DemoAssets _assets;
+        
+        
         private DebugScreen _debug;
+
+        private DemoAssets _assets;
 
         private ObjectHoverContext _objectHoverContext;
 
@@ -45,7 +49,7 @@ namespace DeferredEngine.Logic
 
         public void Load(ContentManager content, GraphicsDevice graphicsDevice)
         {
-            _renderer = new Rendering.RenderingPipeline();
+            _renderer = new RenderingPipeline();
             _sceneLogic = new MainSceneLogic();
             _guiLogic = new GUILogic();
             _editorLogic = new EditorLogic();

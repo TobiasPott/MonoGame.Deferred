@@ -45,7 +45,6 @@ namespace DeferredEngine.Rendering.PostProcessing
             set
             {
                 SSReflection.FarClip = value;
-
             }
         }
         public PipelineMatrices Matrices

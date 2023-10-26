@@ -90,10 +90,11 @@ namespace DeferredEngine.Rendering
             _graphicsDevice = graphicsDevice;
             _spriteBatch = new SpriteBatch(graphicsDevice);
 
-            _gBufferTarget = new GBufferTarget(graphicsDevice, RenderingSettings.Screen.g_Width, RenderingSettings.Screen.g_Height);
-            _lightingBufferTarget = new LightingBufferTarget(graphicsDevice, RenderingSettings.Screen.g_Width, RenderingSettings.Screen.g_Height);
-            _auxTargets = new PipelineTargets(graphicsDevice, RenderingSettings.Screen.g_Width, RenderingSettings.Screen.g_Height);
-            _ssfxTargets = new SSFxTargets(graphicsDevice, RenderingSettings.Screen.g_Width, RenderingSettings.Screen.g_Height);
+            Vector2 resolution = RenderingSettings.Screen.g_Resolution;
+            _gBufferTarget = new GBufferTarget(graphicsDevice, resolution);
+            _lightingBufferTarget = new LightingBufferTarget(graphicsDevice, resolution);
+            _auxTargets = new PipelineTargets(graphicsDevice, resolution);
+            _ssfxTargets = new SSFxTargets(graphicsDevice, resolution);
 
             _moduleStack.Initialize(graphicsDevice, _spriteBatch);
             _moduleStack.SetGBufferParams(_gBufferTarget);
@@ -105,7 +106,7 @@ namespace DeferredEngine.Rendering
             _fxStack.SSFxTargets = _ssfxTargets;
 
             // update directional light module
-            SetUpRenderTargets(RenderingSettings.Screen.g_Resolution);
+            SetUpRenderTargets(resolution);
 
 
             RenderingSettings.g_FarClip.Changed += FarClip_OnChanged;
@@ -169,10 +170,18 @@ namespace DeferredEngine.Rendering
                 // Compute the frustum corners for cheap view direction computation in shaders
                 UpdateFrustumCorners(camera);
             }
+
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SUpdate_ViewProjection);
 
+
+            // Step: 03
+            //Update SDFs
+            if (IsSDFUsed(scene.PointLights))
+                _moduleStack.DistanceField.UpdateDistanceFieldTransformations(scene.Entities);
+
         }
+
         /// <summary>
         /// Main Draw function of the game
         /// </summary>
@@ -183,11 +192,6 @@ namespace DeferredEngine.Rendering
             _moduleStack.ShadowMap.Draw(meshBatcher, scene);
             //Performance Profile
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_Shadows);
-
-            // Step: 03
-            //Update SDFs
-            if (IsSDFUsed(scene.PointLights))
-                _moduleStack.DistanceField.UpdateDistanceFieldTransformations(scene.Entities);
 
             // Step: 05
             //Draw our meshes to the G Buffer
@@ -311,9 +315,12 @@ namespace DeferredEngine.Rendering
         }
         private bool IsSDFUsed(List<PointLight> pointLights)
         {
+            if (!RenderingSettings.SDF.DrawDistance)
+                return false;
+
             for (var index = 0; index < pointLights.Count; index++)
             {
-                if (pointLights[index].CastSDFShadows)
+                if (pointLights[index].HasChanged && pointLights[index].CastSDFShadows)
                 {
                     return true;
                 }

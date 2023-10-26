@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Rendering
 {
@@ -67,7 +68,9 @@ namespace DeferredEngine.Rendering
         public RenderTarget2D Bloom_Main => _renderTargets[BLOOM_MAIN];
 
 
-
+        public SSFxTargets(GraphicsDevice graphicsDevice, Vector2 resolution)
+            : base(graphicsDevice, (int)resolution.X, (int)resolution.Y, Definitions.Length)
+        { }
         public SSFxTargets(GraphicsDevice graphicsDevice, int width, int height)
             : base(graphicsDevice, width, height, Definitions.Length)
         { }

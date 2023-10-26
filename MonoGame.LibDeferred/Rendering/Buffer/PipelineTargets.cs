@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Rendering
 {
@@ -21,13 +22,17 @@ namespace DeferredEngine.Rendering
 
         #endregion
 
-        internal static readonly RenderTarget2DDefinition[] PipelineDefinitions = new RenderTarget2DDefinition[]
+        internal static readonly RenderTarget2DDefinition[] Definitions = new RenderTarget2DDefinition[]
         {
             RenderTarget2DDefinition.Aux_Output, RenderTarget2DDefinition.Aux_Compose,
             RenderTarget2DDefinition.Aux_Decal,
         };
 
-        public PipelineTargets(GraphicsDevice graphicsDevice, int width, int height) : base(graphicsDevice, width, height, PipelineDefinitions)
+        public PipelineTargets(GraphicsDevice graphicsDevice, Vector2 resolution)
+            : base(graphicsDevice, (int)resolution.X, (int)resolution.Y, Definitions)
+        { }
+        public PipelineTargets(GraphicsDevice graphicsDevice, int width, int height) 
+            : base(graphicsDevice, width, height, Definitions)
         { }
     }
 

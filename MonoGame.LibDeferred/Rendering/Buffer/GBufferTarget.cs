@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Rendering
 {
@@ -20,6 +21,9 @@ namespace DeferredEngine.Rendering
         public RenderTarget2D Normal => _renderTargets[NORMAL];
         public RenderTarget2D Depth => _renderTargets[DEPTH];
 
+        public GBufferTarget(GraphicsDevice graphicsDevice, Vector2 resolution)
+            : base(graphicsDevice, (int)resolution.X, (int)resolution.Y, Definitions.Length)
+        { }
         public GBufferTarget(GraphicsDevice graphicsDevice, int width, int height)
             : base(graphicsDevice, width, height, Definitions.Length)
         { }
