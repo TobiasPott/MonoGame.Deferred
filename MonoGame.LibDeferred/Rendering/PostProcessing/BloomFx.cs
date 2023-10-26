@@ -17,6 +17,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         Cheap
     }
 
+
     /// <summary>
     /// Bloom / Blur, 2016 TheKosmonaut
     /// 
@@ -50,31 +51,9 @@ namespace DeferredEngine.Rendering.PostProcessing
     /// 
     /// If you use ToneMapping you should apply Bloom before that step.
     /// </summary>
+    /// 
     public partial class BloomFx : BaseFx
     {
-
-        private static readonly float[] Wide_Strength = new float[] { 0.5f, 1, 2, 1, 2 };
-        private static readonly float[] Wide_Radius = new float[] { 1.0f, 2.0f, 2.0f, 4.0f, 4.0f };
-
-        private static readonly float[] SuperWide_Strength = new float[] { 0.9f, 1, 1, 2, 6 };
-        private static readonly float[] SuperWide_Radius = new float[] { 2.0f, 2.0f, 2.0f, 2.0f, 4.0f };
-
-        private static readonly float[] Focused_Strength = new float[] { 0.9f, 1, 1, 1, 2 };
-        private static readonly float[] Focused_Radius = new float[] { 2.0f, 2.0f, 2.0f, 2.0f, 4.0f };
-
-        private static readonly float[] Small_Strength = new float[] { 0.8f, 1, 1, 1, 1 };
-        private static readonly float[] Small_Radius = new float[] { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
-
-        private static readonly float[] Cheap_Strength = new float[] { 0.8f, 2, 0, 0, 0 };
-        private static readonly float[] Cheap_Radius = new float[] { 2.0f, 2.0f, 0, 0, 0 };
-
-
-        private static readonly RenderTarget2DDefinition Mip0_Definition = new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
-        private static readonly RenderTarget2DDefinition Mip1_Definition = new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x1);
-        private static readonly RenderTarget2DDefinition Mip2_Definition = new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x2);
-        private static readonly RenderTarget2DDefinition Mip3_Definition = new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x3);
-        private static readonly RenderTarget2DDefinition Mip4_Definition = new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x4);
-        private static readonly RenderTarget2DDefinition Mip5_Definition = new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x5);
 
 
         protected override bool GetEnabled() => _enabled && RenderingSettings.Bloom.Enabled;
@@ -103,24 +82,12 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         private Texture2D BloomScreenTexture { set { _fxSetup.Param_ScreenTexture.SetValue(value); } }
 
-        private Vector2 _bloomInverseResolution;
-        private Vector2 BloomInverseResolution
-        {
-            get { return _bloomInverseResolution; }
-            set
-            {
-                if (value != _bloomInverseResolution)
-                {
-                    _bloomInverseResolution = value;
-                    _fxSetup.Param_InverseResolution.SetValue(_bloomInverseResolution);
-                }
-            }
-        }
-        private float BloomRadius { set { _fxSetup.Param_Radius.SetValue(value * _radiusMultiplier); } }
+        private Vector2 InverseResolution { set { _fxSetup.Param_InverseResolution.SetValue(value); } }
 
-        private float BloomStrength { set { _fxSetup.Param_Strength.SetValue(value); } }
-        public float BloomStreakLength { set { _fxSetup.Param_StreakLength.SetValue(value); } }
-        public float BloomThreshold { set { _fxSetup.Param_Threshold.SetValue(value); } }
+        private float Radius { set { _fxSetup.Param_Radius.SetValue(value * _radiusMultiplier); } }
+        private float Strength { set { _fxSetup.Param_Strength.SetValue(value); } }
+        private float StreakLength { set { _fxSetup.Param_StreakLength.SetValue(value); } }
+        private float Threshold { set { _fxSetup.Param_Threshold.SetValue(value); } }
 
 
 
@@ -134,13 +101,21 @@ namespace DeferredEngine.Rendering.PostProcessing
             //BlendStateBloom.ColorDestinationBlend = Blend.BlendFactor;
             //BlendStateBloom.BlendFactor = new Color(0.5f, 0.5f, 0.5f);
 
-            //Default threshold.
-            BloomThreshold = 0.8f;
+            // ToDo: Bloom Threshold by UI seems broken (check if manual changing works)
+            //          Threshold is only set at BloomFx() and should recieve a notified property for runtime notification
             //Setup the default preset values.
             SetBloomPreset(BloomPresets.SuperWide);
 
             ApplyGameSettings();
+
+            RenderingSettings.Bloom.g_Threshold.Changed += Bloom_Threshold_Changed;
         }
+
+        private void Bloom_Threshold_Changed(float threshold)
+        {
+            Threshold = threshold;
+        }
+
         //Initialize graphicsDevice
         public void Initialize(GraphicsDevice graphicsDevice, Vector2 resolution)
         {
@@ -149,7 +124,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
             _graphicsDevice = graphicsDevice;
 
-            _mipMaps = new DynamicMultiRenderTarget(_graphicsDevice, (int)resolution.X, (int)resolution.Y, new[] { Mip0_Definition, Mip1_Definition, Mip2_Definition, Mip3_Definition, Mip4_Definition, Mip5_Definition });
+            _mipMaps = new DynamicMultiRenderTarget(_graphicsDevice, (int)resolution.X, (int)resolution.Y, BloomFxPresetsData.Mip_Definitions);
         }
 
         /// <summary>
@@ -158,49 +133,18 @@ namespace DeferredEngine.Rendering.PostProcessing
         /// <param name="preset">See BloomPresets enums. Example: BloomPresets.Wide</param>
         private void SetBloomPreset(BloomPresets preset)
         {
-            switch (preset)
+            if (preset == BloomPresets.Cheap)
             {
-                case BloomPresets.Wide:
-                    {
-                        Array.Copy(Wide_Strength, _strength, _strength.Length);
-                        Array.Copy(Wide_Radius, _radius, _radius.Length);
-                        BloomStreakLength = 1;
-                        BloomDownsamplePasses = 5;
-                        break;
-                    }
-                case BloomPresets.SuperWide:
-                    {
-                        Array.Copy(SuperWide_Strength, _strength, _strength.Length);
-                        Array.Copy(SuperWide_Radius, _radius, _radius.Length);
-                        BloomStreakLength = 1;
-                        BloomDownsamplePasses = 5;
-                        break;
-                    }
-                case BloomPresets.Focussed:
-                    {
-                        Array.Copy(Focused_Strength, _strength, _strength.Length);
-                        Array.Copy(Focused_Radius, _radius, _radius.Length);
-                        BloomStreakLength = 1;
-                        BloomDownsamplePasses = 5;
-                        break;
-                    }
-                case BloomPresets.Small:
-                    {
-                        Array.Copy(Small_Strength, _strength, _strength.Length);
-                        Array.Copy(Small_Radius, _radius, _radius.Length);
-                        BloomStreakLength = 1;
-                        BloomDownsamplePasses = 5;
-                        break;
-                    }
-                case BloomPresets.Cheap:
-                    {
-                        Array.Copy(Cheap_Strength, _strength, _strength.Length);
-                        Array.Copy(Cheap_Radius, _radius, _radius.Length);
-                        BloomStreakLength = 1;
-                        BloomDownsamplePasses = 2;
-                        break;
-                    }
+                StreakLength = 1;
+                BloomDownsamplePasses = 2;
             }
+            else
+            {
+                StreakLength = 1;
+                BloomDownsamplePasses = 5;
+            }
+            BloomFxPresetsData.CopyPreset(preset, _strength, _radius);
+
         }
 
 
@@ -221,7 +165,8 @@ namespace DeferredEngine.Rendering.PostProcessing
             _graphicsDevice.SetRenderTarget(_mipMaps[0]);
 
             BloomScreenTexture = sourceRT;
-            BloomInverseResolution = Vector2.One / _resolution;
+            Vector2 inverseResolution = Vector2.One / _resolution;
+            //BloomInverseResolution = Vector2.One / _resolution;
 
             if (BloomUseLuminance) _fxSetup.Pass_ExtractLuminance.Apply();
             else _fxSetup.Pass_Extract.Apply();
@@ -230,7 +175,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             //Now downsample to the next lower mip texture
             if (BloomDownsamplePasses > 0)
             {
-                BloomInverseResolution *= 2;
+                this.InverseResolution = inverseResolution *= 2;
                 //DOWNSAMPLE TO MIP1
                 _graphicsDevice.SetRenderTarget(_mipMaps[1]);
 
@@ -242,7 +187,7 @@ namespace DeferredEngine.Rendering.PostProcessing
                 if (BloomDownsamplePasses > 1)
                 {
                     //Our input resolution is halfed, so our inverse 1/res. must be doubled
-                    BloomInverseResolution *= 2;
+                    this.InverseResolution = inverseResolution *= 2;
 
                     //DOWNSAMPLE TO MIP2
                     _graphicsDevice.SetRenderTarget(_mipMaps[2]);
@@ -254,7 +199,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
                     if (BloomDownsamplePasses > 2)
                     {
-                        BloomInverseResolution *= 2;
+                        this.InverseResolution = inverseResolution *= 2;
 
                         //DOWNSAMPLE TO MIP3
                         _graphicsDevice.SetRenderTarget(_mipMaps[3]);
@@ -266,7 +211,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
                         if (BloomDownsamplePasses > 3)
                         {
-                            BloomInverseResolution *= 2;
+                            this.InverseResolution = inverseResolution *= 2;
 
                             //DOWNSAMPLE TO MIP4
                             _graphicsDevice.SetRenderTarget(_mipMaps[4]);
@@ -278,7 +223,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
                             if (BloomDownsamplePasses > 4)
                             {
-                                BloomInverseResolution *= 2;
+                                this.InverseResolution = inverseResolution *= 2;
 
                                 //DOWNSAMPLE TO MIP5
                                 _graphicsDevice.SetRenderTarget(_mipMaps[5]);
@@ -294,12 +239,12 @@ namespace DeferredEngine.Rendering.PostProcessing
                                 _graphicsDevice.SetRenderTarget(_mipMaps[4]);
                                 BloomScreenTexture = _mipMaps[5];
 
-                                BloomStrength = _strength[4];
-                                BloomRadius = _radius[4];
+                                Strength = _strength[4];
+                                Radius = _radius[4];
                                 _fxSetup.Pass_Upsample.Apply();
                                 _fullscreenTarget.Draw(_graphicsDevice);
 
-                                BloomInverseResolution /= 2;
+                                this.InverseResolution = inverseResolution /= 2;
                             }
 
                             ChangeBlendState();
@@ -308,13 +253,12 @@ namespace DeferredEngine.Rendering.PostProcessing
                             _graphicsDevice.SetRenderTarget(_mipMaps[3]);
                             BloomScreenTexture = _mipMaps[4];
 
-                            BloomStrength = _strength[3];
-                            BloomRadius = _radius[3];
+                            Strength = _strength[3];
+                            Radius = _radius[3];
                             _fxSetup.Pass_Upsample.Apply();
                             _fullscreenTarget.Draw(_graphicsDevice);
 
-                            BloomInverseResolution /= 2;
-
+                            this.InverseResolution = inverseResolution /= 2;
                         }
 
                         ChangeBlendState();
@@ -323,12 +267,12 @@ namespace DeferredEngine.Rendering.PostProcessing
                         _graphicsDevice.SetRenderTarget(_mipMaps[2]);
                         BloomScreenTexture = _mipMaps[3];
 
-                        BloomStrength = _strength[2];
-                        BloomRadius = _radius[2];
+                        Strength = _strength[2];
+                        Radius = _radius[2];
                         _fxSetup.Pass_Upsample.Apply();
                         _fullscreenTarget.Draw(_graphicsDevice);
 
-                        BloomInverseResolution /= 2;
+                        this.InverseResolution = inverseResolution /= 2;
 
                     }
 
@@ -338,12 +282,12 @@ namespace DeferredEngine.Rendering.PostProcessing
                     _graphicsDevice.SetRenderTarget(_mipMaps[1]);
                     BloomScreenTexture = _mipMaps[2];
 
-                    BloomStrength = _strength[1];
-                    BloomRadius = _radius[1];
+                    Strength = _strength[1];
+                    Radius = _radius[1];
                     _fxSetup.Pass_Upsample.Apply();
                     _fullscreenTarget.Draw(_graphicsDevice);
 
-                    BloomInverseResolution /= 2;
+                    this.InverseResolution = inverseResolution /= 2;
                 }
 
                 ChangeBlendState();
@@ -352,8 +296,8 @@ namespace DeferredEngine.Rendering.PostProcessing
                 _graphicsDevice.SetRenderTarget(_mipMaps[0]);
                 BloomScreenTexture = _mipMaps[1];
 
-                BloomStrength = _strength[0];
-                BloomRadius = _radius[0];
+                Strength = _strength[0];
+                Radius = _radius[0];
 
                 _fxSetup.Pass_Upsample.Apply();
                 _fullscreenTarget.Draw(_graphicsDevice);
@@ -368,8 +312,6 @@ namespace DeferredEngine.Rendering.PostProcessing
         {
             Array.Copy(RenderingSettings.Bloom.Radius, _radius, _radius.Length);
             Array.Copy(RenderingSettings.Bloom.Strength, _strength, _strength.Length);
-
-            BloomThreshold = RenderingSettings.Bloom.Threshold * 0.1f;
         }
 
         private void ChangeBlendState()
@@ -386,6 +328,77 @@ namespace DeferredEngine.Rendering.PostProcessing
             _mipMaps?.Dispose();
             _fxSetup?.Dispose();
         }
+    }
+
+
+    public class BloomFxPresetsData
+    {
+        private static readonly float[] Wide_Strength = new float[] { 0.5f, 1, 2, 1, 2 };
+        private static readonly float[] Wide_Radius = new float[] { 1.0f, 2.0f, 2.0f, 4.0f, 4.0f };
+
+        private static readonly float[] SuperWide_Strength = new float[] { 0.9f, 1, 1, 2, 6 };
+        private static readonly float[] SuperWide_Radius = new float[] { 2.0f, 2.0f, 2.0f, 2.0f, 4.0f };
+
+        private static readonly float[] Focused_Strength = new float[] { 0.9f, 1, 1, 1, 2 };
+        private static readonly float[] Focused_Radius = new float[] { 2.0f, 2.0f, 2.0f, 2.0f, 4.0f };
+
+        private static readonly float[] Small_Strength = new float[] { 0.8f, 1, 1, 1, 1 };
+        private static readonly float[] Small_Radius = new float[] { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
+
+        private static readonly float[] Cheap_Strength = new float[] { 0.8f, 2, 0, 0, 0 };
+        private static readonly float[] Cheap_Radius = new float[] { 2.0f, 2.0f, 0, 0, 0 };
+
+
+        private static readonly RenderTarget2DDefinition Mip0_Definition = new RenderTarget2DDefinition(false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+        private static readonly RenderTarget2DDefinition Mip1_Definition = new RenderTarget2DDefinition(false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x1);
+        private static readonly RenderTarget2DDefinition Mip2_Definition = new RenderTarget2DDefinition(false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x2);
+        private static readonly RenderTarget2DDefinition Mip3_Definition = new RenderTarget2DDefinition(false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x3);
+        private static readonly RenderTarget2DDefinition Mip4_Definition = new RenderTarget2DDefinition(false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x4);
+        private static readonly RenderTarget2DDefinition Mip5_Definition = new RenderTarget2DDefinition(false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x5);
+
+        internal static readonly RenderTarget2DDefinition[] Mip_Definitions = new[] { Mip0_Definition, Mip1_Definition, Mip2_Definition, Mip3_Definition, Mip4_Definition, Mip5_Definition };
+
+        /// <summary>
+        /// A few presets with different values for the different mip levels of our bloom.
+        /// </summary>
+        /// <param name="preset">See BloomPresets enums. Example: BloomPresets.Wide</param>
+        public static void CopyPreset(BloomPresets preset, float[] targetStrength, float[] targetRadius)
+        {
+            switch (preset)
+            {
+                case BloomPresets.Wide:
+                    {
+                        Array.Copy(BloomFxPresetsData.Wide_Strength, targetStrength, targetStrength.Length);
+                        Array.Copy(BloomFxPresetsData.Wide_Radius, targetRadius, targetRadius.Length);
+                        break;
+                    }
+                case BloomPresets.SuperWide:
+                    {
+                        Array.Copy(BloomFxPresetsData.SuperWide_Strength, targetStrength, targetStrength.Length);
+                        Array.Copy(BloomFxPresetsData.SuperWide_Radius, targetRadius, targetRadius.Length);
+                        break;
+                    }
+                case BloomPresets.Focussed:
+                    {
+                        Array.Copy(BloomFxPresetsData.Focused_Strength, targetStrength, targetStrength.Length);
+                        Array.Copy(BloomFxPresetsData.Focused_Radius, targetRadius, targetRadius.Length);
+                        break;
+                    }
+                case BloomPresets.Small:
+                    {
+                        Array.Copy(BloomFxPresetsData.Small_Strength, targetStrength, targetStrength.Length);
+                        Array.Copy(BloomFxPresetsData.Small_Radius, targetRadius, targetRadius.Length);
+                        break;
+                    }
+                case BloomPresets.Cheap:
+                    {
+                        Array.Copy(BloomFxPresetsData.Cheap_Strength, targetStrength, targetStrength.Length);
+                        Array.Copy(BloomFxPresetsData.Cheap_Radius, targetRadius, targetRadius.Length);
+                        break;
+                    }
+            }
+        }
+
     }
 
 }

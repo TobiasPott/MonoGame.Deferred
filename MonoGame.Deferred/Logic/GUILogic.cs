@@ -342,10 +342,10 @@ namespace DeferredEngine.Logic
                 Toggle = RenderingSettings.Bloom.Enabled
             });
 
-            bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 4, 1, "Threshold: ")
+            bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 1, 3, "Threshold: ")
             {
-                SliderField = typeof(RenderingSettings.Bloom).GetField("Threshold"),
-                SliderValue = RenderingSettings.Bloom.Threshold
+                SliderProperty = typeof(RenderingSettings.Bloom).GetProperty("Threshold"),
+                SliderValue = RenderingSettings.Bloom.Threshold,
             });
 
             // ToDo: @tpott: Reintroduce UI for bloom values

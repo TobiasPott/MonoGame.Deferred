@@ -47,7 +47,6 @@ namespace DeferredEngine.Rendering.RenderModules.Default
         private static bool ApplyIdAndOutlineShaders(GraphicsDevice graphicsDevice, RenderType renderType, Matrix localToWorldMatrix, Matrix viewProjection,
             int transformId, int outlineId, bool outlined)
         {
-            // ToDo: @tpott: Extract IdRender and Bilboard Shaders members
             IdAndOutlineEffectSetup.Instance.Param_WorldViewProj.SetValue(localToWorldMatrix * viewProjection);
 
             if (renderType == RenderType.IdRender)

@@ -61,7 +61,6 @@ namespace DeferredEngine.Rendering.PostProcessing
             if (!this.Enabled)
                 return sourceRT;
 
-            //todo: more samples for more reflective materials!
             _graphicsDevice.SetRenderTarget(destRT);
             _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
 

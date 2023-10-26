@@ -9,6 +9,7 @@ namespace DeferredEngine.Recources
         //Default & Display settings
         public static int g_ScreenWidth => (int)g_ScreenResolution.X;
         public static int g_ScreenHeight => (int)g_ScreenResolution.Y;
+
         public static Vector2 g_ScreenResolution = new Vector2(1280, 720);
         public static Vector2 g_ScreenInverseResolution = new Vector2(1.0f / 1280, 1.0f / 720);
         public static Rectangle g_ScreenRect = new Rectangle(0, 0, 1280, 720);

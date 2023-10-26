@@ -76,7 +76,6 @@ namespace DeferredEngine.Rendering.PostProcessing
         /// </summary>
         private RenderTarget2D DrawSSAO(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
         {
-            // ToDo: @tpott: extract to own BaseFx derived type
             if (!this.Enabled)
                 return sourceRT;
 
@@ -96,7 +95,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
             DrawSSAOToBlur();
             DrawSSAOBilateralBlur();
-            // ToDo: change return render target to be Blur_Final (as it is target in biliteral blur
+            // ToDo: change return render target to be Blur_Final (as it is target in biliteral blur)
             return destRT;
         }
 

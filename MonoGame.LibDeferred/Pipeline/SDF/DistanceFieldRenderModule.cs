@@ -34,7 +34,6 @@ namespace DeferredEngine.Rendering.SDF
         private Vector3[] _volumeTexSizeArray = new Vector3[40];
         private Vector4[] _volumeTexResolutionArray = new Vector4[40];
 
-        // ToDo: @tpott: Move out of the pipeline as some sort of extension as it is only touched by the generator and the module
         private List<SignedDistanceField> _sdfDefinitions;
         private SignedDistanceField[] _signedDistanceFieldDefinitions = new SignedDistanceField[40];
         private int _signedDistanceFieldDefinitionsCount = 0;
@@ -183,8 +182,7 @@ namespace DeferredEngine.Rendering.SDF
                 _volumeTexSizeArray[i] = _signedDistanceFieldDefinitions[i].VolumeSize;
             }
 
-            //todo: Check if we can use half here
-            _atlasRenderTarget2D = new RenderTarget2D(_graphicsDevice, x, y, false, SurfaceFormat.Single, DepthFormat.None);
+            _atlasRenderTarget2D = new RenderTarget2D(_graphicsDevice, x, y, false, SurfaceFormat.HalfSingle, DepthFormat.None);
 
             _graphicsDevice.SetRenderTarget(_atlasRenderTarget2D);
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.PointClamp);
