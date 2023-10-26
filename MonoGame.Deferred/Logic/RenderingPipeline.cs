@@ -292,15 +292,6 @@ namespace DeferredEngine.Rendering
             //Additional editor elements that overlay our screen
             DrawEditorOverlays(gizmoContext, scene);
 
-            // Step: 20
-            //Draw debug geometry
-            DrawEditorPasses(scene, gizmoContext, EditorPasses.Helper);
-
-
-            // Step: 21
-            //Set up the frustum culling for the next frame
-            meshBatcher.FrustumCullingFinalizeFrame();
-
             //Performance Profiler
             _profiler.Sample(ref PipelineSamples.SDraw_TotalRender);
 
@@ -358,6 +349,10 @@ namespace DeferredEngine.Rendering
                 _spriteBatch.Draw(_moduleStack.DistanceField.GetAtlas(), new Rectangle(0, RenderingSettings.Screen.g_Height - 200, RenderingSettings.Screen.g_Width, 200), Color.White);
                 _spriteBatch.End();
             }
+
+            // Step: 20
+            //Draw debug geometry
+            DrawEditorPasses(scene, gizmoContext, EditorPasses.Helper);
 
         }
 

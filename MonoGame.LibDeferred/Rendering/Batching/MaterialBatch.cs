@@ -20,7 +20,6 @@ namespace DeferredEngine.Rendering
         //efficiency: REnder front to back. So we must know the distance!
 
         public float DistanceSquared;
-        public bool HasChangedThisFrame = true;
 
         public int Count => _batches.Count;
         public bool IsAnyRendered => _batches.Any(x => x.IsAnyRendered);
