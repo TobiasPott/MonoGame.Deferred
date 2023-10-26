@@ -310,13 +310,9 @@ namespace DeferredEngine.Rendering
             if (!RenderingSettings.SDF.DrawDistance)
                 return false;
 
-            for (var index = 0; index < pointLights.Count; index++)
-            {
-                if (pointLights[index].HasChanged && pointLights[index].CastSDFShadows)
-                {
+            foreach (PointLight light in pointLights)
+                if (light.HasChanged && light.CastSDFShadows)
                     return true;
-                }
-            }
             return false;
         }
 
