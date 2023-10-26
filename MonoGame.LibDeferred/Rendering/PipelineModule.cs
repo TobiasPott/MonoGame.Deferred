@@ -1,5 +1,8 @@
-﻿using DeferredEngine.Rendering;
+﻿using DeferredEngine.Recources;
+using DeferredEngine.Rendering;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Ext;
 using System.Runtime.CompilerServices;
 
 namespace DeferredEngine.Pipeline
@@ -42,6 +45,32 @@ namespace DeferredEngine.Pipeline
         //public void Draw(MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<DeferredPointLight> pointLights, List<DeferredDirectionalLight> dirLights, Camera camera)
         //public void Draw(RenderTargetBinding[] _renderTargetBinding, MeshMaterialLibrary meshMaterialLibrary, Matrix _viewProjection, Matrix _view)
         //public void Draw(MeshMaterialLibrary meshMaterialLibrary, List<ModelEntity> entities, List<DeferredPointLight> pointLights, List<DeferredDirectionalLight> dirLights)
+      
+        public void Blit(Texture2D source, RenderTarget2D destRT = null)
+            => this.Blit(source, destRT, BlendState.Opaque);
+        public void Blit(Texture2D source, RenderTarget2D destRT = null, BlendState blendState = null, SamplerState samplerState = null)
+        {
+            if (blendState == null)
+                blendState = BlendState.Opaque;
+            if (samplerState == null)
+                samplerState = SamplerState.LinearWrap;
+
+            RenderingSettings.Screen.GetDestinationRectangle(source.GetAspect(), out Rectangle destRectangle);
+            _graphicsDevice.SetRenderTarget(destRT);
+            _spriteBatch.Begin(0, blendState, samplerState);
+            _spriteBatch.Draw(source, destRectangle, Color.White);
+            _spriteBatch.End();
+        }
+
+        public void BlitCube(RenderTarget2D texture, RenderTargetCube target, CubeMapFace? face)
+        {
+            if (face != null)
+                _graphicsDevice.SetRenderTarget(target, (CubeMapFace)face);
+
+            _spriteBatch.Begin(0, BlendState.Opaque, SamplerState.PointClamp);
+            _spriteBatch.Draw(texture, new Rectangle(0, 0, texture.Width, texture.Height), Color.White);
+            _spriteBatch.End();
+        }
 
     }
 

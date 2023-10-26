@@ -87,31 +87,21 @@ namespace MonoGame.Ext
             };
         }
 
-        public static void Blit(this GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, Texture2D source, RenderTarget2D destRT = null) 
-            => graphicsDevice.Blit(spriteBatch, source, destRT, BlendState.Opaque, 1);
         public static void Blit(this GraphicsDevice graphicsDevice, SpriteBatch spriteBatch,
-            Texture2D source, RenderTarget2D destRT = null, BlendState blendState = null,
-            int supersampling = 1)
+            Texture2D source, RenderTarget2D destRT = null, BlendState blendState = null, SamplerState samplerState = null)
         {
             if (blendState == null)
                 blendState = BlendState.Opaque;
+            if (samplerState == null)
+                samplerState = SamplerState.LinearWrap;
 
             RenderingSettings.Screen.GetDestinationRectangle(source.GetAspect(), out Rectangle destRectangle);
             graphicsDevice.SetRenderTarget(destRT);
-            spriteBatch.Begin(0, blendState, supersampling > 1 ? SamplerState.LinearWrap : SamplerState.PointClamp);
+            spriteBatch.Begin(0, blendState, samplerState);
             spriteBatch.Draw(source, destRectangle, Color.White);
             spriteBatch.End();
         }
 
-        public static void BlitCube(this GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, RenderTarget2D texture, RenderTargetCube target, CubeMapFace? face)
-        {
-            if (face != null)
-                graphicsDevice.SetRenderTarget(target, (CubeMapFace)face);
-
-            spriteBatch.Begin(0, BlendState.Opaque, SamplerState.PointClamp);
-            spriteBatch.Draw(texture, new Rectangle(0, 0, texture.Width, texture.Height), Color.White);
-            spriteBatch.End();
-        }
 
 
     }

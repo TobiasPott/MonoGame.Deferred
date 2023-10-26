@@ -206,8 +206,8 @@ namespace DeferredEngine.Rendering
             if (DecalRenderModule.g_EnableDecals)
             {
                 //First copy albedo to decal offtarget
-                _graphicsDevice.Blit(_spriteBatch, _gBufferTarget.Albedo, _auxTargets[PipelineTargets.DECAL]);
-                _graphicsDevice.Blit(_spriteBatch, _auxTargets[PipelineTargets.DECAL], _gBufferTarget.Albedo);
+                _moduleStack.Decal.Blit(_gBufferTarget.Albedo, _auxTargets[PipelineTargets.DECAL]);
+                _moduleStack.Decal.Blit(_auxTargets[PipelineTargets.DECAL], _gBufferTarget.Albedo);
                 _moduleStack.Decal.Draw(scene);
             }
             //// Step: 10
@@ -330,7 +330,7 @@ namespace DeferredEngine.Rendering
             if (RenderingSettings.e_IsEditorEnabled && RenderingSettings.e_EnableSelection)
             {
                 if (IdAndOutlineRenderModule.e_DrawOutlines)
-                    _graphicsDevice.Blit(_spriteBatch, _moduleStack.IdAndOutline.Target, null, BlendState.Additive);
+                    _moduleStack.IdAndOutline.Blit(_moduleStack.IdAndOutline.Target, null, BlendState.Additive);
 
                 this.DrawEditorPasses(scene, gizmoContext, EditorPasses.Billboard | EditorPasses.IdAndOutline);
 
