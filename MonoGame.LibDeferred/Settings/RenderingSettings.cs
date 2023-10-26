@@ -1,7 +1,6 @@
 ﻿using Deferred.Utilities;
 using DeferredEngine.Rendering;
-using Microsoft.VisualBasic.FileIO;
-using System.Reflection;
+using MonoGame.Ext;
 
 namespace DeferredEngine.Recources
 {
@@ -36,37 +35,6 @@ namespace DeferredEngine.Recources
 
         public static NotifiedProperty<float> g_FarClip = new NotifiedProperty<float>(-1);
 
-    }
-
-    public class NotifiedProperty<T>
-    {
-        public event Action<T> Changed;
-        private T _value;
-        public T Value { get => _value; set => this.Set(value); }
-        public NotifiedProperty(T value)
-        {
-            _value = value;
-        }
-
-        public void Set(T value)
-        {
-            if (!Equals(value, _value))
-            {
-                _value = value;
-                this.Changed?.Invoke(value);
-            }
-        }
-
-        public static implicit operator T(NotifiedProperty<T> property)
-        {
-            return property._value;
-        }
-
-
-        public PropertyInfo GetValuePropertyInfo()
-        {
-            return this.GetType().GetProperty("Value");
-        }
     }
 
 }

@@ -10,6 +10,7 @@ namespace DeferredEngine.Rendering.PostProcessing
     //enums
     public enum BloomPresets
     {
+        Default,
         Wide,
         Focussed,
         Small,
@@ -76,10 +77,6 @@ namespace DeferredEngine.Rendering.PostProcessing
         private DynamicMultiRenderTarget _mipMaps;
 
 
-
-        public BloomPresets BloomPreset { set { SetBloomPreset(value); } }
-
-
         private Texture2D BloomScreenTexture { set { _fxSetup.Param_ScreenTexture.SetValue(value); } }
 
         private Vector2 InverseResolution { set { _fxSetup.Param_InverseResolution.SetValue(value); } }
@@ -104,11 +101,9 @@ namespace DeferredEngine.Rendering.PostProcessing
             // ToDo: Bloom Threshold by UI seems broken (check if manual changing works)
             //          Threshold is only set at BloomFx() and should recieve a notified property for runtime notification
             //Setup the default preset values.
-            SetBloomPreset(BloomPresets.SuperWide);
+            SetBloomPreset(BloomPresets.Default);
 
-            ApplyGameSettings();
-
-            RenderingSettings.Bloom.g_Threshold.Changed += Bloom_Threshold_Changed;
+            RenderingSettings.Bloom.Threshold.Changed += Bloom_Threshold_Changed;
         }
 
         private void Bloom_Threshold_Changed(float threshold)
@@ -308,11 +303,6 @@ namespace DeferredEngine.Rendering.PostProcessing
             return _mipMaps[0];
         }
 
-        private void ApplyGameSettings()
-        {
-            Array.Copy(RenderingSettings.Bloom.Radius, _radius, _radius.Length);
-            Array.Copy(RenderingSettings.Bloom.Strength, _strength, _strength.Length);
-        }
 
         private void ChangeBlendState()
         {
@@ -347,6 +337,9 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         private static readonly float[] Cheap_Strength = new float[] { 0.8f, 2, 0, 0, 0 };
         private static readonly float[] Cheap_Radius = new float[] { 2.0f, 2.0f, 0, 0, 0 };
+
+        private static readonly float[] Default_Strength = new float[] { 0.5f, 1.0f, 1.0f, 1.0f, 1.0f };
+        private static readonly float[] Default_Radius = new float[] { 1.0f, 1.0f, 2.0f, 3.0f, 4.0f };
 
 
         private static readonly RenderTarget2DDefinition Mip0_Definition = new RenderTarget2DDefinition(false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
@@ -394,6 +387,12 @@ namespace DeferredEngine.Rendering.PostProcessing
                     {
                         Array.Copy(BloomFxPresetsData.Cheap_Strength, targetStrength, targetStrength.Length);
                         Array.Copy(BloomFxPresetsData.Cheap_Radius, targetRadius, targetRadius.Length);
+                        break;
+                    }
+                case BloomPresets.Default:
+                    {
+                        Array.Copy(BloomFxPresetsData.Default_Strength, targetStrength, targetStrength.Length);
+                        Array.Copy(BloomFxPresetsData.Default_Radius, targetRadius, targetRadius.Length);
                         break;
                     }
             }

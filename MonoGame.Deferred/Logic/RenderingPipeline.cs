@@ -113,7 +113,7 @@ namespace DeferredEngine.Rendering
             RenderingSettings.g_FarClip.Changed += FarClip_OnChanged;
             RenderingSettings.g_FarClip.Set(500);
             SSReflectionFx.g_Enabled.Changed += SSR_Enabled_Changed;
-            RenderingSettings.Bloom.Threshold = 0.0f;
+            RenderingSettings.Bloom.Threshold.Set(0.0f);
         }
 
         private void SSR_Enabled_Changed(bool enabled)
@@ -238,7 +238,7 @@ namespace DeferredEngine.Rendering
             //              I mmight need to split it into Environment and Sky
             // Step: 11
             //Draw the environment cube map as a fullscreen effect on all meshes
-            if (RenderingSettings.EnvironmentMapping.Enabled)
+            if (RenderingSettings.Environment.Enabled)
             {
                 _moduleStack.Environment.SetEnvironmentProbe(scene.EnvProbe);
                 _moduleStack.Environment.SetViewPosition(camera.Position);

@@ -9,6 +9,7 @@ using HelperSuite.GUIHelper;
 using Microsoft.Xna.Framework;
 using System.Reflection;
 using System.Text;
+using static DeferredEngine.Recources.RenderingSettings;
 
 namespace DeferredEngine.Logic
 {
@@ -212,6 +213,12 @@ namespace DeferredEngine.Logic
             GuiListToggle postprocessingList = new GuiListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
             optionList.AddElement(postprocessingList);
 
+            postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Post Processing")
+            {
+                ToggleField = typeof(RenderingSettings).GetField(nameof(RenderingSettings.g_PostProcessing)),
+                Toggle = RenderingSettings.g_PostProcessing
+            });
+
             postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Color Grading")
             {
                 ToggleField = typeof(RenderingSettings).GetField(nameof(RenderingSettings.g_ColorGrading)),
@@ -343,14 +350,31 @@ namespace DeferredEngine.Logic
 
             bloomList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Bloom")
             {
-                ToggleField = typeof(RenderingSettings.Bloom).GetField(nameof(RenderingSettings.Bloom.Enabled)),
+                ToggleProperty = RenderingSettings.Bloom.Enabled.GetValuePropertyInfo(),
+                ToggleObject = RenderingSettings.Bloom.Enabled,
                 Toggle = RenderingSettings.Bloom.Enabled
             });
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 1, 3, "Threshold: ")
             {
-                SliderProperty = typeof(RenderingSettings.Bloom).GetProperty(nameof(RenderingSettings.Bloom.Threshold)),
+                SliderProperty = RenderingSettings.Bloom.Threshold.GetValuePropertyInfo(),
+                SliderObject = RenderingSettings.Bloom.Threshold,
                 SliderValue = RenderingSettings.Bloom.Threshold,
+            });
+
+
+            optionList.AddElement(new GUITextBlock(Vector2.Zero, new Vector2(200, 10), "Environment",
+                defaultStyle.TextFontStyle, Color.DarkSlateGray, Color.White, GUIStyle.TextAlignment.Center,
+                Vector2.Zero));
+
+            GuiListToggle environmentGroup = new GuiListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
+            optionList.AddElement(environmentGroup);
+
+            environmentGroup.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Environment")
+            {
+                ToggleProperty = RenderingSettings.Environment.Enabled.GetValuePropertyInfo(),
+                ToggleObject = RenderingSettings.Environment.Enabled,
+                Toggle = RenderingSettings.Environment.Enabled
             });
 
             // ToDo: @tpott: Reintroduce UI for bloom values

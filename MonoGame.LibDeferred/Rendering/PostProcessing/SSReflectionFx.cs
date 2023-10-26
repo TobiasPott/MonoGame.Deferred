@@ -74,7 +74,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
             _fxSetup.Param_Samples.SetValue(SSReflectionFx.g_Samples);
             _fxSetup.Param_SecondarySamples.SetValue(SSReflectionFx.g_RefinementSamples);
-            
+
             _fxSetup.Effect.CurrentTechnique = SSReflectionFx.g_UseTaa ? _fxSetup.Technique_Taa : _fxSetup.Technique_Default;
             _fxSetup.Effect.CurrentTechnique.Passes[0].Apply();
             _fullscreenTarget.Draw(_graphicsDevice);
