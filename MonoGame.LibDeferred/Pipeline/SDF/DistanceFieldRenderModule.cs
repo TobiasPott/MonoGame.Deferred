@@ -10,7 +10,7 @@ namespace DeferredEngine.Rendering.SDF
 {
 
     //Just a template
-    public partial class DistanceFieldRenderModule : IDisposable
+    public partial class DistanceFieldRenderModule : PipelineModule, IDisposable
     {
 
         private DistanceFieldEffectSetup _effectSetup = new DistanceFieldEffectSetup();
@@ -19,8 +19,6 @@ namespace DeferredEngine.Rendering.SDF
         public PointLightPipelineModule PointLightRenderModule;
         public EnvironmentPipelineModule EnvironmentProbeRenderModule;
 
-        private GraphicsDevice _graphicsDevice;
-        private SpriteBatch _spriteBatch;
         private RenderTarget2D _atlasRenderTarget2D;
 
 
@@ -68,12 +66,6 @@ namespace DeferredEngine.Rendering.SDF
             _effectSetup.Param_VolumeTexResolution.SetValue(texResolutions);
         }
 
-
-        public void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
-        {
-            _graphicsDevice = graphicsDevice;
-            _spriteBatch = spriteBatch;
-        }
 
         public Texture2D GetAtlas()
         {
@@ -234,7 +226,7 @@ namespace DeferredEngine.Rendering.SDF
             _sdfGenerator.Update(_graphicsDevice, entities, this, ref _sdfDefinitions);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             _effectSetup.Dispose();
         }

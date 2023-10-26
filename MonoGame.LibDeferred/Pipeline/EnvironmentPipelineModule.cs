@@ -96,7 +96,8 @@ namespace DeferredEngine.Pipeline
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
         }
 
-        public void DrawEnvironmentMap(Camera camera)
+        public void Draw(Camera camera) => DrawEnvironmentMap(camera);
+        private void DrawEnvironmentMap(Camera camera)
         {
             CameraPositionWS = camera.Position;
 

@@ -100,6 +100,7 @@ namespace DeferredEngine.Rendering
             _moduleStack.SetGBufferParams(_gBufferTarget);
             _moduleStack.LightingBufferTarget = _lightingBufferTarget;
             _moduleStack.SSFxTargets = _ssfxTargets;
+            _moduleStack.Frustum = _frustum;
 
             _fxStack.Initialize(graphicsDevice, _spriteBatch);
             _fxStack.SetGBufferParams(_gBufferTarget);
@@ -229,14 +230,14 @@ namespace DeferredEngine.Rendering
             // Step: 10
             //Light the scene
             //_moduleStack.Lighting.UpdateViewProjection(_boundingFrustum, _viewProjectionHasChanged, _matrices);
-            _moduleStack.Lighting.DrawLights(scene, camera.Position, camera.HasChanged);
+            _moduleStack.Lighting.Draw(scene, camera.Position, camera.HasChanged);
 
             // Step: 11
             //Draw the environment cube map as a fullscreen effect on all meshes
             if (RenderingSettings.EnvironmentMapping.Enabled)
             {
                 _moduleStack.Environment.SetEnvironmentProbe(scene.EnvProbe);
-                _moduleStack.Environment.DrawEnvironmentMap(camera);
+                _moduleStack.Environment.Draw(camera);
                 //Performance Profiler
                 _profiler.SampleTimestamp(ref PipelineSamples.SDraw_EnvironmentMap);
             }
@@ -412,8 +413,7 @@ namespace DeferredEngine.Rendering
                     _fxStack.TemporaAA.SwapOffFrame();
                     _matrices.ApplyViewProjectionJitter(_fxStack.TemporaAA.JitterMode, _fxStack.TemporaAA.IsOffFrame, _fxStack.TemporaAA.HaltonSequence);
                 }
-
-                _moduleStack.Lighting.UpdateViewProjection(_frustum.Frustum, hasChanged);
+;
                 _frustum.Frustum.Matrix = _matrices.StaticViewProjection;
             }
 

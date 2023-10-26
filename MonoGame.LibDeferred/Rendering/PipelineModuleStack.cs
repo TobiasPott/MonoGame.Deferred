@@ -1,6 +1,7 @@
 ﻿using DeferredEngine.Pipeline;
 using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Pipeline.Utilities;
+using DeferredEngine.Recources;
 using DeferredEngine.Rendering.SDF;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -62,18 +63,8 @@ namespace DeferredEngine.Rendering
         {
             set
             {
-                DepthReconstruct.Matrices = value;
-                GBuffer.Matrices = value;
-                Decal.Matrices = value;
-                Lighting.Matrices = value;
-                Environment.Matrices = value;
-                Forward.Matrices = value;
-                PointLight.Matrices = value;
-                DirectionalLight.Matrices = value;
-
-                Helper.Matrices = value;
-                IdAndOutline.Matrices = value;
-                Billboard.Matrices = value;
+                foreach(PipelineModule module in _modules)
+                    module.Matrices = value;
             }
         }
         public SSFxTargets SSFxTargets
@@ -93,9 +84,16 @@ namespace DeferredEngine.Rendering
                 Deferred.SetLightingParams(value);
             }
         }
+        public BoundingFrustumWithVertices Frustum
+        {
+            set
+            {
+                PointLight.Frustum = value.Frustum;
+            }
+        }
 
 
-
+        private List<PipelineModule> _modules = new List<PipelineModule>();
 
         public PipelineModuleStack()
         {
@@ -119,6 +117,11 @@ namespace DeferredEngine.Rendering
 
             Billboard.IdAndOutlineRenderer = IdAndOutline;
             IdAndOutline.BillboardRenderer = Billboard;
+
+            _modules.AddRange(new PipelineModule[] {
+                GBuffer, Deferred, Forward, ShadowMap, DirectionalLight, PointLight, DepthReconstruct,
+                Lighting, Environment, Decal, Helper, DistanceField, Billboard, IdAndOutline
+            });
         }
         public void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         {
