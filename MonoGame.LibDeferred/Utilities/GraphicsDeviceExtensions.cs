@@ -87,8 +87,8 @@ namespace MonoGame.Ext
             };
         }
 
-        public static void Blit(this GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, Texture2D source, RenderTarget2D destRT = null, int supersampling = 1) 
-            => graphicsDevice.Blit(spriteBatch, source, destRT, BlendState.Opaque, supersampling);
+        public static void Blit(this GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, Texture2D source, RenderTarget2D destRT = null) 
+            => graphicsDevice.Blit(spriteBatch, source, destRT, BlendState.Opaque, 1);
         public static void Blit(this GraphicsDevice graphicsDevice, SpriteBatch spriteBatch,
             Texture2D source, RenderTarget2D destRT = null, BlendState blendState = null,
             int supersampling = 1)
@@ -96,7 +96,7 @@ namespace MonoGame.Ext
             if (blendState == null)
                 blendState = BlendState.Opaque;
 
-            RenderingSettings.GetDestinationRectangle(source.GetAspect(), out Rectangle destRectangle);
+            RenderingSettings.Screen.GetDestinationRectangle(source.GetAspect(), out Rectangle destRectangle);
             graphicsDevice.SetRenderTarget(destRT);
             spriteBatch.Begin(0, blendState, supersampling > 1 ? SamplerState.LinearWrap : SamplerState.PointClamp);
             spriteBatch.Draw(source, destRectangle, Color.White);

@@ -38,7 +38,7 @@ namespace DeferredEngine.Logic
             _guiLogic.Initialize(_assets, _sceneLogic.Camera);
             _editorLogic.Initialize(graphicsDevice);
             _debug.Initialize(graphicsDevice);
-            _guiRenderer.Initialize(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
+            _guiRenderer.Initialize(graphicsDevice, RenderingSettings.Screen.g_Width, RenderingSettings.Screen.g_Height);
         }
 
         //Load content

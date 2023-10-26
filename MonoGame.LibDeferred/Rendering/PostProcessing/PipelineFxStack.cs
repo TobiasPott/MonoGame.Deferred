@@ -87,7 +87,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             _spriteBatch = spriteBatch;
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
 
-            Bloom.Initialize(graphicsDevice, RenderingSettings.g_ScreenResolution);
+            Bloom.Initialize(graphicsDevice, RenderingSettings.Screen.g_Resolution);
             TemporaAA.Initialize(graphicsDevice, _fullscreenTarget);
             ColorGrading.Initialize(graphicsDevice, _fullscreenTarget);
             PostProcessing.Initialize(graphicsDevice, _fullscreenTarget);
@@ -134,8 +134,8 @@ namespace DeferredEngine.Rendering.PostProcessing
                 _graphicsDevice.SetRenderTargets(destRT);
                 _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
 
-                _spriteBatch.Draw(sourceRT, RenderingSettings.g_ScreenRect, Color.White);
-                _spriteBatch.Draw(bloom, RenderingSettings.g_ScreenRect, Color.White);
+                _spriteBatch.Draw(sourceRT, RenderingSettings.Screen.g_Rect, Color.White);
+                _spriteBatch.Draw(bloom, RenderingSettings.Screen.g_Rect, Color.White);
 
                 _spriteBatch.End();
 
@@ -194,7 +194,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         {
             if (blendState == null) blendState = BlendState.Opaque;
 
-            RenderingSettings.GetDestinationRectangle(source.GetAspect(), out Rectangle destRectangle);
+            RenderingSettings.Screen.GetDestinationRectangle(source.GetAspect(), out Rectangle destRectangle);
             _graphicsDevice.SetRenderTarget(destRT);
             _spriteBatch.Begin(0, blendState, _superSampling > 1 ? SamplerState.LinearWrap : SamplerState.PointClamp);
             _spriteBatch.Draw(source, destRectangle, Color.White);

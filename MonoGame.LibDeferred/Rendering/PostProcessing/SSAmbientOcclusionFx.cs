@@ -103,7 +103,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         {
             _graphicsDevice.SetRenderTarget(_ssfxTargets.AO_Blur_V);
             _spriteBatch.Begin(0, BlendState.Additive);
-            _spriteBatch.Draw(_ssfxTargets.AO_Main, RenderingSettings.g_ScreenRect, Color.White);
+            _spriteBatch.Draw(_ssfxTargets.AO_Main, RenderingSettings.Screen.g_Rect, Color.White);
             _spriteBatch.End();
         }
         /// <summary>
@@ -141,7 +141,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         }
 
-        public void SetCamera(Vector3 cameraPosition)
+        public void SetViewPosition(Vector3 cameraPosition)
         {
             _fxSetup.Param_InverseViewProjection.SetValue(this.Matrices.InverseViewProjection);
             _fxSetup.Param_Projection.SetValue(this.Matrices.Projection);

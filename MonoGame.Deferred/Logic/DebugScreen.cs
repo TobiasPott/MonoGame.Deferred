@@ -330,9 +330,9 @@ namespace DeferredEngine.Logic
                 _mngStringBuilder.Append((int)Math.Round(_minfps));
                 _mngStringBuilder.AppendLine(sb_closeBracket);
 
-                _mngStringBuilder.Append(RenderingSettings.g_ScreenWidth);
+                _mngStringBuilder.Append(RenderingSettings.Screen.g_Width);
                 _mngStringBuilder.Append(sb_multipliedBy);
-                _mngStringBuilder.Append(RenderingSettings.g_ScreenHeight);
+                _mngStringBuilder.Append(RenderingSettings.Screen.g_Height);
                 _mngStringBuilder.Append(sb_emptySpace);
                 _mngStringBuilder.Append(RenderModesToString(RenderingSettings.g_RenderMode));
                 _mngStringBuilder.Append(sb_memoryGc);

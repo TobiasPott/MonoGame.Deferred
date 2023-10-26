@@ -47,9 +47,6 @@ namespace DeferredEngine.Rendering
         //Used for the view space directions in our shaders. Far edges of our view frustum
         private BoundingFrustumWithVertices _frustum = new BoundingFrustumWithVertices();
 
-        //Checkvariables to see which console variables have changed from the frame before
-        private int _supersampling = 1;
-
         //Render targets
         private GBufferTarget _gBufferTarget;
         private LightingBufferTarget _lightingBufferTarget;
@@ -93,10 +90,10 @@ namespace DeferredEngine.Rendering
             _graphicsDevice = graphicsDevice;
             _spriteBatch = new SpriteBatch(graphicsDevice);
 
-            _gBufferTarget = new GBufferTarget(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
-            _lightingBufferTarget = new LightingBufferTarget(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
-            _auxTargets = new PipelineTargets(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
-            _ssfxTargets = new SSFxTargets(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
+            _gBufferTarget = new GBufferTarget(graphicsDevice, RenderingSettings.Screen.g_Width, RenderingSettings.Screen.g_Height);
+            _lightingBufferTarget = new LightingBufferTarget(graphicsDevice, RenderingSettings.Screen.g_Width, RenderingSettings.Screen.g_Height);
+            _auxTargets = new PipelineTargets(graphicsDevice, RenderingSettings.Screen.g_Width, RenderingSettings.Screen.g_Height);
+            _ssfxTargets = new SSFxTargets(graphicsDevice, RenderingSettings.Screen.g_Width, RenderingSettings.Screen.g_Height);
 
             _moduleStack.Initialize(graphicsDevice, _spriteBatch);
             _moduleStack.SetGBufferParams(_gBufferTarget);
@@ -108,7 +105,7 @@ namespace DeferredEngine.Rendering
             _fxStack.SSFxTargets = _ssfxTargets;
 
             // update directional light module
-            SetUpRenderTargets(RenderingSettings.g_ScreenResolution);
+            SetUpRenderTargets(RenderingSettings.Screen.g_Resolution);
 
 
             RenderingSettings.g_FarClip.Changed += FarClip_OnChanged;
@@ -204,9 +201,8 @@ namespace DeferredEngine.Rendering
             if (DecalRenderModule.g_EnableDecals)
             {
                 //First copy albedo to decal offtarget
-                _graphicsDevice.Blit(_spriteBatch, _gBufferTarget.Albedo, _auxTargets[PipelineTargets.DECAL], _supersampling);
-                _graphicsDevice.Blit(_spriteBatch, _auxTargets[PipelineTargets.DECAL], _gBufferTarget.Albedo, _supersampling);
-
+                _graphicsDevice.Blit(_spriteBatch, _gBufferTarget.Albedo, _auxTargets[PipelineTargets.DECAL]);
+                _graphicsDevice.Blit(_spriteBatch, _auxTargets[PipelineTargets.DECAL], _gBufferTarget.Albedo);
                 _moduleStack.Decal.Draw(scene.Decals);
             }
 
@@ -221,7 +217,7 @@ namespace DeferredEngine.Rendering
 
             // Step: 08
             //SSAO
-            _fxStack.SSAmbientOcclusion.SetCamera(camera.Position);
+            _fxStack.SSAmbientOcclusion.SetViewPosition(camera.Position);
             _fxStack.Draw(PipelineFxStage.SSAmbientOcclusion, null, null, _ssfxTargets.AO_Main);
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_SSFx_SSAO);
@@ -351,7 +347,7 @@ namespace DeferredEngine.Rendering
             if (RenderingSettings.SDF.DrawDebug && _moduleStack.DistanceField.GetAtlas() != null)
             {
                 _spriteBatch.Begin(0, BlendState.Opaque, SamplerState.PointClamp);
-                _spriteBatch.Draw(_moduleStack.DistanceField.GetAtlas(), new Rectangle(0, RenderingSettings.g_ScreenHeight - 200, RenderingSettings.g_ScreenWidth, 200), Color.White);
+                _spriteBatch.Draw(_moduleStack.DistanceField.GetAtlas(), new Rectangle(0, RenderingSettings.Screen.g_Height - 200, RenderingSettings.Screen.g_Width, 200), Color.White);
                 _spriteBatch.End();
             }
 
@@ -368,7 +364,7 @@ namespace DeferredEngine.Rendering
                 _moduleStack.Billboard.DrawEditorBillboards(scene, gizmoContext);
             if (passes.HasFlag(EditorPasses.IdAndOutline))
                 _moduleStack.IdAndOutline.DrawTransformGizmos(gizmoContext, IdAndOutlineRenderModule.Pass.Color);
-            if(passes.HasFlag(EditorPasses.Helper))
+            if (passes.HasFlag(EditorPasses.Helper))
                 _moduleStack.Helper.Draw();
 
         }
@@ -488,29 +484,26 @@ namespace DeferredEngine.Rendering
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
         private void SetUpRenderTargets(Vector2 resolution)
         {
-            int targetWidth = (int)(resolution.X * _supersampling);
-            int targetHeight = (int)(resolution.Y * _supersampling);
-
-            Vector2 targetResolution = new Vector2(targetWidth, targetHeight);
+            int targetWidth = (int)(resolution.X);
+            int targetHeight = (int)(resolution.Y);
 
             // Update multi render target size
             _gBufferTarget.Resize(targetWidth, targetHeight);
             _lightingBufferTarget.Resize(targetWidth, targetHeight);
             _auxTargets.Resize(targetWidth, targetHeight);
 
-            _moduleStack.PointLight.Resolution = targetResolution;
-            _moduleStack.Environment.Resolution = targetResolution;
+            _moduleStack.PointLight.Resolution = resolution;
+            _moduleStack.Environment.Resolution = resolution;
 
             _moduleStack.Billboard.AspectRatio = (float)targetWidth / targetHeight;
-            _moduleStack.IdAndOutline.SetUpRenderTarget(targetResolution);
+            _moduleStack.IdAndOutline.SetUpRenderTarget(resolution);
 
-            _fxStack.TemporaAA.Resolution = targetResolution;
-            _fxStack.SSReflection.Resolution = targetResolution;
+            _fxStack.TemporaAA.Resolution = resolution;
+            _fxStack.SSReflection.Resolution = resolution;
 
 
             ///////////////////
             // HALF RESOLUTION
-
             targetWidth /= 2;
             targetHeight /= 2;
 
@@ -525,7 +518,7 @@ namespace DeferredEngine.Rendering
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         private void BlitTo(Texture2D source, RenderTarget2D destRT = null)
         {
-            _graphicsDevice.Blit(_spriteBatch, source, destRT, _supersampling);
+            _graphicsDevice.Blit(_spriteBatch, source, destRT);
         }
 
 
