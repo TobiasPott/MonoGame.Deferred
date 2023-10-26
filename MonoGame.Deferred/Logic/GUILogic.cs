@@ -136,7 +136,7 @@ namespace DeferredEngine.Logic
 
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Default Material")
             {
-                ToggleField = typeof(RenderingSettings).GetField("d_defaultmaterial"),
+                ToggleField = typeof(RenderingSettings).GetField("d_DefaultMaterial"),
                 Toggle = RenderingSettings.d_DefaultMaterial
             });
 
@@ -193,13 +193,13 @@ namespace DeferredEngine.Logic
 
             sdfList.AddElement(new GUITextBlockToggle(defaultStyle, "Draw SDF")
             {
-                ToggleField = typeof(RenderingSettings.SDF).GetField("DrawDistance"),
+                ToggleField = typeof(RenderingSettings.SDF).GetField(nameof(RenderingSettings.SDF.DrawDistance)),
                 Toggle = RenderingSettings.SDF.DrawDistance
             });
 
             sdfList.AddElement(new GUITextBlockToggle(defaultStyle, "Draw SDF volume")
             {
-                ToggleField = typeof(RenderingSettings.SDF).GetField("DrawVolume"),
+                ToggleField = typeof(RenderingSettings.SDF).GetField(nameof(RenderingSettings.SDF.DrawVolume)),
                 Toggle = RenderingSettings.SDF.DrawVolume
             });
 
@@ -338,13 +338,13 @@ namespace DeferredEngine.Logic
 
             bloomList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Bloom")
             {
-                ToggleField = typeof(RenderingSettings.Bloom).GetField("Enabled"),
+                ToggleField = typeof(RenderingSettings.Bloom).GetField(nameof(RenderingSettings.Bloom.Enabled)),
                 Toggle = RenderingSettings.Bloom.Enabled
             });
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 1, 3, "Threshold: ")
             {
-                SliderProperty = typeof(RenderingSettings.Bloom).GetProperty("Threshold"),
+                SliderProperty = typeof(RenderingSettings.Bloom).GetProperty(nameof(RenderingSettings.Bloom.Threshold)),
                 SliderValue = RenderingSettings.Bloom.Threshold,
             });
 

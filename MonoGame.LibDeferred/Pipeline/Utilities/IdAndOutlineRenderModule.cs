@@ -10,33 +10,10 @@ using MonoGame.Ext;
 
 namespace DeferredEngine.Pipeline.Utilities
 {
+
     public partial class IdAndOutlineRenderModule : PipelineModule
     {
         public static bool e_DrawOutlines = true;
-
-        // ToDo: check if gizmo alignment matches ids and axis order
-        public const int ID_AXIS_X = 1;
-        public const int ID_AXIS_Y = 2;
-        public const int ID_AXIS_Z = 3;
-
-        private static readonly Vector3[] AxisAngles = new Vector3[] {
-            new Vector3(0, 0, 0),
-            new Vector3((float)-Math.PI / 2.0f, 0, 0),
-            new Vector3(0, (float)Math.PI / 2.0f, 0),
-            new Vector3((float)Math.PI, 0, 0),
-            new Vector3((float)Math.PI / 2.0f, 0, 0),
-            new Vector3(0, (float)-Math.PI / 2.0f, 0)
-        };
-        private static readonly Color[] AxisColors = new Color[] {
-            Color.Blue,
-            Color.Green,
-            Color.Red,
-        };
-        private static readonly Color[] AxisIdColors = new Color[] {
-            new Color(ID_AXIS_X, 0, 0),
-            new Color(ID_AXIS_Y, 0, 0),
-            new Color(ID_AXIS_Z, 0, 0),
-        };
 
         private readonly Vector4 HoveredColor = new Vector4(1, 1, 1, 0.1f);
         private readonly Vector4 SelectedColor = new Vector4(1, 1, 0, 0.1f);
@@ -50,34 +27,28 @@ namespace DeferredEngine.Pipeline.Utilities
 
         private Color[] _readbackIdColor = new Color[1];
 
-        private RenderTarget2D _renderTarget;
+        public RenderTarget2D Target { get; protected set; }
         private RenderContext _renderContext = new RenderContext() { Flags = RenderFlags.Outlined };
 
         public BillboardRenderModule BillboardRenderer;
         public int HoveredId;
 
         public IdAndOutlineRenderModule()
-            :base()
+            : base()
         { }
-
-        public RenderTarget2D GetRenderTarget2D()
-        {
-            return _renderTarget;
-        }
-
 
         public void SetUpRenderTarget(Vector2 resolution)
         {
-            if (_renderTarget != null)
-                _renderTarget.Dispose();
-            _renderTarget = RenderTarget2DDefinition.Aux_Id.CreateRenderTarget(_graphicsDevice, resolution);
+            if (Target != null)
+                Target.Dispose();
+            Target = RenderTarget2DDefinition.Aux_Id.CreateRenderTarget(_graphicsDevice, resolution);
         }
 
         public void Draw(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GizmoDrawContext drawContext, bool mouseMoved)
         {
             if (drawContext.GizmoTransformationMode)
             {
-                _graphicsDevice.SetRenderTarget(_renderTarget);
+                _graphicsDevice.SetRenderTarget(Target);
                 _graphicsDevice.Clear(Color.Black);
                 return;
             }
@@ -92,7 +63,7 @@ namespace DeferredEngine.Pipeline.Utilities
         private void DrawIds(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, PipelineMatrices matrices, GizmoDrawContext gizmoContext)
         {
 
-            _graphicsDevice.SetRenderTarget(_renderTarget);
+            _graphicsDevice.SetRenderTarget(Target);
             _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
 
             if (meshBatcher.CheckRequiresRedraw(RenderType.IdRender, false, false))
@@ -109,8 +80,8 @@ namespace DeferredEngine.Pipeline.Utilities
             Rectangle sourceRectangle = new Rectangle(Mouse.GetState().X, Mouse.GetState().Y, 1, 1);
             try
             {
-                if (sourceRectangle.X >= 0 && sourceRectangle.Y >= 0 && sourceRectangle.X < _renderTarget.Width - 2 && sourceRectangle.Y < _renderTarget.Height - 2)
-                    _renderTarget.GetData(0, sourceRectangle, _readbackIdColor, 0, 1);
+                if (sourceRectangle.X >= 0 && sourceRectangle.Y >= 0 && sourceRectangle.X < Target.Width - 2 && sourceRectangle.Y < Target.Height - 2)
+                    Target.GetData(0, sourceRectangle, _readbackIdColor, 0, 1);
             }
             catch
             {
@@ -124,9 +95,9 @@ namespace DeferredEngine.Pipeline.Utilities
         public void DrawTransformGizmos(GizmoDrawContext gizmoContext, Pass pass = Pass.Color)
         {
             if (pass == Pass.Color)
-                DrawTransformGizmo(this.Matrices.StaticViewProjection, gizmoContext, AxisColors);
+                DrawTransformGizmo(this.Matrices.StaticViewProjection, gizmoContext, IdAndOutlineRenderData.AxisColors);
             else
-                DrawTransformGizmo(this.Matrices.StaticViewProjection, gizmoContext, AxisIdColors);
+                DrawTransformGizmo(this.Matrices.StaticViewProjection, gizmoContext, IdAndOutlineRenderData.AxisIdColors);
         }
 
         private void DrawTransformGizmo(Matrix staticViewProjection, GizmoDrawContext gizmoContext, Color[] axisColors)
@@ -137,13 +108,13 @@ namespace DeferredEngine.Pipeline.Utilities
             GizmoModes gizmoMode = gizmoContext.GizmoMode;
             Matrix rotation = (RenderingSettings.e_LocalTransformation || gizmoContext.GizmoMode == GizmoModes.Scale) ? gizmoContext.SelectedObject.RotationMatrix : Matrix.Identity;
 
-            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, AxisAngles[0], this.HoveredId == ID_AXIS_X ? 1.5f : 1.0f, axisColors[0], staticViewProjection, gizmoMode);
-            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, AxisAngles[1], this.HoveredId == ID_AXIS_Y ? 1.5f : 1.0f, axisColors[1], staticViewProjection, gizmoMode);
-            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, AxisAngles[2], this.HoveredId == ID_AXIS_Z ? 1.5f : 1.0f, axisColors[2], staticViewProjection, gizmoMode);
+            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, IdAndOutlineRenderData.AxisAngles[0], this.HoveredId == IdAndOutlineRenderData.ID_AXIS_X ? 1.5f : 1.0f, axisColors[0], staticViewProjection, gizmoMode);
+            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, IdAndOutlineRenderData.AxisAngles[1], this.HoveredId == IdAndOutlineRenderData.ID_AXIS_Y ? 1.5f : 1.0f, axisColors[1], staticViewProjection, gizmoMode);
+            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, IdAndOutlineRenderData.AxisAngles[2], this.HoveredId == IdAndOutlineRenderData.ID_AXIS_Z ? 1.5f : 1.0f, axisColors[2], staticViewProjection, gizmoMode);
 
-            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, AxisAngles[3], this.HoveredId == ID_AXIS_X ? 1.5f : 1.0f, axisColors[0], staticViewProjection, gizmoMode);
-            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, AxisAngles[4], this.HoveredId == ID_AXIS_Y ? 1.5f : 1.0f, axisColors[1], staticViewProjection, gizmoMode);
-            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, AxisAngles[5], this.HoveredId == ID_AXIS_Z ? 1.5f : 1.0f, axisColors[2], staticViewProjection, gizmoMode);
+            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, IdAndOutlineRenderData.AxisAngles[3], this.HoveredId == IdAndOutlineRenderData.ID_AXIS_X ? 1.5f : 1.0f, axisColors[0], staticViewProjection, gizmoMode);
+            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, IdAndOutlineRenderData.AxisAngles[4], this.HoveredId == IdAndOutlineRenderData.ID_AXIS_Y ? 1.5f : 1.0f, axisColors[1], staticViewProjection, gizmoMode);
+            DrawTransformGizmoAxis(_graphicsDevice, position, rotation, IdAndOutlineRenderData.AxisAngles[5], this.HoveredId == IdAndOutlineRenderData.ID_AXIS_Z ? 1.5f : 1.0f, axisColors[2], staticViewProjection, gizmoMode);
 
         }
 
@@ -170,7 +141,7 @@ namespace DeferredEngine.Pipeline.Utilities
 
         private void DrawOutlines(DynamicMeshBatcher meshBatcher, PipelineMatrices matrices, GizmoDrawContext gizmoContext, int hoveredId, bool mouseMoved)
         {
-            _graphicsDevice.SetRenderTarget(_renderTarget);
+            _graphicsDevice.SetRenderTarget(Target);
 
             if (!mouseMoved)
                 _graphicsDevice.Clear(ClearOptions.Target, Color.Black, 0, 0);
@@ -209,7 +180,35 @@ namespace DeferredEngine.Pipeline.Utilities
 
         public override void Dispose()
         {
-            _renderTarget?.Dispose();
+            Target?.Dispose();
         }
     }
+  
+    public static class IdAndOutlineRenderData
+    {
+        public const int ID_AXIS_X = 1;
+        public const int ID_AXIS_Y = 2;
+        public const int ID_AXIS_Z = 3;
+
+        public static readonly Vector3[] AxisAngles = new Vector3[] {
+            new Vector3(0, 0, 0),
+            new Vector3((float)-Math.PI / 2.0f, 0, 0),
+            new Vector3(0, (float)Math.PI / 2.0f, 0),
+            new Vector3((float)Math.PI, 0, 0),
+            new Vector3((float)Math.PI / 2.0f, 0, 0),
+            new Vector3(0, (float)-Math.PI / 2.0f, 0)
+        };
+        public static readonly Color[] AxisColors = new Color[] {
+            Color.Blue,
+            Color.Green,
+            Color.Red,
+        };
+        public static readonly Color[] AxisIdColors = new Color[] {
+            new Color(ID_AXIS_X, 0, 0),
+            new Color(ID_AXIS_Y, 0, 0),
+            new Color(ID_AXIS_Z, 0, 0),
+        };
+
+    }
+
 }

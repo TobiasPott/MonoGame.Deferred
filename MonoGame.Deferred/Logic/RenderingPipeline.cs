@@ -286,7 +286,8 @@ namespace DeferredEngine.Rendering
 
             // Step: 18
             //Draw signed distance field functions
-            _moduleStack.DistanceField.Draw(camera);
+            _moduleStack.DistanceField.SetViewPosition(camera.Position);
+            _moduleStack.DistanceField.Draw();
 
             // Step: 19
             //Additional editor elements that overlay our screen
@@ -321,7 +322,7 @@ namespace DeferredEngine.Rendering
             if (RenderingSettings.e_IsEditorEnabled && RenderingSettings.e_EnableSelection)
             {
                 if (IdAndOutlineRenderModule.e_DrawOutlines)
-                    _graphicsDevice.Blit(_spriteBatch, _moduleStack.IdAndOutline.GetRenderTarget2D(), null, BlendState.Additive);
+                    _graphicsDevice.Blit(_spriteBatch, _moduleStack.IdAndOutline.Target, null, BlendState.Additive);
 
                 this.DrawEditorPasses(scene, gizmoContext, EditorPasses.Billboard | EditorPasses.IdAndOutline);
 
@@ -339,10 +340,10 @@ namespace DeferredEngine.Rendering
                 }
             }
 
-            if (RenderingSettings.SDF.DrawDebug && _moduleStack.DistanceField.GetAtlas() != null)
+            if (RenderingSettings.SDF.DrawDebug && _moduleStack.DistanceField.AtlasTarget != null)
             {
                 _spriteBatch.Begin(0, BlendState.Opaque, SamplerState.PointClamp);
-                _spriteBatch.Draw(_moduleStack.DistanceField.GetAtlas(), new Rectangle(0, RenderingSettings.Screen.g_Height - 200, RenderingSettings.Screen.g_Width, 200), Color.White);
+                _spriteBatch.Draw(_moduleStack.DistanceField.AtlasTarget, new Rectangle(0, RenderingSettings.Screen.g_Height - 200, RenderingSettings.Screen.g_Width, 200), Color.White);
                 _spriteBatch.End();
             }
 
