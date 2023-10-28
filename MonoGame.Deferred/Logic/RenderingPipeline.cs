@@ -12,8 +12,6 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using DirectionalLight = DeferredEngine.Pipeline.Lighting.DirectionalLight;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //    MAIN RENDER FUNCTIONS, TheKosmonaut 2016
@@ -51,7 +49,6 @@ namespace DeferredEngine.Rendering
         //Checkvariables to see which console variables have changed from the frame before
         //private float _g_FarClip;
         private int _supersampling = 1;
-        private bool _prevSSReflectionEnabled = true;
         private bool _g_SSReflectionNoise;
 
         //Render targets
@@ -84,7 +81,7 @@ namespace DeferredEngine.Rendering
             _matrices = new PipelineMatrices();
 
             _moduleStack = new PipelineModuleStack();
-            _moduleStack.DepthReconstruct.Matrices = _matrices;
+            _moduleStack.Matrices = _matrices;
             _profiler = new PipelineProfiler();
 
             _fxStack = new PipelineFxStack(content);
@@ -204,7 +201,7 @@ namespace DeferredEngine.Rendering
 
             // Step: 05
             //Draw our meshes to the G Buffer
-            _moduleStack.GBuffer.Draw(meshBatcher, _matrices);
+            _moduleStack.GBuffer.Draw(meshBatcher);
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_GBuffer);
 
@@ -217,7 +214,7 @@ namespace DeferredEngine.Rendering
                 _graphicsDevice.Blit(_spriteBatch, _gBufferTarget.Albedo, _auxTargets[PipelineTargets.DECAL], _supersampling);
                 _graphicsDevice.Blit(_spriteBatch, _auxTargets[PipelineTargets.DECAL], _gBufferTarget.Albedo, _supersampling);
 
-                _moduleStack.Decal.Draw(scene.Decals, _matrices);
+                _moduleStack.Decal.Draw(scene.Decals);
             }
 
             // Step: 07
@@ -246,7 +243,7 @@ namespace DeferredEngine.Rendering
             if (RenderingSettings.EnvironmentMapping.Enabled)
             {
                 _moduleStack.Environment.SetEnvironmentProbe(scene.EnvProbe);
-                _moduleStack.Environment.DrawEnvironmentMap(camera, _matrices.View);
+                _moduleStack.Environment.DrawEnvironmentMap(camera);
                 //Performance Profiler
                 _profiler.SampleTimestamp(ref PipelineSamples.SDraw_EnvironmentMap);
             }
