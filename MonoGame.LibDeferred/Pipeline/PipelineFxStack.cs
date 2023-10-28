@@ -29,7 +29,6 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         //GaussianBlurFx _gaussianBlur;
 
-        private float _superSampling = 1;
         private GraphicsDevice _graphicsDevice;
         private SpriteBatch _spriteBatch;
         private FullscreenTriangleBuffer _fullscreenTarget;
@@ -205,7 +204,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
             RenderingSettings.Screen.GetDestinationRectangle(source.GetAspect(), out Rectangle destRectangle);
             _graphicsDevice.SetRenderTarget(destRT);
-            _spriteBatch.Begin(0, blendState, _superSampling > 1 ? SamplerState.LinearWrap : SamplerState.PointClamp);
+            _spriteBatch.Begin(SpriteSortMode.Deferred, blendState, SamplerState.PointClamp);
             _spriteBatch.Draw(source, destRectangle, Color.White);
             _spriteBatch.End();
         }
