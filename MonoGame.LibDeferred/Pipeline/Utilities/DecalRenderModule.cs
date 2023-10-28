@@ -6,7 +6,7 @@ using MonoGame.Ext;
 
 namespace DeferredEngine.Pipeline.Utilities
 {
-    public class DecalRenderModule : IDisposable
+    public class DecalRenderModule : PipelineModule, IDisposable
     {
         //Deferred Decals
         public static bool g_EnableDecals = true;
@@ -20,13 +20,13 @@ namespace DeferredEngine.Pipeline.Utilities
         private IndexBuffer _indexBufferCage;
         private IndexBuffer _indexBufferCube;
 
-        private GraphicsDevice _graphicsDevice;
 
         public float FarClip { set { _effectSetup.Param_FarClip.SetValue(value); } }
         public Texture2D DepthMap { set { _effectSetup.Param_DepthMap.SetValue(value); } }
 
 
         public DecalRenderModule()
+            : base()
         { }
 
 
@@ -148,7 +148,7 @@ namespace DeferredEngine.Pipeline.Utilities
             _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.LineList, 0, 0, 12);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             _vertexBuffer?.Dispose();
             _indexBufferCage?.Dispose();
