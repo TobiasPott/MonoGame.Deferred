@@ -30,14 +30,6 @@ namespace DeferredEngine.Rendering
         public readonly IdAndOutlineRenderModule IdAndOutline;
 
 
-        public float FarClip
-        {
-            set
-            {
-                PointLight.FarClip = value;
-                Billboard.FarClip = value;
-            }
-        }
         public Vector3[] FrustumCornersWS
         {
             set

@@ -2,7 +2,6 @@
 using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Recources;
 using DeferredEngine.Recources.Helper;
-using DeferredEngine.Rendering;
 using DeferredEngine.Rendering.Helper.Editor;
 using DeferredEngine.Rendering.Helper.HelperGeometry;
 using Microsoft.Xna.Framework;
@@ -20,8 +19,6 @@ namespace DeferredEngine.Pipeline.Utilities
         private BillboardEffectSetup _effectSetup = new BillboardEffectSetup();
         private BillboardBuffer _billboardBuffer;
 
-        public float FarClip
-        { set { _effectSetup.Param_FarClip.SetValue(value); } }
         public Texture2D DepthMap { set { _effectSetup.Param_DepthMap.SetValue(value); } }
         public float AspectRatio
         { set { _effectSetup.Param_AspectRatio.SetValue(value); } }
@@ -40,6 +37,7 @@ namespace DeferredEngine.Pipeline.Utilities
             _graphicsDevice.Indices = (_billboardBuffer.IndexBuffer);
 
             _effectSetup.Param_Texture.SetValue(StaticAssets.Instance.IconLight);
+            _effectSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
             _effectSetup.Effect.CurrentTechnique = _effectSetup.Technique_Id;
 
             List<Decal> decals = scene.Decals;
@@ -88,6 +86,7 @@ namespace DeferredEngine.Pipeline.Utilities
 
             _effectSetup.Effect.CurrentTechnique = _effectSetup.Technique_Billboard;
             _effectSetup.Param_IdColor.SetValue(Color.Gray.ToVector3());
+            _effectSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
 
             // Decals
             List<Decal> decals = scene.Decals;

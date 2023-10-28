@@ -20,7 +20,6 @@ namespace DeferredEngine.Pipeline.Lighting
 
         public GameTime GameTime { set { _gameTime = value; } }
 
-        public float FarClip { set { _effectSetup.Param_FarClip.SetValue(value); } }
         public Vector2 Resolution { set { _effectSetup.Param_Resolution.SetValue(value); } }
 
 
@@ -99,6 +98,8 @@ namespace DeferredEngine.Pipeline.Lighting
             if (PointLightPipelineModule.g_VolumetricLights && _gameTime != null)
                 _effectSetup.Param_Time.SetValue((float)_gameTime.TotalGameTime.TotalSeconds % 1000);
             _effectSetup.Param_InverseView.SetValue(Matrices.InverseView);
+           
+            _effectSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
 
             int primitiveCount = meshpart.PrimitiveCount;
             int vertexOffset = meshpart.VertexOffset;

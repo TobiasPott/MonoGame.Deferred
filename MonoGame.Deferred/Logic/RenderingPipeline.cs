@@ -133,7 +133,6 @@ namespace DeferredEngine.Rendering
         private void FarClip_OnChanged(float farClip)
         {
             _frustum.FarClip = farClip;
-            _moduleStack.FarClip = farClip;
             _fxStack.FarClip = farClip;
         }
 
