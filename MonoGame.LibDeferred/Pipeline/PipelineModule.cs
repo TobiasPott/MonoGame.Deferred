@@ -1,5 +1,4 @@
 ﻿using DeferredEngine.Rendering;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.Runtime.CompilerServices;
 
@@ -10,6 +9,10 @@ namespace DeferredEngine.Pipeline
     {
         protected GraphicsDevice _graphicsDevice;
         protected SpriteBatch _spriteBatch;
+
+
+        public PipelineMatrices Matrices { get; set; }
+
 
         public PipelineModule()
         { }

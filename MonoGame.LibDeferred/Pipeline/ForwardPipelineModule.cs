@@ -3,9 +3,6 @@ using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Rendering;
 using DeferredEngine.Rendering.RenderModules.Default;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Ext;
 
 namespace DeferredEngine.Pipeline
 {

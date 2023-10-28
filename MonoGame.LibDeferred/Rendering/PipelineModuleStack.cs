@@ -58,6 +58,18 @@ namespace DeferredEngine.Rendering
                 DirectionalLight.FrustumCorners = value;
             }
         }
+        public PipelineMatrices Matrices
+        {
+            set
+            {
+                DepthReconstruct.Matrices = value;
+                GBuffer.Matrices = value;
+                Decal.Matrices = value;
+                Environment.Matrices = value;
+                Forward.Matrices = value;
+            }
+        }
+
 
 
 

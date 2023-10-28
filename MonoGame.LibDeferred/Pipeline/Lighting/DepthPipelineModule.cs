@@ -1,6 +1,5 @@
 ﻿using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 
@@ -11,7 +10,6 @@ namespace DeferredEngine.Pipeline.Lighting
 
         private FullscreenTriangleBuffer _fullscreenTarget;
 
-        public PipelineMatrices Matrices { get; set; }
         private ReconstructDepthFxSetup _effectSetup = new ReconstructDepthFxSetup();
 
 
