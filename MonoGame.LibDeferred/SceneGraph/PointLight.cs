@@ -21,7 +21,6 @@ namespace DeferredEngine.Pipeline.Lighting
         public bool HasChanged = true;
 
         public readonly int ShadowResolution;
-        public readonly bool StaticShadows;
         public RenderTarget2D ShadowMap;
 
         public BoundingSphere BoundingSphere;
@@ -44,7 +43,7 @@ namespace DeferredEngine.Pipeline.Lighting
         /// <summary>
         /// A point light is a light that shines in all directions
         /// </summary>
-        public PointLight(Vector3 position, float radius, Color color, float intensity, bool castShadows, bool isVolumetric, int shadowResolution, int softShadowBlurAmount, bool staticShadow, float volumeDensity = 1, bool isEnabled = true)
+        public PointLight(Vector3 position, float radius, Color color, float intensity, bool castShadows, bool isVolumetric, int shadowResolution, int softShadowBlurAmount, float volumeDensity = 1, bool isEnabled = true)
             : base()
         {
             BoundingSphere = new BoundingSphere(position, radius);
@@ -57,7 +56,6 @@ namespace DeferredEngine.Pipeline.Lighting
             SoftShadowBlurAmount = softShadowBlurAmount;
 
             ShadowResolution = shadowResolution;
-            StaticShadows = staticShadow;
             LightVolumeDensity = volumeDensity;
             IsEnabled = isEnabled;
 

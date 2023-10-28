@@ -140,7 +140,6 @@ namespace DeferredEngine.Logic
                         intensity: 20,
                         castShadows: false,
                         shadowResolution: 1024,
-                        staticShadow: false,
                         isVolumetric: true);
 
             AddPointLight(position: new Vector3(15, 0, 107),
@@ -149,7 +148,6 @@ namespace DeferredEngine.Logic
                         intensity: 30,
                         castShadows: false,
                         shadowResolution: 1024,
-                        staticShadow: false,
                         isVolumetric: true);
 
             AddPointLight(position: new Vector3(66, 0, 40),
@@ -159,7 +157,6 @@ namespace DeferredEngine.Logic
                         castShadows: true,
                         shadowResolution: 1024,
                         softShadowBlurAmount: 0,
-                        staticShadow: false,
                         isVolumetric: false);
 
             AddDirectionalLight(direction: new Vector3(0.2f, 0.2f, -1),
@@ -263,9 +260,9 @@ namespace DeferredEngine.Logic
         /// <param name="shadowResolution">shadow map resolution per face. Optional</param>
         /// <param name="staticShadow">if set to true the shadows will not update at all. Dynamic shadows in contrast update only when needed.</param>
         /// <returns></returns>
-        private PointLight AddPointLight(Vector3 position, float radius, Color color, float intensity, bool castShadows, bool isVolumetric = false, float volumetricDensity = 1, int shadowResolution = 256, int softShadowBlurAmount = 0, bool staticShadow = false)
+        private PointLight AddPointLight(Vector3 position, float radius, Color color, float intensity, bool castShadows, bool isVolumetric = false, float volumetricDensity = 1, int shadowResolution = 256, int softShadowBlurAmount = 0)
         {
-            PointLight light = new PointLight(position, radius, color, intensity, castShadows, isVolumetric, shadowResolution, softShadowBlurAmount, staticShadow, volumetricDensity);
+            PointLight light = new PointLight(position, radius, color, intensity, castShadows, isVolumetric, shadowResolution, softShadowBlurAmount, volumetricDensity);
             PointLights.Add(light);
             return light;
         }

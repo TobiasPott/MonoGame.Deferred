@@ -79,6 +79,7 @@ namespace DeferredEngine.Rendering
 
             _moduleStack = new PipelineModuleStack();
             _moduleStack.Matrices = _matrices;
+            _moduleStack.Frustum = _frustum;
             _profiler = new PipelineProfiler();
 
             _fxStack = new PipelineFxStack(content);
@@ -105,7 +106,6 @@ namespace DeferredEngine.Rendering
             _moduleStack.SetGBufferParams(_gBufferTarget);
             _moduleStack.LightingBufferTarget = _lightingBufferTarget;
             _moduleStack.SSFxTargets = _ssfxTargets;
-            _moduleStack.Frustum = _frustum;
 
             _fxStack.Initialize(graphicsDevice, _spriteBatch);
             _fxStack.SetGBufferParams(_gBufferTarget);

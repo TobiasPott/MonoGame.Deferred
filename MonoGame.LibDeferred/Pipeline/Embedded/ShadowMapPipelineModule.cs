@@ -62,7 +62,7 @@ namespace DeferredEngine.Pipeline
                     RenderingStats.shadowMaps += 6;
 
                     //Update if we didn't initialize yet or if we are dynamic
-                    if (!light.StaticShadows || light.ShadowMap == null)
+                    if (light.ShadowMap == null)
                     {
                         CreateShadowCubeMap(light, light.ShadowResolution, meshBatcher);
 
@@ -99,10 +99,11 @@ namespace DeferredEngine.Pipeline
             //For VSM we need 2 channels, -> Vector2
             //todo: check if we need preserve contents
             if (light.ShadowMap == null)
+                // ToDo: Create Rendertarget definition for shadow map 'cube' (most likely also for directional lights)
                 light.ShadowMap = new RenderTarget2D(_graphicsDevice, size, size * 6, false, SurfaceFormat.HalfSingle, DepthFormat.Depth24, 0, RenderTargetUsage.PreserveContents);
 
             Matrix lightViewProjection = Matrix.Identity;
-            CubeMapFace cubeMapFace; // = CubeMapFace.NegativeX;
+            CubeMapFace cubeMapFace;
 
             if (light.HasChanged)
             {
