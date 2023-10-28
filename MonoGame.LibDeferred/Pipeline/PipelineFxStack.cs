@@ -62,9 +62,9 @@ namespace DeferredEngine.Rendering.PostProcessing
         {
             set
             {
-                SSAmbientOcclusion.FrustumCorners = value;
-                TemporaAA.FrustumCorners = value;
-                SSReflection.FrustumCorners = value;
+                SSAmbientOcclusion.FrustumCornersVS = value;
+                TemporaAA.FrustumCornersVS = value;
+                SSReflection.FrustumCornersVS = value;
             }
         }
 
@@ -85,14 +85,13 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         public PipelineFxStack(ContentManager content)
         {
-            Bloom = new BloomFx(content);
+            Bloom = new BloomFx();
             TemporaAA = new TemporalAAFx();
-            ColorGrading = new ColorGradingFx(content);
-            PostProcessing = new PostProcessingFx(content);
-            SSReflection = new SSReflectionFx(content);
-            SSAmbientOcclusion = new SSAmbientOcclustionFx(content);
-            //_gaussianBlur = new GaussianBlurFx();
-
+            ColorGrading = new ColorGradingFx();
+            ColorGrading.LookUpTable = content.Load<Texture2D>("Shaders/PostProcessing/lut");
+            PostProcessing = new PostProcessingFx();
+            SSReflection = new SSReflectionFx();
+            SSAmbientOcclusion = new SSAmbientOcclustionFx();
         }
         public void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         {
@@ -100,11 +99,11 @@ namespace DeferredEngine.Rendering.PostProcessing
             _spriteBatch = spriteBatch;
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
 
-            Bloom.Initialize(graphicsDevice, RenderingSettings.Screen.g_Resolution);
-            TemporaAA.Initialize(graphicsDevice, _fullscreenTarget);
-            ColorGrading.Initialize(graphicsDevice, _fullscreenTarget);
-            PostProcessing.Initialize(graphicsDevice, _fullscreenTarget);
-            SSReflection.Initialize(graphicsDevice, _fullscreenTarget);
+            Bloom.Initialize(graphicsDevice, spriteBatch, _fullscreenTarget);
+            TemporaAA.Initialize(graphicsDevice, spriteBatch, _fullscreenTarget);
+            ColorGrading.Initialize(graphicsDevice, spriteBatch, _fullscreenTarget);
+            PostProcessing.Initialize(graphicsDevice, spriteBatch, _fullscreenTarget);
+            SSReflection.Initialize(graphicsDevice, spriteBatch, _fullscreenTarget);
             SSAmbientOcclusion.Initialize(graphicsDevice, spriteBatch, _fullscreenTarget);
         }
 
@@ -164,7 +163,6 @@ namespace DeferredEngine.Rendering.PostProcessing
         {
             if (!this.TemporaAA.Enabled)
                 return sourceRT;
-
             this.TemporaAA.Draw(sourceRT, previousRT, destRT);
 
             return TemporalAAFx.g_UseTonemapping ? sourceRT : destRT;

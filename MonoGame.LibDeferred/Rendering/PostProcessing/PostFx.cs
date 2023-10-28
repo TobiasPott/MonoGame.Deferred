@@ -14,12 +14,14 @@ namespace DeferredEngine.Rendering.PostProcessing
 
 
         protected GraphicsDevice _graphicsDevice;
+        protected SpriteBatch _spriteBatch;
         protected FullscreenTriangleBuffer _fullscreenTarget;
 
 
-        public virtual void Initialize(GraphicsDevice graphicsDevice, FullscreenTriangleBuffer fullscreenTarget)
+        public virtual void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, FullscreenTriangleBuffer fullscreenTarget)
         {
             _graphicsDevice = graphicsDevice;
+            _spriteBatch = spriteBatch;
             _fullscreenTarget = fullscreenTarget;
         }
         protected void Draw(EffectPass pass)

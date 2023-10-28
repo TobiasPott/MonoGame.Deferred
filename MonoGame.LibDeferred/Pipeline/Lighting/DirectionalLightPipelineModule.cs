@@ -12,8 +12,6 @@ namespace DeferredEngine.Pipeline.Lighting
 
         private DirectionalLightFxSetup _effectSetup = new DirectionalLightFxSetup();
 
-        public Vector3[] FrustumCornersVS { set { _effectSetup.Param_FrustumCorners.SetValue(value); } }
-
         public DirectionalLightPipelineModule()
             : base()
         {
@@ -29,12 +27,6 @@ namespace DeferredEngine.Pipeline.Lighting
             _effectSetup.Param_NormalMap.SetValue(gBufferTarget.Normal);
             _effectSetup.Param_DepthMap.SetValue(gBufferTarget.Depth);
         }
-        protected void SetCameraAndMatrices(Vector3 cameraPosition)
-        {
-            _effectSetup.Param_ViewProjection.SetValue(this.Matrices.ViewProjection);
-            _effectSetup.Param_InverseViewProjection.SetValue(this.Matrices.InverseViewProjection);
-            _effectSetup.Param_CameraPosition.SetValue(cameraPosition);
-        }
 
 
         /// <summary>
@@ -46,9 +38,14 @@ namespace DeferredEngine.Pipeline.Lighting
                 return;
             _graphicsDevice.SetStates(DepthStencilStateOption.None, RasterizerStateOption.CullCounterClockwise);
 
+            _effectSetup.Param_FrustumCorners.SetValue(this.Frustum.ViewSpaceFrustum);
             //If nothing has changed we don't need to update
             if (viewProjectionHasChanged)
-                this.SetCameraAndMatrices(cameraPosition);
+            {
+                _effectSetup.Param_ViewProjection.SetValue(this.Matrices.ViewProjection);
+                _effectSetup.Param_InverseViewProjection.SetValue(this.Matrices.InverseViewProjection);
+                _effectSetup.Param_CameraPosition.SetValue(cameraPosition);
+            }
 
             for (int index = 0; index < dirLights.Count; index++)
             {

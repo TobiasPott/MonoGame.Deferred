@@ -18,9 +18,9 @@ namespace DeferredEngine.Rendering.PostProcessing
         private RenderTarget2D _rt20482;
 
 
-        public override void Initialize(GraphicsDevice graphicsDevice, FullscreenTriangleBuffer fullScreenTarget)
+        public override void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, FullscreenTriangleBuffer fullScreenTarget)
         {
-            base.Initialize(graphicsDevice, fullScreenTarget);
+            base.Initialize(graphicsDevice, spriteBatch, fullScreenTarget);
 
             _rt2562 = new RenderTarget2D(graphicsDevice, 256, 256, false, SurfaceFormat.Vector2, DepthFormat.None);
             _rt5122 = new RenderTarget2D(graphicsDevice, 512, 512, false, SurfaceFormat.Vector2, DepthFormat.None);

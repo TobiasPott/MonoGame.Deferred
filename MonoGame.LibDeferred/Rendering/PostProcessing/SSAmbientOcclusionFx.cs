@@ -1,7 +1,6 @@
 ﻿using DeferredEngine.Pipeline;
 using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 
@@ -33,7 +32,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         public Vector2 AspectRatios
         { set { _fxSetup.Param_AspectRatio.SetValue(value); } }
         public Vector2 InverseResolution { set { _fxSetup.Param_InverseResolution.SetValue(value); } }
-        public Vector3[] FrustumCorners { set { _fxSetup.Param_FrustumCorners.SetValue(value); } }
+        public Vector3[] FrustumCornersVS { set { _fxSetup.Param_FrustumCorners.SetValue(value); } }
 
         public RenderTarget2D DepthMap { set { _fxSetup.Param_DepthMap.SetValue(value); } }
         public RenderTarget2D NormalMap { set { _fxSetup.Param_NormalMap.SetValue(value); } }
@@ -48,22 +47,7 @@ namespace DeferredEngine.Rendering.PostProcessing
                 _fxSetup.Param_SSAOMap.SetValue(value?.AO_Main);
             }
         }
-        private SpriteBatch _spriteBatch;
 
-        /// <summary>
-        /// A filter that allows color grading by using Look up tables
-        /// </summary>
-        public SSAmbientOcclustionFx(ContentManager content)
-        {
-        }
-
-        public virtual void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, FullscreenTriangleBuffer fullscreenTarget)
-        {
-            _graphicsDevice = graphicsDevice;
-            _spriteBatch = spriteBatch;
-            _fullscreenTarget = fullscreenTarget;
-
-        }
 
         /// <summary>
         /// returns a modified image with color grading applied.

@@ -89,7 +89,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
 
 
-        public BloomFx(ContentManager content)
+        public BloomFx()
         {
             //An interesting blendstate for merging the initial image with the bloom.
             //BlendStateBloom = new BlendState();
@@ -110,16 +110,16 @@ namespace DeferredEngine.Rendering.PostProcessing
         {
             Threshold = threshold;
         }
-
-        //Initialize graphicsDevice
-        public void Initialize(GraphicsDevice graphicsDevice, Vector2 resolution)
+        public override void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, FullscreenTriangleBuffer fullscreenTarget)
         {
-            _resolution = resolution;
+            base.Initialize(graphicsDevice, spriteBatch, fullscreenTarget);
+
+            _resolution = RenderingSettings.Screen.g_Resolution;
 
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
             _graphicsDevice = graphicsDevice;
 
-            _mipMaps = new DynamicMultiRenderTarget(_graphicsDevice, (int)resolution.X, (int)resolution.Y, BloomFxPresetsData.Mip_Definitions);
+            _mipMaps = new DynamicMultiRenderTarget(_graphicsDevice, (int)_resolution.X, (int)_resolution.Y, BloomFxPresetsData.Mip_Definitions);
         }
 
         /// <summary>

@@ -37,7 +37,6 @@ namespace DeferredEngine.Rendering.SDF
         private int _signedDistanceFieldDefinitionsCount = 0;
 
 
-        public Vector3[] FrustumCornersWS { set { _effectSetup.Param_FrustumCorners.SetValue(value); } }
         public Vector3 ViewPosition { set { _effectSetup.Param_CameraPositon.SetValue(value); } }
         public Texture2D DepthMap { set { _effectSetup.Param_DepthMap.SetValue(value); } }
         public Vector3 MeshOffset { set { _effectSetup.Param_MeshOffset.SetValue(value); } }
@@ -71,6 +70,8 @@ namespace DeferredEngine.Rendering.SDF
         {
             if (!RenderingSettings.SDF.DrawDistance)
                 return;
+
+            _effectSetup.Param_FrustumCorners.SetValue(this.Frustum.WorldSpaceFrustum);
 
             if (RenderingSettings.SDF.DrawVolume)
                 _effectSetup.Pass_Volume.Apply();

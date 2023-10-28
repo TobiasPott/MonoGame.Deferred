@@ -200,7 +200,7 @@ namespace DeferredEngine.Logic
                 _renderModeCycle++;
                 if (_renderModeCycle > Enum.GetNames(typeof(PipelinePasses)).Length - 1) _renderModeCycle = 0;
 
-                RenderingSettings.g_RenderMode = (PipelinePasses)_renderModeCycle;
+                RenderingSettings.g_CurrentPass = (PipelinePasses)_renderModeCycle;
             }
         }
 

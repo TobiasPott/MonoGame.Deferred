@@ -170,7 +170,7 @@ namespace DeferredEngine.Rendering
             {
                 UpdateViewProjection(camera);
                 //We need to update whether or not entities are in our boundingFrustum and then cull them or not!
-                meshBatcher.FrustumCulling(_frustum.Frustum, camera.HasChanged, camera.Position);
+                meshBatcher.FrustumCulling(_frustum.Frustum, camera.HasChanged);
                 // Compute the frustum corners for cheap view direction computation in shaders
                 UpdateFrustumCorners(camera);
             }
@@ -191,20 +191,20 @@ namespace DeferredEngine.Rendering
         /// </summary>
         public void Draw(Camera camera, DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GizmoDrawContext gizmoContext)
         {
-            // Step: 02
+            // Step: 01
             //Render ShadowMaps
             _moduleStack.ShadowMap.Draw(meshBatcher, scene);
             //Performance Profile
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_Shadows);
 
-            // Step: 05
+            // Step: 02
             //Draw our meshes to the G Buffer
             _moduleStack.GBuffer.Draw(meshBatcher);
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_GBuffer);
 
 
-            // Step: 06
+            // Step: 03
             //Deferred Decals
             if (DecalRenderModule.g_EnableDecals)
             {
@@ -215,7 +215,7 @@ namespace DeferredEngine.Rendering
             }
 
             // STAGE: PreLighting-SSFx
-            // Step: 07
+            // Step: 04
             //Draw Screen Space reflections to a different render target
             RenderTarget2D ssrTargetMap = _ssfxTargets.GetSSReflectionRenderTargets(_fxStack.TemporaAA.Enabled, _fxStack.TemporaAA.IsOffFrame);
             _fxStack.SSReflection.TargetMap = ssrTargetMap ?? _auxTargets[PipelineTargets.COMPOSE];
@@ -224,7 +224,7 @@ namespace DeferredEngine.Rendering
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_SSFx_SSR);
 
             // STAGE: PreLighting-SSFx
-            // Step: 08
+            // Step: 05
             //SSAO
             _fxStack.SSAmbientOcclusion.SetViewPosition(camera.Position);
             _fxStack.Draw(PipelineFxStage.SSAmbientOcclusion, null, null, _ssfxTargets.AO_Main);
@@ -232,14 +232,14 @@ namespace DeferredEngine.Rendering
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_SSFx_SSAO);
 
             // STAGE: Lighting
-            // Step: 10
+            // Step: 06
             //Light the scene
             //// ToDo: PRIO I: Extract camera.HasChanged and Position and move to reference inside the module
             _moduleStack.Lighting.Draw(scene, camera.Position, camera.HasChanged);
 
             // ToDo: PRIO II: Is Environment module actually part of lighting? (unsure ahout the sky part though)
             //              I mmight need to split it into Environment and Sky
-            // Step: 11
+            // Step: 07
             //Draw the environment cube map as a fullscreen effect on all meshes
             if (RenderingSettings.Environment.Enabled)
             {
@@ -251,7 +251,7 @@ namespace DeferredEngine.Rendering
             }
 
 
-            // Step: 12
+            // Step: 08
             //Compose the scene by combining our lighting data with the gbuffer data
             // ToDo: PRIO III: @tpott: hacky way to disable ssao when disabled on global scale (GUI is insufficient here)
             //      Add NotifiedProperty with wrapper property for UI
@@ -260,7 +260,7 @@ namespace DeferredEngine.Rendering
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_Compose);
 
-            // Step: 13
+            // Step: 09
             //Forward
             if (ForwardPipelineModule.g_EnableForward)
             {
@@ -270,7 +270,7 @@ namespace DeferredEngine.Rendering
                 _moduleStack.Forward.Draw(meshBatcher);
             }
 
-            // Step: 14
+            // Step: 10
             //Compose the image and add information from previous frames to apply temporal super sampling
             _ssfxTargets.GetTemporalAARenderTargets(_fxStack.TemporaAA.IsOffFrame, out RenderTarget2D taaDestRT, out RenderTarget2D taaPreviousRT);
             _currentOutput = _fxStack.Draw(PipelineFxStage.TemporalAA, _auxTargets[PipelineTargets.COMPOSE], taaPreviousRT, taaDestRT);
@@ -278,25 +278,25 @@ namespace DeferredEngine.Rendering
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_CombineTAA);
 
 
-            // Step: 15
+            // Step: 11
             //Do Bloom
             _currentOutput = _fxStack.Draw(PipelineFxStage.Bloom, _currentOutput, null, _ssfxTargets.Bloom_Main);
 
-            // Step: 16
+            // Step: 12
             //Draw the elements that we are hovering over with outlines
             if (RenderingSettings.e_IsEditorEnabled && RenderingSettings.e_EnableSelection)
                 _moduleStack.IdAndOutline.Draw(meshBatcher, scene, gizmoContext, EditorLogic.Instance.HasMouseMoved);
 
-            // Step: 17
+            // Step: 13
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
-            DrawRenderMode(_currentOutput, null, _auxTargets[PipelineTargets.OUTPUT]);
+            DrawPipelinePass(RenderingSettings.g_CurrentPass, _currentOutput, null, _auxTargets[PipelineTargets.OUTPUT]);
 
-            // Step: 18
+            // Step: 14
             //Draw signed distance field functions
             _moduleStack.DistanceField.SetViewPosition(camera.Position);
             _moduleStack.DistanceField.Draw();
 
-            // Step: 19
+            // Step: 15
             //Additional editor elements that overlay our screen
             DrawEditorOverlays(gizmoContext, scene);
 
@@ -420,11 +420,7 @@ namespace DeferredEngine.Rendering
         private void UpdateFrustumCorners(Camera camera)
         {
             _frustum.UpdateVertices(_matrices.View, camera.Position);
-
-            //World Space Corners
-            _moduleStack.FrustumCornersWS = _frustum.WorldSpaceFrustum;
             //View Space Corners
-            _moduleStack.FrustumCornersVS = _frustum.ViewSpaceFrustum;
             _fxStack.FrustumCorners = _frustum.ViewSpaceFrustum;
         }
 
@@ -448,9 +444,9 @@ namespace DeferredEngine.Rendering
         /// <summary>
         /// Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
         /// </summary>
-        private void DrawRenderMode(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
+        private void DrawPipelinePass(PipelinePasses pass, RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
         {
-            switch (RenderingSettings.g_RenderMode)
+            switch (pass)
             {
                 case PipelinePasses.Albedo:
                     BlitTo(_gBufferTarget.Albedo);

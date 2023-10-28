@@ -334,7 +334,7 @@ namespace DeferredEngine.Logic
                 _mngStringBuilder.Append(sb_multipliedBy);
                 _mngStringBuilder.Append(RenderingSettings.Screen.g_Height);
                 _mngStringBuilder.Append(sb_emptySpace);
-                _mngStringBuilder.Append(RenderModesToString(RenderingSettings.g_RenderMode));
+                _mngStringBuilder.Append(RenderModesToString(RenderingSettings.g_CurrentPass));
                 _mngStringBuilder.Append(sb_memoryGc);
                 _mngStringBuilder.Append(totalmemory / 1024);
                 _mngStringBuilder.Append(sb_dotdotdot);

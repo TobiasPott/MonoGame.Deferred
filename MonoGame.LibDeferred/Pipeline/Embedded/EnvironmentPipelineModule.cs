@@ -16,10 +16,7 @@ namespace DeferredEngine.Pipeline
 
         public Texture2D SSRMap
         { set { _effectSetup.Param_SSRMap.SetValue(value); } }
-        public Vector3[] FrustumCornersWS
-        { set { _effectSetup.Param_FrustumCorners.SetValue(value); } }
-        //public Vector3 CameraPositionWS
-        //{ set { _effectSetup.Param_CameraPositionWS.SetValue(value); } }
+        
         public Vector2 Resolution
         { set { _effectSetup.Param_Resolution.SetValue(value); } }
         public float Time
@@ -103,6 +100,7 @@ namespace DeferredEngine.Pipeline
         public void Draw() => DrawEnvironmentMap();
         private void DrawEnvironmentMap()
         {
+            _effectSetup.Param_FrustumCorners.SetValue(this.Frustum.WorldSpaceFrustum);
             _effectSetup.Param_TransposeView.SetValue(Matrix.Transpose(this.Matrices.View));
             _effectSetup.Pass_Basic.Apply();
 
@@ -111,9 +109,11 @@ namespace DeferredEngine.Pipeline
         }
         public void DrawSky()
         {
-            _graphicsDevice.SetStates(DepthStencilStateOption.None, RasterizerStateOption.CullCounterClockwise);
-
+            _effectSetup.Param_FrustumCorners.SetValue(this.Frustum.WorldSpaceFrustum);
+            _effectSetup.Param_TransposeView.SetValue(Matrix.Transpose(this.Matrices.View));
             _effectSetup.Pass_Sky.Apply();
+
+            _graphicsDevice.SetStates(DepthStencilStateOption.None, RasterizerStateOption.CullCounterClockwise);
             _fullscreenTarget.Draw(_graphicsDevice);
         }
 

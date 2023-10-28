@@ -30,21 +30,7 @@ namespace DeferredEngine.Rendering
         public readonly IdAndOutlineRenderModule IdAndOutline;
 
 
-        public Vector3[] FrustumCornersWS
-        {
-            set
-            {
-                DistanceField.FrustumCornersWS = value;
-                Environment.FrustumCornersWS = value;
-            }
-        }
-        public Vector3[] FrustumCornersVS
-        {
-            set
-            {
-                DirectionalLight.FrustumCornersVS = value;
-            }
-        }
+        
         public PipelineMatrices Matrices
         { set { foreach (PipelineModule module in _modules) module.Matrices = value; } }
         public BoundingFrustumWithVertices Frustum

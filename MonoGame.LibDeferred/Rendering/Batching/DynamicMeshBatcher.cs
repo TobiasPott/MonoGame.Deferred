@@ -160,7 +160,7 @@ namespace DeferredEngine.Rendering
         /// <summary>
         /// Update whether or not Objects are in the viewFrustumEx and need to be rendered or not.
         /// </summary>
-        public bool FrustumCulling(BoundingFrustum boundingFrustrum, bool hasCameraChanged, Vector3 cameraPosition)
+        public bool FrustumCulling(BoundingFrustum boundingFrustrum, bool hasCameraChanged)
         {
             //Check if the culling mode has changed
             if (_cpuCulling != RenderingSettings.g_CpuCulling)

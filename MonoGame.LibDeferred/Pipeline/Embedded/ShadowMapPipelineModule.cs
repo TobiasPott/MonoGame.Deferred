@@ -124,7 +124,7 @@ namespace DeferredEngine.Pipeline
                     if (_boundingFrustumShadow != null) _boundingFrustumShadow.Matrix = lightViewProjection;
                     else _boundingFrustumShadow = new BoundingFrustum(lightViewProjection);
 
-                    meshBatcher.FrustumCulling(_boundingFrustumShadow, true, light.Position);
+                    meshBatcher.FrustumCulling(_boundingFrustumShadow, true);
 
                     // Rendering!
                     _effectSetup.Param_FarClip.SetValue(light.Radius);
@@ -158,7 +158,7 @@ namespace DeferredEngine.Pipeline
                     if (_boundingFrustumShadow != null) _boundingFrustumShadow.Matrix = lightViewProjection;
                     else _boundingFrustumShadow = new BoundingFrustum(lightViewProjection);
 
-                    bool hasAnyObjectMoved = meshBatcher.FrustumCulling(_boundingFrustumShadow, false, light.Position);
+                    bool hasAnyObjectMoved = meshBatcher.FrustumCulling(_boundingFrustumShadow, false);
 
                     if (!hasAnyObjectMoved) continue;
 
@@ -207,7 +207,7 @@ namespace DeferredEngine.Pipeline
                 _graphicsDevice.SetRenderTarget(light.ShadowMap);
                 _graphicsDevice.Clear(ClearOptions.DepthBuffer, Color.White, 1, 0);
 
-                meshBatcher.FrustumCulling(_boundingFrustumShadow, true, light.Position);
+                meshBatcher.FrustumCulling(_boundingFrustumShadow, true);
 
                 // Rendering!
                 _effectSetup.Param_FarClip.SetValue(light.ShadowFarClip);
@@ -221,11 +221,11 @@ namespace DeferredEngine.Pipeline
             {
                 _boundingFrustumShadow = new BoundingFrustum(light.Matrices.ViewProjection);
 
-                bool hasAnyObjectMoved = meshBatcher.FrustumCulling(boundingFrustrum: _boundingFrustumShadow, hasCameraChanged: false, cameraPosition: light.Position);
+                bool hasAnyObjectMoved = meshBatcher.FrustumCulling(_boundingFrustumShadow, false);
 
                 if (!hasAnyObjectMoved) return;
 
-                meshBatcher.FrustumCulling(boundingFrustrum: _boundingFrustumShadow, hasCameraChanged: true, cameraPosition: light.Position);
+                meshBatcher.FrustumCulling(_boundingFrustumShadow, true);
 
                 _graphicsDevice.SetRenderTarget(light.ShadowMap);
                 _graphicsDevice.Clear(ClearOptions.DepthBuffer, Color.White, 1, 0);

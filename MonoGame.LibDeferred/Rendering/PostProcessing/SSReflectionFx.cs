@@ -1,7 +1,6 @@
 ﻿using DeferredEngine.Pipeline;
 using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 
@@ -37,7 +36,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         public float Time { set { _fxSetup.Param_Time.SetValue(value); } }
         public float FarClip { set { _fxSetup.Param_FarClip.SetValue(value); } }
 
-        public Vector3[] FrustumCorners { set { _fxSetup.Param_FrustumCorners.SetValue(value); } }
+        public Vector3[] FrustumCornersVS { set { _fxSetup.Param_FrustumCorners.SetValue(value); } }
         public Vector2 Resolution { set { _fxSetup.Param_Resolution.SetValue(value); } }
 
         public RenderTarget2D DepthMap { set { _fxSetup.Param_DepthMap.SetValue(value); } }
@@ -49,7 +48,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         /// <summary>
         /// A filter that allows color grading by using Look up tables
         /// </summary>
-        public SSReflectionFx(ContentManager content)
+        public SSReflectionFx()
         {
             g_Noise.Changed += Global_Noise_Changed;
         }

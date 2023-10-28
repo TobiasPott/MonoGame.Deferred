@@ -24,7 +24,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         public bool IsOffFrame { get; protected set; } = true;
         public int JitterMode = 2;
 
-        public Vector3[] FrustumCorners { set { _fxSetup.Param_FrustumCorners.SetValue(value); } }
+        public Vector3[] FrustumCornersVS { set { _fxSetup.Param_FrustumCorners.SetValue(value); } }
         public Vector2 Resolution { set { _fxSetup.Param_Resolution.SetValue(value); } }
         public RenderTarget2D DepthMap { set { _fxSetup.Param_DepthMap.SetValue(value); } }
 
@@ -36,8 +36,6 @@ namespace DeferredEngine.Rendering.PostProcessing
         public HaltonSequence HaltonSequence => _haltonSequence;
 
 
-        public TemporalAAFx()
-        { }
 
         protected override bool GetEnabled() => _enabled && TemporalAAFx.g_Enabled;
         public void SwapOffFrame()
@@ -59,6 +57,7 @@ namespace DeferredEngine.Rendering.PostProcessing
                 _graphicsDevice.SetRenderTarget(sourceRT);
                 _fxSetup.Param_UpdateMap.SetValue(destRT);
                 this.Draw(_fxSetup.Pass_TonemapInverse);
+                return sourceRT;
             }
 
             return destRT;

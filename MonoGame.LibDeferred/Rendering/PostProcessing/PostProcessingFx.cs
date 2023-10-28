@@ -1,5 +1,4 @@
 ﻿using DeferredEngine.Recources;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 
@@ -20,14 +19,6 @@ namespace DeferredEngine.Rendering.PostProcessing
         private float _sCurveStrength = 0.05f;
         private float _whitePoint = 1.1f;
         private float _exposure = 0.75f;
-
-
-        /// <summary>
-        /// A filter that allows color grading by using Look up tables
-        /// </summary>
-        public PostProcessingFx(ContentManager content)
-        {
-        }
 
         /// <summary>
         /// returns a modified image with color grading applied.

@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
-using SharpDX.Direct3D9;
 
 namespace DeferredEngine.Rendering.PostProcessing
 {
@@ -41,19 +40,6 @@ namespace DeferredEngine.Rendering.PostProcessing
 
             }
         }
-
-
-
-
-        /// <summary>
-        /// A filter that allows color grading by using Look up tables
-        /// </summary>
-        public ColorGradingFx(ContentManager content, string shaderPath = "Shaders/PostProcessing/ColorGrading")
-        {
-            _lookupTable = content.Load<Texture2D>("Shaders/PostProcessing/lut");
-            _fxSetup.Param_LUT.SetValue(_lookupTable);
-        }
-
 
         /// <summary>
         /// returns a modified image with color grading applied.
