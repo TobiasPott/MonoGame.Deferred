@@ -16,11 +16,6 @@ namespace DeferredEngine.Pipeline
 
 
         public GBufferTarget GBufferTarget { set { _gBufferTarget = value; } }
-        public float FarClip
-        { set { _effectSetup.Param_FarClip.SetValue(value); } }
-
-        public Vector3 Camera
-        { set { _effectSetup.Param_Camera.SetValue(value); } }
 
         public bool ClearGBuffer { get; set; } = true;
 
@@ -61,6 +56,8 @@ namespace DeferredEngine.Pipeline
             worldView = Matrix.Invert(Matrix.Transpose(worldView));
             _effectSetup.Param_WorldViewIT.SetValue(worldView);
             _effectSetup.Effect_GBuffer.CurrentTechnique.Passes[0].Apply();
+
+            _effectSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
         }
 
         public void SetMaterialSettings(MaterialEffect material)

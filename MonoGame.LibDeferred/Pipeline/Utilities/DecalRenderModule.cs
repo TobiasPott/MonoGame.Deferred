@@ -20,7 +20,6 @@ namespace DeferredEngine.Pipeline.Utilities
         private IndexBuffer _indexBufferCube;
 
 
-        public float FarClip { set { _effectSetup.Param_FarClip.SetValue(value); } }
         public Texture2D DepthMap { set { _effectSetup.Param_DepthMap.SetValue(value); } }
 
 
@@ -116,6 +115,9 @@ namespace DeferredEngine.Pipeline.Utilities
             _graphicsDevice.SetState(RasterizerStateOption.CullClockwise);
             _graphicsDevice.BlendState = _decalBlend;
 
+
+            _effectSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
+
             for (int index = 0; index < decals.Count; index++)
             {
                 Decal decal = decals[index];
@@ -139,9 +141,10 @@ namespace DeferredEngine.Pipeline.Utilities
             _graphicsDevice.Indices = _indexBufferCage;
 
             Matrix localMatrix = decal.World;
-
             _effectSetup.Param_WorldView.SetValue(localMatrix * this.Matrices.View);
             _effectSetup.Param_WorldViewProj.SetValue(localMatrix * this.Matrices.ViewProjection);
+
+            _effectSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
 
             _effectSetup.Pass_Outline.Apply();
 

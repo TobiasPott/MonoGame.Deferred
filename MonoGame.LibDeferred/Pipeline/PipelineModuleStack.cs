@@ -34,8 +34,6 @@ namespace DeferredEngine.Rendering
         {
             set
             {
-                GBuffer.FarClip = value;
-                Decal.FarClip = value;
                 PointLight.FarClip = value;
                 Billboard.FarClip = value;
             }
