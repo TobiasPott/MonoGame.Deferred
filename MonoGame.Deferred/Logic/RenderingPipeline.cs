@@ -47,11 +47,6 @@ namespace DeferredEngine.Rendering
         //Used for the view space directions in our shaders. Far edges of our view frustum
         private BoundingFrustumWithVertices _frustum = new BoundingFrustumWithVertices();
 
-        //Checkvariables to see which console variables have changed from the frame before
-        //private float _g_FarClip;
-        private int _supersampling = 1;
-        private bool _g_SSReflectionNoise;
-
         //Render targets
         private GBufferTarget _gBufferTarget;
         private LightingBufferTarget _lightingBufferTarget;
@@ -201,11 +196,6 @@ namespace DeferredEngine.Rendering
             _moduleStack.ShadowMap.Draw(meshBatcher, scene);
             //Performance Profile
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_Shadows);
-
-            // Step: 03
-            //Update SDFs
-            if (IsSDFUsed(scene.PointLights))
-                _moduleStack.DistanceField.UpdateDistanceFieldTransformations(scene.Entities);
 
             // Step: 05
             //Draw our meshes to the G Buffer

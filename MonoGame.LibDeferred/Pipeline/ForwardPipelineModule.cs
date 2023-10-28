@@ -26,11 +26,6 @@ namespace DeferredEngine.Pipeline
             : base()
         { }
 
-        //public override void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
-        //{
-        //    base.Initialize(graphicsDevice, spriteBatch);
-        //}
-
         /// <summary>
         /// Draw forward shaded, alpha blended materials. Very basic and unoptimized algorithm. Can be improved to use tiling in future.
         /// </summary>
