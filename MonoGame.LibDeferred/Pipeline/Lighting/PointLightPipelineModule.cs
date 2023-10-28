@@ -12,14 +12,12 @@ namespace DeferredEngine.Pipeline.Lighting
 
 
         private PointLightFxSetup _effectSetup = new PointLightFxSetup();
-        private BoundingFrustum _frustum;
         private GameTime _gameTime;
 
         private DepthStencilState _stencilCullPass1;
         private DepthStencilState _stencilCullPass2;
 
 
-        public BoundingFrustum Frustum { set { _frustum = value; } }
         public GameTime GameTime { set { _gameTime = value; } }
 
         public float FarClip { set { _effectSetup.Param_FarClip.SetValue(value); } }
@@ -120,7 +118,7 @@ namespace DeferredEngine.Pipeline.Lighting
             if (!light.IsEnabled) return;
 
             //first let's check if the light is even in bounds
-            if (_frustum.Contains(light.BoundingSphere) == ContainmentType.Disjoint || !_frustum.Intersects(light.BoundingSphere))
+            if (this.Frustum.Frustum.Contains(light.BoundingSphere) == ContainmentType.Disjoint || !this.Frustum.Frustum.Intersects(light.BoundingSphere))
                 return;
 
             //For our stats

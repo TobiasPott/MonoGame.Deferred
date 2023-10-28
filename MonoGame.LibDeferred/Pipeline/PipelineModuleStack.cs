@@ -1,11 +1,9 @@
 ﻿using DeferredEngine.Pipeline;
 using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Pipeline.Utilities;
-using DeferredEngine.Recources;
 using DeferredEngine.Rendering.SDF;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
 
 namespace DeferredEngine.Rendering
 {
@@ -40,7 +38,6 @@ namespace DeferredEngine.Rendering
                 Decal.FarClip = value;
                 PointLight.FarClip = value;
                 Billboard.FarClip = value;
-                DepthReconstruct.FarClip = value;
             }
         }
         public Vector3[] FrustumCornersWS
@@ -55,18 +52,15 @@ namespace DeferredEngine.Rendering
         {
             set
             {
-                DepthReconstruct.FrustumCorners = value;
-                DirectionalLight.FrustumCorners = value;
+                DirectionalLight.FrustumCornersVS = value;
             }
         }
         public PipelineMatrices Matrices
-        {
-            set
-            {
-                foreach(PipelineModule module in _modules)
-                    module.Matrices = value;
-            }
-        }
+        { set { foreach (PipelineModule module in _modules) module.Matrices = value; } }
+        public BoundingFrustumWithVertices Frustum
+        { set { foreach (PipelineModule module in _modules) module.Frustum = value; } }
+
+
         public SSFxTargets SSFxTargets
         {
             set
@@ -82,13 +76,6 @@ namespace DeferredEngine.Rendering
             {
                 Lighting.LightingBufferTarget = value;
                 Deferred.SetLightingParams(value);
-            }
-        }
-        public BoundingFrustumWithVertices Frustum
-        {
-            set
-            {
-                PointLight.Frustum = value.Frustum;
             }
         }
 

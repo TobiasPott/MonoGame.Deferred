@@ -1,5 +1,4 @@
 ﻿using DeferredEngine.Rendering;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 
@@ -12,10 +11,7 @@ namespace DeferredEngine.Pipeline.Lighting
 
         private ReconstructDepthFxSetup _effectSetup = new ReconstructDepthFxSetup();
 
-
-        public float FarClip { set { _effectSetup.Param_FarClip.SetValue(value); } }
         public Texture2D DepthMap { set { _effectSetup.Param_DepthMap.SetValue(value); } }
-        public Vector3[] FrustumCorners { set { _effectSetup.Param_FrustumCorners.SetValue(value); } }
 
 
         public DepthReconstructPipelineModule()
@@ -30,7 +26,10 @@ namespace DeferredEngine.Pipeline.Lighting
         public void ReconstructDepth()
         {
             _graphicsDevice.SetState(DepthStencilStateOption.Default);
+
             _effectSetup.Param_Projection.SetValue(Matrices.Projection);
+            _effectSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
+            _effectSetup.Param_FrustumCorners.SetValue(this.Frustum.ViewSpaceFrustum);
             _effectSetup.Effect.CurrentTechnique.Passes[0].Apply();
             _fullscreenTarget.Draw(_graphicsDevice);
         }

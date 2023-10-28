@@ -29,7 +29,7 @@ namespace DeferredEngine.Recources
         public static float m_DefaultRoughness = 0.5f;
 
         //Settings
-        public static RenderModes g_RenderMode = RenderModes.Deferred;
+        public static PipelinePasses g_RenderMode = PipelinePasses.Deferred;
         public static bool g_CpuCulling = true;
 
 

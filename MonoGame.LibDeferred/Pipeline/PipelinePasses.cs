@@ -2,7 +2,7 @@
 namespace DeferredEngine.Rendering
 {
     //Render modes
-    public enum RenderModes
+    public enum PipelinePasses
     {
         Deferred,
         Albedo,

@@ -12,7 +12,7 @@ namespace DeferredEngine.Pipeline.Lighting
 
         private DirectionalLightFxSetup _effectSetup = new DirectionalLightFxSetup();
 
-        public Vector3[] FrustumCorners { set { _effectSetup.Param_FrustumCorners.SetValue(value); } }
+        public Vector3[] FrustumCornersVS { set { _effectSetup.Param_FrustumCorners.SetValue(value); } }
 
         public DirectionalLightPipelineModule()
             : base()

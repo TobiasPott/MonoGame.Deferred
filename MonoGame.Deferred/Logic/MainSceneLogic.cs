@@ -212,9 +212,9 @@ namespace DeferredEngine.Logic
             if (Input.WasKeyPressed(Keys.F1))
             {
                 _renderModeCycle++;
-                if (_renderModeCycle > Enum.GetNames(typeof(Rendering.RenderModes)).Length - 1) _renderModeCycle = 0;
+                if (_renderModeCycle > Enum.GetNames(typeof(Rendering.PipelinePasses)).Length - 1) _renderModeCycle = 0;
 
-                RenderingSettings.g_RenderMode = (Rendering.RenderModes)_renderModeCycle;
+                RenderingSettings.g_RenderMode = (Rendering.PipelinePasses)_renderModeCycle;
             }
         }
 

@@ -65,18 +65,18 @@ namespace DeferredEngine.Logic
 
         public StringBuilder[] RenderModesSB =
         {
-            new StringBuilder( ((Rendering.RenderModes)0).ToString() ),
-            new StringBuilder( ((Rendering.RenderModes)1).ToString() ),
-            new StringBuilder( ((Rendering.RenderModes)2).ToString() ),
-            new StringBuilder( ((Rendering.RenderModes)3).ToString() ),
-            new StringBuilder( ((Rendering.RenderModes)4).ToString() ),
-            new StringBuilder( ((Rendering.RenderModes)5).ToString() ),
-            new StringBuilder( ((Rendering.RenderModes)6).ToString() ),
-            new StringBuilder( ((Rendering.RenderModes)7).ToString() ),
-            new StringBuilder( ((Rendering.RenderModes)8).ToString() ),
-            new StringBuilder( ((Rendering.RenderModes)9).ToString() ),
-            new StringBuilder( ((Rendering.RenderModes)10).ToString() ),
-            new StringBuilder( ((Rendering.RenderModes)11).ToString() ),
+            new StringBuilder( ((Rendering.PipelinePasses)0).ToString() ),
+            new StringBuilder( ((Rendering.PipelinePasses)1).ToString() ),
+            new StringBuilder( ((Rendering.PipelinePasses)2).ToString() ),
+            new StringBuilder( ((Rendering.PipelinePasses)3).ToString() ),
+            new StringBuilder( ((Rendering.PipelinePasses)4).ToString() ),
+            new StringBuilder( ((Rendering.PipelinePasses)5).ToString() ),
+            new StringBuilder( ((Rendering.PipelinePasses)6).ToString() ),
+            new StringBuilder( ((Rendering.PipelinePasses)7).ToString() ),
+            new StringBuilder( ((Rendering.PipelinePasses)8).ToString() ),
+            new StringBuilder( ((Rendering.PipelinePasses)9).ToString() ),
+            new StringBuilder( ((Rendering.PipelinePasses)10).ToString() ),
+            new StringBuilder( ((Rendering.PipelinePasses)11).ToString() ),
         };
 
         // Console
@@ -536,7 +536,7 @@ namespace DeferredEngine.Logic
         }
 
 
-        private StringBuilder RenderModesToString(RenderModes render)
+        private StringBuilder RenderModesToString(PipelinePasses render)
         {
             return RenderModesSB[(int)render];
         }

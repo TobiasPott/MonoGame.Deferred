@@ -14,7 +14,6 @@ namespace DeferredEngine.Rendering.RenderModules.Default
 
     public static class RenderModule
     {
-
         public static bool ApplyShaders(GraphicsDevice graphicsDevice, RenderType renderType, IRenderModule renderModule,
             Matrix localToWorldMatrix, Matrix? view, Matrix viewProjection,
             int transformId, int outlineId, bool outlined)

@@ -132,6 +132,7 @@ namespace DeferredEngine.Rendering
         }
         private void FarClip_OnChanged(float farClip)
         {
+            _frustum.FarClip = farClip;
             _moduleStack.FarClip = farClip;
             _fxStack.FarClip = farClip;
         }
@@ -452,34 +453,34 @@ namespace DeferredEngine.Rendering
         {
             switch (RenderingSettings.g_RenderMode)
             {
-                case RenderModes.Albedo:
+                case PipelinePasses.Albedo:
                     BlitTo(_gBufferTarget.Albedo);
                     break;
-                case RenderModes.Normal:
+                case PipelinePasses.Normal:
                     BlitTo(_gBufferTarget.Normal);
                     break;
-                case RenderModes.Depth:
+                case PipelinePasses.Depth:
                     BlitTo(_gBufferTarget.Depth);
                     break;
-                case RenderModes.Diffuse:
+                case PipelinePasses.Diffuse:
                     BlitTo(_lightingBufferTarget.Diffuse);
                     break;
-                case RenderModes.Specular:
+                case PipelinePasses.Specular:
                     BlitTo(_lightingBufferTarget.Specular);
                     break;
-                case RenderModes.Volumetric:
+                case PipelinePasses.Volumetric:
                     BlitTo(_lightingBufferTarget.Volume);
                     break;
-                case RenderModes.SSAO:
+                case PipelinePasses.SSAO:
                     BlitTo(_ssfxTargets.AO_Main);
                     break;
-                case RenderModes.SSBlur:
+                case PipelinePasses.SSBlur:
                     BlitTo(_ssfxTargets.AO_Blur_Final);
                     break;
-                case RenderModes.SSR:
+                case PipelinePasses.SSR:
                     BlitTo(_ssfxTargets.SSR_Main);
                     break;
-                case RenderModes.HDR:
+                case PipelinePasses.HDR:
                     BlitTo(sourceRT);
                     break;
                 default:
