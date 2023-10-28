@@ -2,7 +2,6 @@
 using DeferredEngine.Rendering;
 using DeferredEngine.Rendering.RenderModules.Default;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 
@@ -35,7 +34,7 @@ namespace DeferredEngine.Pipeline
             base.Initialize(graphicsDevice, spriteBatch);
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
         }
-        public void Draw(DynamicMeshBatcher meshBatcher, PipelineMatrices matrices)
+        public override void Draw(DynamicMeshBatcher meshBatcher)
         {
             _graphicsDevice.SetRenderTargets(_gBufferTarget.Bindings);
 
@@ -49,7 +48,7 @@ namespace DeferredEngine.Pipeline
 
             //Draw the Gbuffer!
             if (meshBatcher.CheckRequiresRedraw(RenderType.Opaque, true, false))
-                meshBatcher.Draw(renderType: RenderType.Opaque, matrices: matrices, RenderContext.Default, renderModule: this);
+                meshBatcher.Draw(renderType: RenderType.Opaque, this.Matrices, RenderContext.Default, this);
 
         }
 

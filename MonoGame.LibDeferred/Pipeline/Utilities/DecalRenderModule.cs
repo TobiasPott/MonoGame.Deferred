@@ -108,7 +108,7 @@ namespace DeferredEngine.Pipeline.Utilities
             _indexBufferCube.SetData(Indices2);
         }
 
-        public void Draw(List<Decal> decals, PipelineMatrices matrices) => Draw(decals, matrices.View, matrices.ViewProjection, matrices.InverseView);
+        public void Draw(List<Decal> decals) => Draw(decals, this.Matrices.View, this.Matrices.ViewProjection, this.Matrices.InverseView);
         public void Draw(List<Decal> decals, Matrix view, Matrix viewProjection, Matrix inverseView)
         {
             _graphicsDevice.SetVertexBuffer(_vertexBuffer);
