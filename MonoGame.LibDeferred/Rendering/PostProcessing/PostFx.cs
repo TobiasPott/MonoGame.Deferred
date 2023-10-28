@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using DeferredEngine.Pipeline;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Rendering.PostProcessing
 {
@@ -16,6 +17,11 @@ namespace DeferredEngine.Rendering.PostProcessing
         protected GraphicsDevice _graphicsDevice;
         protected SpriteBatch _spriteBatch;
         protected FullscreenTriangleBuffer _fullscreenTarget;
+
+
+        public PipelineMatrices Matrices { get; set; }
+        public PipelineFrustum Frustum { get; set; }
+
 
 
         public virtual void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, FullscreenTriangleBuffer fullscreenTarget)

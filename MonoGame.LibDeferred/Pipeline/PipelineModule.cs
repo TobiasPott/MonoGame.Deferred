@@ -21,7 +21,7 @@ namespace DeferredEngine.Pipeline
 
 
         public PipelineMatrices Matrices { get; set; }
-        public BoundingFrustumWithVertices Frustum { get; set; }
+        public PipelineFrustum Frustum { get; set; }
 
 
         public PipelineModule()

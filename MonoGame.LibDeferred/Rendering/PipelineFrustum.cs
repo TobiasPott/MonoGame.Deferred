@@ -3,7 +3,7 @@ using MonoGame.Ext;
 
 namespace DeferredEngine.Rendering
 {
-    public class BoundingFrustumWithVertices
+    public class PipelineFrustum
     {
         //Used for the view space directions in our shaders. Far edges of our view frustum
         public readonly BoundingFrustum Frustum = new BoundingFrustum(Matrix.Identity);

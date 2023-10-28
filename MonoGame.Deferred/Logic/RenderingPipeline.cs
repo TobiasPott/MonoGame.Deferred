@@ -45,7 +45,7 @@ namespace DeferredEngine.Rendering
         private PipelineProfiler _profiler;
 
         //Used for the view space directions in our shaders. Far edges of our view frustum
-        private BoundingFrustumWithVertices _frustum = new BoundingFrustumWithVertices();
+        private PipelineFrustum _frustum = new PipelineFrustum();
 
         //Render targets
         private GBufferTarget _gBufferTarget;
@@ -84,6 +84,7 @@ namespace DeferredEngine.Rendering
 
             _fxStack = new PipelineFxStack(content);
             _fxStack.Matrices = _matrices;
+            _fxStack.Frustum = _frustum;
 
         }
 
@@ -172,7 +173,7 @@ namespace DeferredEngine.Rendering
                 //We need to update whether or not entities are in our boundingFrustum and then cull them or not!
                 meshBatcher.FrustumCulling(_frustum.Frustum, camera.HasChanged);
                 // Compute the frustum corners for cheap view direction computation in shaders
-                UpdateFrustumCorners(camera);
+                _frustum.UpdateVertices(_matrices.View, camera.Position);
             }
 
             //Performance Profiler
@@ -217,7 +218,7 @@ namespace DeferredEngine.Rendering
             // STAGE: PreLighting-SSFx
             // Step: 04
             //Draw Screen Space reflections to a different render target
-            RenderTarget2D ssrTargetMap = _ssfxTargets.GetSSReflectionRenderTargets(_fxStack.TemporaAA.Enabled, _fxStack.TemporaAA.IsOffFrame);
+            RenderTarget2D ssrTargetMap = _ssfxTargets.GetSSReflectionRenderTargets(_fxStack.TemporalAA.Enabled, _fxStack.TemporalAA.IsOffFrame);
             _fxStack.SSReflection.TargetMap = ssrTargetMap ?? _auxTargets[PipelineTargets.COMPOSE];
             _fxStack.Draw(PipelineFxStage.SSReflection, null, null, _ssfxTargets.SSR_Main);
             // Profiler sample
@@ -272,7 +273,7 @@ namespace DeferredEngine.Rendering
 
             // Step: 10
             //Compose the image and add information from previous frames to apply temporal super sampling
-            _ssfxTargets.GetTemporalAARenderTargets(_fxStack.TemporaAA.IsOffFrame, out RenderTarget2D taaDestRT, out RenderTarget2D taaPreviousRT);
+            _ssfxTargets.GetTemporalAARenderTargets(_fxStack.TemporalAA.IsOffFrame, out RenderTarget2D taaDestRT, out RenderTarget2D taaPreviousRT);
             _currentOutput = _fxStack.Draw(PipelineFxStage.TemporalAA, _auxTargets[PipelineTargets.COMPOSE], taaPreviousRT, taaDestRT);
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_CombineTAA);
@@ -398,34 +399,18 @@ namespace DeferredEngine.Rendering
                 _matrices.SetFromCamera(camera);
 
                 //Temporal AA - alternate frames for temporal anti-aliasing
-                if (_fxStack.TemporaAA.Enabled)
+                if (_fxStack.TemporalAA.Enabled)
                 {
                     hasChanged = true;
-                    _fxStack.TemporaAA.SwapOffFrame();
-                    _matrices.ApplyViewProjectionJitter(_fxStack.TemporaAA.JitterMode, _fxStack.TemporaAA.IsOffFrame, _fxStack.TemporaAA.HaltonSequence);
+                    _fxStack.TemporalAA.SwapOffFrame();
+                    _matrices.ApplyViewProjectionJitter(_fxStack.TemporalAA.JitterMode, _fxStack.TemporalAA.IsOffFrame, _fxStack.TemporalAA.HaltonSequence);
                 }
 ;
                 _frustum.Frustum.Matrix = _matrices.StaticViewProjection;
             }
 
         }
-
-        /// <summary>
-        /// From https://jcoluna.wordpress.com/2011/01/18/xna-4-0-light-pre-pass/
-        /// Compute the frustum corners for a camera.
-        /// Its used to reconstruct the pixel position using only the depth value.
-        /// Read here for more information
-        /// http://mynameismjp.wordpress.com/2009/03/10/reconstructing-position-from-depth/
-        /// </summary>
-        private void UpdateFrustumCorners(Camera camera)
-        {
-            _frustum.UpdateVertices(_matrices.View, camera.Position);
-            //View Space Corners
-            _fxStack.FrustumCorners = _frustum.ViewSpaceFrustum;
-        }
-
-
-
+        
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  RENDERTARGET SETUP FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////

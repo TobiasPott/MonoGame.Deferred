@@ -1,9 +1,11 @@
-﻿using DeferredEngine.Pipeline;
+﻿using DeferredEngine.Entities;
+using DeferredEngine.Pipeline;
 using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
+using System.Reflection;
 
 namespace DeferredEngine.Rendering.PostProcessing
 {
@@ -21,7 +23,7 @@ namespace DeferredEngine.Rendering.PostProcessing
     public class PipelineFxStack : IDisposable
     {
         protected readonly BloomFx Bloom;
-        public readonly TemporalAAFx TemporaAA;
+        public readonly TemporalAAFx TemporalAA;
         protected readonly ColorGradingFx ColorGrading;
         protected readonly PostProcessingFx PostProcessing;
         public readonly SSReflectionFx SSReflection;
@@ -47,31 +49,12 @@ namespace DeferredEngine.Rendering.PostProcessing
                 SSReflection.FarClip = value;
             }
         }
-        public PipelineMatrices Matrices
-        {
-            set
-            {
-                TemporaAA.Matrices = value;
-                SSReflection.Matrices = value;
-                SSAmbientOcclusion.Matrices = value;
-            }
-        }
-
-        public Vector3[] FrustumCorners
-        {
-            set
-            {
-                SSAmbientOcclusion.FrustumCornersVS = value;
-                TemporaAA.FrustumCornersVS = value;
-                SSReflection.FrustumCornersVS = value;
-            }
-        }
 
         public Vector2 Resolution
         {
             set
             {
-                TemporaAA.Resolution = value;
+                TemporalAA.Resolution = value;
                 SSReflection.Resolution = value;
                 ///////////////////
                 // HALF RESOLUTION
@@ -81,16 +64,28 @@ namespace DeferredEngine.Rendering.PostProcessing
             }
         }
 
+        public PipelineMatrices Matrices
+        { set { foreach (PostFx module in _modules) module.Matrices = value; } }
+        public PipelineFrustum Frustum
+        { set { foreach (PostFx module in _modules) module.Frustum = value; } }
+
+
+        private List<PostFx> _modules = new List<PostFx>();
+
 
         public PipelineFxStack(ContentManager content)
         {
             Bloom = new BloomFx();
-            TemporaAA = new TemporalAAFx();
+            TemporalAA = new TemporalAAFx();
             ColorGrading = new ColorGradingFx();
             ColorGrading.LookUpTable = content.Load<Texture2D>("Shaders/PostProcessing/lut");
             PostProcessing = new PostProcessingFx();
             SSReflection = new SSReflectionFx();
             SSAmbientOcclusion = new SSAmbientOcclustionFx();
+
+            _modules.AddRange(new PostFx[] {
+                Bloom, TemporalAA, ColorGrading, PostProcessing, SSReflection, SSAmbientOcclusion
+            });
         }
         public void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         {
@@ -99,7 +94,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
 
             Bloom.Initialize(graphicsDevice, spriteBatch, _fullscreenTarget);
-            TemporaAA.Initialize(graphicsDevice, spriteBatch, _fullscreenTarget);
+            TemporalAA.Initialize(graphicsDevice, spriteBatch, _fullscreenTarget);
             ColorGrading.Initialize(graphicsDevice, spriteBatch, _fullscreenTarget);
             PostProcessing.Initialize(graphicsDevice, spriteBatch, _fullscreenTarget);
             SSReflection.Initialize(graphicsDevice, spriteBatch, _fullscreenTarget);
@@ -160,9 +155,9 @@ namespace DeferredEngine.Rendering.PostProcessing
         /// </summary>
         private RenderTarget2D DrawTemporalAA(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
         {
-            if (!this.TemporaAA.Enabled)
+            if (!this.TemporalAA.Enabled)
                 return sourceRT;
-            this.TemporaAA.Draw(sourceRT, previousRT, destRT);
+            this.TemporalAA.Draw(sourceRT, previousRT, destRT);
 
             return TemporalAAFx.g_UseTonemapping ? sourceRT : destRT;
         }
@@ -192,7 +187,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             SSReflection.NormalMap = gBufferTarget.Normal;
             SSReflection.DepthMap = gBufferTarget.Depth;
 
-            TemporaAA.DepthMap = gBufferTarget.Depth;
+            TemporalAA.DepthMap = gBufferTarget.Depth;
 
             SSAmbientOcclusion.NormalMap = gBufferTarget.Normal;
             SSAmbientOcclusion.DepthMap = gBufferTarget.Depth;
@@ -214,7 +209,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         public void Dispose()
         {
             Bloom?.Dispose();
-            TemporaAA?.Dispose();
+            TemporalAA?.Dispose();
             ColorGrading?.Dispose();
             PostProcessing?.Dispose();
             SSReflection?.Dispose();

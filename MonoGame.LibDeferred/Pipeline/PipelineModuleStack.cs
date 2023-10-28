@@ -33,7 +33,7 @@ namespace DeferredEngine.Rendering
         
         public PipelineMatrices Matrices
         { set { foreach (PipelineModule module in _modules) module.Matrices = value; } }
-        public BoundingFrustumWithVertices Frustum
+        public PipelineFrustum Frustum
         { set { foreach (PipelineModule module in _modules) module.Frustum = value; } }
 
 

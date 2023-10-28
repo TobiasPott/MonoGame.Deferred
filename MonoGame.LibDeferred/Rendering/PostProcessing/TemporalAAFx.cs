@@ -3,6 +3,7 @@ using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
+using SharpDX.Direct3D9;
 
 namespace DeferredEngine.Rendering.PostProcessing
 {
@@ -19,12 +20,10 @@ namespace DeferredEngine.Rendering.PostProcessing
         private bool _useTonemapping = true;
         private HaltonSequence _haltonSequence = new HaltonSequence();
 
-
-        public PipelineMatrices Matrices { get; set; }
+        
         public bool IsOffFrame { get; protected set; } = true;
         public int JitterMode = 2;
 
-        public Vector3[] FrustumCornersVS { set { _fxSetup.Param_FrustumCorners.SetValue(value); } }
         public Vector2 Resolution { set { _fxSetup.Param_Resolution.SetValue(value); } }
         public RenderTarget2D DepthMap { set { _fxSetup.Param_DepthMap.SetValue(value); } }
 
@@ -45,6 +44,8 @@ namespace DeferredEngine.Rendering.PostProcessing
         {
             _graphicsDevice.SetRenderTarget(destRT);
             _graphicsDevice.SetState(BlendStateOption.Opaque);
+
+            _fxSetup.Param_FrustumCorners.SetValue(this.Frustum.ViewSpaceFrustum);
 
             _fxSetup.Param_UpdateMap.SetValue(sourceRT);
             _fxSetup.Param_AccumulationMap.SetValue(previousRT);
