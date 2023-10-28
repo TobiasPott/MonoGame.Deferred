@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using MonoGame.Ext;
 
-namespace DeferredEngine.Recources
+namespace DeferredEngine.Rendering
 {
     public class BoundingFrustumWithVertices
     {
@@ -11,14 +11,14 @@ namespace DeferredEngine.Recources
         public readonly Vector3[] ViewSpace = new Vector3[8];
         public readonly Vector3[] WorldSpaceFrustum = new Vector3[4];
         public readonly Vector3[] ViewSpaceFrustum = new Vector3[4];
-
+        public float FarClip = 500;
 
         public void UpdateVertices(Matrix? view, Vector3? worldOffset = null)
         {
             Frustum.GetCorners(WorldSpace);
-            if(view.HasValue)
+            if (view.HasValue)
                 WorldSpace.Transform(view.Value, ViewSpace); //put the frustum into view space
-            if(worldOffset.HasValue)
+            if (worldOffset.HasValue)
                 /*this part is used for volume projection*/
                 //World Space Corners - Camera Position
                 for (int i = 0; i < 4; i++) //take only the 4 farthest points
@@ -27,7 +27,7 @@ namespace DeferredEngine.Recources
                     ViewSpaceFrustum[i] = ViewSpace[i + 4];
                 }
 
-            this.SwapCorners();
+            SwapCorners();
         }
         private void SwapCorners()
         {
