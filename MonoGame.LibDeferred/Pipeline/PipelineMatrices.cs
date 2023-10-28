@@ -1,15 +1,14 @@
 ﻿using DeferredEngine.Entities;
 using DeferredEngine.Recources;
+using DeferredEngine.Rendering;
 using DeferredEngine.Rendering.Helper;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
-using System.Windows.Forms;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //    MAIN RENDER FUNCTIONS, TheKosmonaut 2016
 
-namespace DeferredEngine.Rendering
+namespace DeferredEngine.Pipeline
 {
     public class PipelineMatrices
     {

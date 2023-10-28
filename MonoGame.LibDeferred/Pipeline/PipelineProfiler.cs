@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 
 
-namespace DeferredEngine.Rendering
+namespace DeferredEngine.Pipeline
 {
 
     public class PipelineSamples

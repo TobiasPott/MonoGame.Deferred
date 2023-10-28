@@ -1,4 +1,5 @@
 ﻿using DeferredEngine.Entities;
+using DeferredEngine.Pipeline;
 using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Recources;
 using DeferredEngine.Rendering;
@@ -152,24 +153,24 @@ namespace DeferredEngine.Logic
                         isVolumetric: true);
 
             AddPointLight(position: new Vector3(66, 0, 40),
-                radius: 120,
-                color: new Color(255, 248, 232),
-                intensity: 120,
-                castShadows: true,
-                shadowResolution: 1024,
-                softShadowBlurAmount: 0,
-                staticShadow: false,
-                isVolumetric: false);
+                        radius: 120,
+                        color: new Color(255, 248, 232),
+                        intensity: 120,
+                        castShadows: true,
+                        shadowResolution: 1024,
+                        softShadowBlurAmount: 0,
+                        staticShadow: false,
+                        isVolumetric: false);
 
             AddDirectionalLight(direction: new Vector3(0.2f, 0.2f, -1),
-                intensity: 100,
-                color: Color.White,
-                position: Vector3.UnitZ * 2,
-                drawShadows: true,
-                shadowWorldSize: 450,
-                shadowDepth: 180,
-                shadowResolution: 1024,
-                shadowFilteringFiltering: Pipeline.Lighting.DirectionalLight.ShadowFilteringTypes.SoftPCF3x);
+                        intensity: 100,
+                        color: Color.White,
+                        position: Vector3.UnitZ * 2,
+                        drawShadows: true,
+                        shadowWorldSize: 450,
+                        shadowDepth: 180,
+                        shadowResolution: 1024,
+                        shadowFilteringFiltering: Pipeline.Lighting.DirectionalLight.ShadowFilteringTypes.SoftPCF3x);
         }
 
 
@@ -196,25 +197,13 @@ namespace DeferredEngine.Logic
                 RenderingSettings.e_IsEditorEnabled = !RenderingSettings.e_IsEditorEnabled;
             }
 
-
-            //Spawns a new light on the ground
-            if (Input.keyboardState.IsKeyDown(Keys.L))
-            {
-                AddPointLight(position: new Vector3(FastRand.NextSingle() * 250 - 125, FastRand.NextSingle() * 50 - 25, FastRand.NextSingle() * 30 - 19),
-                    radius: 20,
-                    color: FastRand.NextColor(),
-                    intensity: 40,
-                    castShadows: false,
-                    isVolumetric: true);
-            }
-
             //Switch which rendertargets we show
             if (Input.WasKeyPressed(Keys.F1))
             {
                 _renderModeCycle++;
-                if (_renderModeCycle > Enum.GetNames(typeof(Rendering.PipelinePasses)).Length - 1) _renderModeCycle = 0;
+                if (_renderModeCycle > Enum.GetNames(typeof(PipelinePasses)).Length - 1) _renderModeCycle = 0;
 
-                RenderingSettings.g_RenderMode = (Rendering.PipelinePasses)_renderModeCycle;
+                RenderingSettings.g_RenderMode = (PipelinePasses)_renderModeCycle;
             }
         }
 

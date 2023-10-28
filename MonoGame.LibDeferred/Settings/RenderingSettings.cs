@@ -1,5 +1,5 @@
 ﻿using Deferred.Utilities;
-using DeferredEngine.Rendering;
+using DeferredEngine.Pipeline;
 using MonoGame.Ext;
 
 namespace DeferredEngine.Recources

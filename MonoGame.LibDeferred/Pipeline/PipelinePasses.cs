@@ -1,5 +1,5 @@
 ﻿
-namespace DeferredEngine.Rendering
+namespace DeferredEngine.Pipeline
 {
     //Render modes
     public enum PipelinePasses

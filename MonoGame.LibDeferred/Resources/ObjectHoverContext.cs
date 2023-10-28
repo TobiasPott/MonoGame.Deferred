@@ -1,4 +1,4 @@
-﻿using DeferredEngine.Rendering;
+﻿using DeferredEngine.Pipeline;
 using Microsoft.Xna.Framework;
 
 namespace DeferredEngine.Recources

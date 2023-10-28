@@ -1,6 +1,6 @@
-﻿using DeferredEngine.Recources;
+﻿using DeferredEngine.Pipeline;
+using DeferredEngine.Recources;
 using DeferredEngine.Recources.Helper;
-using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -65,18 +65,18 @@ namespace DeferredEngine.Logic
 
         public StringBuilder[] RenderModesSB =
         {
-            new StringBuilder( ((Rendering.PipelinePasses)0).ToString() ),
-            new StringBuilder( ((Rendering.PipelinePasses)1).ToString() ),
-            new StringBuilder( ((Rendering.PipelinePasses)2).ToString() ),
-            new StringBuilder( ((Rendering.PipelinePasses)3).ToString() ),
-            new StringBuilder( ((Rendering.PipelinePasses)4).ToString() ),
-            new StringBuilder( ((Rendering.PipelinePasses)5).ToString() ),
-            new StringBuilder( ((Rendering.PipelinePasses)6).ToString() ),
-            new StringBuilder( ((Rendering.PipelinePasses)7).ToString() ),
-            new StringBuilder( ((Rendering.PipelinePasses)8).ToString() ),
-            new StringBuilder( ((Rendering.PipelinePasses)9).ToString() ),
-            new StringBuilder( ((Rendering.PipelinePasses)10).ToString() ),
-            new StringBuilder( ((Rendering.PipelinePasses)11).ToString() ),
+            new StringBuilder( ((PipelinePasses)0).ToString() ),
+            new StringBuilder( ((PipelinePasses)1).ToString() ),
+            new StringBuilder( ((PipelinePasses)2).ToString() ),
+            new StringBuilder( ((PipelinePasses)3).ToString() ),
+            new StringBuilder( ((PipelinePasses)4).ToString() ),
+            new StringBuilder( ((PipelinePasses)5).ToString() ),
+            new StringBuilder( ((PipelinePasses)6).ToString() ),
+            new StringBuilder( ((PipelinePasses)7).ToString() ),
+            new StringBuilder( ((PipelinePasses)8).ToString() ),
+            new StringBuilder( ((PipelinePasses)9).ToString() ),
+            new StringBuilder( ((PipelinePasses)10).ToString() ),
+            new StringBuilder( ((PipelinePasses)11).ToString() ),
         };
 
         // Console
@@ -380,7 +380,7 @@ namespace DeferredEngine.Logic
         /// </summary>
         private void LoadProfilerStrings()
         {
-            if (!PipelineProfiler.IsProfilerEnabled) 
+            if (!PipelineProfiler.IsProfilerEnabled)
                 return;
 
             FieldInfo[] info2 = typeof(PipelineSamples).GetFields();
