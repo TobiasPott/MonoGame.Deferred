@@ -34,10 +34,10 @@ namespace DeferredEngine.Pipeline
         /// <summary>
         /// Draw forward shaded, alpha blended materials. Very basic and unoptimized algorithm. Can be improved to use tiling in future.
         /// </summary>
-        public void Draw(DynamicMeshBatcher meshBatcher, PipelineMatrices matrices)
+        public override void Draw(DynamicMeshBatcher meshBatcher)
         {
             if (meshBatcher.CheckRequiresRedraw(RenderType.Forward, false, false))
-                meshBatcher.Draw(RenderType.Forward, matrices, RenderContext.Default, this);
+                meshBatcher.Draw(RenderType.Forward, this.Matrices, RenderContext.Default, this);
         }
 
         public void SetupLighting(Camera camera, List<PointLight> pointLights, BoundingFrustum frustum)

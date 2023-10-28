@@ -116,6 +116,7 @@ namespace DeferredEngine.Rendering
             RenderingSettings.g_FarClip.Changed += FarClip_OnChanged;
             RenderingSettings.g_FarClip.Set(500);
             SSReflectionFx.gg_Enabled.Changed += SSR_Enabled_Changed;
+            RenderingSettings.Bloom.Threshold = 0.0f;
         }
 
         private void SSR_Enabled_Changed(bool enabled)
@@ -160,13 +161,11 @@ namespace DeferredEngine.Rendering
 
             //Reset the stat counter, so we can count stats/information for this frame only
             ResetStats();
-
             // Step: 01
             //Check if we changed some drastic stuff for which we need to reload some elements
             CheckRenderChanges();
             //Performance Profiler
             _profiler.Timestamp();
-
 
             // Step: 04
             //Update our view projection matrices if the camera moved
@@ -195,9 +194,7 @@ namespace DeferredEngine.Rendering
             // Step: 03
             //Update SDFs
             if (IsSDFUsed(scene.PointLights))
-            {
                 _moduleStack.DistanceField.UpdateDistanceFieldTransformations(scene.Entities);
-            }
 
             // Step: 05
             //Draw our meshes to the G Buffer
@@ -262,7 +259,7 @@ namespace DeferredEngine.Rendering
                 _graphicsDevice.SetRenderTarget(_auxTargets[PipelineTargets.COMPOSE]);
                 _moduleStack.DepthReconstruct.ReconstructDepth();
                 _moduleStack.Forward.SetupLighting(camera, scene.PointLights, _frustum.Frustum);
-                _moduleStack.Forward.Draw(meshBatcher, _matrices);
+                _moduleStack.Forward.Draw(meshBatcher);
             }
             _currentOutput = _auxTargets[PipelineTargets.COMPOSE];
 
