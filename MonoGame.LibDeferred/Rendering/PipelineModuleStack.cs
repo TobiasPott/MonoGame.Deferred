@@ -92,6 +92,18 @@ namespace DeferredEngine.Rendering
             }
         }
 
+        public Vector2 Resolution
+        {
+            set
+            {
+                PointLight.Resolution = value;
+                Environment.Resolution = value;
+
+                Billboard.AspectRatio = value.X / value.Y;
+                IdAndOutline.SetUpRenderTarget(value);
+            }
+        }
+
 
         private List<PipelineModule> _modules = new List<PipelineModule>();
 

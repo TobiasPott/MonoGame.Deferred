@@ -88,7 +88,7 @@ namespace MonoGame.Ext
         }
 
         public static void Blit(this GraphicsDevice graphicsDevice, SpriteBatch spriteBatch,
-            Texture2D source, RenderTarget2D destRT = null, BlendState blendState = null, SamplerState samplerState = null)
+            Texture2D source, RenderTarget2D destRT = null, BlendState blendState = null, SamplerState samplerState = null, SpriteSortMode sortMode = SpriteSortMode.Deferred)
         {
             if (blendState == null)
                 blendState = BlendState.Opaque;
@@ -97,7 +97,7 @@ namespace MonoGame.Ext
 
             RenderingSettings.Screen.GetDestinationRectangle(source.GetAspect(), out Rectangle destRectangle);
             graphicsDevice.SetRenderTarget(destRT);
-            spriteBatch.Begin(0, blendState, samplerState);
+            spriteBatch.Begin(sortMode, blendState, samplerState);
             spriteBatch.Draw(source, destRectangle, Color.White);
             spriteBatch.End();
         }

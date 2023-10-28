@@ -107,7 +107,7 @@ namespace DeferredEngine.Rendering
             _fxStack.SSFxTargets = _ssfxTargets;
 
             // update directional light module
-            SetUpRenderTargets(resolution);
+            SetResolution(resolution);
 
 
             RenderingSettings.g_FarClip.Changed += FarClip_OnChanged;
@@ -472,6 +472,7 @@ namespace DeferredEngine.Rendering
                     BlitTo(sourceRT);
                     break;
                 default:
+                    // ToDo: PRIO IV: PostProcessing should blit source to dest if disabled
                     _fxStack.Draw(PipelineFxStage.PostProcessing, sourceRT, null, destRT);
                     _fxStack.Draw(PipelineFxStage.ColorGrading, destRT, null, null);
                     break;
@@ -485,34 +486,16 @@ namespace DeferredEngine.Rendering
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  RENDERTARGET SETUP FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
-        private void SetUpRenderTargets(Vector2 resolution)
+        private void SetResolution(Vector2 resolution)
         {
-            int targetWidth = (int)(resolution.X);
-            int targetHeight = (int)(resolution.Y);
-
             // Update multi render target size
-            _gBufferTarget.Resize(targetWidth, targetHeight);
-            _lightingBufferTarget.Resize(targetWidth, targetHeight);
-            _auxTargets.Resize(targetWidth, targetHeight);
+            _gBufferTarget.Resize(resolution);
+            _lightingBufferTarget.Resize(resolution);
+            _auxTargets.Resize(resolution);
+            _ssfxTargets.Resize(resolution); 
 
-            _moduleStack.PointLight.Resolution = resolution;
-            _moduleStack.Environment.Resolution = resolution;
-
-            _moduleStack.Billboard.AspectRatio = (float)targetWidth / targetHeight;
-            _moduleStack.IdAndOutline.SetUpRenderTarget(resolution);
-
-            _fxStack.TemporaAA.Resolution = resolution;
-            _fxStack.SSReflection.Resolution = resolution;
-
-
-            ///////////////////
-            // HALF RESOLUTION
-            targetWidth /= 2;
-            targetHeight /= 2;
-
-            Vector2 aspectRatios = new Vector2(Math.Min(1.0f, targetWidth / (float)targetHeight), Math.Min(1.0f, targetHeight / (float)targetWidth));
-            _fxStack.SSAmbientOcclusion.InverseResolution = new Vector2(1.0f / targetWidth, 1.0f / targetHeight);
-            _fxStack.SSAmbientOcclusion.AspectRatios = aspectRatios;
+            _moduleStack.Resolution = resolution;
+            _fxStack.Resolution = resolution;
         }
 
 

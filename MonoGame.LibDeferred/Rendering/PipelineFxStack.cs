@@ -67,6 +67,19 @@ namespace DeferredEngine.Rendering.PostProcessing
             }
         }
 
+        public Vector2 Resolution
+        {
+            set
+            {
+                TemporaAA.Resolution = value;
+                SSReflection.Resolution = value;
+                ///////////////////
+                // HALF RESOLUTION
+                value /= 2;
+                SSAmbientOcclusion.InverseResolution = Vector2.One / value;
+                SSAmbientOcclusion.AspectRatios = new Vector2(Math.Min(1.0f, value.X / value.Y), Math.Min(1.0f, value.Y / value.X));
+            }
+        }
 
 
         public PipelineFxStack(ContentManager content)
@@ -110,9 +123,6 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         private RenderTarget2D DrawPostProcessing(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
-            if (!this.PostProcessing.Enabled)
-                return sourceRT;
-
             return this.PostProcessing.Draw(sourceRT, previousRT, destRT);
         }
         private RenderTarget2D DrawColorGrading(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
