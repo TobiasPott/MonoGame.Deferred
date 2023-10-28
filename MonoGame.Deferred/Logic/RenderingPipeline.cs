@@ -56,10 +56,15 @@ namespace DeferredEngine.Rendering
         // Final output
         private RenderTarget2D _currentOutput;
 
+        /// <summary>
+        /// Main Draw function of the game
+        /// </summary>
+        public ObjectHoverContext CurrentHoverContext => new ObjectHoverContext(_moduleStack.IdAndOutline.HoveredId, _matrices);
+
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  BASE FUNCTIONS
@@ -125,7 +130,6 @@ namespace DeferredEngine.Rendering
                 _graphicsDevice.Clear(new Color(0, 0, 0, 0.0f));
             }
         }
-
         private void FarClip_OnChanged(float farClip)
         {
             _moduleStack.FarClip = farClip;
@@ -135,7 +139,6 @@ namespace DeferredEngine.Rendering
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  RENDER FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         //  MAIN DRAW FUNCTIONS
@@ -301,15 +304,7 @@ namespace DeferredEngine.Rendering
             _profiler.Sample(ref PipelineSamples.SDraw_TotalRender);
 
         }
-        /// <summary>
-        /// Main Draw function of the game
-        /// </summary>
-        public ObjectHoverContext GetHoverContext()
-        {
-            //return data we have recovered from the editor id, so we know what entity gets hovered/clicked on and can manipulate in the update function
-            return new ObjectHoverContext(_moduleStack.IdAndOutline.HoveredId, _matrices);
 
-        }
         private bool IsSDFUsed(List<PointLight> pointLights)
         {
             if (!RenderingSettings.SDF.DrawDistance)
@@ -434,6 +429,22 @@ namespace DeferredEngine.Rendering
         }
 
 
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  RENDERTARGET SETUP FUNCTIONS
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
+        private void SetResolution(Vector2 resolution)
+        {
+            // Update multi render target size
+            _gBufferTarget.Resize(resolution);
+            _lightingBufferTarget.Resize(resolution);
+            _auxTargets.Resize(resolution);
+            _ssfxTargets.Resize(resolution);
+
+            _moduleStack.Resolution = resolution;
+            _fxStack.Resolution = resolution;
+        }
+
         /// <summary>
         /// Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
         /// </summary>
@@ -480,22 +491,6 @@ namespace DeferredEngine.Rendering
 
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_FinalRender);
-        }
-
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //  RENDERTARGET SETUP FUNCTIONS
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////
-        private void SetResolution(Vector2 resolution)
-        {
-            // Update multi render target size
-            _gBufferTarget.Resize(resolution);
-            _lightingBufferTarget.Resize(resolution);
-            _auxTargets.Resize(resolution);
-            _ssfxTargets.Resize(resolution); 
-
-            _moduleStack.Resolution = resolution;
-            _fxStack.Resolution = resolution;
         }
 
 

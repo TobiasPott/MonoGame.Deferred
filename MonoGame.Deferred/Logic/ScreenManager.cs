@@ -75,7 +75,7 @@ namespace DeferredEngine.Logic
         public void Update(GameTime gameTime, bool isActive)
         {
             _guiLogic.Update(gameTime, isActive, _editorLogic.SelectedObject);
-            _editorLogic.Update(gameTime, _sceneLogic.Scene, _renderer.GetHoverContext(), _sceneLogic.MeshBatcher);
+            _editorLogic.Update(gameTime, _sceneLogic.Scene, _renderer.CurrentHoverContext, _sceneLogic.MeshBatcher);
             _sceneLogic.Update(gameTime, isActive);
             _renderer.Update(_sceneLogic.Camera, _sceneLogic.MeshBatcher, _sceneLogic.Scene, gameTime, isActive);
 
