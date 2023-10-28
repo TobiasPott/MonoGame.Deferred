@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Pipeline
 {
-    public class GBufferEffectSetup : BaseFxSetup
+    public class GBufferFxSetup : BaseFxSetup
     {
         public Effect Effect_GBuffer { get; protected set; }
         public Effect Effect_Clear { get; protected set; }
@@ -46,7 +46,7 @@ namespace DeferredEngine.Pipeline
         public EffectParameter Param_Material_MaterialType { get; protected set; }
 
 
-        public GBufferEffectSetup(string shaderPathBase = "Shaders/GbufferSetup/", string gBufferEffect = "GBuffer", string gBufferClearEffect = "ClearGBuffer")
+        public GBufferFxSetup(string shaderPathBase = "Shaders/GbufferSetup/", string gBufferEffect = "GBuffer", string gBufferClearEffect = "ClearGBuffer")
               : base(shaderPathBase)
         {
             Effect_GBuffer = Globals.content.Load<Effect>(shaderPathBase + gBufferEffect);

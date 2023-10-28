@@ -196,18 +196,6 @@ namespace DeferredEngine.Rendering
             return hasAnythingChanged;
         }
 
-        /// <summary>
-        /// Should be called when the frame is done.
-        /// </summary>
-        public void FrustumCullingFinalizeFrame()
-        {
-            for (int i = 0; i < _batches.Count; i++)
-            {
-                MaterialBatch matLib = _batches[i];
-                matLib.HasChangedThisFrame = false;
-            }
-        }
-
         public void Draw(RenderType renderType, PipelineMatrices matrices, RenderContext context, IRenderModule renderModule = null)
             => Draw(renderType, matrices.ViewProjection, matrices.View, context, renderModule);
         public void Draw(RenderType renderType, Matrix viewProjection, Matrix? view, RenderContext context, IRenderModule renderModule = null)
@@ -309,7 +297,7 @@ namespace DeferredEngine.Rendering
             {
                 _graphicsDevice.DepthStencilState = DepthWriteState;
 
-                DeferredEffectSetup.Instance.Pass_Clear.Apply();
+                DeferredFxSetup.Instance.Pass_Clear.Apply();
                 _fullscreenTarget.Draw(_graphicsDevice);
                 _graphicsDevice.SetState(DepthStencilStateOption.Default);
             }

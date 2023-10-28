@@ -14,7 +14,7 @@ namespace DeferredEngine.Pipeline
     public class DeferredPipelineModule : PipelineModule
     {
 
-        private DeferredEffectSetup _effectSetup = new DeferredEffectSetup();
+        private DeferredFxSetup _effectSetup = new DeferredFxSetup();
         private FullscreenTriangleBuffer _fullscreenTarget;
         private DeferredColorSpace _colorSpace = DeferredColorSpace.Linear;
 

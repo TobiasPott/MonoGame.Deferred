@@ -6,7 +6,7 @@ using MonoGame.Ext;
 namespace DeferredEngine.Rendering.PostProcessing
 {
     //Just a template
-    public class TemporalAAFx : BaseFx
+    public class TemporalAAFx : PostFx
     {
         public static bool g_Enabled { get; set; } = true;
         public static bool g_UseTonemapping { get; set; } = true;

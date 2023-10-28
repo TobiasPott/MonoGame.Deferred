@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Rendering
 {
@@ -24,6 +25,7 @@ namespace DeferredEngine.Rendering
             this.Resize(width, height);
         }
 
+        public void Resize(Vector2 resolution) => this.Resize((int)resolution.X, (int)resolution.Y);
         public virtual void Resize(int width, int height)
         {
             _width = width;

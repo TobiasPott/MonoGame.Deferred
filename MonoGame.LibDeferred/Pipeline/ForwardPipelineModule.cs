@@ -19,7 +19,7 @@ namespace DeferredEngine.Pipeline
         private float[] LightIntensity;
         private Vector3[] LightColor;
 
-        private ForwardEffectSetup _effectSetup = new ForwardEffectSetup();
+        private ForwardFxSetup _effectSetup = new ForwardFxSetup();
 
 
         public ForwardPipelineModule()
@@ -42,7 +42,7 @@ namespace DeferredEngine.Pipeline
 
         public void SetupLighting(Camera camera, List<PointLight> pointLights, BoundingFrustum frustum)
         {
-            int count = pointLights.Count > 40 ? MAXLIGHTS : pointLights.Count;
+            int count = pointLights.Count > MAXLIGHTS ? MAXLIGHTS : pointLights.Count;
 
             if (LightPositionWS == null || pointLights.Count != LightPositionWS.Length)
             {
@@ -55,10 +55,8 @@ namespace DeferredEngine.Pipeline
             //Fill
             int lightsInBounds = 0;
 
-            for (var index = 0; index < count; index++)
+            foreach (PointLight light in pointLights)
             {
-                PointLight light = pointLights[index];
-
                 //Check frustum culling
                 if (frustum.Contains(light.BoundingSphere) == ContainmentType.Disjoint) continue;
 

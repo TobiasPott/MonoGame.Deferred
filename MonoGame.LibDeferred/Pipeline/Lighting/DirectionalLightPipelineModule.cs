@@ -1,6 +1,5 @@
 ﻿using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 
@@ -11,7 +10,7 @@ namespace DeferredEngine.Pipeline.Lighting
 
         private FullscreenTriangleBuffer _fullscreenTarget;
 
-        private DirectionalLightEffectSetup _effectSetup = new DirectionalLightEffectSetup();
+        private DirectionalLightFxSetup _effectSetup = new DirectionalLightFxSetup();
 
         public Vector3[] FrustumCorners { set { _effectSetup.Param_FrustumCorners.SetValue(value); } }
 
@@ -30,10 +29,10 @@ namespace DeferredEngine.Pipeline.Lighting
             _effectSetup.Param_NormalMap.SetValue(gBufferTarget.Normal);
             _effectSetup.Param_DepthMap.SetValue(gBufferTarget.Depth);
         }
-        protected void SetCameraAndMatrices(Vector3 cameraPosition, PipelineMatrices matrices)
+        protected void SetCameraAndMatrices(Vector3 cameraPosition)
         {
-            _effectSetup.Param_ViewProjection.SetValue(matrices.ViewProjection);
-            _effectSetup.Param_InverseViewProjection.SetValue(matrices.InverseViewProjection);
+            _effectSetup.Param_ViewProjection.SetValue(this.Matrices.ViewProjection);
+            _effectSetup.Param_InverseViewProjection.SetValue(this.Matrices.InverseViewProjection);
             _effectSetup.Param_CameraPosition.SetValue(cameraPosition);
         }
 
@@ -41,7 +40,7 @@ namespace DeferredEngine.Pipeline.Lighting
         /// <summary>
         /// Draw all directional lights, set up some shader variables first
         /// </summary>
-        public void DrawDirectionalLights(List<DirectionalLight> dirLights, Vector3 cameraPosition, PipelineMatrices matrices, bool viewProjectionHasChanged)
+        public void DrawDirectionalLights(List<DirectionalLight> dirLights, Vector3 cameraPosition, bool viewProjectionHasChanged)
         {
             if (dirLights.Count < 1)
                 return;
@@ -49,13 +48,13 @@ namespace DeferredEngine.Pipeline.Lighting
 
             //If nothing has changed we don't need to update
             if (viewProjectionHasChanged)
-                this.SetCameraAndMatrices(cameraPosition, matrices);
+                this.SetCameraAndMatrices(cameraPosition);
 
             for (int index = 0; index < dirLights.Count; index++)
             {
                 DirectionalLight light = dirLights[index];
                 if (viewProjectionHasChanged)
-                    light.UpdateViewSpaceProjection(matrices);
+                    light.UpdateViewSpaceProjection(this.Matrices);
 
                 this.DrawDirectionalLight(light);
             }

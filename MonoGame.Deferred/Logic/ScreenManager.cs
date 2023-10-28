@@ -1,5 +1,6 @@
 ﻿using DeferredEngine.Entities;
 using DeferredEngine.Recources;
+using DeferredEngine.Rendering;
 using HelperSuite.GUIRenderer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -17,13 +18,16 @@ namespace DeferredEngine.Logic
         //  VARIABLES
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        private Rendering.RenderingPipeline _renderer;
-        private GUIRenderer _guiRenderer;
+        private RenderingPipeline _renderer;
         private MainSceneLogic _sceneLogic;
+        private GUIRenderer _guiRenderer;
         private GUILogic _guiLogic;
         private EditorLogic _editorLogic;
-        private DemoAssets _assets;
+        
+        
         private DebugScreen _debug;
+
+        private DemoAssets _assets;
 
         private ObjectHoverContext _objectHoverContext;
 
@@ -38,14 +42,14 @@ namespace DeferredEngine.Logic
             _guiLogic.Initialize(_assets, _sceneLogic.Camera);
             _editorLogic.Initialize(graphicsDevice);
             _debug.Initialize(graphicsDevice);
-            _guiRenderer.Initialize(graphicsDevice, RenderingSettings.g_ScreenWidth, RenderingSettings.g_ScreenHeight);
+            _guiRenderer.Initialize(graphicsDevice, RenderingSettings.Screen.g_Width, RenderingSettings.Screen.g_Height);
         }
 
         //Load content
 
         public void Load(ContentManager content, GraphicsDevice graphicsDevice)
         {
-            _renderer = new Rendering.RenderingPipeline();
+            _renderer = new RenderingPipeline();
             _sceneLogic = new MainSceneLogic();
             _guiLogic = new GUILogic();
             _editorLogic = new EditorLogic();
@@ -71,7 +75,7 @@ namespace DeferredEngine.Logic
         public void Update(GameTime gameTime, bool isActive)
         {
             _guiLogic.Update(gameTime, isActive, _editorLogic.SelectedObject);
-            _editorLogic.Update(gameTime, _sceneLogic.Scene, _renderer.GetHoverContext(), _sceneLogic.MeshBatcher);
+            _editorLogic.Update(gameTime, _sceneLogic.Scene, _renderer.CurrentHoverContext, _sceneLogic.MeshBatcher);
             _sceneLogic.Update(gameTime, isActive);
             _renderer.Update(_sceneLogic.Camera, _sceneLogic.MeshBatcher, _sceneLogic.Scene, gameTime, isActive);
 

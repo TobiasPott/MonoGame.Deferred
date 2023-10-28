@@ -1,4 +1,5 @@
 ﻿using DeferredEngine.Entities;
+using DeferredEngine.Recources;
 using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,9 +11,7 @@ namespace DeferredEngine.Pipeline.Lighting
         public static int g_UseDepthStencilLightCulling = 1; //None, Depth, Depth+Stencil
 
         private bool _useDepthStencilLightCulling;
-        private bool _viewProjectionHasChanged;
 
-        private PipelineMatrices _matrices;
         private BlendState _lightBlendState;
 
         public PointLightPipelineModule PointLightRenderModule;
@@ -23,6 +22,7 @@ namespace DeferredEngine.Pipeline.Lighting
 
         private LightingBufferTarget _lightingBufferTarget;
         public LightingBufferTarget LightingBufferTarget { set { _lightingBufferTarget = value; } }
+
 
 
         public LightingPipelineModule()
@@ -42,21 +42,11 @@ namespace DeferredEngine.Pipeline.Lighting
         {
             PointLightRenderModule.GameTime = gameTime;
         }
-        /// <summary>
-        /// Needs to be called before draw
-        /// </summary>
-        public void UpdateViewProjection(BoundingFrustum boundingFrustum, bool viewProjHasChanged, PipelineMatrices matrices)
-        {
-            PointLightRenderModule.Frustum = boundingFrustum;
-
-            _viewProjectionHasChanged = viewProjHasChanged;
-            _matrices = matrices;
-        }
 
         /// <summary>
         /// Draw our lights to the diffuse/specular/volume buffer
         /// </summary>
-        public void DrawLights(EntitySceneGroup scene, Vector3 cameraOrigin)
+        public void Draw(EntitySceneGroup scene, Vector3 viewPosition, bool viewProjectionHasChanged)
         {
             //Reconstruct Depth
             if (LightingPipelineModule.g_UseDepthStencilLightCulling > 0)
@@ -90,8 +80,8 @@ namespace DeferredEngine.Pipeline.Lighting
             _graphicsDevice.Clear(ClearOptions.Target, new Color(0, 0, 0, 0.0f), 1, 0);
             _graphicsDevice.BlendState = _lightBlendState;
 
-            PointLightRenderModule.Draw(scene.PointLights, cameraOrigin, _matrices, _viewProjectionHasChanged);
-            DirectionalLightRenderModule.DrawDirectionalLights(scene.DirectionalLights, cameraOrigin, _matrices, _viewProjectionHasChanged);
+            PointLightRenderModule.Draw(scene.PointLights, viewPosition, viewProjectionHasChanged);
+            DirectionalLightRenderModule.DrawDirectionalLights(scene.DirectionalLights, viewPosition, viewProjectionHasChanged);
 
         }
 

@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+
 
 namespace DeferredEngine.Rendering
 {
@@ -19,6 +21,9 @@ namespace DeferredEngine.Rendering
         public RenderTarget2D Specular => _renderTargets[SPECULAR];
         public RenderTarget2D Volume => _renderTargets[VOLUME];
 
+        public LightingBufferTarget(GraphicsDevice graphicsDevice, Vector2 resolution)
+            : base(graphicsDevice, (int)resolution.X, (int)resolution.Y, Definitions.Length)
+        { }
         public LightingBufferTarget(GraphicsDevice graphicsDevice, int width, int height)
             : base(graphicsDevice, width, height, Definitions.Length)
         { }

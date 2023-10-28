@@ -225,13 +225,9 @@ namespace DeferredEngine.Rendering.SDF
                 for (var i = 0; i < sdfDefinitions.Count; i++)
                 {
                     if (RenderingSettings.SDF.Regenerate)
-                    {
                         sdfDefinitions[i].NeedsToBeGenerated = true;
-                    }
                 }
-
                 RenderingSettings.SDF.Regenerate = false;
-
                 sdfDefinitionsOut = sdfDefinitions;
             }
 

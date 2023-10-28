@@ -10,7 +10,7 @@ namespace DeferredEngine.Pipeline
     //Just a template
     public class GBufferPipelineModule : PipelineModule, IRenderModule
     {
-        private GBufferEffectSetup _effectSetup = new GBufferEffectSetup();
+        private GBufferFxSetup _effectSetup = new GBufferFxSetup();
         private GBufferTarget _gBufferTarget;
         private FullscreenTriangleBuffer _fullscreenTarget;
 
@@ -117,7 +117,7 @@ namespace DeferredEngine.Pipeline
 
     public static class GBufferExtensions
     {
-        public static EffectTechnique GetGBufferTechnique(this MaterialEffect material, GBufferEffectSetup effectSetup)
+        public static EffectTechnique GetGBufferTechnique(this MaterialEffect material, GBufferFxSetup effectSetup)
         {
             if (material.HasDisplacementMap)
             {

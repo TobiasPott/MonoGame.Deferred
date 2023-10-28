@@ -3,15 +3,14 @@
 namespace DeferredEngine.Recources
 {
 
-
     public static partial class RenderingSettings
     {
-        // Bloom
-        public static class Bloom
+        //Environment mapping
+        public static class Environment
         {
             public readonly static NotifiedProperty<bool> Enabled = new NotifiedProperty<bool>(true);
 
-            public readonly static NotifiedProperty<float> Threshold = new NotifiedProperty<float>(-1.0f);
         }
+
     }
 }

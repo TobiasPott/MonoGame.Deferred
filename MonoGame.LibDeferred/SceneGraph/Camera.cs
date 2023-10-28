@@ -124,7 +124,7 @@ namespace DeferredEngine.Entities
             base.UpdateMatrices();
             //View matrix
             _view = Matrix.CreateLookAt(_position, _position + _forward, _up);
-            _projection = Matrix.CreatePerspectiveFieldOfView(_fieldOfView, RenderingSettings.g_ScreenAspect, 1, RenderingSettings.g_FarClip);
+            _projection = Matrix.CreatePerspectiveFieldOfView(_fieldOfView, RenderingSettings.Screen.g_Aspect, 1, RenderingSettings.g_FarClip);
             _viewProjection = _view * _projection;
         }
 

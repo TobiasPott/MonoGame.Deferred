@@ -140,7 +140,7 @@ namespace DeferredEngine.Recources
         /// </summary>
         private static MaterialEffect CreateMaterialEffect(Color color, float roughness, float metallic, Texture2D albedoMap = null, Texture2D normalMap = null, Texture2D roughnessMap = null, Texture2D metallicMap = null, Texture2D mask = null, Texture2D displacementMap = null, MaterialEffect.MaterialTypes type = 0, float emissiveStrength = 0)
         {
-            MaterialEffect mat = new MaterialEffect(DeferredEffectSetup.Instance.Effect_Clear);
+            MaterialEffect mat = new MaterialEffect(DeferredFxSetup.Instance.Effect_Clear);
             mat.Initialize(color, roughness, metallic, albedoMap, normalMap, roughnessMap, metallicMap, mask, displacementMap, type, emissiveStrength);
             return mat;
         }

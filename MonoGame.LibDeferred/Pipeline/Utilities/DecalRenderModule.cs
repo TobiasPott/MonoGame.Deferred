@@ -1,5 +1,4 @@
 ﻿using DeferredEngine.Entities;
-using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
@@ -30,9 +29,10 @@ namespace DeferredEngine.Pipeline.Utilities
         { }
 
 
-        public void Initialize(GraphicsDevice graphicsDevice)
+        public override void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         {
-            _graphicsDevice = graphicsDevice;
+            base.Initialize(graphicsDevice, spriteBatch);
+
             _decalBlend = new BlendState()
             {
                 AlphaDestinationBlend = Blend.One,
@@ -108,7 +108,7 @@ namespace DeferredEngine.Pipeline.Utilities
             _indexBufferCube.SetData(Indices2);
         }
 
-        public void Draw(List<Decal> decals) => Draw(decals, this.Matrices.View, this.Matrices.ViewProjection, this.Matrices.InverseView);
+        public void Draw(EntitySceneGroup scene) => Draw(scene.Decals, this.Matrices.View, this.Matrices.ViewProjection, this.Matrices.InverseView);
         public void Draw(List<Decal> decals, Matrix view, Matrix viewProjection, Matrix inverseView)
         {
             _graphicsDevice.SetVertexBuffer(_vertexBuffer);
@@ -133,15 +133,15 @@ namespace DeferredEngine.Pipeline.Utilities
             }
         }
 
-        public void DrawOutlines(Decal decal, PipelineMatrices matrices)
+        public void DrawOutlines(Decal decal)
         {
             _graphicsDevice.SetVertexBuffer(_vertexBuffer);
             _graphicsDevice.Indices = _indexBufferCage;
 
             Matrix localMatrix = decal.World;
 
-            _effectSetup.Param_WorldView.SetValue(localMatrix * matrices.View);
-            _effectSetup.Param_WorldViewProj.SetValue(localMatrix * matrices.ViewProjection);
+            _effectSetup.Param_WorldView.SetValue(localMatrix * this.Matrices.View);
+            _effectSetup.Param_WorldViewProj.SetValue(localMatrix * this.Matrices.ViewProjection);
 
             _effectSetup.Pass_Outline.Apply();
 

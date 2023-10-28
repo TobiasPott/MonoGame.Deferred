@@ -7,7 +7,7 @@ using MonoGame.Ext;
 namespace DeferredEngine.Rendering.PostProcessing
 {
 
-    public partial class SSAmbientOcclustionFx : BaseFx
+    public partial class SSAmbientOcclustionFx : PostFx
     {
         //Screen Space Ambient Occlusion
         public static bool g_ssao_blur { get; set; } = true;
@@ -103,7 +103,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         {
             _graphicsDevice.SetRenderTarget(_ssfxTargets.AO_Blur_V);
             _spriteBatch.Begin(0, BlendState.Additive);
-            _spriteBatch.Draw(_ssfxTargets.AO_Main, RenderingSettings.g_ScreenRect, Color.White);
+            _spriteBatch.Draw(_ssfxTargets.AO_Main, RenderingSettings.Screen.g_Rect, Color.White);
             _spriteBatch.End();
         }
         /// <summary>
@@ -141,13 +141,13 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         }
 
-        public void SetCameraAndMatrices(Vector3 cameraPosition, PipelineMatrices matrices)
+        public void SetViewPosition(Vector3 viewPosition)
         {
-            _fxSetup.Param_InverseViewProjection.SetValue(matrices.InverseViewProjection);
-            _fxSetup.Param_Projection.SetValue(matrices.Projection);
-            _fxSetup.Param_ViewProjection.SetValue(matrices.ViewProjection);
+            _fxSetup.Param_InverseViewProjection.SetValue(this.Matrices.InverseViewProjection);
+            _fxSetup.Param_Projection.SetValue(this.Matrices.Projection);
+            _fxSetup.Param_ViewProjection.SetValue(this.Matrices.ViewProjection);
 
-            _fxSetup.Param_CameraPosition.SetValue(cameraPosition);
+            _fxSetup.Param_CameraPosition.SetValue(viewPosition);
         }
 
 

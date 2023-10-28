@@ -45,7 +45,6 @@ namespace DeferredEngine.Rendering.PostProcessing
             set
             {
                 SSReflection.FarClip = value;
-
             }
         }
         public PipelineMatrices Matrices
@@ -54,6 +53,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             {
                 TemporaAA.Matrices = value;
                 SSReflection.Matrices = value;
+                SSAmbientOcclusion.Matrices = value;
             }
         }
 
@@ -67,6 +67,19 @@ namespace DeferredEngine.Rendering.PostProcessing
             }
         }
 
+        public Vector2 Resolution
+        {
+            set
+            {
+                TemporaAA.Resolution = value;
+                SSReflection.Resolution = value;
+                ///////////////////
+                // HALF RESOLUTION
+                value /= 2;
+                SSAmbientOcclusion.InverseResolution = Vector2.One / value;
+                SSAmbientOcclusion.AspectRatios = new Vector2(Math.Min(1.0f, value.X / value.Y), Math.Min(1.0f, value.Y / value.X));
+            }
+        }
 
 
         public PipelineFxStack(ContentManager content)
@@ -86,7 +99,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             _spriteBatch = spriteBatch;
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
 
-            Bloom.Initialize(graphicsDevice, RenderingSettings.g_ScreenResolution);
+            Bloom.Initialize(graphicsDevice, RenderingSettings.Screen.g_Resolution);
             TemporaAA.Initialize(graphicsDevice, _fullscreenTarget);
             ColorGrading.Initialize(graphicsDevice, _fullscreenTarget);
             PostProcessing.Initialize(graphicsDevice, _fullscreenTarget);
@@ -110,9 +123,6 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         private RenderTarget2D DrawPostProcessing(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
-            if (!this.PostProcessing.Enabled)
-                return sourceRT;
-
             return this.PostProcessing.Draw(sourceRT, previousRT, destRT);
         }
         private RenderTarget2D DrawColorGrading(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
@@ -133,8 +143,8 @@ namespace DeferredEngine.Rendering.PostProcessing
                 _graphicsDevice.SetRenderTargets(destRT);
                 _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
 
-                _spriteBatch.Draw(sourceRT, RenderingSettings.g_ScreenRect, Color.White);
-                _spriteBatch.Draw(bloom, RenderingSettings.g_ScreenRect, Color.White);
+                _spriteBatch.Draw(sourceRT, RenderingSettings.Screen.g_Rect, Color.White);
+                _spriteBatch.Draw(bloom, RenderingSettings.Screen.g_Rect, Color.White);
 
                 _spriteBatch.End();
 
@@ -153,6 +163,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         {
             if (!this.TemporaAA.Enabled)
                 return sourceRT;
+
             this.TemporaAA.Draw(sourceRT, previousRT, destRT);
 
             return TemporalAAFx.g_UseTonemapping ? sourceRT : destRT;
@@ -193,7 +204,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         {
             if (blendState == null) blendState = BlendState.Opaque;
 
-            RenderingSettings.GetDestinationRectangle(source.GetAspect(), out Rectangle destRectangle);
+            RenderingSettings.Screen.GetDestinationRectangle(source.GetAspect(), out Rectangle destRectangle);
             _graphicsDevice.SetRenderTarget(destRT);
             _spriteBatch.Begin(0, blendState, _superSampling > 1 ? SamplerState.LinearWrap : SamplerState.PointClamp);
             _spriteBatch.Draw(source, destRectangle, Color.White);

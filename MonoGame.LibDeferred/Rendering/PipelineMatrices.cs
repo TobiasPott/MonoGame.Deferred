@@ -54,13 +54,13 @@ namespace DeferredEngine.Rendering
                 case 0: //2 frames, just basic translation. Worst taa implementation. Not good with the continous integration used
                     {
                         Vector2 translation = Vector2.One * (isOffFrame ? 0.5f : -0.5f);
-                        ViewProjection *= (translation / RenderingSettings.g_ScreenResolution).ToMatrixTranslationXY();
+                        ViewProjection *= (translation / RenderingSettings.Screen.g_Resolution).ToMatrixTranslationXY();
                         return true;
                     }
                 case 1: // Just random translation
                     {
                         float randomAngle = FastRand.NextAngle();
-                        Vector2 translation = (new Vector2((float)Math.Sin(randomAngle), (float)Math.Cos(randomAngle)) / RenderingSettings.g_ScreenResolution) * 0.5f;
+                        Vector2 translation = (new Vector2((float)Math.Sin(randomAngle), (float)Math.Cos(randomAngle)) / RenderingSettings.Screen.g_Resolution) * 0.5f;
                         ViewProjection *= translation.ToMatrixTranslationXY();
                         return true;
                     }

@@ -9,6 +9,7 @@ using HelperSuite.GUIHelper;
 using Microsoft.Xna.Framework;
 using System.Reflection;
 using System.Text;
+using static DeferredEngine.Recources.RenderingSettings;
 
 namespace DeferredEngine.Logic
 {
@@ -60,7 +61,7 @@ namespace DeferredEngine.Logic
         /// <param name="sceneLogicCamera"></param>
         private void CreateGUI(Camera sceneLogicCamera)
         {
-            GuiCanvas = new GUICanvas(Vector2.Zero, RenderingSettings.g_ScreenResolution);
+            GuiCanvas = new GUICanvas(Vector2.Zero, RenderingSettings.Screen.g_Resolution);
 
             defaultStyle = new GUIStyle(
                 dimensionsStyle: new Vector2(200, 35),
@@ -136,7 +137,7 @@ namespace DeferredEngine.Logic
 
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Default Material")
             {
-                ToggleField = typeof(RenderingSettings).GetField("d_defaultmaterial"),
+                ToggleField = typeof(RenderingSettings).GetField("d_DefaultMaterial"),
                 Toggle = RenderingSettings.d_DefaultMaterial
             });
 
@@ -193,13 +194,13 @@ namespace DeferredEngine.Logic
 
             sdfList.AddElement(new GUITextBlockToggle(defaultStyle, "Draw SDF")
             {
-                ToggleField = typeof(RenderingSettings.SDF).GetField("DrawDistance"),
+                ToggleField = typeof(RenderingSettings.SDF).GetField(nameof(RenderingSettings.SDF.DrawDistance)),
                 Toggle = RenderingSettings.SDF.DrawDistance
             });
 
             sdfList.AddElement(new GUITextBlockToggle(defaultStyle, "Draw SDF volume")
             {
-                ToggleField = typeof(RenderingSettings.SDF).GetField("DrawVolume"),
+                ToggleField = typeof(RenderingSettings.SDF).GetField(nameof(RenderingSettings.SDF.DrawVolume)),
                 Toggle = RenderingSettings.SDF.DrawVolume
             });
 
@@ -211,6 +212,12 @@ namespace DeferredEngine.Logic
 
             GuiListToggle postprocessingList = new GuiListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
             optionList.AddElement(postprocessingList);
+
+            postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Post Processing")
+            {
+                ToggleField = typeof(RenderingSettings).GetField(nameof(RenderingSettings.g_PostProcessing)),
+                Toggle = RenderingSettings.g_PostProcessing
+            });
 
             postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Color Grading")
             {
@@ -244,7 +251,8 @@ namespace DeferredEngine.Logic
 
             ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable SSR")
             {
-                ToggleProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_Enabled)),
+                ToggleProperty = SSReflectionFx.g_Enabled.GetValuePropertyInfo(),
+                ToggleObject = SSReflectionFx.g_Enabled,
                 Toggle = SSReflectionFx.g_Enabled
             });
 
@@ -256,9 +264,11 @@ namespace DeferredEngine.Logic
 
             ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Temporal Noise")
             {
-                ToggleProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_Noise)),
+                ToggleProperty = SSReflectionFx.g_Noise.GetValuePropertyInfo(),
+                ToggleObject = SSReflectionFx.g_Noise,
                 Toggle = SSReflectionFx.g_Noise
             });
+
 
             ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Firefly Reduction")
             {
@@ -274,13 +284,15 @@ namespace DeferredEngine.Logic
 
             ssrList.AddElement(new GuiSliderIntText(defaultStyle, 1, 100, 1, "Samples: ")
             {
-                SliderProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_Samples)),
+                SliderProperty = SSReflectionFx.g_Samples.GetValuePropertyInfo(),
+                SliderObject = SSReflectionFx.g_Samples,
                 SliderValue = SSReflectionFx.g_Samples
-            });
+            }); ;
 
             ssrList.AddElement(new GuiSliderIntText(defaultStyle, 1, 100, 1, "Search Samples: ")
             {
-                SliderProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_RefinementSamples)),
+                SliderProperty = SSReflectionFx.g_RefinementSamples.GetValuePropertyInfo(),
+                SliderObject = SSReflectionFx.g_RefinementSamples,
                 SliderValue = SSReflectionFx.g_RefinementSamples
             });
 
@@ -338,14 +350,31 @@ namespace DeferredEngine.Logic
 
             bloomList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Bloom")
             {
-                ToggleField = typeof(RenderingSettings.Bloom).GetField("Enabled"),
+                ToggleProperty = RenderingSettings.Bloom.Enabled.GetValuePropertyInfo(),
+                ToggleObject = RenderingSettings.Bloom.Enabled,
                 Toggle = RenderingSettings.Bloom.Enabled
             });
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 1, 3, "Threshold: ")
             {
-                SliderProperty = typeof(RenderingSettings.Bloom).GetProperty("Threshold"),
+                SliderProperty = RenderingSettings.Bloom.Threshold.GetValuePropertyInfo(),
+                SliderObject = RenderingSettings.Bloom.Threshold,
                 SliderValue = RenderingSettings.Bloom.Threshold,
+            });
+
+
+            optionList.AddElement(new GUITextBlock(Vector2.Zero, new Vector2(200, 10), "Environment",
+                defaultStyle.TextFontStyle, Color.DarkSlateGray, Color.White, GUIStyle.TextAlignment.Center,
+                Vector2.Zero));
+
+            GuiListToggle environmentGroup = new GuiListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
+            optionList.AddElement(environmentGroup);
+
+            environmentGroup.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Environment")
+            {
+                ToggleProperty = RenderingSettings.Environment.Enabled.GetValuePropertyInfo(),
+                ToggleObject = RenderingSettings.Environment.Enabled,
+                Toggle = RenderingSettings.Environment.Enabled
             });
 
             // ToDo: @tpott: Reintroduce UI for bloom values
@@ -496,7 +525,7 @@ namespace DeferredEngine.Logic
                         _objectSlider0.SetText(new StringBuilder("Radius: "));
 
                         _objectSlider1.MinValue = 0.01f;
-                        _objectSlider1.MaxValue = 1000;
+                        _objectSlider1.MaxValue = 300;
 
                         _objectSlider1.SetField(selectedObject, "Intensity");
                         _objectSlider1.SetText(new StringBuilder("Intensity: "));
@@ -524,7 +553,7 @@ namespace DeferredEngine.Logic
                         _objectToggle2.Text = new StringBuilder("Cast Shadows");
 
                         _objectSlider1.MinValue = 0.01f;
-                        _objectSlider1.MaxValue = 1000;
+                        _objectSlider1.MaxValue = 300;
 
                         _objectSlider1.SetField(selectedObject, "Intensity");
                         _objectSlider1.SetText(new StringBuilder("Intensity: "));
@@ -580,8 +609,8 @@ namespace DeferredEngine.Logic
 
         public void UpdateResolution()
         {
-            GUIControl.UpdateResolution(RenderingSettings.g_ScreenResolution);
-            GuiCanvas.Resize(RenderingSettings.g_ScreenResolution);
+            GUIControl.UpdateResolution(RenderingSettings.Screen.g_Resolution);
+            GuiCanvas.Resize(RenderingSettings.Screen.g_Resolution);
         }
     }
 }

@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DeferredEngine.Pipeline.Lighting
 {
 
-    public class PointLightEffectSetup : BaseFxSetup
+    public class PointLightFxSetup : BaseFxSetup
     {
         public Effect Effect { get; protected set; }
 
@@ -54,7 +54,7 @@ namespace DeferredEngine.Pipeline.Lighting
         public EffectParameter Param_NormalMap { get; protected set; }
         public EffectParameter Param_DepthMap { get; protected set; }
 
-        public PointLightEffectSetup(string shaderPath = "Shaders/Deferred/DeferredPointLight") : base(shaderPath)
+        public PointLightFxSetup(string shaderPath = "Shaders/Deferred/DeferredPointLight") : base(shaderPath)
         {
             Effect = Globals.content.Load<Effect>("Shaders/Deferred/DeferredPointLight");
 

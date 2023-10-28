@@ -7,11 +7,10 @@ using MonoGame.Ext;
 namespace DeferredEngine.Rendering.PostProcessing
 {
 
-    public partial class SSReflectionFx : BaseFx
+    public partial class SSReflectionFx : PostFx
     {
         // SSR
-        public static NotifiedProperty<bool> gg_Enabled = new NotifiedProperty<bool>(true);
-        public static bool g_Enabled { get => gg_Enabled; set => gg_Enabled.Set(value); }
+        public static NotifiedProperty<bool> g_Enabled = new NotifiedProperty<bool>(true);
         public static bool g_FireflyReduction { get; set; } = true;
 
 
@@ -19,12 +18,13 @@ namespace DeferredEngine.Rendering.PostProcessing
         public static float g_FireflyThreshold { get; set; } = 1.75f;
 
 
-        public static bool g_Noise { get; set; } = true;
+        public static NotifiedProperty<bool> g_Noise = new NotifiedProperty<bool>(true);
         public static bool g_UseTaa { get; set; } = true;
 
-        //5 and 5 are good, 3 and 3 are cheap
-        public static int g_Samples { get; set; } = 3;
-        public static int g_RefinementSamples { get; set; } = 3;
+        //5 and 5 are good, 3 and 3 are cheap#
+
+        public static NotifiedProperty<int> g_Samples = new NotifiedProperty<int>(3);
+        public static NotifiedProperty<int> g_RefinementSamples = new NotifiedProperty<int>(3);
 
 
 
@@ -50,6 +50,12 @@ namespace DeferredEngine.Rendering.PostProcessing
         /// </summary>
         public SSReflectionFx(ContentManager content)
         {
+            g_Noise.Changed += Global_Noise_Changed;
+        }
+
+        private void Global_Noise_Changed(bool enabled)
+        {
+            Time = 0.0f;
         }
 
         protected override bool GetEnabled() => _enabled && SSReflectionFx.g_Enabled;
@@ -68,7 +74,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
             _fxSetup.Param_Samples.SetValue(SSReflectionFx.g_Samples);
             _fxSetup.Param_SecondarySamples.SetValue(SSReflectionFx.g_RefinementSamples);
-            
+
             _fxSetup.Effect.CurrentTechnique = SSReflectionFx.g_UseTaa ? _fxSetup.Technique_Taa : _fxSetup.Technique_Default;
             _fxSetup.Effect.CurrentTechnique.Passes[0].Apply();
             _fullscreenTarget.Draw(_graphicsDevice);

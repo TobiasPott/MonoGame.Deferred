@@ -10,7 +10,7 @@ namespace DeferredEngine.Rendering.SDF
 {
 
     //Just a template
-    public partial class DistanceFieldRenderModule : IDisposable
+    public partial class DistanceFieldRenderModule : PipelineModule, IDisposable
     {
 
         private DistanceFieldEffectSetup _effectSetup = new DistanceFieldEffectSetup();
@@ -19,9 +19,7 @@ namespace DeferredEngine.Rendering.SDF
         public PointLightPipelineModule PointLightRenderModule;
         public EnvironmentPipelineModule EnvironmentProbeRenderModule;
 
-        private GraphicsDevice _graphicsDevice;
-        private SpriteBatch _spriteBatch;
-        private RenderTarget2D _atlasRenderTarget2D;
+        public RenderTarget2D AtlasTarget { get; protected set; }
 
 
         private const int InstanceMaxCount = 40;
@@ -40,14 +38,10 @@ namespace DeferredEngine.Rendering.SDF
 
 
         public Vector3[] FrustumCornersWS { set { _effectSetup.Param_FrustumCorners.SetValue(value); } }
-        public Vector3 CameraPosition { set { _effectSetup.Param_CameraPositon.SetValue(value); } }
+        public Vector3 ViewPosition { set { _effectSetup.Param_CameraPositon.SetValue(value); } }
         public Texture2D DepthMap { set { _effectSetup.Param_DepthMap.SetValue(value); } }
+        public Vector3 MeshOffset { set { _effectSetup.Param_MeshOffset.SetValue(value); } }
 
-
-        public Vector3 MeshOffset
-        {
-            set { _effectSetup.Param_MeshOffset.SetValue(value); }
-        }
 
         public DistanceFieldRenderModule()
         {
@@ -67,24 +61,16 @@ namespace DeferredEngine.Rendering.SDF
             _effectSetup.Param_VolumeTexSize.SetValue(texSizes);
             _effectSetup.Param_VolumeTexResolution.SetValue(texResolutions);
         }
-
-
-        public void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
+        public void SetViewPosition(Vector3 viewPosition)
         {
-            _graphicsDevice = graphicsDevice;
-            _spriteBatch = spriteBatch;
+            _effectSetup.Param_CameraPositon.SetValue(viewPosition);
         }
 
-        public Texture2D GetAtlas()
-        {
-            return _atlasRenderTarget2D;
-        }
-        public void Draw(Camera camera)
+
+        public void Draw()
         {
             if (!RenderingSettings.SDF.DrawDistance)
                 return;
-
-            CameraPosition = camera.Position;
 
             if (RenderingSettings.SDF.DrawVolume)
                 _effectSetup.Pass_Volume.Apply();
@@ -168,7 +154,7 @@ namespace DeferredEngine.Rendering.SDF
 
             if (!updateAtlas) return;
 
-            _atlasRenderTarget2D?.Dispose();
+            AtlasTarget?.Dispose();
 
             int x = 0, y = 0;
             //Count size
@@ -182,9 +168,9 @@ namespace DeferredEngine.Rendering.SDF
                 _volumeTexSizeArray[i] = _signedDistanceFieldDefinitions[i].VolumeSize;
             }
 
-            _atlasRenderTarget2D = new RenderTarget2D(_graphicsDevice, x, y, false, SurfaceFormat.HalfSingle, DepthFormat.None);
+            AtlasTarget = new RenderTarget2D(_graphicsDevice, x, y, false, SurfaceFormat.HalfSingle, DepthFormat.None);
 
-            _graphicsDevice.SetRenderTarget(_atlasRenderTarget2D);
+            _graphicsDevice.SetRenderTarget(AtlasTarget);
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.PointClamp);
             for (int i = 0; i < _signedDistanceFieldDefinitionsCount; i++)
             {
@@ -195,9 +181,9 @@ namespace DeferredEngine.Rendering.SDF
 
 
             //Atlas
-            this.SetVolumeTexParams(_atlasRenderTarget2D, _volumeTexSizeArray, _volumeTexResolutionArray);
-            PointLightRenderModule.SetVolumeTexParams(_atlasRenderTarget2D, _volumeTexSizeArray, _volumeTexResolutionArray);
-            EnvironmentProbeRenderModule.SetVolumeTexParams(_atlasRenderTarget2D, _volumeTexSizeArray, _volumeTexResolutionArray);
+            this.SetVolumeTexParams(AtlasTarget, _volumeTexSizeArray, _volumeTexResolutionArray);
+            PointLightRenderModule.SetVolumeTexParams(AtlasTarget, _volumeTexSizeArray, _volumeTexResolutionArray);
+            EnvironmentProbeRenderModule.SetVolumeTexParams(AtlasTarget, _volumeTexSizeArray, _volumeTexResolutionArray);
         }
 
         public RenderTarget2D CreateSDFTexture(GraphicsDevice graphics, Texture2D triangleData, Vector3 steps, SignedDistanceField sdf, int trianglesLength)
@@ -234,7 +220,7 @@ namespace DeferredEngine.Rendering.SDF
             _sdfGenerator.Update(_graphicsDevice, entities, this, ref _sdfDefinitions);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             _effectSetup.Dispose();
         }
