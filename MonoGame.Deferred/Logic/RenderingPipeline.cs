@@ -176,8 +176,15 @@ namespace DeferredEngine.Rendering
                 meshBatcher.FrustumCulling(_frustum.Frustum, camera.HasChanged);
                 // Compute the frustum corners for cheap view direction computation in shaders
                 _frustum.UpdateVertices(_matrices.View, camera.Position);
+
                 _moduleStack.Lighting.SetViewPosition(camera.Position);
                 _moduleStack.Lighting.RequestRedraw();
+                _moduleStack.Environment.SetViewPosition(camera.Position);
+                _moduleStack.Environment.SetEnvironmentProbe(scene.EnvProbe);
+                _moduleStack.Forward.SetupLighting(camera, scene.PointLights, _frustum.Frustum);
+                _moduleStack.DistanceField.SetViewPosition(camera.Position);
+
+                _fxStack.SSAmbientOcclusion.SetViewPosition(camera.Position);
             }
 
             //Performance Profiler
@@ -200,6 +207,11 @@ namespace DeferredEngine.Rendering
         /// </summary>
         public void Draw(Camera camera, DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GizmoDrawContext gizmoContext)
         {
+            // Step: 12
+            //Draw the elements that we are hovering over with outlines
+            if (RenderingSettings.e_IsEditorEnabled && RenderingSettings.e_EnableSelection)
+                _moduleStack.IdAndOutline.Draw(meshBatcher, scene, gizmoContext, EditorLogic.Instance.HasMouseMoved);
+
             // Step: 01
             //Render SHADOW MAPS
             _moduleStack.ShadowMap.Draw(meshBatcher, scene);
@@ -227,7 +239,6 @@ namespace DeferredEngine.Rendering
             // STAGE: PreLighting-SSFx
             // Step: 05
             //SSAO
-            _fxStack.SSAmbientOcclusion.SetViewPosition(camera.Position);
             _fxStack.Draw(PipelineFxStage.SSAmbientOcclusion, null, null, _ssfxTargets.AO_Main);
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_SSFx_SSAO);
@@ -244,8 +255,6 @@ namespace DeferredEngine.Rendering
             //Draw the environment cube map as a fullscreen effect on all meshes
             if (RenderingSettings.Environment.Enabled)
             {
-                _moduleStack.Environment.SetEnvironmentProbe(scene.EnvProbe);
-                _moduleStack.Environment.SetViewPosition(camera.Position);
                 _moduleStack.Environment.Draw();
                 //Performance Profiler
                 _profiler.SampleTimestamp(ref PipelineSamples.SDraw_EnvironmentMap);
@@ -267,7 +276,6 @@ namespace DeferredEngine.Rendering
             {
                 _graphicsDevice.SetRenderTarget(_auxTargets[PipelineTargets.COMPOSE]);
                 _moduleStack.DepthReconstruct.ReconstructDepth();
-                _moduleStack.Forward.SetupLighting(camera, scene.PointLights, _frustum.Frustum);
                 _moduleStack.Forward.Draw(meshBatcher);
             }
 
@@ -277,31 +285,26 @@ namespace DeferredEngine.Rendering
             _currentOutput = _fxStack.Draw(PipelineFxStage.TemporalAA, _auxTargets[PipelineTargets.COMPOSE], taaPreviousRT, taaDestRT);
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_CombineTAA);
-
             // Step: 11
             //Do Bloom
             _currentOutput = _fxStack.Draw(PipelineFxStage.Bloom, _currentOutput, null, _ssfxTargets.Bloom_Main);
-
             //Performance Profiler
             _profiler.Sample(ref PipelineSamples.SDraw_TotalRender);
-
-            // Step: 12
-            //Draw the elements that we are hovering over with outlines
-            if (RenderingSettings.e_IsEditorEnabled && RenderingSettings.e_EnableSelection)
-                _moduleStack.IdAndOutline.Draw(meshBatcher, scene, gizmoContext, EditorLogic.Instance.HasMouseMoved);
 
             // Step: 13
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
             DrawPipelinePass(RenderingSettings.g_CurrentPass, _currentOutput, null, _auxTargets[PipelineTargets.OUTPUT]);
 
+            // ToDo: PRIO II: Move the different SDF outputs into the PipelinePass method to blit them to output
+            // Step: 14
+            //Draw signed distance field functions
+            _moduleStack.DistanceField.DrawDistance();
+            _moduleStack.DistanceField.DrawVolume();
+
             // Step: 15
             //Additional editor elements that overlay our screen
             DrawEditorOverlays(gizmoContext, scene);
 
-            // Step: 14
-            //Draw signed distance field functions
-            _moduleStack.DistanceField.SetViewPosition(camera.Position);
-            _moduleStack.DistanceField.Draw();
 
         }
 

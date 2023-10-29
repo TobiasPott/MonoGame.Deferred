@@ -111,13 +111,13 @@ namespace DeferredEngine.Logic
             GUITextBlock helperText = new GUITextBlock(new Vector2(0, 100), new Vector2(300, 200), CreateHelperText(), defaultStyle.TextFontStyle, new Color(Color.DimGray, 0.2f), Color.White, GUIStyle.TextAlignment.Left, new Vector2(10, 1)) { IsHidden = true };
             GuiCanvas.AddElement(helperText);
 
-            _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Editor")
+            _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Selection")
             {
                 ToggleField = typeof(RenderingSettings).GetField(nameof(RenderingSettings.e_EnableSelection)),
                 Toggle = RenderingSettings.e_EnableSelection
             });
 
-            _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Highlight Meshes")
+            _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Draw Mesh Outlines")
             {
                 ToggleField = typeof(IdAndOutlineRenderModule).GetField("e_DrawOutlines"),
                 Toggle = IdAndOutlineRenderModule.e_DrawOutlines

@@ -66,7 +66,7 @@ namespace DeferredEngine.Rendering.SDF
         }
 
 
-        public void Draw()
+        public void DrawDistance()
         {
             if (RenderingSettings.SDF.DrawDistance)
             {
@@ -74,7 +74,10 @@ namespace DeferredEngine.Rendering.SDF
                 _effectSetup.Pass_Distance.Apply();
                 FullscreenTriangleBuffer.Instance.Draw(_graphicsDevice);
             }
-            else if (RenderingSettings.SDF.DrawVolume)
+        }
+        public void DrawVolume()
+        {
+            if (RenderingSettings.SDF.DrawVolume)
             {
                 _effectSetup.Param_FrustumCorners.SetValue(this.Frustum.WorldSpaceFrustum);
 
