@@ -9,7 +9,7 @@ namespace DeferredEngine.Recources
 
         public EffectParameter Param_DepthMap { get; protected set; }
         public EffectParameter Param_NormalMap { get; protected set; }
-        public EffectParameter Param_TargetMap { get; protected set; }
+        public EffectParameter Param_SourceMap { get; protected set; }
         public EffectParameter Param_Resolution { get; protected set; }
         public EffectParameter Param_Projection { get; protected set; }
         public EffectParameter Param_Time { get; protected set; }
@@ -28,8 +28,8 @@ namespace DeferredEngine.Recources
 
             Param_DepthMap = Effect.Parameters["DepthMap"];
             Param_NormalMap = Effect.Parameters["NormalMap"];
-            Param_TargetMap = Effect.Parameters["TargetMap"];
-            Param_Resolution = Effect.Parameters["resolution"];
+            Param_SourceMap = Effect.Parameters["SourceMap"];
+            Param_Resolution = Effect.Parameters["Resolution"];
             Param_Projection = Effect.Parameters["Projection"];
             Param_Time = Effect.Parameters["Time"];
             Param_FrustumCorners = Effect.Parameters["FrustumCorners"];

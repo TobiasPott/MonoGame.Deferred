@@ -35,7 +35,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         public RenderTarget2D DepthMap { set { _fxSetup.Param_DepthMap.SetValue(value); } }
         public RenderTarget2D NormalMap { set { _fxSetup.Param_NormalMap.SetValue(value); } }
-        public RenderTarget2D TargetMap { set { _fxSetup.Param_TargetMap.SetValue(value); } }
+        public RenderTarget2D TargetMap { set { _fxSetup.Param_SourceMap.SetValue(value); } }
 
 
 

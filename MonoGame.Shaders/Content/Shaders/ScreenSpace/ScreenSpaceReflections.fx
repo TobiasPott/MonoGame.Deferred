@@ -18,11 +18,11 @@ const int SecondarySamples = 3;
 const float MinimumThickness = 70;
 
 const float border = 0.1f;
-float2 resolution = float2(1280, 800);
+float2 Resolution = float2(1280, 720);
 
 Texture2D DepthMap;
-Texture2D TargetMap;
 Texture2D NormalMap;
+Texture2D SourceMap;
 Texture2D NoiseMap;
 
 SamplerState texSampler
@@ -192,7 +192,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 	}
 
 	//Add some noise
-	float noise = NoiseMap.Sample(texSampler, frac(((texCoord + temporalComponent.xx)* resolution ) / 64)).r; // + frac(input.TexCoord* Projection)).r;
+	float noise = NoiseMap.Sample(texSampler, frac(((texCoord + temporalComponent.xx)* Resolution ) / 64)).r; // + frac(input.TexCoord* Projection)).r;
 	
 	//Raymarching the depth buffer
 	[loop]
@@ -205,7 +205,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 		if (rayPosition.z < 0 || rayPosition.z>1) break;
 
 		//Get the depth at our new position
-		int3 texCoordInt = int3(rayPosition.xy * resolution, 0);
+		int3 texCoordInt = int3(rayPosition.xy * Resolution, 0);
 
 		float linearDepth = DepthMap.Load(texCoordInt).r * -FarClip;
 		float sampleDepth = TransformDepth(linearDepth, Projection);
@@ -245,7 +245,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 			{
 				rayPosition = hitPosition - rayStep * j / (samples2);
 
-				texCoordInt = int3(rayPosition.xy * resolution, 0);
+				texCoordInt = int3(rayPosition.xy * Resolution, 0);
 
 				sampleDepth = TransformDepth(DepthMap.Load(texCoordInt).r * -FarClip - 50.0f, Projection);
 
@@ -293,9 +293,9 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 			if (!hit)
 				continue;
 
-			int3 hitCoordInt = int3(hitTexCoord.xy * resolution, 0);
+			int3 hitCoordInt = int3(hitTexCoord.xy * Resolution, 0);
 
-			float4 albedoColor = TargetMap.Load(hitCoordInt);
+			float4 albedoColor = SourceMap.Load(hitCoordInt);
 			output.rgb = albedoColor.rgb;
 			output.a = 1;
 
@@ -438,7 +438,7 @@ float4 PixelShaderFunctionTAA(VertexShaderOutput input) : COLOR0
 		if (rayPosition.z < 0 || rayPosition.z>1) break;
 
 		//Get the depth at our new position
-		int3 texCoordInt = int3(rayPosition.xy * resolution, 0);
+		int3 texCoordInt = int3(rayPosition.xy * Resolution, 0);
 
 		float linearDepth = DepthMap.Load(texCoordInt).r * -FarClip;
 		float sampleDepth = TransformDepth(linearDepth, Projection);
@@ -478,7 +478,7 @@ float4 PixelShaderFunctionTAA(VertexShaderOutput input) : COLOR0
 			{
 				rayPosition = hitPosition - rayStep * j / (samples2);
 
-				texCoordInt = int3(rayPosition.xy * resolution, 0);
+				texCoordInt = int3(rayPosition.xy * Resolution, 0);
 
 				sampleDepth = TransformDepth(DepthMap.Load(texCoordInt).r * -FarClip - 50.0f, Projection);
 
@@ -526,9 +526,9 @@ float4 PixelShaderFunctionTAA(VertexShaderOutput input) : COLOR0
 			if (!hit)
 				continue;
 
-			int3 hitCoordInt = int3(  (hitTexCoord.xy * resolution), 0);
+			int3 hitCoordInt = int3(  (hitTexCoord.xy * Resolution), 0);
 
-			float4 albedoColor = TargetMap.Load(hitCoordInt);
+            float4 albedoColor = SourceMap.Load(hitCoordInt);
 			output.rgb = albedoColor.rgb;
 			output.a = 1;
 
