@@ -8,24 +8,44 @@ namespace DeferredEngine.Pipeline
     {
         public const string FieldInfoPrefix = "S";
 
-        public static long SDraw_Shadows;
-        public static long SDraw_CubeMap;
-        public static long SDraw_GBuffer;
-        public static long SDraw_SSFx_SSAO;
-        public static long SDraw_SSFx_AO_BilateralBlur;
-        public static long SDraw_EnvironmentMap;
-        public static long SDraw_SSFx_SSR;
-        public static long SDraw_Compose;
-        public static long SDraw_CombineTAA;
-        public static long SDraw_FinalRender;
-        public static long SDraw_TotalRender;
+        public static double SDraw_Shadows => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_Shadows);
+        public static double SDraw_CubeMap => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_CubeMap);
+        public static double SDraw_GBuffer => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_GBuffer);
+        public static double SDraw_SSFx_SSAO => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_SSFx_SSAO);
+        public static double SDraw_SSFx_AO_BilateralBlur => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_SSFx_AO_BilateralBlur);
+        public static double SDraw_EnvironmentMap => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_EnvironmentMap);
+        public static double SDraw_SSFx_SSR => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_SSFx_SSR);
+        public static double SDraw_Compose => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_Compose);
+        public static double SDraw_CombineTAA => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_CombineTAA);
+        public static double SDraw_FinalRender => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_FinalRender);
+        public static double SDraw_TotalRender => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_TotalRender);
 
-        public static long SUpdate_ViewProjection;
+        public static double SUpdate_ViewProjection => PipelineProfiler.GetTimestamp(TimestampIndices.Update_ViewProjection);
+    }
+
+    public class TimestampIndices
+    {
+        public static int Draw_Shadows = 1;
+        public static int Draw_CubeMap = 2;
+        public static int Draw_GBuffer = 3;
+        public static int Draw_SSFx_SSAO = 4;
+        public static int Draw_SSFx_AO_BilateralBlur = 5;
+        public static int Draw_EnvironmentMap = 6;
+        public static int Draw_SSFx_SSR = 7;
+        public static int Draw_Compose = 8;
+        public static int Draw_CombineTAA = 9;
+        public static int Draw_FinalRender = 10;
+        public static int Draw_TotalRender = 11;
+
+        public static int Update_ViewProjection = 12;
     }
 
 
     public class PipelineProfiler
     {
+        public const int InitialTimestamps = 64;
+        private static double[] _timestamps = new double[InitialTimestamps];
+        public static double GetTimestamp(int index) => _timestamps[index];
 
 
         //Profiler
@@ -33,23 +53,35 @@ namespace DeferredEngine.Pipeline
 
         //Performance Profiler
         private readonly Stopwatch _timer = new Stopwatch();
-        private long _prevTimestamp;
+        private double _lastTimestamp;
 
         public bool IsEnabled { get; set; } = true;
+
 
         /// <summary>
         /// retrieves the current profiler time and sets the profiler timestamp 
         /// </summary>
-        public void SampleTimestamp(ref long profilerSample)
+        public void SampleTimestamp(int timestampIndex)
         {
             //Performance Profiler
             if (PipelineProfiler.IsProfilerEnabled && IsEnabled)
             {
-                long currentTime = _timer.ElapsedTicks;
-                profilerSample = currentTime - _prevTimestamp;
-                _prevTimestamp = currentTime;
+                double currentTime = _timer.Elapsed.TotalMilliseconds;
+                _timestamps[timestampIndex] = currentTime - _lastTimestamp;
+                _lastTimestamp = currentTime;
             }
         }
+        /// <summary>
+        /// retrieves the current profiler time
+        /// </summary>
+        public void Sample(int timestampIndex)
+        {
+            //Performance Profiler
+            if (PipelineProfiler.IsProfilerEnabled && IsEnabled)
+                _timestamps[timestampIndex] = _timer.Elapsed.TotalMilliseconds;
+        }
+
+
         /// <summary>
         /// sets the current profiler timestamp 
         /// </summary>
@@ -57,16 +89,7 @@ namespace DeferredEngine.Pipeline
         {
             //Performance Profiler
             if (PipelineProfiler.IsProfilerEnabled && IsEnabled)
-                _prevTimestamp = _timer.ElapsedTicks;
-        }
-        /// <summary>
-        /// retrieves the current profiler time
-        /// </summary>
-        public void Sample(ref long profilerSample)
-        {
-            //Performance Profiler
-            if (PipelineProfiler.IsProfilerEnabled && IsEnabled)
-                profilerSample = _timer.ElapsedTicks;
+                _lastTimestamp = _timer.ElapsedTicks;
         }
         /// <summary>
         /// resets or stops the profiler timer
@@ -77,7 +100,9 @@ namespace DeferredEngine.Pipeline
             if (PipelineProfiler.IsProfilerEnabled && IsEnabled)
             {
                 _timer.Restart();
-                _prevTimestamp = 0;
+                _lastTimestamp = 0;
+                for (int i = 0; i < _timestamps.Length; i++)
+                    _timestamps[i] = 0;
             }
             else if (_timer.IsRunning)
             {

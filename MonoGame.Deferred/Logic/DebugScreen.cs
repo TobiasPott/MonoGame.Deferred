@@ -383,24 +383,18 @@ namespace DeferredEngine.Logic
             if (!PipelineProfiler.IsProfilerEnabled)
                 return;
 
-            FieldInfo[] info2 = typeof(PipelineSamples).GetFields();
+            PropertyInfo[] propertyInfo = typeof(PipelineSamples).GetProperties();
             int foundIndex = 0;
-            for (int index = 0; index < info2.Length; index++)
+            for (int i = 0; i < propertyInfo.Length; i++)
             {
-                FieldInfo info = info2[index];
-                if (info.Name.Contains(PipelineSamples.FieldInfoPrefix))
+                PropertyInfo pInfo = propertyInfo[i];
+                if (pInfo.Name.Contains(PipelineSamples.FieldInfoPrefix))
                 {
-                    _spriteBatch.DrawString(_sprFont, info.Name + " " + info.GetValue(null), new Vector2(10.0f, 55.0f + foundIndex * 15), Color.White);
+                    _spriteBatch.DrawString(_sprFont, $"{pInfo.Name} {string.Format("{0,8:F6}", pInfo.GetValue(null))}", new Vector2(10.0f, 55.0f + (foundIndex * 15)), Color.White);
                     foundIndex++;
                 }
             }
         }
-
-
-        //public void UpdateResolution()
-        //{
-        //    //
-        //}
 
         public struct StringColor
         {
