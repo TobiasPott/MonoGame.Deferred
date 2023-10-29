@@ -177,6 +177,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         {
             if (!this.SSReflection.Enabled)
                 return sourceRT;
+
             return this.SSReflection.Draw(sourceRT, previousRT, destRT);
         }
 

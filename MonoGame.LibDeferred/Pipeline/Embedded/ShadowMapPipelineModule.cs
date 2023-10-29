@@ -62,9 +62,9 @@ namespace DeferredEngine.Pipeline
                     RenderingStats.shadowMaps += 6;
 
                     //Update if we didn't initialize yet or if we are dynamic
-                    if (light.ShadowMap == null)
+                    if (light.HasChanged || light.ShadowMap == null)
                     {
-                        CreateShadowCubeMap(light, light.ShadowResolution, meshBatcher);
+                        CreateShadowCubeMap(light, meshBatcher);
 
                         light.HasChanged = false;
                     }
@@ -82,7 +82,7 @@ namespace DeferredEngine.Pipeline
                 {
                     RenderingStats.shadowMaps += 1;
 
-                    CreateShadowMapDirectionalLight(light, light.ShadowResolution, meshBatcher);
+                    CreateShadowMapDirectionalLight(light, meshBatcher);
 
                     light.HasChanged = false;
 
@@ -94,13 +94,14 @@ namespace DeferredEngine.Pipeline
         /// <summary>
         /// Create the shadow map for each cubemapside, then combine into one cubemap
         /// </summary>
-        private void CreateShadowCubeMap(PointLight light, int size, DynamicMeshBatcher meshBatcher)
+        private void CreateShadowCubeMap(PointLight light, DynamicMeshBatcher meshBatcher)
         {
+            int shadowResolution = light.ShadowResolution;
             //For VSM we need 2 channels, -> Vector2
             //todo: check if we need preserve contents
             if (light.ShadowMap == null)
                 // ToDo: Create Rendertarget definition for shadow map 'cube' (most likely also for directional lights)
-                light.ShadowMap = new RenderTarget2D(_graphicsDevice, size, size * 6, false, SurfaceFormat.HalfSingle, DepthFormat.Depth24, 0, RenderTargetUsage.PreserveContents);
+                light.ShadowMap = new RenderTarget2D(_graphicsDevice, shadowResolution, shadowResolution * 6, false, SurfaceFormat.HalfSingle, DepthFormat.Depth24, 0, RenderTargetUsage.PreserveContents);
 
             Matrix lightViewProjection = Matrix.Identity;
             CubeMapFace cubeMapFace;
@@ -130,8 +131,8 @@ namespace DeferredEngine.Pipeline
                     _effectSetup.Param_FarClip.SetValue(light.Radius);
                     _effectSetup.Param_LightPositionWS.SetValue(light.Position);
 
-                    _graphicsDevice.Viewport = new Viewport(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
-                    _graphicsDevice.ScissorRectangle = new Rectangle(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
+                    _graphicsDevice.Viewport = new Viewport(0, shadowResolution * (int)cubeMapFace, shadowResolution, shadowResolution);
+                    _graphicsDevice.ScissorRectangle = new Rectangle(0, shadowResolution * (int)cubeMapFace, shadowResolution, shadowResolution);
 
                     //For shadowmaps we need to find out whether any object has moved and if so if it is rendered. If yes, redraw the whole frame, if no don't do anything
 
@@ -162,8 +163,8 @@ namespace DeferredEngine.Pipeline
 
                     if (!hasAnyObjectMoved) continue;
 
-                    _graphicsDevice.Viewport = new Viewport(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
-                    _graphicsDevice.ScissorRectangle = new Rectangle(0, light.ShadowResolution * (int)cubeMapFace, light.ShadowResolution, light.ShadowResolution);
+                    _graphicsDevice.Viewport = new Viewport(0, shadowResolution * (int)cubeMapFace, shadowResolution, shadowResolution);
+                    _graphicsDevice.ScissorRectangle = new Rectangle(0, shadowResolution * (int)cubeMapFace, shadowResolution, shadowResolution);
 
                     if (meshBatcher.CheckRequiresRedraw(RenderType.ShadowOmnidirectional, light.HasChanged, true))
                         meshBatcher.Draw(renderType: RenderType.ShadowOmnidirectional,
@@ -178,8 +179,9 @@ namespace DeferredEngine.Pipeline
         /// <summary>
         /// Only one shadow map needed for a directional light
         /// </summary>
-        private void CreateShadowMapDirectionalLight(DirectionalLight light, int shadowResolution, DynamicMeshBatcher meshBatcher)
+        private void CreateShadowMapDirectionalLight(DirectionalLight light,  DynamicMeshBatcher meshBatcher)
         {
+            int shadowResolution = light.ShadowResolution;
             //Create a renderTarget if we don't have one yet
             if (light.ShadowMap == null)
             {

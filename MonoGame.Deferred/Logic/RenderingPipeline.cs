@@ -284,12 +284,6 @@ namespace DeferredEngine.Rendering
             //Do Bloom
             _currentOutput = _fxStack.Draw(PipelineFxStage.Bloom, _currentOutput, null, _ssfxTargets.Bloom_Main);
 
-
-            // Step: 14
-            //Draw signed distance field functions
-            _moduleStack.DistanceField.SetViewPosition(camera.Position);
-            _moduleStack.DistanceField.Draw();
-
             //Performance Profiler
             _profiler.Sample(ref PipelineSamples.SDraw_TotalRender);
 
@@ -305,6 +299,11 @@ namespace DeferredEngine.Rendering
             // Step: 15
             //Additional editor elements that overlay our screen
             DrawEditorOverlays(gizmoContext, scene);
+
+            // Step: 14
+            //Draw signed distance field functions
+            _moduleStack.DistanceField.SetViewPosition(camera.Position);
+            _moduleStack.DistanceField.Draw();
 
         }
 
