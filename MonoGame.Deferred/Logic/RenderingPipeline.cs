@@ -176,6 +176,8 @@ namespace DeferredEngine.Rendering
                 meshBatcher.FrustumCulling(_frustum.Frustum, camera.HasChanged);
                 // Compute the frustum corners for cheap view direction computation in shaders
                 _frustum.UpdateVertices(_matrices.View, camera.Position);
+                _moduleStack.Lighting.SetViewPosition(camera.Position);
+                _moduleStack.Lighting.RequestRedraw();
             }
 
             //Performance Profiler
@@ -234,7 +236,7 @@ namespace DeferredEngine.Rendering
             // Step: 06
             //Light the scene
             //// ToDo: PRIO I: Extract camera.HasChanged and Position and move to reference inside the module
-            _moduleStack.Lighting.Draw(scene, camera.Position, camera.HasChanged);
+            _moduleStack.Lighting.Draw(scene);
 
             // ToDo: PRIO II: Is Environment module actually part of lighting? (unsure ahout the sky part though)
             //              I mmight need to split it into Environment and Sky
@@ -403,8 +405,6 @@ namespace DeferredEngine.Rendering
         {
             // ToDo: @tpott: This boolean flag controls general update and draw, though it should only determine if matrices and such should be updated
             //      if a frame should be drawn is a conditioned layered on top of this and may be required regardless of camera change
-            bool hasChanged = camera.HasChanged;
-
             //If the camera didn't do anything we don't need to update this stuff
             if (camera.HasChanged)
             {

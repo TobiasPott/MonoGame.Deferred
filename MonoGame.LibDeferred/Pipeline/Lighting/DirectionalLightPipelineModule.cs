@@ -10,7 +10,10 @@ namespace DeferredEngine.Pipeline.Lighting
 
         private FullscreenTriangleBuffer _fullscreenTarget;
 
+        private Vector3 _viewOrigin;
         private DirectionalLightFxSetup _effectSetup = new DirectionalLightFxSetup();
+
+        public Vector3 ViewOrigin { set => _viewOrigin = value; get => _viewOrigin; }
 
         public DirectionalLightPipelineModule()
             : base()
@@ -32,7 +35,7 @@ namespace DeferredEngine.Pipeline.Lighting
         /// <summary>
         /// Draw all directional lights, set up some shader variables first
         /// </summary>
-        public void DrawDirectionalLights(List<DirectionalLight> dirLights, Vector3 cameraPosition, bool viewProjectionHasChanged)
+        public void Draw(List<DirectionalLight> dirLights, bool viewProjectionHasChanged)
         {
             if (dirLights.Count < 1)
                 return;
@@ -44,7 +47,7 @@ namespace DeferredEngine.Pipeline.Lighting
             {
                 _effectSetup.Param_ViewProjection.SetValue(this.Matrices.ViewProjection);
                 _effectSetup.Param_InverseViewProjection.SetValue(this.Matrices.InverseViewProjection);
-                _effectSetup.Param_CameraPosition.SetValue(cameraPosition);
+                _effectSetup.Param_CameraPosition.SetValue(this.ViewOrigin);
             }
 
             for (int index = 0; index < dirLights.Count; index++)

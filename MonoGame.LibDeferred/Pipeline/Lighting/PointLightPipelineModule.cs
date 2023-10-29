@@ -13,12 +13,14 @@ namespace DeferredEngine.Pipeline.Lighting
 
         private PointLightFxSetup _effectSetup = new PointLightFxSetup();
         private GameTime _gameTime;
+        private Vector3 _viewOrigin;
 
         private DepthStencilState _stencilCullPass1;
         private DepthStencilState _stencilCullPass2;
 
 
         public GameTime GameTime { set { _gameTime = value; } }
+        public Vector3 ViewOrigin { set => _viewOrigin = value; get => _viewOrigin; }
 
         public Vector2 Resolution { set { _effectSetup.Param_Resolution.SetValue(value); } }
 
@@ -87,7 +89,7 @@ namespace DeferredEngine.Pipeline.Lighting
         /// <summary>
         /// Draw the point lights, set up some stuff first
         /// </summary>
-        public void Draw(List<PointLight> pointLights, Vector3 cameraOrigin, bool viewProjectionHasChanged)
+        public void Draw(List<PointLight> pointLights, bool viewProjectionHasChanged)
         {
             if (pointLights.Count < 1) return;
 
@@ -107,14 +109,14 @@ namespace DeferredEngine.Pipeline.Lighting
 
             for (int index = 0; index < pointLights.Count; index++)
             {
-                DrawPointLight(pointLights[index], cameraOrigin, vertexOffset, startIndex, primitiveCount, viewProjectionHasChanged, this.Matrices.View, this.Matrices.ViewProjection);
+                DrawPointLight(pointLights[index], vertexOffset, startIndex, primitiveCount, viewProjectionHasChanged, this.Matrices.View, this.Matrices.ViewProjection);
             }
         }
 
         /// <summary>
         /// Draw each individual point lights
         /// </summary>
-        private void DrawPointLight(PointLight light, Vector3 cameraOrigin, int vertexOffset, int startIndex, int primitiveCount, bool viewProjectionHasChanged, Matrix view, Matrix viewProjection)
+        private void DrawPointLight(PointLight light, int vertexOffset, int startIndex, int primitiveCount, bool viewProjectionHasChanged, Matrix view, Matrix viewProjection)
         {
             if (!light.IsEnabled) return;
 
@@ -141,7 +143,7 @@ namespace DeferredEngine.Pipeline.Lighting
             _effectSetup.Param_LightIntensity.SetValue(light.Intensity);
 
             //Compute whether we are inside or outside and use 
-            float cameraToCenter = Vector3.Distance(cameraOrigin, light.Position);
+            float cameraToCenter = Vector3.Distance(this.ViewOrigin, light.Position);
             int inside = cameraToCenter < light.Radius * 1.2f ? 1 : -1;
             _effectSetup.Param_Inside.SetValue(inside);
 

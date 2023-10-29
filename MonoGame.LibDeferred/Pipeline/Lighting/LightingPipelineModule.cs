@@ -10,6 +10,7 @@ namespace DeferredEngine.Pipeline.Lighting
     {
         public static int g_UseDepthStencilLightCulling = 1; //None, Depth, Depth+Stencil
 
+        private bool _redrawRequested = false;
         private bool _useDepthStencilLightCulling;
 
         private BlendState _lightBlendState;
@@ -21,6 +22,7 @@ namespace DeferredEngine.Pipeline.Lighting
 
 
         private LightingBufferTarget _lightingBufferTarget;
+
         public LightingBufferTarget LightingBufferTarget { set { _lightingBufferTarget = value; } }
 
 
@@ -37,7 +39,12 @@ namespace DeferredEngine.Pipeline.Lighting
             };
         }
 
-
+        public void RequestRedraw() { _redrawRequested = true; }
+        public void SetViewPosition(Vector3 viewPosition)
+        {
+            PointLightRenderModule.ViewOrigin = viewPosition;
+            DirectionalLightRenderModule.ViewOrigin = viewPosition;
+        }
         public void UpdateGameTime(GameTime gameTime)
         {
             PointLightRenderModule.GameTime = gameTime;
@@ -46,8 +53,11 @@ namespace DeferredEngine.Pipeline.Lighting
         /// <summary>
         /// Draw our lights to the diffuse/specular/volume buffer
         /// </summary>
-        public void Draw(EntitySceneGroup scene, Vector3 viewPosition, bool viewProjectionHasChanged)
+        public void Draw(EntitySceneGroup scene)
         {
+            if (!_redrawRequested)
+                return;
+
             //Reconstruct Depth
             if (LightingPipelineModule.g_UseDepthStencilLightCulling > 0)
             {
@@ -80,8 +90,8 @@ namespace DeferredEngine.Pipeline.Lighting
             _graphicsDevice.Clear(ClearOptions.Target, new Color(0, 0, 0, 0.0f), 1, 0);
             _graphicsDevice.BlendState = _lightBlendState;
 
-            PointLightRenderModule.Draw(scene.PointLights, viewPosition, viewProjectionHasChanged);
-            DirectionalLightRenderModule.DrawDirectionalLights(scene.DirectionalLights, viewPosition, viewProjectionHasChanged);
+            PointLightRenderModule.Draw(scene.PointLights, _redrawRequested);
+            DirectionalLightRenderModule.Draw(scene.DirectionalLights, _redrawRequested);
 
         }
 
