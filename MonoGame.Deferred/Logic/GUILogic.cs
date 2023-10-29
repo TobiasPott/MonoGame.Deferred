@@ -113,7 +113,7 @@ namespace DeferredEngine.Logic
 
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Selection")
             {
-                ToggleField = typeof(RenderingSettings).GetField(nameof(RenderingSettings.e_EnableSelection)),
+                ToggleProperty = typeof(RenderingSettings).GetProperty(nameof(RenderingSettings.e_EnableSelection)),
                 Toggle = RenderingSettings.e_EnableSelection
             });
 

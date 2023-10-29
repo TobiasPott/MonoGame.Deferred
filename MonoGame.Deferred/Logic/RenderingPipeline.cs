@@ -199,7 +199,7 @@ namespace DeferredEngine.Rendering
         {
             // Step: 12
             //Draw the elements that we are hovering over with outlines
-            if (RenderingSettings.e_IsEditorEnabled && RenderingSettings.e_EnableSelection)
+            if (RenderingSettings.e_EnableSelection)
                 _moduleStack.IdAndOutline.Draw(meshBatcher, scene, gizmoContext, EditorLogic.Instance.HasMouseMoved);
 
             // Step: 01
@@ -331,7 +331,7 @@ namespace DeferredEngine.Rendering
 
         private void DrawEditorOverlays(GizmoDrawContext gizmoContext, EntitySceneGroup scene)
         {
-            if (RenderingSettings.e_IsEditorEnabled && RenderingSettings.e_EnableSelection)
+            if (RenderingSettings.e_EnableSelection)
             {
                 if (IdAndOutlineRenderModule.e_DrawOutlines)
                     _moduleStack.IdAndOutline.Blit(_moduleStack.IdAndOutline.Target, null, BlendState.Additive);
@@ -352,12 +352,6 @@ namespace DeferredEngine.Rendering
                 }
             }
 
-            if (RenderingSettings.SDF.DrawDebug && _moduleStack.DistanceField.AtlasTarget != null)
-            {
-                _spriteBatch.Begin(0, BlendState.Opaque, SamplerState.PointClamp);
-                _spriteBatch.Draw(_moduleStack.DistanceField.AtlasTarget, new Rectangle(0, RenderingSettings.Screen.g_Height - 200, RenderingSettings.Screen.g_Width, 200), Color.White);
-                _spriteBatch.End();
-            }
 
             // Step: 20
             //Draw debug geometry
@@ -369,7 +363,7 @@ namespace DeferredEngine.Rendering
         {
             _graphicsDevice.SetRenderTarget(null);
             _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
-            
+
             // render directly to the output buffer
             if (passes.HasFlag(PipelineEditorPasses.Billboard))
             {
@@ -393,6 +387,15 @@ namespace DeferredEngine.Rendering
                 _graphicsDevice.SetStates(DepthStencilStateOption.None);
                 _moduleStack.DistanceField.DrawVolume();
             }
+            //if(passes.HasFlag(PipelineEditorPasses.SDFVolume))
+            //{
+            //    if (RenderingSettings.SDF.DrawDebug && _moduleStack.DistanceField.AtlasTarget != null)
+            //    {
+            //        _spriteBatch.Begin(0, BlendState.Opaque, SamplerState.PointClamp);
+            //        _spriteBatch.Draw(_moduleStack.DistanceField.AtlasTarget, new Rectangle(0, RenderingSettings.Screen.g_Height - 200, RenderingSettings.Screen.g_Width, 200), Color.White);
+            //        _spriteBatch.End();
+            //    }
+            //}
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////

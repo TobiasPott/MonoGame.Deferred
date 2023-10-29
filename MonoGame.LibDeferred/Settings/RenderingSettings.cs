@@ -8,7 +8,9 @@ namespace DeferredEngine.Recources
     public static partial class RenderingSettings
     {
 
-        public static bool e_EnableSelection = false;
+        private static bool _enabledSelection = false;
+        public static bool e_EnableSelection { get { return _enabledSelection && RenderingSettings.e_IsEditorEnabled; } set => _enabledSelection = value; }
+
         public static GizmoModes e_gizmoMode = GizmoModes.Translation;
         public static bool e_LocalTransformation = false;
 
