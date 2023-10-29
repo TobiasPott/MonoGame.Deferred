@@ -22,7 +22,7 @@ namespace DeferredEngine.Recources
         public EffectTechnique Technique_Default { get; protected set; }
         public EffectTechnique Technique_Taa { get; protected set; }
 
-        public SSReflectionFxSetup(string shaderPath = "Shaders/ScreenSpace/ScreenSpaceReflections") : base(shaderPath)
+        public SSReflectionFxSetup(string shaderPath = "Shaders/ScreenSpace/ScreenSpaceReflections") : base()
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
 

@@ -47,7 +47,7 @@ namespace DeferredEngine.Pipeline
 
 
         public GBufferFxSetup(string shaderPathBase = "Shaders/GbufferSetup/", string gBufferEffect = "GBuffer", string gBufferClearEffect = "ClearGBuffer")
-              : base(shaderPathBase)
+              : base()
         {
             Effect_GBuffer = Globals.content.Load<Effect>(shaderPathBase + gBufferEffect);
             Effect_Clear = Globals.content.Load<Effect>(shaderPathBase + gBufferClearEffect);

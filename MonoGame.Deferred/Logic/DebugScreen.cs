@@ -65,18 +65,18 @@ namespace DeferredEngine.Logic
 
         public StringBuilder[] RenderModesSB =
         {
-            new StringBuilder( ((PipelinePasses)0).ToString() ),
-            new StringBuilder( ((PipelinePasses)1).ToString() ),
-            new StringBuilder( ((PipelinePasses)2).ToString() ),
-            new StringBuilder( ((PipelinePasses)3).ToString() ),
-            new StringBuilder( ((PipelinePasses)4).ToString() ),
-            new StringBuilder( ((PipelinePasses)5).ToString() ),
-            new StringBuilder( ((PipelinePasses)6).ToString() ),
-            new StringBuilder( ((PipelinePasses)7).ToString() ),
-            new StringBuilder( ((PipelinePasses)8).ToString() ),
-            new StringBuilder( ((PipelinePasses)9).ToString() ),
-            new StringBuilder( ((PipelinePasses)10).ToString() ),
-            new StringBuilder( ((PipelinePasses)11).ToString() ),
+            new StringBuilder( ((PipelineOutputPasses)0).ToString() ),
+            new StringBuilder( ((PipelineOutputPasses)1).ToString() ),
+            new StringBuilder( ((PipelineOutputPasses)2).ToString() ),
+            new StringBuilder( ((PipelineOutputPasses)3).ToString() ),
+            new StringBuilder( ((PipelineOutputPasses)4).ToString() ),
+            new StringBuilder( ((PipelineOutputPasses)5).ToString() ),
+            new StringBuilder( ((PipelineOutputPasses)6).ToString() ),
+            new StringBuilder( ((PipelineOutputPasses)7).ToString() ),
+            new StringBuilder( ((PipelineOutputPasses)8).ToString() ),
+            new StringBuilder( ((PipelineOutputPasses)9).ToString() ),
+            new StringBuilder( ((PipelineOutputPasses)10).ToString() ),
+            new StringBuilder( ((PipelineOutputPasses)11).ToString() ),
         };
 
         // Console
@@ -536,7 +536,7 @@ namespace DeferredEngine.Logic
         }
 
 
-        private StringBuilder RenderModesToString(PipelinePasses render)
+        private StringBuilder RenderModesToString(PipelineOutputPasses render)
         {
             return RenderModesSB[(int)render];
         }

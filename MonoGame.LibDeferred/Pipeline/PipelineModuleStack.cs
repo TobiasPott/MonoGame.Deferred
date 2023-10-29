@@ -37,6 +37,24 @@ namespace DeferredEngine.Rendering
         { set { foreach (PipelineModule module in _modules) module.Frustum = value; } }
 
 
+        public GBufferTarget GBufferTarget
+        {
+            set
+            {
+                GBuffer.GBufferTarget = value;
+                Billboard.DepthMap = value.Depth;
+
+                PointLight.SetGBufferParams(value);
+                DirectionalLight.SetGBufferParams(value);
+                Environment.SetGBufferParams(value);
+
+                Decal.DepthMap = value.Depth;
+                DistanceField.DepthMap = value.Depth;
+                DepthReconstruct.DepthMap = value.Depth;
+
+                Deferred.SetGBufferParams(value);
+            }
+        }
         public SSFxTargets SSFxTargets
         {
             set
@@ -118,22 +136,6 @@ namespace DeferredEngine.Rendering
             Billboard.Initialize(graphicsDevice, spriteBatch);
             IdAndOutline.Initialize(graphicsDevice, spriteBatch);
 
-        }
-
-        public void SetGBufferParams(GBufferTarget gBufferTarget)
-        {
-            GBuffer.GBufferTarget = gBufferTarget;
-            Billboard.DepthMap = gBufferTarget.Depth;
-
-            PointLight.SetGBufferParams(gBufferTarget);
-            DirectionalLight.SetGBufferParams(gBufferTarget);
-            Environment.SetGBufferParams(gBufferTarget);
-
-            Decal.DepthMap = gBufferTarget.Depth;
-            DistanceField.DepthMap = gBufferTarget.Depth;
-            DepthReconstruct.DepthMap = gBufferTarget.Depth;
-
-            Deferred.SetGBufferParams(gBufferTarget);
         }
 
         public void Dispose()

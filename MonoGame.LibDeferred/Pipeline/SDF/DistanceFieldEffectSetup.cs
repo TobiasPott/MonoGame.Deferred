@@ -30,7 +30,7 @@ namespace DeferredEngine.Rendering.SDF
         public EffectParameter Param_TriangleAmount { get; protected set; }
 
         public DistanceFieldEffectSetup(string shaderPath = "Shaders/SDF/volumeProjection")
-            : base(shaderPath)
+            : base()
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
 

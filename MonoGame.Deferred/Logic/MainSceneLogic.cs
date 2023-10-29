@@ -198,9 +198,9 @@ namespace DeferredEngine.Logic
             if (Input.WasKeyPressed(Keys.F1))
             {
                 _renderModeCycle++;
-                if (_renderModeCycle > Enum.GetNames(typeof(PipelinePasses)).Length - 1) _renderModeCycle = 0;
+                if (_renderModeCycle > Enum.GetNames(typeof(PipelineOutputPasses)).Length - 1) _renderModeCycle = 0;
 
-                RenderingSettings.g_CurrentPass = (PipelinePasses)_renderModeCycle;
+                RenderingSettings.g_CurrentPass = (PipelineOutputPasses)_renderModeCycle;
             }
         }
 

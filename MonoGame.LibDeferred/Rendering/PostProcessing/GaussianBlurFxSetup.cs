@@ -22,7 +22,7 @@ namespace DeferredEngine.Recources
 
 
         public GaussianBlurFxSetup(string shaderPath = "Shaders/ScreenSpace/GaussianBlur")
-              : base(shaderPath)
+              : base()
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
 

@@ -20,6 +20,7 @@ namespace DeferredEngine.Rendering
 {
 
 
+
     [Flags()]
     public enum EditorPasses
     {
@@ -30,6 +31,8 @@ namespace DeferredEngine.Rendering
 
     public partial class RenderingPipeline : IDisposable
     {
+        public event Action<DrawEvents> EventTriggered;
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  VARIABLES
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -104,12 +107,12 @@ namespace DeferredEngine.Rendering
             _ssfxTargets = new SSFxTargets(graphicsDevice, resolution);
 
             _moduleStack.Initialize(graphicsDevice, _spriteBatch);
-            _moduleStack.SetGBufferParams(_gBufferTarget);
+            _moduleStack.GBufferTarget = _gBufferTarget;
             _moduleStack.LightingBufferTarget = _lightingBufferTarget;
             _moduleStack.SSFxTargets = _ssfxTargets;
 
             _fxStack.Initialize(graphicsDevice, _spriteBatch);
-            _fxStack.SetGBufferParams(_gBufferTarget);
+            _fxStack.GBufferTarget = _gBufferTarget;
             _fxStack.SSFxTargets = _ssfxTargets;
 
             // update directional light module
@@ -134,7 +137,6 @@ namespace DeferredEngine.Rendering
         private void FarClip_OnChanged(float farClip)
         {
             _frustum.FarClip = farClip;
-            _fxStack.FarClip = farClip;
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -278,10 +280,18 @@ namespace DeferredEngine.Rendering
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_CombineTAA);
 
-
             // Step: 11
             //Do Bloom
             _currentOutput = _fxStack.Draw(PipelineFxStage.Bloom, _currentOutput, null, _ssfxTargets.Bloom_Main);
+
+
+            // Step: 14
+            //Draw signed distance field functions
+            _moduleStack.DistanceField.SetViewPosition(camera.Position);
+            _moduleStack.DistanceField.Draw();
+
+            //Performance Profiler
+            _profiler.Sample(ref PipelineSamples.SDraw_TotalRender);
 
             // Step: 12
             //Draw the elements that we are hovering over with outlines
@@ -292,19 +302,27 @@ namespace DeferredEngine.Rendering
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
             DrawPipelinePass(RenderingSettings.g_CurrentPass, _currentOutput, null, _auxTargets[PipelineTargets.OUTPUT]);
 
-            // Step: 14
-            //Draw signed distance field functions
-            _moduleStack.DistanceField.SetViewPosition(camera.Position);
-            _moduleStack.DistanceField.Draw();
-
             // Step: 15
             //Additional editor elements that overlay our screen
             DrawEditorOverlays(gizmoContext, scene);
 
-            //Performance Profiler
-            _profiler.Sample(ref PipelineSamples.SDraw_TotalRender);
-
         }
+
+        //Render modes
+        public enum DrawEvents
+        {
+            ShadowMap,
+            GBuffer,
+            Decal,
+            FxReflection,
+            FxAmbientOcclusion,
+            Lighting,
+            Environment,
+            Deferred,
+            Forward,
+            FxTAA,
+            Bloom,
+        };
 
         private bool IsSDFUsed(List<PointLight> pointLights)
         {
@@ -405,12 +423,12 @@ namespace DeferredEngine.Rendering
                     _fxStack.TemporalAA.SwapOffFrame();
                     _matrices.ApplyViewProjectionJitter(_fxStack.TemporalAA.JitterMode, _fxStack.TemporalAA.IsOffFrame, _fxStack.TemporalAA.HaltonSequence);
                 }
-;
+        ;
                 _frustum.Frustum.Matrix = _matrices.StaticViewProjection;
             }
 
         }
-        
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  RENDERTARGET SETUP FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -429,38 +447,38 @@ namespace DeferredEngine.Rendering
         /// <summary>
         /// Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
         /// </summary>
-        private void DrawPipelinePass(PipelinePasses pass, RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
+        private void DrawPipelinePass(PipelineOutputPasses pass, RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
         {
             switch (pass)
             {
-                case PipelinePasses.Albedo:
+                case PipelineOutputPasses.Albedo:
                     BlitTo(_gBufferTarget.Albedo);
                     break;
-                case PipelinePasses.Normal:
+                case PipelineOutputPasses.Normal:
                     BlitTo(_gBufferTarget.Normal);
                     break;
-                case PipelinePasses.Depth:
+                case PipelineOutputPasses.Depth:
                     BlitTo(_gBufferTarget.Depth);
                     break;
-                case PipelinePasses.Diffuse:
+                case PipelineOutputPasses.Diffuse:
                     BlitTo(_lightingBufferTarget.Diffuse);
                     break;
-                case PipelinePasses.Specular:
+                case PipelineOutputPasses.Specular:
                     BlitTo(_lightingBufferTarget.Specular);
                     break;
-                case PipelinePasses.Volumetric:
+                case PipelineOutputPasses.Volumetric:
                     BlitTo(_lightingBufferTarget.Volume);
                     break;
-                case PipelinePasses.SSAO:
+                case PipelineOutputPasses.SSAO:
                     BlitTo(_ssfxTargets.AO_Main);
                     break;
-                case PipelinePasses.SSBlur:
+                case PipelineOutputPasses.SSBlur:
                     BlitTo(_ssfxTargets.AO_Blur_Final);
                     break;
-                case PipelinePasses.SSR:
+                case PipelineOutputPasses.SSR:
                     BlitTo(_ssfxTargets.SSR_Main);
                     break;
-                case PipelinePasses.HDR:
+                case PipelineOutputPasses.HDR:
                     BlitTo(sourceRT);
                     break;
                 default:

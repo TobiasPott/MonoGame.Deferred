@@ -54,7 +54,7 @@ namespace DeferredEngine.Pipeline.Lighting
         public EffectParameter Param_NormalMap { get; protected set; }
         public EffectParameter Param_DepthMap { get; protected set; }
 
-        public PointLightFxSetup(string shaderPath = "Shaders/Deferred/DeferredPointLight") : base(shaderPath)
+        public PointLightFxSetup(string shaderPath = "Shaders/Deferred/DeferredPointLight") : base()
         {
             Effect = Globals.content.Load<Effect>("Shaders/Deferred/DeferredPointLight");
 

@@ -1,5 +1,4 @@
 ﻿using DeferredEngine.Rendering;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 

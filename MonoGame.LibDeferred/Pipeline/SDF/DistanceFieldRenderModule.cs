@@ -68,16 +68,19 @@ namespace DeferredEngine.Rendering.SDF
 
         public void Draw()
         {
-            if (!RenderingSettings.SDF.DrawDistance)
-                return;
-
-            _effectSetup.Param_FrustumCorners.SetValue(this.Frustum.WorldSpaceFrustum);
-
-            if (RenderingSettings.SDF.DrawVolume)
-                _effectSetup.Pass_Volume.Apply();
-            else
+            if (RenderingSettings.SDF.DrawDistance)
+            {
+                _effectSetup.Param_FrustumCorners.SetValue(this.Frustum.WorldSpaceFrustum);
                 _effectSetup.Pass_Distance.Apply();
-            FullscreenTriangleBuffer.Instance.Draw(_graphicsDevice);
+                FullscreenTriangleBuffer.Instance.Draw(_graphicsDevice);
+            }
+            else if (RenderingSettings.SDF.DrawVolume)
+            {
+                _effectSetup.Param_FrustumCorners.SetValue(this.Frustum.WorldSpaceFrustum);
+
+                _effectSetup.Pass_Volume.Apply();
+                FullscreenTriangleBuffer.Instance.Draw(_graphicsDevice);
+            }
         }
 
         public void UpdateDistanceFieldTransformations(List<ModelEntity> entities)

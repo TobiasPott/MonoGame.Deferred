@@ -30,7 +30,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
 
         public BloomFxSetup(string shaderPath = "Shaders/BloomFilter/Bloom")
-              : base(shaderPath)
+              : base()
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
 

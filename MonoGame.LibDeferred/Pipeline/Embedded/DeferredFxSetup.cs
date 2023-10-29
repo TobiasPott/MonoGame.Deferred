@@ -36,7 +36,7 @@ namespace DeferredEngine.Pipeline
         //public EffectParameter Param_SSRMap { get; protected set; } // Unused
 
 
-        public DeferredFxSetup(string shaderPath = "Shaders/Deferred/DeferredCompose", string shaderPathClear = "Shaders/Deferred/DeferredClear") : base(shaderPath)
+        public DeferredFxSetup(string shaderPath = "Shaders/Deferred/DeferredCompose", string shaderPathClear = "Shaders/Deferred/DeferredClear") : base()
         {
             Effect_Compose = Globals.content.Load<Effect>(shaderPath);
             Effect_Clear = Globals.content.Load<Effect>(shaderPathClear);

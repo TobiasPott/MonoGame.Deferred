@@ -26,7 +26,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
 
         public ColorGradingFxSetup(string shaderPath = "Shaders/PostProcessing/ColorGrading")
-              : base(shaderPath)
+              : base()
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
 

@@ -45,7 +45,7 @@ namespace DeferredEngine.Pipeline
         public EffectParameter Param_UseSDFAO { get; protected set; }
 
 
-        public EnvironmentFxSetup(string shaderPath = "Shaders/Deferred/DeferredEnvironmentMap") : base(shaderPath)
+        public EnvironmentFxSetup(string shaderPath = "Shaders/Deferred/DeferredEnvironmentMap") : base()
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
 

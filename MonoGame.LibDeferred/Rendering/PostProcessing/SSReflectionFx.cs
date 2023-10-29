@@ -1,9 +1,7 @@
-﻿using DeferredEngine.Pipeline;
-using DeferredEngine.Recources;
+﻿using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
-using SharpDX.Direct3D9;
 
 namespace DeferredEngine.Rendering.PostProcessing
 {
@@ -23,7 +21,6 @@ namespace DeferredEngine.Rendering.PostProcessing
         public static bool g_UseTaa { get; set; } = true;
 
         //5 and 5 are good, 3 and 3 are cheap#
-
         public static NotifiedProperty<int> g_Samples = new NotifiedProperty<int>(3);
         public static NotifiedProperty<int> g_RefinementSamples = new NotifiedProperty<int>(3);
 
@@ -34,8 +31,6 @@ namespace DeferredEngine.Rendering.PostProcessing
 
 
         public float Time { set { _fxSetup.Param_Time.SetValue(value); } }
-        public float FarClip { set { _fxSetup.Param_FarClip.SetValue(value); } }
-
         public Vector2 Resolution { set { _fxSetup.Param_Resolution.SetValue(value); } }
 
         public RenderTarget2D DepthMap { set { _fxSetup.Param_DepthMap.SetValue(value); } }
@@ -69,6 +64,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             _graphicsDevice.SetRenderTarget(destRT);
             _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
 
+            _fxSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
             _fxSetup.Param_FrustumCorners.SetValue(this.Frustum.ViewSpaceFrustum);
             _fxSetup.Param_Projection.SetValue(this.Matrices.Projection);
 

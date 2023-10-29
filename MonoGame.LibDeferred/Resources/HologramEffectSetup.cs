@@ -26,7 +26,7 @@ namespace DeferredEngine.Recources
 
 
         public HologramEffectSetup(string shaderPath = "Shaders/Hologram/HologramEffect")
-              : base(shaderPath)
+              : base()
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
 

@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
+using SharpDX.MediaFoundation;
 using System.Reflection;
 
 namespace DeferredEngine.Rendering.PostProcessing
@@ -35,18 +36,25 @@ namespace DeferredEngine.Rendering.PostProcessing
         private SpriteBatch _spriteBatch;
         private FullscreenTriangleBuffer _fullscreenTarget;
 
+        public GBufferTarget GBufferTarget
+        {
+            set
+            {
+                SSReflection.NormalMap = value.Normal;
+                SSReflection.DepthMap = value.Depth;
+
+                TemporalAA.DepthMap = value.Depth;
+
+                SSAmbientOcclusion.NormalMap = value.Normal;
+                SSAmbientOcclusion.DepthMap = value.Depth;
+            }
+        }
+
         public SSFxTargets SSFxTargets
         {
             set
             {
                 SSAmbientOcclusion.SSFxTargets = value;
-            }
-        }
-        public float FarClip
-        {
-            set
-            {
-                SSReflection.FarClip = value;
             }
         }
 
@@ -180,17 +188,6 @@ namespace DeferredEngine.Rendering.PostProcessing
             if (!this.SSAmbientOcclusion.Enabled)
                 return sourceRT;
             return this.SSAmbientOcclusion.Draw(sourceRT, previousRT, destRT);
-        }
-
-        public void SetGBufferParams(GBufferTarget gBufferTarget)
-        {
-            SSReflection.NormalMap = gBufferTarget.Normal;
-            SSReflection.DepthMap = gBufferTarget.Depth;
-
-            TemporalAA.DepthMap = gBufferTarget.Depth;
-
-            SSAmbientOcclusion.NormalMap = gBufferTarget.Normal;
-            SSAmbientOcclusion.DepthMap = gBufferTarget.Depth;
         }
 
         private void DrawTextureToScreenToFullScreen(Texture2D source, BlendState blendState = null, RenderTarget2D destRT = null)

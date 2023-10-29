@@ -20,7 +20,7 @@ namespace DeferredEngine.Pipeline.Utilities
 
 
         public DecalEffectSetup(string shaderPath = "Shaders/Deferred/DeferredDecal")
-              : base(shaderPath)
+              : base()
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
 

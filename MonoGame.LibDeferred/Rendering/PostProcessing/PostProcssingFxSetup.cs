@@ -18,7 +18,7 @@ namespace DeferredEngine.Recources
         public EffectTechnique Technique_Base { get; protected set; }
 
 
-        public PostProcssingFxSetup(string shaderPath = "shaders/postprocessing/postprocessing") : base(shaderPath)
+        public PostProcssingFxSetup(string shaderPath = "shaders/postprocessing/postprocessing") : base()
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
 

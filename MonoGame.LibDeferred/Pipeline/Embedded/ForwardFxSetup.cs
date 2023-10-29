@@ -20,7 +20,7 @@ namespace DeferredEngine.Pipeline
         public EffectParameter Param_LightColor { get; protected set; }
         public EffectParameter Param_CameraPositionWS { get; protected set; }
 
-        public ForwardFxSetup(string shaderPath = "Shaders/forward/forward") : base(shaderPath)
+        public ForwardFxSetup(string shaderPath = "Shaders/forward/forward") : base()
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
 

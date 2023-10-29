@@ -32,7 +32,7 @@ namespace DeferredEngine.Recources
         public EffectTechnique Technique_BlurVertical { get; protected set; }
 
 
-        public SSAmbientOcclusionFxSetup(string shaderPath = "Shaders/ScreenSpace/ScreenSpaceAO") : base(shaderPath)
+        public SSAmbientOcclusionFxSetup(string shaderPath = "Shaders/ScreenSpace/ScreenSpaceAO") : base()
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
 

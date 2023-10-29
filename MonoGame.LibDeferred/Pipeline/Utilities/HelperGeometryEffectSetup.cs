@@ -19,7 +19,7 @@ namespace DeferredEngine.Pipeline.Utilities
 
 
         public HelperGeometryEffectSetup(string shaderPath = "Shaders/Editor/LineEffect")
-              : base(shaderPath)
+              : base()
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
 

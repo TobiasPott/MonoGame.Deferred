@@ -2,12 +2,8 @@
 {
     public abstract class BaseFxSetup : IDisposable
     {
-        public string ShaderPath { get; protected set; }
-
-        public BaseFxSetup(string shaderPath)
-        {
-            ShaderPath = shaderPath;
-        }
+        public BaseFxSetup()
+        { }
         public abstract void Dispose();
     }
 

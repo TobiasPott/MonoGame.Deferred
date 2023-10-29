@@ -19,7 +19,7 @@ namespace DeferredEngine.Pipeline.Utilities
         public EffectTechnique Technique_Id { get; protected set; }
 
 
-        public BillboardEffectSetup(string shaderPath = "Shaders/Editor/BillboardEffect") : base(shaderPath)
+        public BillboardEffectSetup(string shaderPath = "Shaders/Editor/BillboardEffect") : base()
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
 

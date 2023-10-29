@@ -38,7 +38,7 @@ namespace DeferredEngine.Pipeline.Lighting
         public EffectParameter Param_DepthMap { get; protected set; }
 
 
-        public DirectionalLightFxSetup(string shaderPath = "Shaders/Deferred/DeferredDirectionalLight") : base(shaderPath)
+        public DirectionalLightFxSetup(string shaderPath = "Shaders/Deferred/DeferredDirectionalLight") : base()
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
 

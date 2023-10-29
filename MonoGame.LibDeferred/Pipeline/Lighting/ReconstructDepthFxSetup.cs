@@ -13,7 +13,7 @@ namespace DeferredEngine.Pipeline.Lighting
         public EffectParameter Param_FarClip { get; protected set; }
         public EffectParameter Param_FrustumCorners { get; protected set; }
 
-        public ReconstructDepthFxSetup(string shaderPath = "Shaders/ScreenSpace/ReconstructDepth") : base(shaderPath)
+        public ReconstructDepthFxSetup(string shaderPath = "Shaders/ScreenSpace/ReconstructDepth") : base()
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
 

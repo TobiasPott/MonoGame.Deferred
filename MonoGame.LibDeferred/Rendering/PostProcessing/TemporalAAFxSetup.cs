@@ -26,7 +26,7 @@ namespace DeferredEngine.Recources
 
 
         public TemporalAAFxSetup(string shaderPath = "Shaders/TemporalAntiAliasing/TemporalAntiAliasing")
-              : base(shaderPath)
+              : base()
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
 

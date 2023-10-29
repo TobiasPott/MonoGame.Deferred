@@ -28,7 +28,7 @@ namespace DeferredEngine.Pipeline.Utilities
         public EffectParameter Param_World { get; protected set; }
 
 
-        public IdAndOutlineEffectSetup(string shaderPath = "Shaders/Editor/IdRender") : base(shaderPath)
+        public IdAndOutlineEffectSetup(string shaderPath = "Shaders/Editor/IdRender") : base()
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
             Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
