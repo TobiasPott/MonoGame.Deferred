@@ -1,9 +1,7 @@
-﻿using DeferredEngine.Pipeline;
-using DeferredEngine.Recources;
+﻿using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
-using SharpDX.Direct3D9;
 
 namespace DeferredEngine.Rendering.PostProcessing
 {
@@ -20,7 +18,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         private bool _useTonemapping = true;
         private HaltonSequence _haltonSequence = new HaltonSequence();
 
-        
+
         public bool IsOffFrame { get; protected set; } = true;
         public int JitterMode = 2;
 

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
+using SharpDX.Direct3D9;
 
 namespace DeferredEngine.Rendering.PostProcessing
 {
@@ -26,6 +27,9 @@ namespace DeferredEngine.Rendering.PostProcessing
 
 
 
+        private SSFxTargets _ssfxTargets;
+        public SSFxTargets SSFxTargets { set { _ssfxTargets = value; } }
+
 
         private SSReflectionFxSetup _fxSetup = new SSReflectionFxSetup();
 
@@ -35,7 +39,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         public RenderTarget2D DepthMap { set { _fxSetup.Param_DepthMap.SetValue(value); } }
         public RenderTarget2D NormalMap { set { _fxSetup.Param_NormalMap.SetValue(value); } }
-        public RenderTarget2D TargetMap { set { _fxSetup.Param_SourceMap.SetValue(value); } }
+        public RenderTarget2D SourceMap { set { _fxSetup.Param_SourceMap.SetValue(value); } }
 
 
 
@@ -64,6 +68,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             _graphicsDevice.SetRenderTarget(destRT);
             _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
 
+            _fxSetup.Param_SourceMap.SetValue(sourceRT);
             _fxSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
             _fxSetup.Param_FrustumCorners.SetValue(this.Frustum.ViewSpaceFrustum);
             _fxSetup.Param_Projection.SetValue(this.Matrices.Projection);
@@ -76,6 +81,13 @@ namespace DeferredEngine.Rendering.PostProcessing
             _fullscreenTarget.Draw(_graphicsDevice);
 
             return destRT;
+        }
+        public RenderTarget2D GetSSReflectionRenderTargets(TemporalAAFx taaFx)
+        {
+            if (_ssfxTargets != null && taaFx != null && taaFx.Enabled)
+                return taaFx.IsOffFrame ? _ssfxTargets.TAA_Even : _ssfxTargets.TAA_Odd;
+            else
+                return null;
         }
 
         public override void Dispose()

@@ -175,6 +175,10 @@ namespace DeferredEngine.Rendering.PostProcessing
         /// </summary>
         private RenderTarget2D DrawSSReflection(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
         {
+            // optional: use TemporalAA buffers as sourceRT
+            if (sourceRT == null)
+                sourceRT = this.SSReflection.GetSSReflectionRenderTargets(TemporalAA);
+
             if (!this.SSReflection.Enabled)
                 return sourceRT;
 

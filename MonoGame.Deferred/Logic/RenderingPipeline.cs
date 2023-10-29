@@ -199,7 +199,7 @@ namespace DeferredEngine.Rendering
         public void Draw(Camera camera, DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GizmoDrawContext gizmoContext)
         {
             // Step: 01
-            //Render ShadowMaps
+            //Render SHADOW MAPS
             _moduleStack.ShadowMap.Draw(meshBatcher, scene);
             //Performance Profile
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_Shadows);
@@ -210,20 +210,15 @@ namespace DeferredEngine.Rendering
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_GBuffer);
 
-
             // Step: 03
             //Deferred Decals
             if (DecalRenderModule.g_EnableDecals)
-            {
                 _moduleStack.Decal.Draw(scene, null, _auxTargets[PipelineTargets.DECAL], _gBufferTarget.Albedo);
-            }
 
             // STAGE: PreLighting-SSFx
             // Step: 04
             //Draw Screen Space reflections to a different render target
-            RenderTarget2D ssrTargetMap = _ssfxTargets.GetSSReflectionRenderTargets(_fxStack.TemporalAA.Enabled, _fxStack.TemporalAA.IsOffFrame);
-            _fxStack.SSReflection.TargetMap = ssrTargetMap ?? _auxTargets[PipelineTargets.COMPOSE];
-            _fxStack.Draw(PipelineFxStage.SSReflection, null, null, _ssfxTargets.SSR_Main);
+            _fxStack.Draw(PipelineFxStage.SSReflection, _auxTargets[PipelineTargets.COMPOSE], null, _ssfxTargets.SSR_Main);
             // Profiler sample
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_SSFx_SSR);
 
@@ -419,7 +414,6 @@ namespace DeferredEngine.Rendering
                 //Temporal AA - alternate frames for temporal anti-aliasing
                 if (_fxStack.TemporalAA.Enabled)
                 {
-                    hasChanged = true;
                     _fxStack.TemporalAA.SwapOffFrame();
                     _matrices.ApplyViewProjectionJitter(_fxStack.TemporalAA.JitterMode, _fxStack.TemporalAA.IsOffFrame, _fxStack.TemporalAA.HaltonSequence);
                 }
