@@ -281,7 +281,6 @@ namespace DeferredEngine.Rendering
             //Compose the scene by combining our lighting data with the gbuffer data
             // ToDo: PRIO III: @tpott: hacky way to disable ssao when disabled on global scale (GUI is insufficient here)
             //      Add NotifiedProperty with wrapper property for UI
-            //_moduleStack.Deferred.UseSSAOMap = SSAmbientOcclustionFx.g_ssao_draw;
             _moduleStack.Deferred.Draw(null, null, _auxTargets[PipelineTargets.COMPOSE]);
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_Compose);
@@ -289,10 +288,7 @@ namespace DeferredEngine.Rendering
             // Step: 09
             //Forward
             if (ForwardPipelineModule.g_EnableForward)
-            {
-                _moduleStack.DepthReconstruct.ReconstructDepth();
                 _moduleStack.Forward.Draw(meshBatcher, null, null, _auxTargets[PipelineTargets.COMPOSE]);
-            }
 
             // Step: 10
             //Compose the image and add information from previous frames to apply temporal super sampling
@@ -310,16 +306,9 @@ namespace DeferredEngine.Rendering
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
             DrawPipelinePass(RenderingSettings.g_CurrentPass, _currentOutput, null, _auxTargets[PipelineTargets.OUTPUT]);
 
-            //// ToDo: PRIO II: Move the different SDF outputs into the PipelinePass method to blit them to output
-            //// Step: 14
-            ////Draw signed distance field functions
-            //_moduleStack.DistanceField.DrawDistance();
-            //_moduleStack.DistanceField.DrawVolume();
-
-
             this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.SDFDistance);
             this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.SDFVolume);
-
+            
             // Step: 15
             //Additional editor elements that overlay our screen
             DrawEditorOverlays(gizmoContext, scene);

@@ -90,14 +90,14 @@ namespace DeferredEngine.Rendering
 
         public PipelineModuleStack()
         {
+            DepthReconstruct = new DepthReconstructPipelineModule();
             GBuffer = new GBufferPipelineModule();
             Deferred = new DeferredPipelineModule();
-            Forward = new ForwardPipelineModule();
+            Forward = new ForwardPipelineModule() { DepthReconstruct = DepthReconstruct };
             ShadowMap = new ShadowMapPipelineModule();
 
             DirectionalLight = new DirectionalLightPipelineModule();
             PointLight = new PointLightPipelineModule();
-            DepthReconstruct = new DepthReconstructPipelineModule();
             Lighting = new LightingPipelineModule() { PointLightRenderModule = PointLight, DirectionalLightRenderModule = DirectionalLight, DepthPipelineModule = DepthReconstruct };
             Environment = new EnvironmentPipelineModule();
 

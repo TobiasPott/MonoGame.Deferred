@@ -22,6 +22,7 @@ namespace DeferredEngine.Pipeline
 
         private ForwardFxSetup _effectSetup = new ForwardFxSetup();
 
+        public DepthReconstructPipelineModule DepthReconstruct;
 
         public ForwardPipelineModule()
             : base()
@@ -29,7 +30,8 @@ namespace DeferredEngine.Pipeline
         public void Draw(DynamicMeshBatcher meshBatcher, RenderTarget2D sourceRT, RenderTarget2D auxRT, RenderTarget2D destRT)
         {
             _graphicsDevice.SetRenderTarget(destRT);
-
+            // reconstruct depth
+            DepthReconstruct?.ReconstructDepth();
             if (meshBatcher.CheckRequiresRedraw(RenderType.Forward, false, false))
                 meshBatcher.Draw(RenderType.Forward, this.Matrices, RenderContext.Default, this);
         }
