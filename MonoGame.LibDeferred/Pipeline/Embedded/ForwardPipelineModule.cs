@@ -3,6 +3,7 @@ using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Rendering;
 using DeferredEngine.Rendering.RenderModules.Default;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Pipeline
 {
@@ -25,12 +26,10 @@ namespace DeferredEngine.Pipeline
         public ForwardPipelineModule()
             : base()
         { }
-
-        /// <summary>
-        /// Draw forward shaded, alpha blended materials. Very basic and unoptimized algorithm. Can be improved to use tiling in future.
-        /// </summary>
-        public override void Draw(DynamicMeshBatcher meshBatcher)
+        public void Draw(DynamicMeshBatcher meshBatcher, RenderTarget2D sourceRT, RenderTarget2D auxRT, RenderTarget2D destRT)
         {
+            _graphicsDevice.SetRenderTarget(destRT);
+
             if (meshBatcher.CheckRequiresRedraw(RenderType.Forward, false, false))
                 meshBatcher.Draw(RenderType.Forward, this.Matrices, RenderContext.Default, this);
         }

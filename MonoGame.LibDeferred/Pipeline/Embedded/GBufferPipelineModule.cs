@@ -29,7 +29,7 @@ namespace DeferredEngine.Pipeline
             base.Initialize(graphicsDevice, spriteBatch);
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
         }
-        public override void Draw(DynamicMeshBatcher meshBatcher)
+        public void Draw(DynamicMeshBatcher meshBatcher)
         {
             _graphicsDevice.SetRenderTargets(_gBufferTarget.Bindings);
 

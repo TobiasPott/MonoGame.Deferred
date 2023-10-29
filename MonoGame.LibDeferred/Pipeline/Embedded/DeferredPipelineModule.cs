@@ -1,6 +1,8 @@
 ﻿using DeferredEngine.Rendering;
+using DeferredEngine.Rendering.PostProcessing;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
+using SharpDX.Direct3D9;
 
 namespace DeferredEngine.Pipeline
 {
@@ -49,12 +51,14 @@ namespace DeferredEngine.Pipeline
         /// <summary>
         /// Compose the render by combining the albedo channel with the light channels
         /// </summary>
-        public override RenderTarget2D Draw(RenderTarget2D sourceRT, RenderTarget2D auxRT, RenderTarget2D destRT)
+        public RenderTarget2D Draw(RenderTarget2D sourceRT, RenderTarget2D auxRT, RenderTarget2D destRT)
         {
             // ToDo: Move 'Compose' to DeferredPipelineModule and pass target buffer as RenderTarget2D parameter
             _graphicsDevice.SetRenderTarget(destRT);
             _graphicsDevice.SetStates(DepthStencilStateOption.KeepState, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
-
+            
+            _effectSetup.Param_UseSSAO.SetValue(SSAmbientOcclustionFx.g_ssao_draw);
+            _effectSetup.Effect_Compose.CurrentTechnique = _colorSpace == DeferredColorSpace.Linear ? _effectSetup.Technique_Linear : _effectSetup.Technique_NonLinear;
             //combine!
             _effectSetup.Effect_Compose.CurrentTechnique.Passes[0].Apply();
             _fullscreenTarget.Draw(_graphicsDevice);

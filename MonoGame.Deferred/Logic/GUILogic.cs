@@ -1,5 +1,6 @@
 ﻿using Deferred.Utilities;
 using DeferredEngine.Entities;
+using DeferredEngine.Pipeline;
 using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Pipeline.Utilities;
 using DeferredEngine.Recources;
@@ -117,7 +118,7 @@ namespace DeferredEngine.Logic
                 Toggle = RenderingSettings.e_EnableSelection
             });
 
-            _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Draw Mesh Outlines")
+            _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Draw Mesh Outl.")
             {
                 ToggleField = typeof(IdAndOutlineRenderModule).GetField("e_DrawOutlines"),
                 Toggle = IdAndOutlineRenderModule.e_DrawOutlines
@@ -127,6 +128,11 @@ namespace DeferredEngine.Logic
             {
                 ToggleField = typeof(DecalRenderModule).GetField("g_EnableDecals"),
                 Toggle = DecalRenderModule.g_EnableDecals
+            });
+            _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Forward")
+            {
+                ToggleField = typeof(ForwardPipelineModule).GetField("g_EnableForward"),
+                Toggle = ForwardPipelineModule.g_EnableForward
             });
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Show Controls")
             {

@@ -18,6 +18,31 @@ using System.Collections.Generic;
 
 namespace DeferredEngine.Rendering
 {
+    public enum DrawEvents
+    {
+        // BeforeAll
+        ShadowMap,
+        // PreGBuffer
+        GBuffer,
+        // PostGBuffer
+        Decal,
+        FxReflection,
+        FxAmbientOcclusion,
+        // PreLighting
+        Lighting,
+        // PostLighting
+        Environment,
+        // PreDefeerred
+        Deferred,
+        // PostDeferred
+        // PreForward
+        Forward,
+        // PostForward
+        // ScreenSpace
+        FxTAA,
+        Bloom,
+        // AfterAll
+    };
 
     public partial class RenderingPipeline : IDisposable
     {
@@ -145,7 +170,6 @@ namespace DeferredEngine.Rendering
             if (!isActive)
                 return;
 
-            _moduleStack.DistanceField.UpdateSdfGenerator(scene.Entities);
             _moduleStack.Lighting.UpdateGameTime(gameTime);
             if (SSReflectionFx.g_Noise)
                 _fxStack.SSReflection.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
@@ -184,8 +208,10 @@ namespace DeferredEngine.Rendering
             // Step: 03
             //Update SDFs
             if (IsSDFUsed(scene.PointLights))
+            {
+                _moduleStack.DistanceField.UpdateSdfGenerator(scene.Entities);
                 _moduleStack.DistanceField.UpdateDistanceFieldTransformations(scene.Entities);
-
+            }
         }
 
         // ! ! ! ! ! ! ! ! ! ! !
@@ -195,7 +221,7 @@ namespace DeferredEngine.Rendering
         /// <summary>
         /// Main Draw function of the game
         /// </summary>
-        public void Draw(Camera camera, DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GizmoDrawContext gizmoContext)
+        public void Draw(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GizmoDrawContext gizmoContext)
         {
             // Step: 12
             //Draw the elements that we are hovering over with outlines
@@ -255,7 +281,7 @@ namespace DeferredEngine.Rendering
             //Compose the scene by combining our lighting data with the gbuffer data
             // ToDo: PRIO III: @tpott: hacky way to disable ssao when disabled on global scale (GUI is insufficient here)
             //      Add NotifiedProperty with wrapper property for UI
-            _moduleStack.Deferred.UseSSAOMap = SSAmbientOcclustionFx.g_ssao_draw;
+            //_moduleStack.Deferred.UseSSAOMap = SSAmbientOcclustionFx.g_ssao_draw;
             _moduleStack.Deferred.Draw(null, null, _auxTargets[PipelineTargets.COMPOSE]);
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_Compose);
@@ -264,9 +290,8 @@ namespace DeferredEngine.Rendering
             //Forward
             if (ForwardPipelineModule.g_EnableForward)
             {
-                _graphicsDevice.SetRenderTarget(_auxTargets[PipelineTargets.COMPOSE]);
                 _moduleStack.DepthReconstruct.ReconstructDepth();
-                _moduleStack.Forward.Draw(meshBatcher);
+                _moduleStack.Forward.Draw(meshBatcher, null, null, _auxTargets[PipelineTargets.COMPOSE]);
             }
 
             // Step: 10
@@ -301,22 +326,6 @@ namespace DeferredEngine.Rendering
 
 
         }
-
-        //Render modes
-        public enum DrawEvents
-        {
-            ShadowMap,
-            GBuffer,
-            Decal,
-            FxReflection,
-            FxAmbientOcclusion,
-            Lighting,
-            Environment,
-            Deferred,
-            Forward,
-            FxTAA,
-            Bloom,
-        };
 
         private bool IsSDFUsed(List<PointLight> pointLights)
         {

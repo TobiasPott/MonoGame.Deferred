@@ -85,7 +85,7 @@ namespace DeferredEngine.Logic
         public void Draw(GameTime gameTime)
         {
             //Our renderer gives us information on what id is currently hovered over so we can update / manipulate objects in the logic functions
-            _renderer.Draw(_sceneLogic.Camera, _sceneLogic.MeshBatcher, _sceneLogic.Scene,
+            _renderer.Draw(_sceneLogic.MeshBatcher, _sceneLogic.Scene,
                 gizmoContext: _editorLogic.GetEditorData());
 
             if (RenderingSettings.e_IsEditorEnabled && RenderingSettings.ui_IsUIEnabled)
