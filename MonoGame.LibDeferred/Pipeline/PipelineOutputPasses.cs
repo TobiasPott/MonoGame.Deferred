@@ -14,8 +14,6 @@ namespace DeferredEngine.Pipeline
         SSAO,
         SSBlur,
         SSR,
-        HDR,
-        //SDFDistance,
-        //SDFVolume
+        HDR
     }
 }

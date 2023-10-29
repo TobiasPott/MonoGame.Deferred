@@ -19,16 +19,6 @@ using System.Collections.Generic;
 namespace DeferredEngine.Rendering
 {
 
-
-
-    [Flags()]
-    public enum EditorPasses
-    {
-        Billboard = 1,
-        IdAndOutline = 2,
-        Helper = 4,
-    }
-
     public partial class RenderingPipeline : IDisposable
     {
         public event Action<DrawEvents> EventTriggered;
@@ -295,11 +285,15 @@ namespace DeferredEngine.Rendering
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
             DrawPipelinePass(RenderingSettings.g_CurrentPass, _currentOutput, null, _auxTargets[PipelineTargets.OUTPUT]);
 
-            // ToDo: PRIO II: Move the different SDF outputs into the PipelinePass method to blit them to output
-            // Step: 14
-            //Draw signed distance field functions
-            _moduleStack.DistanceField.DrawDistance();
-            _moduleStack.DistanceField.DrawVolume();
+            //// ToDo: PRIO II: Move the different SDF outputs into the PipelinePass method to blit them to output
+            //// Step: 14
+            ////Draw signed distance field functions
+            //_moduleStack.DistanceField.DrawDistance();
+            //_moduleStack.DistanceField.DrawVolume();
+
+
+            this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.SDFDistance);
+            this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.SDFVolume);
 
             // Step: 15
             //Additional editor elements that overlay our screen
@@ -342,7 +336,7 @@ namespace DeferredEngine.Rendering
                 if (IdAndOutlineRenderModule.e_DrawOutlines)
                     _moduleStack.IdAndOutline.Blit(_moduleStack.IdAndOutline.Target, null, BlendState.Additive);
 
-                this.DrawEditorPasses(scene, gizmoContext, EditorPasses.Billboard | EditorPasses.IdAndOutline);
+                this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.Billboard | PipelineEditorPasses.IdAndOutline);
 
                 if (gizmoContext.SelectedObject != null)
                 {
@@ -367,26 +361,39 @@ namespace DeferredEngine.Rendering
 
             // Step: 20
             //Draw debug geometry
-            DrawEditorPasses(scene, gizmoContext, EditorPasses.Helper);
+            DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.Helper);
 
         }
 
-        private void DrawEditorPasses(EntitySceneGroup scene, GizmoDrawContext gizmoContext,
-            EditorPasses passes = EditorPasses.Billboard | EditorPasses.IdAndOutline)
+        private void DrawEditorPasses(EntitySceneGroup scene, GizmoDrawContext gizmoContext, PipelineEditorPasses passes = PipelineEditorPasses.Billboard | PipelineEditorPasses.IdAndOutline)
         {
-            // render directly to the output buffer
             _graphicsDevice.SetRenderTarget(null);
             _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
-
-            if (passes.HasFlag(EditorPasses.Billboard))
+            
+            // render directly to the output buffer
+            if (passes.HasFlag(PipelineEditorPasses.Billboard))
+            {
                 _moduleStack.Billboard.DrawEditorBillboards(scene, gizmoContext);
-            if (passes.HasFlag(EditorPasses.IdAndOutline))
+            }
+            if (passes.HasFlag(PipelineEditorPasses.IdAndOutline))
+            {
                 _moduleStack.IdAndOutline.DrawTransformGizmos(gizmoContext, IdAndOutlineRenderModule.Pass.Color);
-            if (passes.HasFlag(EditorPasses.Helper))
+            }
+            if (passes.HasFlag(PipelineEditorPasses.Helper))
+            {
                 _moduleStack.Helper.Draw();
-
+            }
+            if (passes.HasFlag(PipelineEditorPasses.SDFDistance))
+            {
+                _graphicsDevice.SetStates(DepthStencilStateOption.None);
+                _moduleStack.DistanceField.DrawDistance();
+            }
+            if (passes.HasFlag(PipelineEditorPasses.SDFVolume))
+            {
+                _graphicsDevice.SetStates(DepthStencilStateOption.None);
+                _moduleStack.DistanceField.DrawVolume();
+            }
         }
-
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         //  DEFERRED RENDERING FUNCTIONS, IN ORDER OF USAGE

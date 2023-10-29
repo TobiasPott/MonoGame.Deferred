@@ -80,7 +80,6 @@ namespace DeferredEngine.Rendering.SDF
             if (RenderingSettings.SDF.DrawVolume)
             {
                 _effectSetup.Param_FrustumCorners.SetValue(this.Frustum.WorldSpaceFrustum);
-
                 _effectSetup.Pass_Volume.Apply();
                 FullscreenTriangleBuffer.Instance.Draw(_graphicsDevice);
             }
