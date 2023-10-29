@@ -189,6 +189,10 @@ namespace DeferredEngine.Rendering
 
         }
 
+        // ! ! ! ! ! ! ! ! ! ! !
+        // ToDo: PRIO I: Reduce Draw method to only call profiler and .Draw calls from modules
+        //              Setup and processing should be internalized and done before any drawing takes place
+
         /// <summary>
         /// Main Draw function of the game
         /// </summary>
@@ -211,10 +215,7 @@ namespace DeferredEngine.Rendering
             //Deferred Decals
             if (DecalRenderModule.g_EnableDecals)
             {
-                //First copy albedo to decal offtarget
-                _moduleStack.Decal.Blit(_gBufferTarget.Albedo, _auxTargets[PipelineTargets.DECAL]);
-                _moduleStack.Decal.Blit(_auxTargets[PipelineTargets.DECAL], _gBufferTarget.Albedo);
-                _moduleStack.Decal.Draw(scene);
+                _moduleStack.Decal.Draw(scene, null, _auxTargets[PipelineTargets.DECAL], _gBufferTarget.Albedo);
             }
 
             // STAGE: PreLighting-SSFx
@@ -259,7 +260,7 @@ namespace DeferredEngine.Rendering
             // ToDo: PRIO III: @tpott: hacky way to disable ssao when disabled on global scale (GUI is insufficient here)
             //      Add NotifiedProperty with wrapper property for UI
             _moduleStack.Deferred.UseSSAOMap = SSAmbientOcclustionFx.g_ssao_draw;
-            _moduleStack.Deferred.Draw(_auxTargets[PipelineTargets.COMPOSE]);
+            _moduleStack.Deferred.Draw(null, null, _auxTargets[PipelineTargets.COMPOSE]);
             //Performance Profiler
             _profiler.SampleTimestamp(ref PipelineSamples.SDraw_Compose);
 

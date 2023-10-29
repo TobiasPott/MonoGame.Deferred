@@ -49,17 +49,17 @@ namespace DeferredEngine.Pipeline
         /// <summary>
         /// Compose the render by combining the albedo channel with the light channels
         /// </summary>
-        public override RenderTarget2D Draw(RenderTarget2D destination)
+        public override RenderTarget2D Draw(RenderTarget2D sourceRT, RenderTarget2D auxRT, RenderTarget2D destRT)
         {
             // ToDo: Move 'Compose' to DeferredPipelineModule and pass target buffer as RenderTarget2D parameter
-            _graphicsDevice.SetRenderTarget(destination);
+            _graphicsDevice.SetRenderTarget(destRT);
             _graphicsDevice.SetStates(DepthStencilStateOption.KeepState, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
 
             //combine!
             _effectSetup.Effect_Compose.CurrentTechnique.Passes[0].Apply();
             _fullscreenTarget.Draw(_graphicsDevice);
 
-            return destination;
+            return destRT;
         }
 
 

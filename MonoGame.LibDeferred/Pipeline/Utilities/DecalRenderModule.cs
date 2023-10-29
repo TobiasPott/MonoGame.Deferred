@@ -1,4 +1,5 @@
 ﻿using DeferredEngine.Entities;
+using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
@@ -7,9 +8,35 @@ namespace DeferredEngine.Pipeline.Utilities
 {
     public class DecalRenderModule : PipelineModule, IDisposable
     {
+        public static readonly short[] indicesCage = new short[]
+        {
+                0, 1, 1,
+                3, 3, 2,
+                2, 0, 4,
+                5, 5, 7,
+                7, 6, 6,
+                4, 0, 4,
+                1, 5, 2,
+                6, 3, 7,
+        };
+        public static readonly short[] indicesCube = new short[]
+        {
+                0,4,1,
+                1,4,5,
+                1,5,3,
+                3,5,7,
+                2,3,7,
+                7,6,2,
+                2,6,0,
+                0,6,4,
+                5,4,7,
+                7,4,6,
+                2,0,1,
+                1,3,2
+        };
+
         //Deferred Decals
         public static bool g_EnableDecals = true;
-
 
         private readonly DecalEffectSetup _effectSetup = new DecalEffectSetup();
 
@@ -40,76 +67,39 @@ namespace DeferredEngine.Pipeline.Utilities
                 ColorSourceBlend = Blend.SourceAlpha,
             };
 
-            VertexPositionColor[] verts = new VertexPositionColor[8];
 
             Vector3 a = -Vector3.One;
             Vector3 b = Vector3.One;
             Color color = Color.White;
             Color colorUpper = new Color(0, 255, 0, 255);
+
+            VertexPositionColor[] verts = new VertexPositionColor[8];
             verts[0] = new VertexPositionColor(new Vector3(a.X, a.Y, a.Z), color);
             verts[1] = new VertexPositionColor(new Vector3(b.X, a.Y, a.Z), color);
             verts[2] = new VertexPositionColor(new Vector3(a.X, b.Y, a.Z), color);
             verts[3] = new VertexPositionColor(new Vector3(b.X, b.Y, a.Z), color);
+
             verts[4] = new VertexPositionColor(new Vector3(a.X, a.Y, b.Z), colorUpper);
             verts[5] = new VertexPositionColor(new Vector3(b.X, a.Y, b.Z), colorUpper);
             verts[6] = new VertexPositionColor(new Vector3(a.X, b.Y, b.Z), colorUpper);
             verts[7] = new VertexPositionColor(new Vector3(b.X, b.Y, b.Z), colorUpper);
 
-            short[] Indices = new short[24];
-
-            Indices[0] = 0;
-            Indices[1] = 1;
-            Indices[2] = 1;
-            Indices[3] = 3;
-            Indices[4] = 3;
-            Indices[5] = 2;
-            Indices[6] = 2;
-            Indices[7] = 0;
-
-            Indices[8] = 4;
-            Indices[9] = 5;
-            Indices[10] = 5;
-            Indices[11] = 7;
-            Indices[12] = 7;
-            Indices[13] = 6;
-            Indices[14] = 6;
-            Indices[15] = 4;
-
-            Indices[16] = 0;
-            Indices[17] = 4;
-            Indices[18] = 1;
-            Indices[19] = 5;
-            Indices[20] = 2;
-            Indices[21] = 6;
-            Indices[22] = 3;
-            Indices[23] = 7;
-
-            //short[] Indices2 = new short[36];
-            short[] Indices2 = new short[] {0,4,1,
-                1,4,5,
-                1,5,3,
-                3,5,7,
-                2,3,7,
-                7,6,2,
-                2,6,0,
-                0,6,4,
-                5,4,7,
-                7,4,6,
-                2,0,1,
-                1,3,2 };
 
             _vertexBuffer = new VertexBuffer(graphicsDevice, VertexPositionColor.VertexDeclaration, 8, BufferUsage.WriteOnly);
             _indexBufferCage = new IndexBuffer(graphicsDevice, IndexElementSize.SixteenBits, 24, BufferUsage.WriteOnly);
             _indexBufferCube = new IndexBuffer(graphicsDevice, IndexElementSize.SixteenBits, 36, BufferUsage.WriteOnly);
 
             _vertexBuffer.SetData(verts);
-            _indexBufferCage.SetData(Indices);
-            _indexBufferCube.SetData(Indices2);
+            _indexBufferCage.SetData(indicesCage);
+            _indexBufferCube.SetData(indicesCube);
         }
 
-        public void Draw(EntitySceneGroup scene) => Draw(scene.Decals, this.Matrices.View, this.Matrices.ViewProjection, this.Matrices.InverseView);
-        public void Draw(List<Decal> decals, Matrix view, Matrix viewProjection, Matrix inverseView)
+        public void Draw(EntitySceneGroup scene, RenderTarget2D sourceRT, RenderTarget2D auxRT, RenderTarget2D destRT) => Draw(scene.Decals, sourceRT, auxRT, destRT, this.Matrices.View, this.Matrices.ViewProjection, this.Matrices.InverseView);
+        public void Draw(List<Decal> decals, RenderTarget2D sourceRT, RenderTarget2D auxRT, RenderTarget2D destRT, Matrix view, Matrix viewProjection, Matrix inverseView)
         {
+            // blit current buffer to aux to work on this (decals are not full GBuffer support and misses normals)
+            this.Blit(destRT, auxRT);
+
             _graphicsDevice.SetVertexBuffer(_vertexBuffer);
             _graphicsDevice.Indices = _indexBufferCube;
             _graphicsDevice.SetState(RasterizerStateOption.CullClockwise);
@@ -118,10 +108,8 @@ namespace DeferredEngine.Pipeline.Utilities
 
             _effectSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
 
-            for (int index = 0; index < decals.Count; index++)
+            foreach (Decal decal in decals)
             {
-                Decal decal = decals[index];
-
                 Matrix localMatrix = decal.World;
 
                 _effectSetup.Param_DecalMap.SetValue(decal.Texture);
@@ -130,9 +118,10 @@ namespace DeferredEngine.Pipeline.Utilities
                 _effectSetup.Param_InverseWorldView.SetValue(inverseView * decal.InverseWorld);
 
                 _effectSetup.Pass_Decal.Apply();
-
                 _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 12);
             }
+
+            this.Blit(auxRT, destRT);
         }
 
         public void DrawOutlines(Decal decal)
