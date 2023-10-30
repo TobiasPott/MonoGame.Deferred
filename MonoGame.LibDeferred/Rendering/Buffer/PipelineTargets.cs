@@ -19,17 +19,13 @@ namespace DeferredEngine.Rendering
         /// Index to the swap render target
         /// </summary>
         public const int SWAP = 2;
-        /// <summary>
-        /// Index to the decal render target
-        /// </summary>
-        public const int DECAL = 3;
 
         #endregion
 
         internal static readonly RenderTarget2DDefinition[] Definitions = new RenderTarget2DDefinition[]
         {
             RenderTarget2DDefinition.Aux_FinalColor, RenderTarget2DDefinition.Aux_SwapHalf,
-            RenderTarget2DDefinition.Aux_Swap, RenderTarget2DDefinition.Aux_Decal,
+            RenderTarget2DDefinition.Aux_Swap
         };
 
         public PipelineTargets(GraphicsDevice graphicsDevice, Vector2 resolution)

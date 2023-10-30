@@ -285,18 +285,7 @@ namespace DeferredEngine.Rendering
             _moduleStack.GBuffer.Draw(meshBatcher);
             // Step: 03
             //Deferred Decals
-            _moduleStack.Decal.Draw(scene, null, _auxTargets[PipelineTargets.DECAL], _gBufferTarget.Albedo);
-
-            // ToDo: PRIO I: Disabling this code makes rendering broken with enabled SSAO (works when SSAO is disabled)
-            //              Consider moving these to the other FxStack Draw calls
-            //// STAGE: PreLighting-SSFx
-            //// Step: 04
-            ////Draw Screen Space reflections to a different render target
-            //_fxStack.Draw(PipelineFxStage.SSReflection, _auxTargets[PipelineTargets.SWAP_HALF], null, _ssfxTargets.SSR_Main);
-            //// Step: 05
-            ////SSAO
-            //_fxStack.Draw(PipelineFxStage.SSAmbientOcclusion, null, null, _ssfxTargets.AO_Main);
-
+            _moduleStack.Decal.Draw(scene, null, _auxTargets[PipelineTargets.SWAP], _gBufferTarget.Albedo);
 
             // Step: 06
             //Light the scene

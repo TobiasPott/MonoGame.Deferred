@@ -30,9 +30,8 @@ namespace DeferredEngine.Rendering
         public static readonly RenderTarget2DDefinition Depth = new RenderTarget2DDefinition(nameof(Depth), false, SurfaceFormat.Single, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
 
         public static readonly RenderTarget2DDefinition Aux_FinalColor = new RenderTarget2DDefinition(nameof(Aux_FinalColor), false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-        public static readonly RenderTarget2DDefinition Aux_Swap = new RenderTarget2DDefinition(nameof(Aux_Swap), false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+        public static readonly RenderTarget2DDefinition Aux_Swap = new RenderTarget2DDefinition(nameof(Aux_Swap), false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
         public static readonly RenderTarget2DDefinition Aux_SwapHalf = new RenderTarget2DDefinition(nameof(Aux_SwapHalf), false, SurfaceFormat.HalfVector4, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
-        public static readonly RenderTarget2DDefinition Aux_Decal = new RenderTarget2DDefinition(nameof(Aux_Decal), false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
 
         public static readonly RenderTarget2DDefinition SSFx_Bloom = new RenderTarget2DDefinition(nameof(SSFx_Bloom), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
 
