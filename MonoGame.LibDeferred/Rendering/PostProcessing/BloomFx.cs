@@ -3,6 +3,7 @@ using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
+using static DeferredEngine.Recources.RenderingSettings;
 
 namespace DeferredEngine.Rendering.PostProcessing
 {
@@ -150,10 +151,6 @@ namespace DeferredEngine.Rendering.PostProcessing
         /// <param name="sourceRT">the image from which we want to extract bright parts and blur these</param>
         public override RenderTarget2D Draw(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
-            //Check if we are initialized
-            if (_graphicsDevice == null)
-                throw new Exception("Module not yet Loaded / Initialized. Use Load() first");
-
             //EXTRACT  //Note: Is setRenderTargets(binding better?)
             //We extract the bright values which are above the Threshold and save them to Mip0
             _graphicsDevice.SetStates(DepthStencilStateOption.KeepState, RasterizerStateOption.CullNone, BlendStateOption.Opaque);
@@ -161,12 +158,13 @@ namespace DeferredEngine.Rendering.PostProcessing
 
             BloomScreenTexture = sourceRT;
             Vector2 inverseResolution = Vector2.One / _resolution;
-            //BloomInverseResolution = Vector2.One / _resolution;
 
-            if (BloomUseLuminance) _fxSetup.Pass_ExtractLuminance.Apply();
+            if (BloomUseLuminance)
+                _fxSetup.Pass_ExtractLuminance.Apply();
             else _fxSetup.Pass_Extract.Apply();
             _fullscreenTarget.Draw(_graphicsDevice);
 
+            #region Run 1-5 Passes
             //Now downsample to the next lower mip texture
             if (BloomDownsamplePasses > 0)
             {
@@ -287,7 +285,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
                 ChangeBlendState();
 
-                //UPSAMPLE TO MIP0
+                ////UPSAMPLE TO MIP0
                 _graphicsDevice.SetRenderTarget(_mipMaps[0]);
                 BloomScreenTexture = _mipMaps[1];
 
@@ -296,14 +294,25 @@ namespace DeferredEngine.Rendering.PostProcessing
 
                 _fxSetup.Pass_Upsample.Apply();
                 _fullscreenTarget.Draw(_graphicsDevice);
+
+
+                // ToDo: Swap use of render textures to return the sourceRT (is COMPOSE at the moment)
+                _graphicsDevice.SetRenderTargets(destRT);
+                _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive);
+
+                _spriteBatch.Draw(sourceRT, RenderingSettings.Screen.g_Rect, Color.White);
+                _spriteBatch.Draw(_mipMaps[0], RenderingSettings.Screen.g_Rect, Color.White);
+                
+                _spriteBatch.End();
             }
+            #endregion
 
+            this.Blit(destRT, sourceRT);
             //Note the final step could be done as a blend to the final texture.
-
             // sample profiler if set
             this.Profiler?.SampleTimestamp(TimestampIndices.Draw_Bloom);
 
-            return _mipMaps[0];
+            return sourceRT;
         }
 
 

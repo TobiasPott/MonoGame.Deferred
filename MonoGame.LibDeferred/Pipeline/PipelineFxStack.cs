@@ -141,16 +141,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         {
             if (this.Bloom.Enabled)
             {
-                Texture2D bloom = this.Bloom.Draw(sourceRT, null, null);
-
-                _graphicsDevice.SetRenderTargets(destRT);
-                _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
-
-                _spriteBatch.Draw(sourceRT, RenderingSettings.Screen.g_Rect, Color.White);
-                _spriteBatch.Draw(bloom, RenderingSettings.Screen.g_Rect, Color.White);
-
-                _spriteBatch.End();
-
+                Texture2D bloom = this.Bloom.Draw(sourceRT, null, destRT);
                 return destRT;
             }
             else
