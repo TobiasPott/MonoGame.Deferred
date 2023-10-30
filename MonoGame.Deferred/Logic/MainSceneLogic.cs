@@ -22,17 +22,9 @@ namespace DeferredEngine.Logic
         private DemoAssets _assets;
 
         public Camera Camera;
-
-
         //mesh library, holds all the meshes and their materials
         public DynamicMeshBatcher MeshBatcher;
-
-        private EntityScene _scene;
-        public readonly List<ModelEntity> BasicEntities = new List<ModelEntity>();
-        public readonly List<Decal> Decals = new List<Decal>();
-        public readonly List<PointLight> PointLights = new List<PointLight>();
-        public readonly List<Pipeline.Lighting.DirectionalLight> DirectionalLights = new List<Pipeline.Lighting.DirectionalLight>();
-        public EnvironmentProbe EnvProbe;
+        private EntityScene _scene = new EntityScene();
 
         //Which render target are we currently displaying?
         private int _renderModeCycle;
@@ -56,48 +48,39 @@ namespace DeferredEngine.Logic
             MeshBatcher = new DynamicMeshBatcher(graphicsDevice);
             MeshBatcher.BatchByMaterial = false;
 
-            SetUpEditorScene(graphicsDevice);
-
-            _scene = new EntityScene(BasicEntities, DirectionalLights, PointLights, Decals, EnvProbe);
+            SetupSponzaSampleSscenne();
         }
 
         //Load our default setup!
-        private void SetUpEditorScene(GraphicsDevice graphics)
+        private void SetupSponzaSampleSscenne()
         {
             ////////////////////////////////////////////////////////////////////////
             // Camera
-
             //Set up our starting camera position
-
             // NOTE: Coordinate system depends on Camera.up,
             //       Right now z is going up, it's not depth!
-
             Camera = new Camera(position: new Vector3(-88, -11f, 4), lookat: new Vector3(38, 8, 32));
-
-            EnvProbe = new EnvironmentProbe(new Vector3(-45, -5, 5));
 
             ////////////////////////////////////////////////////////////////////////
             // Static geometry
-
             // NOTE: If you don't pass a materialEffect it will use the default material from the object
-
-            AddEntity(model: _assets.SponzaModel,
-                position: Vector3.Zero, angleX: Math.PI / 2, angleY: 0, angleZ: 0, scale: 0.1f);//CHANGE BACK
+            AddEntity(_assets.SponzaModel, null,
+                Vector3.Zero, new Vector3((float)Math.PI / 2, 0, 0), Vector3.One * 0.1f, MeshBatcher);//CHANGE BACK
 
 
             for (int x = -5; x <= 5; x++)
             {
                 for (int y = -5; y <= 5; y++)
                 {
-                    AddEntity(model: _assets.Plane,
-                        materialEffect: ((x + 5 + y + 5) % 2 == 1) ? _assets.MirrorMaterial : _assets.MetalRough03Material,
-                        position: new Vector3(30 + x * 4, y * 4 + 4, 0), angleX: 0, angleY: 0, angleZ: 0, scale: 2);
+                    bool isMirror = ((x + 5 + y + 5) % 2 == 1);
+                    AddEntity(_assets.Plane, isMirror ? _assets.MirrorMaterial : _assets.MetalRough03Material,
+                        new Vector3(30 + x * 4, y * 4 + 4, 0), new Vector3(0, 0, 0), Vector3.One * 2, MeshBatcher);
                 }
             }
 
-            AddEntity(model: _assets.StanfordDragonLowpoly,
-                materialEffect: _assets.BaseMaterial,
-                position: new Vector3(40, -10, 0), angleX: Math.PI / 2, angleY: 0, angleZ: 0, scale: 10);
+            AddEntity(_assets.StanfordDragonLowpoly,
+                _assets.BaseMaterial,
+                new Vector3(40, -10, 0), new Vector3((float)Math.PI / 2, 0, 0), Vector3.One * 10, MeshBatcher);
 
             ////////////////////////////////////////////////////////////////////////
             // Dynamic geometry
@@ -110,9 +93,9 @@ namespace DeferredEngine.Logic
             // NOTE: Our physics entity's position will be overwritten, so it doesn't matter
             // NOTE: If a physics object has mass it will move, otherwise it is static
 
-            AddEntity(model: StaticAssets.Instance.IsoSphere,
-                materialEffect: _assets.AlphaBlendRim,
-                position: new Vector3(20, 0, 10), angleX: Math.PI / 2, angleY: 0, angleZ: 0, scale: 5);
+            AddEntity(StaticAssets.Instance.IsoSphere,
+                _assets.AlphaBlendRim,
+                new Vector3(20, 0, 10), new Vector3((float)Math.PI / 2, 0, 0), Vector3.One * 5, MeshBatcher);
 
 
             for (int i = 0; i < 10; i++)
@@ -120,15 +103,15 @@ namespace DeferredEngine.Logic
                 MaterialEffect test = new MaterialEffect(_assets.SilverMaterial);
                 test.Roughness = i / 9.0f + 0.1f;
                 test.Metallic = 1;
-                AddEntity(model: StaticAssets.Instance.IsoSphere,
-                    materialEffect: test,
-                    position: new Vector3(30 + i * 10, 0, 10), angleX: Math.PI / 2, angleY: 0, angleZ: 0, scale: 5);
+                AddEntity(StaticAssets.Instance.IsoSphere,
+                    test,
+                    new Vector3(30 + i * 10, 0, 10), new Vector3((float)(Math.PI / 2.0f), 0, 0), Vector3.One * 5, MeshBatcher);
             }
 
             ////////////////////////////////////////////////////////////////////////
             // Decals
 
-            Decals.Add(new Decal(StaticAssets.Instance.IconDecal, new Vector3(-6, 22, 15), new Vector3((float)(-Math.PI / 2), 0, 0), Vector3.One * 10));
+            _scene.Decals.Add(new Decal(StaticAssets.Instance.IconDecal, new Vector3(-6, 22, 15), new Vector3((float)(-Math.PI / 2), 0, 0), Vector3.One * 10));
 
             ////////////////////////////////////////////////////////////////////////
             // Dynamic lights
@@ -241,7 +224,7 @@ namespace DeferredEngine.Logic
                 shadowFarClip: shadowDepth,
                 shadowMapResolution: shadowResolution,
                 shadowFiltering: shadowFilteringFiltering);
-            DirectionalLights.Add(light);
+            _scene.DirectionalLights.Add(light);
             return light;
         }
 
@@ -262,57 +245,19 @@ namespace DeferredEngine.Logic
         private PointLight AddPointLight(Vector3 position, float radius, Color color, float intensity, bool castShadows, bool isVolumetric = false, float volumetricDensity = 1, int shadowResolution = 256, int softShadowBlurAmount = 0)
         {
             PointLight light = new PointLight(position, radius, color, intensity, castShadows, isVolumetric, shadowResolution, softShadowBlurAmount, volumetricDensity);
-            PointLights.Add(light);
+            _scene.PointLights.Add(light);
             return light;
         }
 
 
         /// <summary>
-        /// Create a basic rendered model without custom material, use materialEffect: for materials instead
-        /// The material used is the one found in the imported model file, usually that means diffuse texture only
-        /// </summary>
-        /// <param name="model"></param>
-        /// <param name="position"></param>
-        /// <param name="angleX"></param>
-        /// <param name="angleY"></param>
-        /// <param name="angleZ"></param>
-        /// <param name="scale"></param>
-        /// <returns>returns the basicEntity we created</returns>
-        private ModelEntity AddEntity(ModelDefinition model, Vector3 position, double angleX, double angleY, double angleZ, float scale)
-        {
-            ModelEntity entity = new ModelEntity(model,
-                null,
-                position: position,
-                eulerAngles: new Vector3((float)angleX, (float)angleY, (float)angleZ),
-                scale: Vector3.One * scale,
-                library: MeshBatcher);
-            BasicEntities.Add(entity);
-
-            return entity;
-        }
-
-        /// <summary>
         /// Create a basic rendered model with custom material
         /// </summary>
-        /// <param name="model"></param>
-        /// <param name="materialEffect">custom material</param>
-        /// <param name="position"></param>
-        /// <param name="angleX"></param>
-        /// <param name="angleY"></param>
-        /// <param name="angleZ"></param>
-        /// <param name="scale"></param>
         /// <returns>returns the basicEntity we created</returns>
-        private ModelEntity AddEntity(ModelDefinition model, MaterialEffect materialEffect, Vector3 position, double angleX, double angleY, double angleZ, float scale)
+        private ModelEntity AddEntity(ModelDefinition model, MaterialEffect materialEffect,
+            Vector3 position, Vector3 angles, Vector3 scale, DynamicMeshBatcher batcher)
         {
-            ModelEntity entity = new ModelEntity(model,
-                materialEffect,
-                position: position,
-                eulerAngles: new Vector3((float)angleX, (float)angleY, (float)angleZ),
-                scale: Vector3.One * scale,
-                library: MeshBatcher);
-            BasicEntities.Add(entity);
-
-            return entity;
+            return _scene.Add(model, materialEffect, position, angles, scale, batcher);
         }
 
     }

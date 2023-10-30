@@ -14,7 +14,7 @@ namespace DeferredEngine.Entities
         public readonly Vector3 BoundingBoxOffset;
 
 
-        public ModelEntity(ModelDefinition modelbb, MaterialEffect material, Vector3 position, Vector3 eulerAngles, Vector3 scale, DynamicMeshBatcher library = null)
+        public ModelEntity(ModelDefinition modelbb, MaterialEffect material, Vector3 position, Vector3 eulerAngles, Vector3 scale, DynamicMeshBatcher batcher = null)
             : base(position, eulerAngles, scale)
         {
             BoundingBox = modelbb.BoundingBox;
@@ -24,8 +24,8 @@ namespace DeferredEngine.Entities
 
             Material = material;
 
-            if (library != null)
-                library.Register(Material, ModelDefinition.Model, this);
+            if (batcher != null)
+                batcher.Register(Material, ModelDefinition.Model, this);
 
             this.UpdateMatrices();
         }

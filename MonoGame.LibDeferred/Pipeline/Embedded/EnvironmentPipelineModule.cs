@@ -104,6 +104,7 @@ namespace DeferredEngine.Pipeline
         {
             if (EnvironmentPipelineModule.ModuleEnabled)
             {
+                // ToDo: PRIO IV: Environment spec and diffuse strength don't seem to pass to the shader
                 _effectSetup.Param_FrustumCorners.SetValue(this.Frustum.WorldSpaceFrustum);
                 _effectSetup.Param_TransposeView.SetValue(Matrix.Transpose(this.Matrices.View));
                 _effectSetup.Pass_Basic.Apply();
