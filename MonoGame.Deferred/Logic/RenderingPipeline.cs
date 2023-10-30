@@ -307,7 +307,7 @@ namespace DeferredEngine.Rendering
             _fxStack.Draw(PipelineFxStage.TemporalAA, null, null, _auxTargets[PipelineTargets.COMPOSE]);
             // Step: 11
             //Do Bloom
-            _fxStack.Draw(PipelineFxStage.Bloom, _auxTargets[PipelineTargets.COMPOSE], null, _ssfxTargets.Bloom_Main);
+            _fxStack.Draw(PipelineFxStage.Bloom, null, null, _auxTargets[PipelineTargets.COMPOSE]);
             _currentOutput = _fxStack.Draw(PipelineFxStage.PostProcessing, _auxTargets[PipelineTargets.COMPOSE], null, _auxTargets[PipelineTargets.OUTPUT]);
             _currentOutput = _fxStack.Draw(PipelineFxStage.ColorGrading, _auxTargets[PipelineTargets.OUTPUT], null, null);
 

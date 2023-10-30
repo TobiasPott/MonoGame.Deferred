@@ -3,6 +3,7 @@ using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
+using Windows.Gaming.Input.ForceFeedback;
 
 namespace DeferredEngine.Rendering.PostProcessing
 {
@@ -75,18 +76,15 @@ namespace DeferredEngine.Rendering.PostProcessing
         private BloomFxSetup _fxSetup = new BloomFxSetup();
         //RenderTargets
         private DynamicMultiRenderTarget _mipMaps;
+        private RenderTarget2D _swapBuffer;
 
 
         private Texture2D BloomScreenTexture { set { _fxSetup.Param_ScreenTexture.SetValue(value); } }
 
         private Vector2 InverseResolution { set { _fxSetup.Param_InverseResolution.SetValue(value); } }
 
-        private float Radius { set { _fxSetup.Param_Radius.SetValue(value * _radiusMultiplier); } }
-        private float Strength { set { _fxSetup.Param_Strength.SetValue(value); } }
         private float StreakLength { set { _fxSetup.Param_StreakLength.SetValue(value); } }
         private float Threshold { set { _fxSetup.Param_Threshold.SetValue(value); } }
-
-
 
 
         public BloomFx()
@@ -120,6 +118,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             _graphicsDevice = graphicsDevice;
 
             _mipMaps = new DynamicMultiRenderTarget(_graphicsDevice, (int)_resolution.X, (int)_resolution.Y, BloomFxPresetsData.Mip_Definitions);
+            _swapBuffer = RenderTarget2DDefinition.SSFx_Bloom.CreateRenderTarget(_graphicsDevice, _resolution);
         }
 
         /// <summary>
@@ -144,6 +143,27 @@ namespace DeferredEngine.Rendering.PostProcessing
 
 
 
+        private void SetPassAndDraw(bool downsample, int targetMip, int sourceMip, float strength, float radius)
+        {
+            _fxSetup.Param_Radius.SetValue(radius * _radiusMultiplier);
+            _fxSetup.Param_Strength.SetValue(strength);
+
+            this.SetPassAndDraw(downsample, targetMip, sourceMip);
+        }
+        private void SetPassAndDraw(bool downsample, int targetMip, int sourceMip)
+        {
+            _graphicsDevice.SetRenderTarget(_mipMaps[targetMip]);
+            BloomScreenTexture = _mipMaps[sourceMip];
+
+            if (downsample)
+                _fxSetup.Pass_Downsample.Apply();
+            else
+                _fxSetup.Pass_Upsample.Apply();
+            _fullscreenTarget.Draw(_graphicsDevice);
+        }
+
+
+
         /// <summary>
         /// Main draw function
         /// </summary>
@@ -151,14 +171,14 @@ namespace DeferredEngine.Rendering.PostProcessing
         public override RenderTarget2D Draw(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
             if (!this.Enabled)
-                return sourceRT;
+                return destRT;
 
             //EXTRACT  //Note: Is setRenderTargets(binding better?)
             //We extract the bright values which are above the Threshold and save them to Mip0
             _graphicsDevice.SetStates(DepthStencilStateOption.KeepState, RasterizerStateOption.CullNone, BlendStateOption.Opaque);
             _graphicsDevice.SetRenderTarget(_mipMaps[0]);
 
-            BloomScreenTexture = sourceRT;
+            BloomScreenTexture = destRT;
             Vector2 inverseResolution = Vector2.One / _resolution;
 
             if (BloomUseLuminance)
@@ -172,12 +192,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             {
                 this.InverseResolution = inverseResolution *= 2;
                 //DOWNSAMPLE TO MIP1
-                _graphicsDevice.SetRenderTarget(_mipMaps[1]);
-
-                BloomScreenTexture = _mipMaps[0];
-                //Pass
-                _fxSetup.Pass_Downsample.Apply();
-                _fullscreenTarget.Draw(_graphicsDevice);
+                this.SetPassAndDraw(true, 1, 0);
 
                 if (BloomDownsamplePasses > 1)
                 {
@@ -185,136 +200,74 @@ namespace DeferredEngine.Rendering.PostProcessing
                     this.InverseResolution = inverseResolution *= 2;
 
                     //DOWNSAMPLE TO MIP2
-                    _graphicsDevice.SetRenderTarget(_mipMaps[2]);
-
-                    BloomScreenTexture = _mipMaps[1];
-                    //Pass
-                    _fxSetup.Pass_Downsample.Apply();
-                    _fullscreenTarget.Draw(_graphicsDevice);
+                    this.SetPassAndDraw(true, 2, 1);
 
                     if (BloomDownsamplePasses > 2)
                     {
                         this.InverseResolution = inverseResolution *= 2;
 
                         //DOWNSAMPLE TO MIP3
-                        _graphicsDevice.SetRenderTarget(_mipMaps[3]);
-
-                        BloomScreenTexture = _mipMaps[2];
-                        //Pass
-                        _fxSetup.Pass_Downsample.Apply();
-                        _fullscreenTarget.Draw(_graphicsDevice);
+                        this.SetPassAndDraw(true, 3, 2);
 
                         if (BloomDownsamplePasses > 3)
                         {
                             this.InverseResolution = inverseResolution *= 2;
 
                             //DOWNSAMPLE TO MIP4
-                            _graphicsDevice.SetRenderTarget(_mipMaps[4]);
-
-                            BloomScreenTexture = _mipMaps[3];
-                            //Pass
-                            _fxSetup.Pass_Downsample.Apply();
-                            _fullscreenTarget.Draw(_graphicsDevice);
+                            this.SetPassAndDraw(true, 4, 3);
 
                             if (BloomDownsamplePasses > 4)
                             {
                                 this.InverseResolution = inverseResolution *= 2;
 
                                 //DOWNSAMPLE TO MIP5
-                                _graphicsDevice.SetRenderTarget(_mipMaps[5]);
-
-                                BloomScreenTexture = _mipMaps[4];
-                                //Pass
-                                _fxSetup.Pass_Downsample.Apply();
-                                _fullscreenTarget.Draw(_graphicsDevice);
+                                this.SetPassAndDraw(true, 5, 4);
 
                                 ChangeBlendState();
-
                                 //UPSAMPLE TO MIP4
-                                _graphicsDevice.SetRenderTarget(_mipMaps[4]);
-                                BloomScreenTexture = _mipMaps[5];
-
-                                Strength = _strength[4];
-                                Radius = _radius[4];
-                                _fxSetup.Pass_Upsample.Apply();
-                                _fullscreenTarget.Draw(_graphicsDevice);
-
+                                this.SetPassAndDraw(false, 4, 5, _strength[4], _radius[4]);
                                 this.InverseResolution = inverseResolution /= 2;
                             }
 
                             ChangeBlendState();
-
                             //UPSAMPLE TO MIP3
-                            _graphicsDevice.SetRenderTarget(_mipMaps[3]);
-                            BloomScreenTexture = _mipMaps[4];
-
-                            Strength = _strength[3];
-                            Radius = _radius[3];
-                            _fxSetup.Pass_Upsample.Apply();
-                            _fullscreenTarget.Draw(_graphicsDevice);
-
+                            this.SetPassAndDraw(false, 3, 4, _strength[3], _radius[3]);
                             this.InverseResolution = inverseResolution /= 2;
                         }
 
                         ChangeBlendState();
-
                         //UPSAMPLE TO MIP2
-                        _graphicsDevice.SetRenderTarget(_mipMaps[2]);
-                        BloomScreenTexture = _mipMaps[3];
-
-                        Strength = _strength[2];
-                        Radius = _radius[2];
-                        _fxSetup.Pass_Upsample.Apply();
-                        _fullscreenTarget.Draw(_graphicsDevice);
-
+                        this.SetPassAndDraw(false, 2, 3, _strength[2], _radius[2]);
                         this.InverseResolution = inverseResolution /= 2;
 
                     }
-
                     ChangeBlendState();
-
                     //UPSAMPLE TO MIP1
-                    _graphicsDevice.SetRenderTarget(_mipMaps[1]);
-                    BloomScreenTexture = _mipMaps[2];
-
-                    Strength = _strength[1];
-                    Radius = _radius[1];
-                    _fxSetup.Pass_Upsample.Apply();
-                    _fullscreenTarget.Draw(_graphicsDevice);
-
+                    this.SetPassAndDraw(false, 1, 2, _strength[1], _radius[1]);
                     this.InverseResolution = inverseResolution /= 2;
                 }
 
                 ChangeBlendState();
-
                 ////UPSAMPLE TO MIP0
-                _graphicsDevice.SetRenderTarget(_mipMaps[0]);
-                BloomScreenTexture = _mipMaps[1];
-
-                Strength = _strength[0];
-                Radius = _radius[0];
-
-                _fxSetup.Pass_Upsample.Apply();
-                _fullscreenTarget.Draw(_graphicsDevice);
-
+                this.SetPassAndDraw(false, 0, 1, _strength[0], _radius[0]);
 
                 // ToDo: Swap use of render textures to return the sourceRT (is COMPOSE at the moment)
-                _graphicsDevice.SetRenderTargets(destRT);
-                _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive);
+                _graphicsDevice.SetRenderTargets(_swapBuffer);
+                _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointWrap);
 
-                _spriteBatch.Draw(sourceRT, RenderingSettings.Screen.g_Rect, Color.White);
+                _spriteBatch.Draw(destRT, RenderingSettings.Screen.g_Rect, Color.White);
                 _spriteBatch.Draw(_mipMaps[0], RenderingSettings.Screen.g_Rect, Color.White);
 
                 _spriteBatch.End();
             }
             #endregion
 
-            this.Blit(destRT, sourceRT);
+            this.Blit(_swapBuffer, destRT);
             //Note the final step could be done as a blend to the final texture.
             // sample profiler if set
             this.Profiler?.SampleTimestamp(TimestampIndices.Draw_Bloom);
 
-            return sourceRT;
+            return destRT;
         }
 
 
@@ -364,6 +317,9 @@ namespace DeferredEngine.Rendering.PostProcessing
         private static readonly RenderTarget2DDefinition Mip5_Definition = new RenderTarget2DDefinition(nameof(Mip5_Definition), false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x5);
 
         internal static readonly RenderTarget2DDefinition[] Mip_Definitions = new[] { Mip0_Definition, Mip1_Definition, Mip2_Definition, Mip3_Definition, Mip4_Definition, Mip5_Definition };
+
+        public static readonly RenderTarget2DDefinition Swap_Definition = new RenderTarget2DDefinition(nameof(Swap_Definition), false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+
 
         /// <summary>
         /// A few presets with different values for the different mip levels of our bloom.
