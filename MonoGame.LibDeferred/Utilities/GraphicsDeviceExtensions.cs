@@ -1,5 +1,4 @@
-﻿using DeferredEngine.Recources;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Runtime.CompilerServices;
 
@@ -88,17 +87,21 @@ namespace MonoGame.Ext
         }
 
         public static void Blit(this GraphicsDevice graphicsDevice, SpriteBatch spriteBatch,
-            Texture2D source, RenderTarget2D destRT = null, BlendState blendState = null, SamplerState samplerState = null, SpriteSortMode sortMode = SpriteSortMode.Deferred)
+            Texture2D source, RenderTarget2D destRT = null, BlendState blendState = null, SamplerState samplerState = null,
+            SpriteSortMode sortMode = SpriteSortMode.Deferred,
+            Rectangle? destRectangle = null)
         {
             if (blendState == null)
                 blendState = BlendState.Opaque;
             if (samplerState == null)
                 samplerState = SamplerState.LinearWrap;
 
-            RenderingSettings.Screen.GetDestinationRectangle(source.GetAspect(), out Rectangle destRectangle);
             graphicsDevice.SetRenderTarget(destRT);
             spriteBatch.Begin(sortMode, blendState, samplerState);
-            spriteBatch.Draw(source, destRectangle, Color.White);
+            if (destRectangle != null)
+                spriteBatch.Draw(source, destRectangle.Value, Color.White);
+            else
+                spriteBatch.Draw(source, Vector2.Zero, Color.White);
             spriteBatch.End();
         }
 

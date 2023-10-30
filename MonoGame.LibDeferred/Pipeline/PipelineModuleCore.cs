@@ -16,9 +16,9 @@ namespace DeferredEngine.Pipeline
         public PipelineProfiler Profiler { get; set; }
         public PipelineMatrices Matrices { get; set; }
         public PipelineFrustum Frustum { get; set; }
-        
-        
-        
+
+
+
         public virtual void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         {
             _graphicsDevice = graphicsDevice;
@@ -29,17 +29,21 @@ namespace DeferredEngine.Pipeline
 
         public void Blit(Texture2D source, RenderTarget2D destRT = null)
             => this.Blit(source, destRT, BlendState.Opaque);
-        public void Blit(Texture2D source, RenderTarget2D destRT = null, BlendState blendState = null, SamplerState samplerState = null)
+        public void Blit(Texture2D source, RenderTarget2D destRT = null, BlendState blendState = null, SamplerState samplerState = null,
+            Rectangle? destRectangle = null)
         {
             if (blendState == null)
                 blendState = BlendState.Opaque;
             if (samplerState == null)
                 samplerState = SamplerState.LinearWrap;
 
-            RenderingSettings.Screen.GetDestinationRectangle(source.GetAspect(), out Rectangle destRectangle);
+
             _graphicsDevice.SetRenderTarget(destRT);
             _spriteBatch.Begin(0, blendState, samplerState);
-            _spriteBatch.Draw(source, destRectangle, Color.White);
+            if (destRectangle != null)
+                _spriteBatch.Draw(source, destRectangle.Value, Color.White);
+            else
+                _spriteBatch.Draw(source, Vector2.Zero, Color.White);
             _spriteBatch.End();
         }
 

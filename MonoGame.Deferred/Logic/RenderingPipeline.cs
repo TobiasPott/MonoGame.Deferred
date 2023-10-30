@@ -289,7 +289,7 @@ namespace DeferredEngine.Rendering
             // STAGE: PreLighting-SSFx
             // Step: 04
             //Draw Screen Space reflections to a different render target
-            _fxStack.Draw(PipelineFxStage.SSReflection, _auxTargets[PipelineTargets.COMPOSE], null, _ssfxTargets.SSR_Main);
+            _fxStack.Draw(PipelineFxStage.SSReflection, _auxTargets[PipelineTargets.SWAP_HALF], null, _ssfxTargets.SSR_Main);
             // Step: 05
             //SSAO
             _fxStack.Draw(PipelineFxStage.SSAmbientOcclusion, null, null, _ssfxTargets.AO_Main);
@@ -305,18 +305,20 @@ namespace DeferredEngine.Rendering
             //Compose the scene by combining our lighting data with the gbuffer data
             // ToDo: PRIO III: @tpott: hacky way to disable ssao when disabled on global scale (GUI is insufficient here)
             //      Add NotifiedProperty with wrapper property for UI
-            _moduleStack.Deferred.Draw(null, null, _auxTargets[PipelineTargets.COMPOSE]);
+            _moduleStack.Deferred.Draw(null, null, _auxTargets[PipelineTargets.SWAP_HALF]);
             // Step: 09
             //Forward
-            _moduleStack.Forward.Draw(meshBatcher, null, null, _auxTargets[PipelineTargets.COMPOSE]);
+            _moduleStack.Forward.Draw(meshBatcher, null, null, _auxTargets[PipelineTargets.SWAP_HALF]);
             // Step: 10
             // Compose the image and add information from previous frames to apply temporal super sampling
-            _fxStack.Draw(PipelineFxStage.TemporalAA, null, null, _auxTargets[PipelineTargets.COMPOSE]);
+            _fxStack.Draw(PipelineFxStage.TemporalAA, null, null, _auxTargets[PipelineTargets.SWAP_HALF]);
             // Step: 11
             //Do Bloom
-            _fxStack.Draw(PipelineFxStage.Bloom, null, null, _auxTargets[PipelineTargets.COMPOSE]);
-            _currentOutput = _fxStack.Draw(PipelineFxStage.PostProcessing, _auxTargets[PipelineTargets.COMPOSE], null, _auxTargets[PipelineTargets.OUTPUT]);
-            _currentOutput = _fxStack.Draw(PipelineFxStage.ColorGrading, _auxTargets[PipelineTargets.OUTPUT], null, null);
+            _fxStack.Draw(PipelineFxStage.Bloom, null, null, _auxTargets[PipelineTargets.SWAP_HALF]);
+            _currentOutput = _fxStack.Draw(PipelineFxStage.PostProcessing, _auxTargets[PipelineTargets.SWAP_HALF], null, _auxTargets[PipelineTargets.SWAP]);
+            _currentOutput = _fxStack.Draw(PipelineFxStage.ColorGrading, _auxTargets[PipelineTargets.SWAP], null, _auxTargets[PipelineTargets.FINALCOLOR]);
+            if (_currentOutput != null)
+                this.BlitTo(_currentOutput, null);
 
             _profiler.Sample(TimestampIndices.Draw_Total);
 
