@@ -88,9 +88,9 @@ namespace DeferredEngine.Rendering
 
             }
         }
-        public void GetTemporalAARenderTargets(bool isOffFrame, out RenderTarget2D destRT, out RenderTarget2D previousRT)
+        public void GetTemporalAARenderTargets(bool isOffFrame, out RenderTarget2D currentRT, out RenderTarget2D previousRT)
         {
-            destRT = !isOffFrame ? this.TAA_Even : this.TAA_Odd;
+            currentRT = !isOffFrame ? this.TAA_Even : this.TAA_Odd;
             previousRT = isOffFrame ? this.TAA_Even : this.TAA_Odd;
         }
         public RenderTarget2D GetSSReflectionRenderTargets(bool isTaaEnabled, bool isOffFrame)

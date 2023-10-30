@@ -62,6 +62,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             _fxSetup.Param_CurrentToPrevious.SetValue(Matrices.CurrentViewToPreviousViewProjection);
 
             this.Draw(_fxSetup.Pass_TemporalAA);
+            this.Blit(destRT, sourceRT);
 
             if (UseTonemap)
             {
@@ -78,7 +79,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             // sample profiler if set
             this.Profiler?.SampleTimestamp(TimestampIndices.Draw_CombineTAA);
 
-            return destRT;
+            return sourceRT;
         }
 
         public override void Dispose()
