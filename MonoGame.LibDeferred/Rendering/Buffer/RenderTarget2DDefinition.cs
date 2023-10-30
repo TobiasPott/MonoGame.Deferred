@@ -80,10 +80,22 @@ namespace DeferredEngine.Rendering
             if (this.Resampling != ResamplingModes.Original)
                 this.Resample(this.Resampling, ref width, ref height);
 
+            long size = width * height;
+            if (this.Format == SurfaceFormat.Color || this.Format == SurfaceFormat.ColorSRgb
+                || this.Format == SurfaceFormat.Single)
+                size *= 4;
+            else if (this.Format == SurfaceFormat.HalfSingle)
+                size *= 2;
+            else if (this.Format == SurfaceFormat.Vector4)
+                size *= 16;
+            else if (this.Format == SurfaceFormat.HalfVector4)
+                size *= 8;
+
+
             if (string.IsNullOrEmpty(Id))
-                Debug.WriteLine($"CreateRenderTarget '': {width} x {height}");
+                Debug.WriteLine($"CreateRenderTarget '': {width} x {height} {Format} ({size / 1024.0f / 1024.0f:0.000} MBytes)");
             else
-                Debug.WriteLine($"CreateRenderTarget {"'" + Id + "'",-20}: {width} x {height}");
+                Debug.WriteLine($"CreateRenderTarget {"'" + Id + "'",-20}: {width} x {height} {Format} ({size / 1024.0f / 1024.0f:0.000} MBytes)");
 
             return new RenderTarget2D(graphicsDevice, width, height, MipMap, Format, DepthFormat, MultiSampleCount, Usage);
         }

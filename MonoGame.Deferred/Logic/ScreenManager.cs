@@ -77,7 +77,8 @@ namespace DeferredEngine.Logic
             _guiLogic.Update(gameTime, isActive, _editorLogic.SelectedObject);
             _editorLogic.Update(gameTime, _sceneLogic.Scene, _renderer.CurrentHoverContext, _sceneLogic.MeshBatcher);
             _sceneLogic.Update(gameTime, isActive);
-            _renderer.Update(_sceneLogic.Camera, gameTime, _sceneLogic.MeshBatcher, _sceneLogic.Scene, _editorLogic.GetEditorData());
+            _renderer.RequestRedraw(gameTime);
+            _renderer.Update(_sceneLogic.Camera, _sceneLogic.MeshBatcher, _sceneLogic.Scene, _editorLogic.GetEditorData());
 
             _debug.Update(gameTime);
         }

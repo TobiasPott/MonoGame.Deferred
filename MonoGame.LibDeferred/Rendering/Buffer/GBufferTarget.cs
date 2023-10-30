@@ -39,11 +39,8 @@ namespace DeferredEngine.Rendering
                 _renderTargets[DEPTH]?.Dispose();
 
                 _renderTargets[ALBEDO] = Definitions[ALBEDO].CreateRenderTarget(_graphicsDevice, _width, _height);
-                Debug.WriteLine($"CreateRenderTarget {nameof(ALBEDO)}: {width} x {height}");
                 _renderTargets[NORMAL] = Definitions[NORMAL].CreateRenderTarget(_graphicsDevice, _width, _height);
-                Debug.WriteLine($"CreateRenderTarget {nameof(NORMAL)}: {width} x {height}");
                 _renderTargets[DEPTH] = Definitions[DEPTH].CreateRenderTarget(_graphicsDevice, _width, _height);
-                Debug.WriteLine($"CreateRenderTarget {nameof(NORMAL)}: {width} x {height}");
 
                 _bindings[ALBEDO] = new RenderTargetBinding(_renderTargets[ALBEDO]);
                 _bindings[NORMAL] = new RenderTargetBinding(_renderTargets[NORMAL]);

@@ -182,30 +182,35 @@ namespace DeferredEngine.Rendering
         //  MAIN DRAW FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        /// <summary>
-        /// Update our function
-        /// </summary>
-        public void Update(Camera camera, GameTime gameTime, DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GizmoDrawContext gizmoContext)
+        private bool _redrawRequested = false;
+        public void RequestRedraw(GameTime gameTime)
         {
-            if (!this.Enabled)
-                return;
+            _redrawRequested = true;
 
             _moduleStack.Lighting.UpdateGameTime(gameTime);
             if (SSReflectionFx.g_Noise)
                 _fxStack.SSReflection.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
             _moduleStack.Environment.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
+        }
 
+        /// <summary>
+        /// Update our function
+        /// </summary>
+        public void Update(Camera camera, DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GizmoDrawContext gizmoContext)
+        {
+            if (!this.Enabled)
+                return;
 
             //Reset the stat counter, so we can count stats/information for this frame only
             ResetStats();
 
             // Step: 04
             //Update our view projection matrices if the camera moved
-            if (camera.HasChanged)
+            if (_redrawRequested)
             {
                 UpdateViewProjection(camera);
                 //We need to update whether or not entities are in our boundingFrustum and then cull them or not!
-                meshBatcher.FrustumCulling(_frustum.Frustum, camera.HasChanged);
+                meshBatcher.FrustumCulling(_frustum.Frustum, _redrawRequested);
                 // Compute the frustum corners for cheap view direction computation in shaders
                 _frustum.UpdateVertices(_matrices.View, camera.Position);
 

@@ -189,8 +189,6 @@ namespace DeferredEngine
                 Exit();
 
             _screenManager.Update(gameTime, _isActive);
-
-            //base.Update(gameTime);
         }
 
         /// <summary>
