@@ -322,6 +322,17 @@ namespace DeferredEngine.Rendering
             this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.SDFDistance);
             this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.SDFVolume);
 
+            // Step: 15
+            //Additional editor elements that overlay our screen
+            if (RenderingSettings.e_EnableSelection)
+            {
+                if (IdAndOutlineRenderModule.e_DrawOutlines)
+                    this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.IdAndOutline);
+                this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.Billboard | PipelineEditorPasses.TransformGizmo);
+                //Draw debug/helper geometry
+                this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.Helper);
+            }
+
 
         }
 
