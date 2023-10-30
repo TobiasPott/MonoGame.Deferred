@@ -341,8 +341,7 @@ namespace DeferredEngine.Rendering
             //Additional editor elements that overlay our screen
             if (RenderingSettings.e_EnableSelection)
             {
-                if (IdAndOutlineRenderModule.e_DrawOutlines)
-                    this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.IdAndOutline);
+                this.DrawEditorPasses(scene, gizmoContext, IdAndOutlineRenderModule.e_DrawOutlines ? PipelineEditorPasses.IdAndOutline : 0);
                 this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.Billboard | PipelineEditorPasses.TransformGizmo);
                 //Draw debug/helper geometry
                 this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.Helper);
@@ -363,6 +362,9 @@ namespace DeferredEngine.Rendering
 
         private void DrawEditorPasses(EntityScene scene, GizmoDrawContext gizmoContext, PipelineEditorPasses passes = PipelineEditorPasses.Billboard | PipelineEditorPasses.TransformGizmo)
         {
+            if (passes == 0)
+                return;
+
             _graphicsDevice.SetRenderTarget(null);
             _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
 
