@@ -307,8 +307,8 @@ namespace DeferredEngine.Rendering
             _fxStack.Draw(PipelineFxStage.TemporalAA, null, null, _auxTargets[PipelineTargets.COMPOSE]);
             // Step: 11
             //Do Bloom
-            _currentOutput = _fxStack.Draw(PipelineFxStage.Bloom, _auxTargets[PipelineTargets.COMPOSE], null, _ssfxTargets.Bloom_Main);
-            _currentOutput = _fxStack.Draw(PipelineFxStage.PostProcessing, _currentOutput, null, _auxTargets[PipelineTargets.OUTPUT]);
+            _fxStack.Draw(PipelineFxStage.Bloom, _auxTargets[PipelineTargets.COMPOSE], null, _ssfxTargets.Bloom_Main);
+            _currentOutput = _fxStack.Draw(PipelineFxStage.PostProcessing, _auxTargets[PipelineTargets.COMPOSE], null, _auxTargets[PipelineTargets.OUTPUT]);
             _currentOutput = _fxStack.Draw(PipelineFxStage.ColorGrading, _auxTargets[PipelineTargets.OUTPUT], null, null);
 
             _profiler.Sample(TimestampIndices.Draw_Total);
@@ -321,6 +321,12 @@ namespace DeferredEngine.Rendering
             _profiler.SampleTimestamp(TimestampIndices.Draw_FinalRender);
 
 
+        }
+        /// <summary>
+        /// Main Draw function of the game
+        /// </summary>
+        public void DrawEditor(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GizmoDrawContext gizmoContext)
+        {
             this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.SDFDistance);
             this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.SDFVolume);
 
@@ -334,9 +340,8 @@ namespace DeferredEngine.Rendering
                 //Draw debug/helper geometry
                 this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.Helper);
             }
-
-
         }
+
 
         private bool IsSDFUsed(List<PointLight> pointLights)
         {

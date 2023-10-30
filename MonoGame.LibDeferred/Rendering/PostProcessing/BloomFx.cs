@@ -150,6 +150,9 @@ namespace DeferredEngine.Rendering.PostProcessing
         /// <param name="sourceRT">the image from which we want to extract bright parts and blur these</param>
         public override RenderTarget2D Draw(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
+            if (!this.Enabled)
+                return sourceRT;
+
             //EXTRACT  //Note: Is setRenderTargets(binding better?)
             //We extract the bright values which are above the Threshold and save them to Mip0
             _graphicsDevice.SetStates(DepthStencilStateOption.KeepState, RasterizerStateOption.CullNone, BlendStateOption.Opaque);

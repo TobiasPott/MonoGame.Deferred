@@ -46,6 +46,7 @@ namespace DeferredEngine.Pipeline.Utilities
 
         public void Draw(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GizmoDrawContext drawContext, bool mouseMoved)
         {
+            // ToDo: Seemingly doesn't do a thing
             if (drawContext.GizmoTransformationMode)
             {
                 _graphicsDevice.SetRenderTarget(Target);

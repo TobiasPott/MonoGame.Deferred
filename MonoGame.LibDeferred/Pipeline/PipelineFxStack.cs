@@ -139,15 +139,8 @@ namespace DeferredEngine.Rendering.PostProcessing
         }
         private RenderTarget2D DrawBloom(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
-            if (this.Bloom.Enabled)
-            {
-                Texture2D bloom = this.Bloom.Draw(sourceRT, null, destRT);
-                return destRT;
-            }
-            else
-            {
-                return sourceRT;
-            }
+            return this.Bloom.Draw(sourceRT, null, destRT);
+
         }
 
         /// <summary>
