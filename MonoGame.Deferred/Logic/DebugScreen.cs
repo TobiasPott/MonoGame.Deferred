@@ -380,7 +380,7 @@ namespace DeferredEngine.Logic
         /// </summary>
         private void LoadProfilerStrings()
         {
-            if (!PipelineProfiler.IsProfilerEnabled)
+            if (!PipelineProfiler.ModuleEnabled)
                 return;
 
             PropertyInfo[] propertyInfo = typeof(PipelineSamples).GetProperties();

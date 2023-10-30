@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using MonoGame.Ext;
+using System.Diagnostics;
 
 
 namespace DeferredEngine.Pipeline
@@ -46,7 +47,8 @@ namespace DeferredEngine.Pipeline
 
     public class PipelineProfiler
     {
-        public static bool IsProfilerEnabled = true;
+        public readonly static NotifiedProperty<bool> ModuleEnabled = new NotifiedProperty<bool>(true);
+        //public static bool IsProfilerEnabled = false;
 
 
         public const int InitialTimestamps = 64;
@@ -60,7 +62,7 @@ namespace DeferredEngine.Pipeline
         private readonly Stopwatch _timer = new Stopwatch();
         private double _lastTimestamp;
 
-        public bool IsEnabled { get; set; } = true;
+        public bool IsEnabled => ModuleEnabled;
 
 
         /// <summary>
@@ -69,7 +71,7 @@ namespace DeferredEngine.Pipeline
         public void SampleTimestamp(int timestampIndex)
         {
             //Performance Profiler
-            if (PipelineProfiler.IsProfilerEnabled && IsEnabled)
+            if (IsEnabled)
             {
                 double currentTime = _timer.Elapsed.TotalMilliseconds;
                 _timestamps[timestampIndex] = currentTime - _lastTimestamp;
@@ -82,7 +84,7 @@ namespace DeferredEngine.Pipeline
         public void Sample(int timestampIndex)
         {
             //Performance Profiler
-            if (PipelineProfiler.IsProfilerEnabled && IsEnabled)
+            if (IsEnabled)
                 _timestamps[timestampIndex] = _timer.Elapsed.TotalMilliseconds;
         }
 
@@ -93,7 +95,7 @@ namespace DeferredEngine.Pipeline
         public void Timestamp()
         {
             //Performance Profiler
-            if (PipelineProfiler.IsProfilerEnabled && IsEnabled)
+            if (IsEnabled)
                 _lastTimestamp = _timer.ElapsedTicks;
         }
         /// <summary>
@@ -102,7 +104,7 @@ namespace DeferredEngine.Pipeline
         public void Reset()
         {
             //Profiler
-            if (PipelineProfiler.IsProfilerEnabled && IsEnabled)
+            if (IsEnabled)
             {
                 _timer.Restart();
                 _lastTimestamp = 0;

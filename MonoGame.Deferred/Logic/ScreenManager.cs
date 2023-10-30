@@ -24,12 +24,9 @@ namespace DeferredEngine.Logic
         private GUILogic _guiLogic;
         private EditorLogic _editorLogic;
 
-
         private DebugScreen _debug;
 
         private DemoAssets _assets;
-
-        private ObjectHoverContext _objectHoverContext;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  FUNCTIONS

@@ -123,6 +123,12 @@ namespace DeferredEngine.Logic
                 Toggle = IdAndOutlineRenderModule.e_DrawOutlines
             });
 
+            _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Profiler")
+            {
+                ToggleProperty = PipelineProfiler.ModuleEnabled.GetValuePropertyInfo(),
+                ToggleObject = PipelineProfiler.ModuleEnabled,
+                Toggle = PipelineProfiler.ModuleEnabled
+            });
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Decals")
             {
                 ToggleField = typeof(DecalRenderModule).GetField("g_EnableDecals"),
