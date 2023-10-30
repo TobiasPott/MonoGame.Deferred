@@ -47,6 +47,9 @@ namespace DeferredEngine.Rendering
     public partial class RenderingPipeline : IDisposable
     {
         public event Action<DrawEvents> EventTriggered;
+        public bool Enabled { get; set; } = true;
+
+
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  VARIABLES
@@ -157,6 +160,21 @@ namespace DeferredEngine.Rendering
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  RENDERTARGET SETUP FUNCTIONS
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
+        private void SetResolution(Vector2 resolution)
+        {
+            // Update multi render target size
+            _gBufferTarget.Resize(resolution);
+            _lightingBufferTarget.Resize(resolution);
+            _auxTargets.Resize(resolution);
+            _ssfxTargets.Resize(resolution);
+
+            _moduleStack.Resolution = resolution;
+            _fxStack.Resolution = resolution;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  RENDER FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -167,9 +185,9 @@ namespace DeferredEngine.Rendering
         /// <summary>
         /// Update our function
         /// </summary>
-        public void Update(Camera camera, DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GameTime gameTime, bool isActive)
+        public void Update(Camera camera, GameTime gameTime, DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GizmoDrawContext gizmoContext)
         {
-            if (!isActive)
+            if (!this.Enabled)
                 return;
 
             _moduleStack.Lighting.UpdateGameTime(gameTime);
@@ -214,6 +232,15 @@ namespace DeferredEngine.Rendering
             }
 
 
+            // Step: 15
+            //Additional editor elements that overlay our screen
+            if (gizmoContext.SelectedObject != null)
+            {
+                if (gizmoContext.SelectedObject is Decal decal)
+                    _moduleStack.Decal.DrawOutlines(decal);
+                else if (RenderingSettings.e_DrawBoundingBox && gizmoContext.SelectedObject is ModelEntity entity)
+                    HelperGeometryManager.GetInstance().AddBoundingBox(entity);
+            }
 
 
         }
@@ -227,6 +254,9 @@ namespace DeferredEngine.Rendering
         /// </summary>
         public void Draw(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GizmoDrawContext gizmoContext)
         {
+            if (!this.Enabled)
+                return;
+
             // Step: 12
             //Draw the elements that we are hovering over with outlines
             if (RenderingSettings.e_EnableSelection)
@@ -271,7 +301,6 @@ namespace DeferredEngine.Rendering
             //Do Bloom
             _currentOutput = _fxStack.Draw(PipelineFxStage.Bloom, _currentOutput, null, _ssfxTargets.Bloom_Main);
 
-
             _profiler.Sample(TimestampIndices.Draw_Total);
 
             // Step: 13
@@ -285,15 +314,6 @@ namespace DeferredEngine.Rendering
             this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.SDFDistance);
             this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.SDFVolume);
 
-            // Step: 15
-            //Additional editor elements that overlay our screen
-            if (gizmoContext.SelectedObject != null)
-            {
-                if (gizmoContext.SelectedObject is Decal decal)
-                    _moduleStack.Decal.DrawOutlines(decal);
-                else if (RenderingSettings.e_DrawBoundingBox && gizmoContext.SelectedObject is ModelEntity entity)
-                    HelperGeometryManager.GetInstance().AddBoundingBox(entity);
-            }
 
         }
 
@@ -389,21 +409,6 @@ namespace DeferredEngine.Rendering
 
         }
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //  RENDERTARGET SETUP FUNCTIONS
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////
-        private void SetResolution(Vector2 resolution)
-        {
-            // Update multi render target size
-            _gBufferTarget.Resize(resolution);
-            _lightingBufferTarget.Resize(resolution);
-            _auxTargets.Resize(resolution);
-            _ssfxTargets.Resize(resolution);
-
-            _moduleStack.Resolution = resolution;
-            _fxStack.Resolution = resolution;
-        }
-
         /// <summary>
         /// Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
         /// </summary>
@@ -442,7 +447,8 @@ namespace DeferredEngine.Rendering
                     BlitTo(sourceRT);
                     break;
                 default:
-                    // ToDo: PRIO IV: PostProcessing should blit source to dest if disabled
+                    // ToDo: PRIO IV: Calls to a fx stage should not be inside the render pass methods
+                    //                  Moving these outside, will remove the ability to keep the HDR buffer (or needs additional blit into custom buffer)
                     _fxStack.Draw(PipelineFxStage.PostProcessing, sourceRT, null, destRT);
                     _fxStack.Draw(PipelineFxStage.ColorGrading, destRT, null, null);
                     break;

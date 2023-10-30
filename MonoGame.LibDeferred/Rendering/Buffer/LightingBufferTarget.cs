@@ -11,9 +11,9 @@ namespace DeferredEngine.Rendering
         public const int VOLUME = 2;
 
         private static readonly RenderTarget2DDefinition[] Definitions = new RenderTarget2DDefinition[3] {
-                            new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.PreserveContents),
-                            new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents),
-                            new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents)
+                            new RenderTarget2DDefinition(nameof(DIFFUSE), false, SurfaceFormat.HalfVector4, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.PreserveContents),
+                            new RenderTarget2DDefinition(nameof(SPECULAR), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents),
+                            new RenderTarget2DDefinition(nameof(VOLUME), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents)
         };
 
 

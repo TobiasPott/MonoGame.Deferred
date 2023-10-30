@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Diagnostics;
 
 namespace DeferredEngine.Rendering
 {
@@ -11,9 +12,9 @@ namespace DeferredEngine.Rendering
 
 
         private static readonly RenderTarget2DDefinition[] Definitions = new RenderTarget2DDefinition[3] {
-                            new RenderTarget2DDefinition(false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents),
-                            new RenderTarget2DDefinition(false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents),
-                            new RenderTarget2DDefinition(false, SurfaceFormat.Single, DepthFormat.None, 0, RenderTargetUsage.DiscardContents)
+                            new RenderTarget2DDefinition(nameof(ALBEDO), false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents),
+                            new RenderTarget2DDefinition(nameof(NORMAL), false,  SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents),
+                            new RenderTarget2DDefinition(nameof(DEPTH), false, SurfaceFormat.Single, DepthFormat.None, 0, RenderTargetUsage.DiscardContents)
         };
 
 
@@ -38,8 +39,11 @@ namespace DeferredEngine.Rendering
                 _renderTargets[DEPTH]?.Dispose();
 
                 _renderTargets[ALBEDO] = Definitions[ALBEDO].CreateRenderTarget(_graphicsDevice, _width, _height);
+                Debug.WriteLine($"CreateRenderTarget {nameof(ALBEDO)}: {width} x {height}");
                 _renderTargets[NORMAL] = Definitions[NORMAL].CreateRenderTarget(_graphicsDevice, _width, _height);
+                Debug.WriteLine($"CreateRenderTarget {nameof(NORMAL)}: {width} x {height}");
                 _renderTargets[DEPTH] = Definitions[DEPTH].CreateRenderTarget(_graphicsDevice, _width, _height);
+                Debug.WriteLine($"CreateRenderTarget {nameof(NORMAL)}: {width} x {height}");
 
                 _bindings[ALBEDO] = new RenderTargetBinding(_renderTargets[ALBEDO]);
                 _bindings[NORMAL] = new RenderTargetBinding(_renderTargets[NORMAL]);
