@@ -311,9 +311,14 @@ namespace DeferredEngine.Rendering
 
             _profiler.Sample(TimestampIndices.Draw_Total);
 
+            // ToDo: PRIO IV: Calls to a fx stage should not be inside the render pass methods
+            //                  Moving these outside, will remove the ability to keep the HDR buffer (or needs additional blit into custom buffer)
+            _fxStack.Draw(PipelineFxStage.PostProcessing, _currentOutput, null, _auxTargets[PipelineTargets.OUTPUT]);
+            _fxStack.Draw(PipelineFxStage.ColorGrading, _auxTargets[PipelineTargets.OUTPUT], null, null);
+
             // Step: 13
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
-            DrawPipelinePass(RenderingSettings.g_CurrentPass, _currentOutput, null, _auxTargets[PipelineTargets.OUTPUT]);
+            DrawPipelinePass(RenderingSettings.g_CurrentPass, _currentOutput, null, null);
 
             //Performance Profiler
             _profiler.SampleTimestamp(TimestampIndices.Draw_FinalRender);
@@ -466,10 +471,10 @@ namespace DeferredEngine.Rendering
                     BlitTo(sourceRT);
                     break;
                 default:
-                    // ToDo: PRIO IV: Calls to a fx stage should not be inside the render pass methods
-                    //                  Moving these outside, will remove the ability to keep the HDR buffer (or needs additional blit into custom buffer)
-                    _fxStack.Draw(PipelineFxStage.PostProcessing, sourceRT, null, destRT);
-                    _fxStack.Draw(PipelineFxStage.ColorGrading, destRT, null, null);
+                    //// ToDo: PRIO IV: Calls to a fx stage should not be inside the render pass methods
+                    ////                  Moving these outside, will remove the ability to keep the HDR buffer (or needs additional blit into custom buffer)
+                    //_fxStack.Draw(PipelineFxStage.PostProcessing, sourceRT, null, destRT);
+                    //_fxStack.Draw(PipelineFxStage.ColorGrading, destRT, null, null);
                     break;
             }
 
