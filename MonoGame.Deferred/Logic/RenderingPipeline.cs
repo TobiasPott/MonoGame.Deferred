@@ -235,6 +235,9 @@ namespace DeferredEngine.Rendering
                 _moduleStack.DistanceField.UpdateSdfGenerator(scene.Entities);
                 _moduleStack.DistanceField.UpdateDistanceFieldTransformations(scene.Entities);
             }
+            //Performance Profiler
+            _profiler.SampleTimestamp(TimestampIndices.Update_SDF);
+
 
 
             // Step: 15

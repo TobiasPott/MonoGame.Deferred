@@ -21,6 +21,7 @@ namespace DeferredEngine.Pipeline
         public static double SDraw_TotalRender => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_Total);
 
         public static double SUpdate_ViewProjection => PipelineProfiler.GetTimestamp(TimestampIndices.Update_ViewProjection);
+        public static double SUpdate_SDF => PipelineProfiler.GetTimestamp(TimestampIndices.Update_SDF);
     }
 
     public class TimestampIndices
@@ -39,12 +40,13 @@ namespace DeferredEngine.Pipeline
         public static int Draw_Total = 12;
 
         public static int Update_ViewProjection = 13;
+        public static int Update_SDF = 14;
     }
 
 
     public class PipelineProfiler
     {
-        public static bool IsProfilerEnabled = false;
+        public static bool IsProfilerEnabled = true;
 
 
         public const int InitialTimestamps = 64;
