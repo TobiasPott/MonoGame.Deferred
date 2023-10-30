@@ -106,6 +106,9 @@ namespace DeferredEngine.Pipeline
 
             _graphicsDevice.SetStates(DepthStencilStateOption.None, RasterizerStateOption.CullCounterClockwise);
             _fullscreenTarget.Draw(_graphicsDevice);
+
+            // sample profiler if set
+            this.Profiler?.SampleTimestamp(TimestampIndices.Draw_EnvironmentMap);
         }
         public void DrawSky()
         {

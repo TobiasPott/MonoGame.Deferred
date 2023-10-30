@@ -1,12 +1,9 @@
-﻿using DeferredEngine.Entities;
-using DeferredEngine.Pipeline;
+﻿using DeferredEngine.Pipeline;
 using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
-using SharpDX.MediaFoundation;
-using System.Reflection;
 
 namespace DeferredEngine.Rendering.PostProcessing
 {
@@ -72,6 +69,8 @@ namespace DeferredEngine.Rendering.PostProcessing
             }
         }
 
+        public PipelineProfiler Profiler
+        { set { foreach (PostFx module in _modules) module.Profiler = value; } }
         public PipelineMatrices Matrices
         { set { foreach (PostFx module in _modules) module.Matrices = value; } }
         public PipelineFrustum Frustum

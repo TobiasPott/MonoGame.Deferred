@@ -1,4 +1,5 @@
-﻿using DeferredEngine.Recources;
+﻿using DeferredEngine.Pipeline;
+using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -299,6 +300,9 @@ namespace DeferredEngine.Rendering.PostProcessing
             }
 
             //Note the final step could be done as a blend to the final texture.
+
+            // sample profiler if set
+            this.Profiler?.SampleTimestamp(TimestampIndices.Draw_Bloom);
 
             return _mipMaps[0];
         }

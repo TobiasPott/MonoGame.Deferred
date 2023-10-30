@@ -19,6 +19,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         protected FullscreenTriangleBuffer _fullscreenTarget;
 
 
+        public PipelineProfiler Profiler { get; set; }
         public PipelineMatrices Matrices { get; set; }
         public PipelineFrustum Frustum { get; set; }
 

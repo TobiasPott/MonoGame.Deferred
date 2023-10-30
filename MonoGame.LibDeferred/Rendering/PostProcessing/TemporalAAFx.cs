@@ -1,4 +1,5 @@
-﻿using DeferredEngine.Recources;
+﻿using DeferredEngine.Pipeline;
+using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
@@ -56,8 +57,15 @@ namespace DeferredEngine.Rendering.PostProcessing
                 _graphicsDevice.SetRenderTarget(sourceRT);
                 _fxSetup.Param_UpdateMap.SetValue(destRT);
                 this.Draw(_fxSetup.Pass_TonemapInverse);
+
+                // sample profiler if set
+                this.Profiler?.SampleTimestamp(TimestampIndices.Draw_CombineTAA);
+
                 return sourceRT;
             }
+
+            // sample profiler if set
+            this.Profiler?.SampleTimestamp(TimestampIndices.Draw_CombineTAA);
 
             return destRT;
         }

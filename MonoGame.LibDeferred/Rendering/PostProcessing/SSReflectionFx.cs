@@ -1,4 +1,5 @@
-﻿using DeferredEngine.Recources;
+﻿using DeferredEngine.Pipeline;
+using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
@@ -80,6 +81,8 @@ namespace DeferredEngine.Rendering.PostProcessing
             _fxSetup.Effect.CurrentTechnique.Passes[0].Apply();
             _fullscreenTarget.Draw(_graphicsDevice);
 
+            // sample profiler if set
+            this.Profiler?.SampleTimestamp(TimestampIndices.Draw_SSFx_SSR);
             return destRT;
         }
         public RenderTarget2D GetSSReflectionRenderTargets(TemporalAAFx taaFx)

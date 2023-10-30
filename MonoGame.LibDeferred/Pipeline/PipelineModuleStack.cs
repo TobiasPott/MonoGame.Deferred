@@ -30,7 +30,9 @@ namespace DeferredEngine.Rendering
         public readonly IdAndOutlineRenderModule IdAndOutline;
 
 
-        
+
+        public PipelineProfiler Profiler
+        { set { foreach (PipelineModule module in _modules) module.Profiler = value; } }
         public PipelineMatrices Matrices
         { set { foreach (PipelineModule module in _modules) module.Matrices = value; } }
         public PipelineFrustum Frustum

@@ -94,15 +94,17 @@ namespace DeferredEngine.Rendering
         public void Load(ContentManager content)
         {
             _matrices = new PipelineMatrices();
+            _profiler = new PipelineProfiler();
 
             _moduleStack = new PipelineModuleStack();
             _moduleStack.Matrices = _matrices;
             _moduleStack.Frustum = _frustum;
-            _profiler = new PipelineProfiler();
+            _moduleStack.Profiler = _profiler;
 
             _fxStack = new PipelineFxStack(content);
             _fxStack.Matrices = _matrices;
             _fxStack.Frustum = _frustum;
+            _fxStack.Profiler = _profiler;
 
         }
 
@@ -178,8 +180,6 @@ namespace DeferredEngine.Rendering
 
             //Reset the stat counter, so we can count stats/information for this frame only
             ResetStats();
-            //Performance Profiler Reset
-            _profiler.Timestamp();
 
             // Step: 04
             //Update our view projection matrices if the camera moved
@@ -231,14 +231,10 @@ namespace DeferredEngine.Rendering
             // Step: 01
             //Render SHADOW MAPS
             _moduleStack.ShadowMap.Draw(meshBatcher, scene);
-            //Performance Profile
-            _profiler.SampleTimestamp(TimestampIndices.Draw_Shadows);
 
             // Step: 02
             //Draw our meshes to the G Buffer
             _moduleStack.GBuffer.Draw(meshBatcher);
-            //Performance Profiler
-            _profiler.SampleTimestamp(TimestampIndices.Draw_GBuffer);
 
             // Step: 03
             //Deferred Decals
@@ -249,15 +245,10 @@ namespace DeferredEngine.Rendering
             // Step: 04
             //Draw Screen Space reflections to a different render target
             _fxStack.Draw(PipelineFxStage.SSReflection, _auxTargets[PipelineTargets.COMPOSE], null, _ssfxTargets.SSR_Main);
-            // Profiler sample
-            _profiler.SampleTimestamp(TimestampIndices.Draw_SSFx_SSR);
 
-            // STAGE: PreLighting-SSFx
             // Step: 05
             //SSAO
             _fxStack.Draw(PipelineFxStage.SSAmbientOcclusion, null, null, _ssfxTargets.AO_Main);
-            //Performance Profiler
-            _profiler.SampleTimestamp(TimestampIndices.Draw_SSFx_SSAO);
 
             // STAGE: Lighting
             // Step: 06
@@ -270,11 +261,7 @@ namespace DeferredEngine.Rendering
             // Step: 07
             //Draw the environment cube map as a fullscreen effect on all meshes
             if (RenderingSettings.Environment.Enabled)
-            {
                 _moduleStack.Environment.Draw();
-                //Performance Profiler
-                _profiler.SampleTimestamp(TimestampIndices.Draw_EnvironmentMap);
-            }
 
 
             // Step: 08
@@ -282,9 +269,6 @@ namespace DeferredEngine.Rendering
             // ToDo: PRIO III: @tpott: hacky way to disable ssao when disabled on global scale (GUI is insufficient here)
             //      Add NotifiedProperty with wrapper property for UI
             _moduleStack.Deferred.Draw(null, null, _auxTargets[PipelineTargets.COMPOSE]);
-            //Performance Profiler
-            _profiler.SampleTimestamp(TimestampIndices.Draw_Compose);
-
             // Step: 09
             //Forward
             if (ForwardPipelineModule.g_EnableForward)
@@ -294,17 +278,18 @@ namespace DeferredEngine.Rendering
             //Compose the image and add information from previous frames to apply temporal super sampling
             _ssfxTargets.GetTemporalAARenderTargets(_fxStack.TemporalAA.IsOffFrame, out RenderTarget2D taaDestRT, out RenderTarget2D taaPreviousRT);
             _currentOutput = _fxStack.Draw(PipelineFxStage.TemporalAA, _auxTargets[PipelineTargets.COMPOSE], taaPreviousRT, taaDestRT);
-            //Performance Profiler
-            _profiler.SampleTimestamp(TimestampIndices.Draw_CombineTAA);
+            
             // Step: 11
             //Do Bloom
             _currentOutput = _fxStack.Draw(PipelineFxStage.Bloom, _currentOutput, null, _ssfxTargets.Bloom_Main);
-            //Performance Profiler
-            _profiler.Sample(TimestampIndices.Draw_TotalRender);
+            _profiler.Sample(TimestampIndices.Draw_Total);
 
             // Step: 13
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
             DrawPipelinePass(RenderingSettings.g_CurrentPass, _currentOutput, null, _auxTargets[PipelineTargets.OUTPUT]);
+            //Performance Profiler
+            _profiler.SampleTimestamp(TimestampIndices.Draw_FinalRender);
+
 
             this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.SDFDistance);
             this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.SDFVolume);
@@ -493,8 +478,6 @@ namespace DeferredEngine.Rendering
                     break;
             }
 
-            //Performance Profiler
-            _profiler.SampleTimestamp(TimestampIndices.Draw_FinalRender);
         }
 
 

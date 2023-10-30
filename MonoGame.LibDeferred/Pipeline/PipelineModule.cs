@@ -3,7 +3,6 @@ using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
-using System.Runtime.CompilerServices;
 
 namespace DeferredEngine.Pipeline
 {
@@ -20,6 +19,7 @@ namespace DeferredEngine.Pipeline
         protected SpriteBatch _spriteBatch;
 
 
+        public PipelineProfiler Profiler { get; set; }
         public PipelineMatrices Matrices { get; set; }
         public PipelineFrustum Frustum { get; set; }
 

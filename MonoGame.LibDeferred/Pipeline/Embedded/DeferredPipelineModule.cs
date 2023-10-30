@@ -63,6 +63,8 @@ namespace DeferredEngine.Pipeline
             _effectSetup.Effect_Compose.CurrentTechnique.Passes[0].Apply();
             _fullscreenTarget.Draw(_graphicsDevice);
 
+            // sample profiler if set
+            this.Profiler?.SampleTimestamp(TimestampIndices.Draw_DeferredCompose);
             return destRT;
         }
 

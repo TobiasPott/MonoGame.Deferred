@@ -51,13 +51,6 @@ namespace DeferredEngine.Rendering.PostProcessing
         /// </summary>
         public override RenderTarget2D Draw(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
-            return DrawSSAO(sourceRT, previousRT, destRT);
-        }
-        /// <summary>
-        /// Draw SSAO to a different rendertarget
-        /// </summary>
-        private RenderTarget2D DrawSSAO(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
-        {
             if (!this.Enabled)
                 return sourceRT;
 
@@ -78,6 +71,10 @@ namespace DeferredEngine.Rendering.PostProcessing
 
             DrawSSAOToBlur();
             DrawSSAOBilateralBlur();
+
+            // sample profiler if set
+            this.Profiler?.SampleTimestamp(TimestampIndices.Draw_SSFx_SSAO);
+
             // ToDo: change return render target to be Blur_Final (as it is target in biliteral blur)
             return destRT;
         }
