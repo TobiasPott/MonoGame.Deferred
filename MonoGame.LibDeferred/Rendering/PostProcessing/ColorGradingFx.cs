@@ -17,7 +17,10 @@ namespace DeferredEngine.Rendering.PostProcessing
     /// </summary>
     public partial class ColorGradingFx : PostFx
     {
-        protected override bool GetEnabled() => _enabled && RenderingSettings.g_ColorGrading;
+        public readonly static NotifiedProperty<bool> ModuleEnabled = new NotifiedProperty<bool>(true);
+
+
+        protected override bool GetEnabled() => _enabled && ModuleEnabled;
 
 
         private RenderTarget2D _renderTarget;

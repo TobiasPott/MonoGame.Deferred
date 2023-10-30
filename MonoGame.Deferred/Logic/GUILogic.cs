@@ -8,9 +8,7 @@ using DeferredEngine.Rendering.PostProcessing;
 using HelperSuite.GUI;
 using HelperSuite.GUIHelper;
 using Microsoft.Xna.Framework;
-using System.Reflection;
 using System.Text;
-using static DeferredEngine.Recources.RenderingSettings;
 
 namespace DeferredEngine.Logic
 {
@@ -221,14 +219,16 @@ namespace DeferredEngine.Logic
 
             postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Post Processing")
             {
-                ToggleProperty = typeof(RenderingSettings).GetProperty(nameof(RenderingSettings.g_PostProcessing)),
-                Toggle = RenderingSettings.g_PostProcessing
+                ToggleProperty = PostProcessingFx.ModuleEnabled.GetValuePropertyInfo(),
+                ToggleObject = PostProcessingFx.ModuleEnabled,
+                Toggle = PostProcessingFx.ModuleEnabled
             });
 
             postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Color Grading")
             {
-                ToggleProperty = typeof(RenderingSettings).GetProperty(nameof(RenderingSettings.g_ColorGrading)),
-                Toggle = RenderingSettings.g_ColorGrading
+                ToggleProperty = ColorGradingFx.ModuleEnabled.GetValuePropertyInfo(),
+                ToggleObject = ColorGradingFx.ModuleEnabled,
+                Toggle = ColorGradingFx.ModuleEnabled
             });
 
             postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Temporal AA")

@@ -7,8 +7,10 @@ namespace DeferredEngine.Rendering.PostProcessing
 
     public partial class PostProcessingFx : PostFx
     {
+        public readonly static NotifiedProperty<bool> ModuleEnabled = new NotifiedProperty<bool>(true);
 
-        protected override bool GetEnabled() => _enabled && RenderingSettings.g_PostProcessing;
+
+        protected override bool GetEnabled() => _enabled && ModuleEnabled;
 
 
         private PostProcssingFxSetup _fxSetup = new PostProcssingFxSetup();
