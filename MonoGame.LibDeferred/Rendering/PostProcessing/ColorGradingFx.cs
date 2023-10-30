@@ -1,5 +1,4 @@
-﻿using DeferredEngine.Recources;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 
 namespace DeferredEngine.Rendering.PostProcessing
@@ -62,32 +61,6 @@ namespace DeferredEngine.Rendering.PostProcessing
             _fxSetup.Param_InputTexture.SetValue(sourceRT);
             this.Draw(_fxSetup.Pass_ApplyLUT);
             return _renderTarget;
-        }
-
-        /// <summary>
-        /// A function to create and save a new lookup-table with unmodified colors. 
-        /// Check the github readme for use.
-        /// </summary>
-        /// <param name="lutsize">32 or 16. 32 will result in a larger LUT which results in better images but worse performance</param>
-        /// <param name="relativeFilePath">for example "Lut16.png". The base directory is where the .exe is started from</param>
-        protected void CreateLUT(LUTSizes lutsize, string relativeFilePath)
-        {
-            _renderTarget?.Dispose();
-
-            int size = lutsize == LUTSizes.Size16 ? 16 * 4 : 32 * 8;
-            _renderTarget = new RenderTarget2D(_graphicsDevice, size, size, false, SurfaceFormat.Color, DepthFormat.None);
-            _graphicsDevice.SetRenderTarget(_renderTarget);
-
-
-            _fxSetup.Param_Size.SetValue((float)(lutsize == LUTSizes.Size16 ? 16 : 32));
-            _fxSetup.Param_SizeRoot.SetValue((float)(lutsize == LUTSizes.Size16 ? 4 : 8));
-
-            this.Draw(_fxSetup.Pass_CreateLUT);
-
-            //Save this texture
-            Stream stream = File.Create(relativeFilePath);
-            _renderTarget.SaveAsPng(stream, _renderTarget.Width, _renderTarget.Height);
-            stream.Dispose();
         }
 
         public override void Dispose()
