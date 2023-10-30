@@ -117,7 +117,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
             _graphicsDevice = graphicsDevice;
 
-            _mipMaps = new DynamicMultiRenderTarget(_graphicsDevice, (int)_resolution.X, (int)_resolution.Y, BloomFxPresetsData.Mip_Definitions);
+            _mipMaps = new DynamicMultiRenderTarget(_graphicsDevice, (int)_resolution.X, (int)_resolution.Y, BloomFxPresetsData.Mips);
             _swapBuffer = RenderTarget2DDefinition.SSFx_Bloom.CreateRenderTarget(_graphicsDevice, _resolution);
         }
 
@@ -309,16 +309,14 @@ namespace DeferredEngine.Rendering.PostProcessing
         private static readonly float[] Default_Radius = new float[] { 1.0f, 1.0f, 2.0f, 3.0f, 4.0f };
 
 
-        private static readonly RenderTarget2DDefinition Mip0_Definition = new RenderTarget2DDefinition(nameof(Mip0_Definition), false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
-        private static readonly RenderTarget2DDefinition Mip1_Definition = new RenderTarget2DDefinition(nameof(Mip1_Definition), false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x1);
-        private static readonly RenderTarget2DDefinition Mip2_Definition = new RenderTarget2DDefinition(nameof(Mip2_Definition), false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x2);
-        private static readonly RenderTarget2DDefinition Mip3_Definition = new RenderTarget2DDefinition(nameof(Mip3_Definition), false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x3);
-        private static readonly RenderTarget2DDefinition Mip4_Definition = new RenderTarget2DDefinition(nameof(Mip4_Definition), false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x4);
-        private static readonly RenderTarget2DDefinition Mip5_Definition = new RenderTarget2DDefinition(nameof(Mip5_Definition), false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x5);
+        private static readonly RenderTarget2DDefinition Mip0 = new RenderTarget2DDefinition(nameof(Mip0), false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+        private static readonly RenderTarget2DDefinition Mip1 = new RenderTarget2DDefinition(nameof(Mip1), false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x1);
+        private static readonly RenderTarget2DDefinition Mip2 = new RenderTarget2DDefinition(nameof(Mip2), false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x2);
+        private static readonly RenderTarget2DDefinition Mip3 = new RenderTarget2DDefinition(nameof(Mip3), false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x3);
+        private static readonly RenderTarget2DDefinition Mip4 = new RenderTarget2DDefinition(nameof(Mip4), false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x4);
+        private static readonly RenderTarget2DDefinition Mip5 = new RenderTarget2DDefinition(nameof(Mip5), false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents, ResamplingModes.Downsample_x5);
 
-        internal static readonly RenderTarget2DDefinition[] Mip_Definitions = new[] { Mip0_Definition, Mip1_Definition, Mip2_Definition, Mip3_Definition, Mip4_Definition, Mip5_Definition };
-
-        public static readonly RenderTarget2DDefinition Swap_Definition = new RenderTarget2DDefinition(nameof(Swap_Definition), false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+        internal static readonly RenderTarget2DDefinition[] Mips = new[] { Mip0, Mip1, Mip2, Mip3, Mip4, Mip5 };
 
 
         /// <summary>

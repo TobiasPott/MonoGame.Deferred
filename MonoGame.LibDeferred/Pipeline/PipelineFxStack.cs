@@ -128,9 +128,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         }
         private RenderTarget2D DrawColorGrading(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
-            if (this.ColorGrading.Enabled)
-                sourceRT = this.ColorGrading.Draw(sourceRT, previousRT, destRT);
-            return sourceRT;
+            return this.ColorGrading.Draw(sourceRT, previousRT, destRT);
         }
         private RenderTarget2D DrawBloom(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {

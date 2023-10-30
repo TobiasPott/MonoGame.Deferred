@@ -22,8 +22,6 @@ namespace DeferredEngine.Rendering.PostProcessing
         protected override bool GetEnabled() => _enabled && ModuleEnabled;
 
 
-        private RenderTarget2D _renderTarget;
-
         private Texture2D _lookupTable;
         private ColorGradingFxSetup _fxSetup = new ColorGradingFxSetup();
         public enum LUTSizes { Size16, Size32 };
@@ -47,26 +45,24 @@ namespace DeferredEngine.Rendering.PostProcessing
         /// </summary>
         public override RenderTarget2D Draw(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
-
-            // ToDo: Resolve this Draw method to return either sourceRT or destRT to match the other behaviours
-            //Set up rendertarget
-            if (_renderTarget == null || _renderTarget.Width != sourceRT.Width || _renderTarget.Height != sourceRT.Height)
+            if (!this.Enabled)
             {
-                _renderTarget?.Dispose();
-                _renderTarget = new RenderTarget2D(_graphicsDevice, sourceRT.Width, sourceRT.Height, false, SurfaceFormat.Color, DepthFormat.None);
+                this.Blit(sourceRT, destRT);
+                return destRT;
             }
-            _graphicsDevice.SetRenderTarget(_renderTarget);
+            
+            _graphicsDevice.SetRenderTarget(destRT);
             _graphicsDevice.SetState(BlendStateOption.Opaque);
 
             _fxSetup.Param_InputTexture.SetValue(sourceRT);
             this.Draw(_fxSetup.Pass_ApplyLUT);
-            return _renderTarget;
+
+            return destRT;
         }
 
         public override void Dispose()
         {
             _fxSetup?.Dispose();
-            _renderTarget?.Dispose();
         }
 
 
