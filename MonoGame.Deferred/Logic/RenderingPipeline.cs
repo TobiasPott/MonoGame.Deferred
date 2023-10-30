@@ -212,6 +212,10 @@ namespace DeferredEngine.Rendering
                 _moduleStack.DistanceField.UpdateSdfGenerator(scene.Entities);
                 _moduleStack.DistanceField.UpdateDistanceFieldTransformations(scene.Entities);
             }
+
+
+
+
         }
 
         // ! ! ! ! ! ! ! ! ! ! !
@@ -260,12 +264,9 @@ namespace DeferredEngine.Rendering
             // Step: 09
             //Forward
             _moduleStack.Forward.Draw(meshBatcher, null, null, _auxTargets[PipelineTargets.COMPOSE]);
-
             // Step: 10
-            //Compose the image and add information from previous frames to apply temporal super sampling
-            _ssfxTargets.GetTemporalAARenderTargets(_fxStack.TemporalAA.IsOffFrame, out RenderTarget2D taaDestRT, out RenderTarget2D taaPreviousRT);
-            _currentOutput = _fxStack.Draw(PipelineFxStage.TemporalAA, _auxTargets[PipelineTargets.COMPOSE], taaPreviousRT, taaDestRT);
-
+            // Compose the image and add information from previous frames to apply temporal super sampling
+            _currentOutput = _fxStack.Draw(PipelineFxStage.TemporalAA, _auxTargets[PipelineTargets.COMPOSE], null, null);
             // Step: 11
             //Do Bloom
             _currentOutput = _fxStack.Draw(PipelineFxStage.Bloom, _currentOutput, null, _ssfxTargets.Bloom_Main);
@@ -276,6 +277,7 @@ namespace DeferredEngine.Rendering
             // Step: 13
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
             DrawPipelinePass(RenderingSettings.g_CurrentPass, _currentOutput, null, _auxTargets[PipelineTargets.OUTPUT]);
+
             //Performance Profiler
             _profiler.SampleTimestamp(TimestampIndices.Draw_FinalRender);
 
@@ -285,22 +287,11 @@ namespace DeferredEngine.Rendering
 
             // Step: 15
             //Additional editor elements that overlay our screen
-            if (RenderingSettings.e_EnableSelection)
-            {
-                if (IdAndOutlineRenderModule.e_DrawOutlines)
-                    this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.IdAndOutline);
-                this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.Billboard | PipelineEditorPasses.TransformGizmo);
-                //Draw debug/helper geometry
-                this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.Helper);
-            }
-
-
-
             if (gizmoContext.SelectedObject != null)
             {
                 if (gizmoContext.SelectedObject is Decal decal)
                     _moduleStack.Decal.DrawOutlines(decal);
-                if (RenderingSettings.e_DrawBoundingBox && gizmoContext.SelectedObject is ModelEntity entity)
+                else if (RenderingSettings.e_DrawBoundingBox && gizmoContext.SelectedObject is ModelEntity entity)
                     HelperGeometryManager.GetInstance().AddBoundingBox(entity);
             }
 

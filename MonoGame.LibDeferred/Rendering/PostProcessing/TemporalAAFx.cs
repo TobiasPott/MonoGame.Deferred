@@ -19,13 +19,14 @@ namespace DeferredEngine.Rendering.PostProcessing
         private bool _useTonemapping = true;
         private HaltonSequence _haltonSequence = new HaltonSequence();
 
+        private SSFxTargets _ssfxTargets;
 
         public bool IsOffFrame { get; protected set; } = true;
         public int JitterMode = 2;
 
         public Vector2 Resolution { set { _fxSetup.Param_Resolution.SetValue(value); } }
         public RenderTarget2D DepthMap { set { _fxSetup.Param_DepthMap.SetValue(value); } }
-
+        public SSFxTargets SSFxTargets { set { _ssfxTargets = value; } }
         public bool UseTonemap
         {
             get { return _useTonemapping && TemporalAAFx.g_UseTonemapping; }
@@ -41,6 +42,16 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         public override RenderTarget2D Draw(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
         {
+            if (!this.Enabled)
+                return sourceRT;
+
+            if (previousRT == null && destRT == null)
+                _ssfxTargets?.GetTemporalAARenderTargets(this.IsOffFrame, out destRT, out previousRT);
+            else if(previousRT == null)
+                _ssfxTargets?.GetTemporalAARenderTargets(this.IsOffFrame, out _, out previousRT);
+            else if (destRT == null)
+                _ssfxTargets?.GetTemporalAARenderTargets(this.IsOffFrame, out destRT, out _);
+
             _graphicsDevice.SetRenderTarget(destRT);
             _graphicsDevice.SetState(BlendStateOption.Opaque);
 

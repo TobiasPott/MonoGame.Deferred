@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Threading;
+using Windows.ApplicationModel;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
 
 namespace DeferredEngine

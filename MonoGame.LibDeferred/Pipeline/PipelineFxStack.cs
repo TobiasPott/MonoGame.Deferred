@@ -52,6 +52,8 @@ namespace DeferredEngine.Rendering.PostProcessing
             set
             {
                 SSAmbientOcclusion.SSFxTargets = value;
+                SSReflection.SSFxTargets = value;
+                TemporalAA.SSFxTargets = value;
             }
         }
 
@@ -162,11 +164,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         /// </summary>
         private RenderTarget2D DrawTemporalAA(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
         {
-            if (!this.TemporalAA.Enabled)
-                return sourceRT;
-            this.TemporalAA.Draw(sourceRT, previousRT, destRT);
-
-            return TemporalAAFx.g_UseTonemapping ? sourceRT : destRT;
+            return this.TemporalAA.Draw(sourceRT, previousRT, destRT);
         }
 
         /// <summary>
