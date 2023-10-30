@@ -138,6 +138,12 @@ namespace DeferredEngine.Logic
                 ToggleObject = helperText,
                 Toggle = helperText.IsVisible
             });
+            _rightSideList.AddElement(new GuiSliderFloatText(defaultStyle, 16.0f, 1024.0f, 2, "Far Clip: ")
+            {
+                SliderProperty = RenderingSettings.Screen.g_FarClip.GetValuePropertyInfo(),
+                SliderObject = RenderingSettings.Screen.g_FarClip,
+                SliderValue = RenderingSettings.Screen.g_FarClip,
+            });
 
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Default Material")
             {
@@ -356,16 +362,16 @@ namespace DeferredEngine.Logic
 
             bloomList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Bloom")
             {
-                ToggleProperty = RenderingSettings.Bloom.ModuleEnabled.GetValuePropertyInfo(),
-                ToggleObject = RenderingSettings.Bloom.ModuleEnabled,
-                Toggle = RenderingSettings.Bloom.ModuleEnabled
+                ToggleProperty = BloomFx.ModuleEnabled.GetValuePropertyInfo(),
+                ToggleObject = BloomFx.ModuleEnabled,
+                Toggle = BloomFx.ModuleEnabled
             });
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 1, 3, "Threshold: ")
             {
-                SliderProperty = RenderingSettings.Bloom.Threshold.GetValuePropertyInfo(),
-                SliderObject = RenderingSettings.Bloom.Threshold,
-                SliderValue = RenderingSettings.Bloom.Threshold,
+                SliderProperty = BloomFx.ModuleThreshold.GetValuePropertyInfo(),
+                SliderObject = BloomFx.ModuleThreshold,
+                SliderValue = BloomFx.ModuleThreshold,
             });
 
 

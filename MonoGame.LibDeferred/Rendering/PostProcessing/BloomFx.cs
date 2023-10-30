@@ -56,9 +56,11 @@ namespace DeferredEngine.Rendering.PostProcessing
     /// 
     public partial class BloomFx : PostFx
     {
+        public readonly static NotifiedProperty<bool> ModuleEnabled = new NotifiedProperty<bool>(true);
+        public readonly static NotifiedProperty<float> ModuleThreshold = new NotifiedProperty<float>(-1.0f);
 
 
-        protected override bool GetEnabled() => _enabled && RenderingSettings.Bloom.ModuleEnabled;
+        protected override bool GetEnabled() => _enabled && ModuleEnabled;
 
 
 
@@ -101,7 +103,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             //Setup the default preset values.
             SetBloomPreset(BloomPresets.Default);
 
-            RenderingSettings.Bloom.Threshold.Changed += Bloom_Threshold_Changed;
+            ModuleThreshold.Changed += Bloom_Threshold_Changed;
         }
 
         private void Bloom_Threshold_Changed(float threshold)

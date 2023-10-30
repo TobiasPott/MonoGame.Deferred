@@ -8,6 +8,7 @@ namespace DeferredEngine.Entities
         private Vector3 _up = Vector3.UnitZ;
         private Vector3 _forward = Vector3.Up;
         private float _fieldOfView = (float)Math.PI / 4;
+        private float _farClip = 512;
 
         public bool HasChanged = true;
 
@@ -99,6 +100,17 @@ namespace DeferredEngine.Entities
             }
         }
 
+        public float FarClip
+        {
+            get => _farClip;
+            set
+            {
+                _farClip = value;
+                _worldHasChanged = true;
+                HasChanged = true;
+            }
+        }
+
 
 
         public Camera() : this(Vector3.Zero, Vector3.Forward)
@@ -124,7 +136,7 @@ namespace DeferredEngine.Entities
             base.UpdateMatrices();
             //View matrix
             _view = Matrix.CreateLookAt(_position, _position + _forward, _up);
-            _projection = Matrix.CreatePerspectiveFieldOfView(_fieldOfView, RenderingSettings.Screen.g_Aspect, 1, RenderingSettings.g_FarClip);
+            _projection = Matrix.CreatePerspectiveFieldOfView(_fieldOfView, RenderingSettings.Screen.g_Aspect, 1, _farClip);
             _viewProjection = _view * _projection;
         }
 

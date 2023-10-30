@@ -35,8 +35,6 @@ namespace DeferredEngine.Recources
         public static bool g_CpuCulling = true;
 
 
-        public static NotifiedProperty<float> g_FarClip = new NotifiedProperty<float>(-1);
-
     }
 
 }

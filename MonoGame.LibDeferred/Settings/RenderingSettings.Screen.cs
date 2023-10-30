@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using MonoGame.Ext;
 
 namespace DeferredEngine.Recources
 {
@@ -19,6 +20,10 @@ namespace DeferredEngine.Recources
 
             public static bool g_VSync = false;
             public static int g_FixedFPS = 0;
+
+
+            public static NotifiedProperty<float> g_FarClip = new NotifiedProperty<float>(-1);
+
 
 
             public static void SetResolution(int width, int height) => SetResolution(new Vector2(width, height));

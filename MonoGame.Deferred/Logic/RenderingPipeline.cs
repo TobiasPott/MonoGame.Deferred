@@ -139,10 +139,10 @@ namespace DeferredEngine.Rendering
             SetResolution(resolution);
 
 
-            RenderingSettings.g_FarClip.Changed += FarClip_OnChanged;
-            RenderingSettings.g_FarClip.Set(500);
+            RenderingSettings.Screen.g_FarClip.Changed += FarClip_OnChanged;
+            RenderingSettings.Screen.g_FarClip.Set(512);
             SSReflectionFx.ModuleEnabled.Changed += SSR_Enabled_Changed;
-            RenderingSettings.Bloom.Threshold.Set(0.0f);
+            BloomFx.ModuleThreshold.Set(0.0f);
         }
 
         private void SSR_Enabled_Changed(bool enabled)
@@ -214,6 +214,8 @@ namespace DeferredEngine.Rendering
             if (_redrawRequested)
             {
                 UpdateViewProjection(camera);
+                camera.FarClip = RenderingSettings.Screen.g_FarClip;
+
                 //We need to update whether or not entities are in our boundingFrustum and then cull them or not!
                 meshBatcher.FrustumCulling(_frustum.Frustum, _redrawRequested);
                 // Compute the frustum corners for cheap view direction computation in shaders
