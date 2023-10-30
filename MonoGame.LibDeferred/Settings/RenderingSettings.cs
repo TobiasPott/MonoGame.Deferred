@@ -1,18 +1,9 @@
 ﻿using Deferred.Utilities;
 using DeferredEngine.Pipeline;
-using MonoGame.Ext;
 
 namespace DeferredEngine.Recources
 {
 
-    public static partial class RenderingSettings
-    {
-        public class Editor
-        {
-
-        }
-
-    }
     public static partial class RenderingSettings
     {
 

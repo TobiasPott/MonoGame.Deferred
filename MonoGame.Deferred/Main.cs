@@ -5,6 +5,7 @@ using HelperSuite.GUIHelper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Diagnostics;
 using System.Threading;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
 
@@ -28,7 +29,7 @@ namespace DeferredEngine
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        
+
         public Main()
         {
             //Initialize graphics and content
@@ -114,19 +115,26 @@ namespace DeferredEngine
         /// </summary>
         private void ClientChangedWindowSize(object sender, EventArgs e)
         {
-            if (GraphicsDevice.Viewport.Width != _graphics.PreferredBackBufferWidth ||
-                GraphicsDevice.Viewport.Height != _graphics.PreferredBackBufferHeight)
+            Debug.WriteLine($"{GraphicsDevice.Viewport} => {_graphics.PreferredBackBufferWidth} x {_graphics.PreferredBackBufferHeight}" +
+                $"  >> {Window.ClientBounds}");
+            if (RenderingSettings.Screen.g_TargetRect.Width != _graphics.PreferredBackBufferWidth ||
+                RenderingSettings.Screen.g_TargetRect.Height != _graphics.PreferredBackBufferHeight)
             {
+
+                Debug.WriteLine($"\t{GraphicsDevice.Viewport} => {_graphics.PreferredBackBufferWidth} x {_graphics.PreferredBackBufferHeight}" +
+                    $"  >> {Window.ClientBounds}");
                 if (Window.ClientBounds.Width == 0) return;
                 _graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
                 _graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
                 _graphics.ApplyChanges();
 
-                RenderingSettings.Screen.SetResolution(Window.ClientBounds.Width, Window.ClientBounds.Height);
+                //RenderingSettings.Screen.SetResolution(Window.ClientBounds.Width, Window.ClientBounds.Height);
+                RenderingSettings.Screen.g_TargetRect = new Rectangle(0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height);
 
                 _screenManager.UpdateResolution();
-                
+
             }
+
         }
 
         /// <summary>

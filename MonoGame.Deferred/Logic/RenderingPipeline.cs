@@ -316,7 +316,7 @@ namespace DeferredEngine.Rendering
             _fxStack.Draw(PipelineFxStage.ColorGrading, _auxTargets[PipelineTargets.SWAP], null, _auxTargets[PipelineTargets.FINALCOLOR]);
 
             // Step: 08 Blit final color to screen (may blit to a 'viewport' section of the screen, or the full screen
-            this.BlitTo(_auxTargets[PipelineTargets.FINALCOLOR], null, RenderingSettings.Screen.g_Rect);
+            this.BlitTo(_auxTargets[PipelineTargets.FINALCOLOR], null, RenderingSettings.Screen.g_TargetRect);
 
             _profiler.Sample(TimestampIndices.Draw_Total);
 
