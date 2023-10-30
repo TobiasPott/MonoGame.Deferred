@@ -30,7 +30,7 @@ namespace DeferredEngine.Pipeline.Utilities
         }
 
 
-        public void DrawSceneBillboards(EntitySceneGroup scene)
+        public void DrawSceneBillboards(EntityScene scene)
         {
             _graphicsDevice.SetState(RasterizerStateOption.CullCounterClockwise);
             _graphicsDevice.SetVertexBuffer(_billboardBuffer.VertexBuffer);
@@ -78,7 +78,7 @@ namespace DeferredEngine.Pipeline.Utilities
 
 
 
-        public void DrawEditorBillboards(EntitySceneGroup scene, GizmoDrawContext gizmoContext)
+        public void DrawEditorBillboards(EntityScene scene, GizmoDrawContext gizmoContext)
         {
             _graphicsDevice.SetState(RasterizerStateOption.CullCounterClockwise);
             _graphicsDevice.SetVertexBuffer(_billboardBuffer.VertexBuffer);

@@ -1,5 +1,4 @@
 ﻿using DeferredEngine.Entities;
-using DeferredEngine.Recources;
 using DeferredEngine.Rendering;
 using DeferredEngine.Rendering.PostProcessing;
 using Microsoft.Xna.Framework;
@@ -11,6 +10,8 @@ namespace DeferredEngine.Pipeline
     //Just a template
     public partial class EnvironmentPipelineModule : PipelineModule
     {
+        public readonly static NotifiedProperty<bool> ModuleEnabled = new NotifiedProperty<bool>(true);
+
 
         private FullscreenTriangleBuffer _fullscreenTarget;
         private EnvironmentFxSetup _effectSetup = new EnvironmentFxSetup();
@@ -101,7 +102,7 @@ namespace DeferredEngine.Pipeline
         public void Draw() => DrawEnvironmentMap();
         private void DrawEnvironmentMap()
         {
-            if (RenderingSettings.Environment.Enabled)
+            if (EnvironmentPipelineModule.ModuleEnabled)
             {
                 _effectSetup.Param_FrustumCorners.SetValue(this.Frustum.WorldSpaceFrustum);
                 _effectSetup.Param_TransposeView.SetValue(Matrix.Transpose(this.Matrices.View));

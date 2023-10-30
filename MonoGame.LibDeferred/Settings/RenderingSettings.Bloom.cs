@@ -9,7 +9,7 @@ namespace DeferredEngine.Recources
         // Bloom
         public static class Bloom
         {
-            public readonly static NotifiedProperty<bool> Enabled = new NotifiedProperty<bool>(true);
+            public readonly static NotifiedProperty<bool> ModuleEnabled = new NotifiedProperty<bool>(true);
 
             public readonly static NotifiedProperty<float> Threshold = new NotifiedProperty<float>(-1.0f);
         }

@@ -44,7 +44,7 @@ namespace DeferredEngine.Pipeline.Utilities
             Target = RenderTarget2DDefinition.Aux_Id.CreateRenderTarget(_graphicsDevice, resolution);
         }
 
-        public void Draw(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GizmoDrawContext drawContext, bool mouseMoved)
+        public void Draw(DynamicMeshBatcher meshBatcher, EntityScene scene, GizmoDrawContext drawContext, bool mouseMoved)
         {
             // ToDo: Seemingly doesn't do a thing
             if (drawContext.GizmoTransformationMode)
@@ -61,7 +61,7 @@ namespace DeferredEngine.Pipeline.Utilities
                 DrawOutlines(meshBatcher, this.Matrices, drawContext, HoveredId, mouseMoved);
         }
 
-        private void DrawIds(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, PipelineMatrices matrices, GizmoDrawContext gizmoContext)
+        private void DrawIds(DynamicMeshBatcher meshBatcher, EntityScene scene, PipelineMatrices matrices, GizmoDrawContext gizmoContext)
         {
 
             _graphicsDevice.SetRenderTarget(Target);

@@ -99,6 +99,7 @@ namespace DeferredEngine.Logic
             if (_renderer != null)
             {
                 _guiLogic.UpdateResolution();
+                _renderer.UpdateResolution();
             }
         }
 

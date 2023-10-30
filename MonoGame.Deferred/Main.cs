@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Threading;
-using Windows.ApplicationModel;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
 
 namespace DeferredEngine
@@ -29,7 +28,7 @@ namespace DeferredEngine
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+        
         public Main()
         {
             //Initialize graphics and content
@@ -126,6 +125,7 @@ namespace DeferredEngine
                 RenderingSettings.Screen.SetResolution(Window.ClientBounds.Width, Window.ClientBounds.Height);
 
                 _screenManager.UpdateResolution();
+                
             }
         }
 

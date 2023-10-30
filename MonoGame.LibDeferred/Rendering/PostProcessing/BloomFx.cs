@@ -58,7 +58,7 @@ namespace DeferredEngine.Rendering.PostProcessing
     {
 
 
-        protected override bool GetEnabled() => _enabled && RenderingSettings.Bloom.Enabled;
+        protected override bool GetEnabled() => _enabled && RenderingSettings.Bloom.ModuleEnabled;
 
 
 

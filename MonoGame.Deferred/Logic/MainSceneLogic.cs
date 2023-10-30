@@ -3,7 +3,6 @@ using DeferredEngine.Pipeline;
 using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Recources;
 using DeferredEngine.Rendering;
-using DeferredEngine.Rendering.Helper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -28,7 +27,7 @@ namespace DeferredEngine.Logic
         //mesh library, holds all the meshes and their materials
         public DynamicMeshBatcher MeshBatcher;
 
-        private EntitySceneGroup _scene;
+        private EntityScene _scene;
         public readonly List<ModelEntity> BasicEntities = new List<ModelEntity>();
         public readonly List<Decal> Decals = new List<Decal>();
         public readonly List<PointLight> PointLights = new List<PointLight>();
@@ -39,7 +38,7 @@ namespace DeferredEngine.Logic
         private int _renderModeCycle;
 
 
-        public EntitySceneGroup Scene => _scene;
+        public EntityScene Scene => _scene;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  FUNCTIONS
@@ -59,7 +58,7 @@ namespace DeferredEngine.Logic
 
             SetUpEditorScene(graphicsDevice);
 
-            _scene = new EntitySceneGroup(BasicEntities, DirectionalLights, PointLights, Decals, EnvProbe);
+            _scene = new EntityScene(BasicEntities, DirectionalLights, PointLights, Decals, EnvProbe);
         }
 
         //Load our default setup!

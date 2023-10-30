@@ -53,7 +53,7 @@ namespace DeferredEngine.Pipeline.Lighting
         /// <summary>
         /// Draw our lights to the diffuse/specular/volume buffer
         /// </summary>
-        public void Draw(EntitySceneGroup scene)
+        public void Draw(EntityScene scene)
         {
             if (!_redrawRequested)
                 return;

@@ -45,7 +45,7 @@ namespace DeferredEngine.Logic
         /// <summary>
         /// Main Logic for the editor part
         /// </summary>
-        public void Update(GameTime gameTime, EntitySceneGroup scene, ObjectHoverContext hoverContext, DynamicMeshBatcher meshBatcher)
+        public void Update(GameTime gameTime, EntityScene scene, ObjectHoverContext hoverContext, DynamicMeshBatcher meshBatcher)
         {
             if (!RenderingSettings.e_IsEditorEnabled) return;
 

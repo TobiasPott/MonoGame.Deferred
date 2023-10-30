@@ -11,7 +11,7 @@ namespace DeferredEngine.Rendering.PostProcessing
     public partial class SSReflectionFx : PostFx
     {
         // SSR
-        public static NotifiedProperty<bool> g_Enabled = new NotifiedProperty<bool>(true);
+        public static NotifiedProperty<bool> ModuleEnabled = new NotifiedProperty<bool>(true);
         public static bool g_FireflyReduction { get; set; } = true;
 
 
@@ -57,7 +57,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             Time = 0.0f;
         }
 
-        protected override bool GetEnabled() => _enabled && SSReflectionFx.g_Enabled;
+        protected override bool GetEnabled() => _enabled && SSReflectionFx.ModuleEnabled;
         /// <summary>
         /// returns a modified image with color grading applied.
         /// </summary>

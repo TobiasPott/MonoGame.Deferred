@@ -141,7 +141,7 @@ namespace DeferredEngine.Rendering
 
             RenderingSettings.g_FarClip.Changed += FarClip_OnChanged;
             RenderingSettings.g_FarClip.Set(500);
-            SSReflectionFx.g_Enabled.Changed += SSR_Enabled_Changed;
+            SSReflectionFx.ModuleEnabled.Changed += SSR_Enabled_Changed;
             RenderingSettings.Bloom.Threshold.Set(0.0f);
         }
 
@@ -174,6 +174,11 @@ namespace DeferredEngine.Rendering
             _fxStack.Resolution = resolution;
         }
 
+        public void UpdateResolution()
+        {
+            this.SetResolution(RenderingSettings.Screen.g_Resolution);
+        }
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  RENDER FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -196,7 +201,7 @@ namespace DeferredEngine.Rendering
         /// <summary>
         /// Update our function
         /// </summary>
-        public void Update(Camera camera, DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GizmoDrawContext gizmoContext)
+        public void Update(Camera camera, DynamicMeshBatcher meshBatcher, EntityScene scene, GizmoDrawContext gizmoContext)
         {
             if (!this.Enabled)
                 return;
@@ -260,7 +265,7 @@ namespace DeferredEngine.Rendering
         /// <summary>
         /// Main Draw function of the game
         /// </summary>
-        public void Draw(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GizmoDrawContext gizmoContext)
+        public void Draw(DynamicMeshBatcher meshBatcher, EntityScene scene, GizmoDrawContext gizmoContext)
         {
             if (!this.Enabled)
                 return;
@@ -325,7 +330,7 @@ namespace DeferredEngine.Rendering
         /// <summary>
         /// Main Draw function of the game
         /// </summary>
-        public void DrawEditor(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene, GizmoDrawContext gizmoContext)
+        public void DrawEditor(DynamicMeshBatcher meshBatcher, EntityScene scene, GizmoDrawContext gizmoContext)
         {
             this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.SDFDistance);
             this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.SDFVolume);
@@ -354,7 +359,7 @@ namespace DeferredEngine.Rendering
             return false;
         }
 
-        private void DrawEditorPasses(EntitySceneGroup scene, GizmoDrawContext gizmoContext, PipelineEditorPasses passes = PipelineEditorPasses.Billboard | PipelineEditorPasses.TransformGizmo)
+        private void DrawEditorPasses(EntityScene scene, GizmoDrawContext gizmoContext, PipelineEditorPasses passes = PipelineEditorPasses.Billboard | PipelineEditorPasses.TransformGizmo)
         {
             _graphicsDevice.SetRenderTarget(null);
             _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);

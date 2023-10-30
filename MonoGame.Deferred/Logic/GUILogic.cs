@@ -257,9 +257,9 @@ namespace DeferredEngine.Logic
 
             ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable SSR")
             {
-                ToggleProperty = SSReflectionFx.g_Enabled.GetValuePropertyInfo(),
-                ToggleObject = SSReflectionFx.g_Enabled,
-                Toggle = SSReflectionFx.g_Enabled
+                ToggleProperty = SSReflectionFx.ModuleEnabled.GetValuePropertyInfo(),
+                ToggleObject = SSReflectionFx.ModuleEnabled,
+                Toggle = SSReflectionFx.ModuleEnabled
             });
 
             ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Stochastic distr.")
@@ -356,9 +356,9 @@ namespace DeferredEngine.Logic
 
             bloomList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Bloom")
             {
-                ToggleProperty = RenderingSettings.Bloom.Enabled.GetValuePropertyInfo(),
-                ToggleObject = RenderingSettings.Bloom.Enabled,
-                Toggle = RenderingSettings.Bloom.Enabled
+                ToggleProperty = RenderingSettings.Bloom.ModuleEnabled.GetValuePropertyInfo(),
+                ToggleObject = RenderingSettings.Bloom.ModuleEnabled,
+                Toggle = RenderingSettings.Bloom.ModuleEnabled
             });
 
             bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 1, 3, "Threshold: ")
@@ -378,9 +378,9 @@ namespace DeferredEngine.Logic
 
             environmentGroup.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Environment")
             {
-                ToggleProperty = RenderingSettings.Environment.Enabled.GetValuePropertyInfo(),
-                ToggleObject = RenderingSettings.Environment.Enabled,
-                Toggle = RenderingSettings.Environment.Enabled
+                ToggleProperty = EnvironmentPipelineModule.ModuleEnabled.GetValuePropertyInfo(),
+                ToggleObject = EnvironmentPipelineModule.ModuleEnabled,
+                Toggle = EnvironmentPipelineModule.ModuleEnabled
             });
 
             // ToDo: @tpott: Reintroduce UI for bloom values

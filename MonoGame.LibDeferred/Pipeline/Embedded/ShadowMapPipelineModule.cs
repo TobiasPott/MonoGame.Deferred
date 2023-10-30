@@ -35,7 +35,7 @@ namespace DeferredEngine.Pipeline
         //    base.Initialize(graphicsDevice, spriteBatch);
         //}
 
-        public void Draw(DynamicMeshBatcher meshBatcher, EntitySceneGroup scene)
+        public void Draw(DynamicMeshBatcher meshBatcher, EntityScene scene)
         {
             List<PointLight> pointLights = scene.PointLights;
             List<Pipeline.Lighting.DirectionalLight> dirLights = scene.DirectionalLights;

@@ -5,7 +5,7 @@ namespace DeferredEngine.Entities
     /// <summary>
     /// primitive stuct to group entities (basic & model), directional & point lights, decals and potential other entity type lists for easier access inside the pipeline
     /// </summary>
-    public struct EntitySceneGroup
+    public class EntityScene
     {
         public readonly List<ModelEntity> Entities;
         public readonly List<PointLight> PointLights;
@@ -13,7 +13,7 @@ namespace DeferredEngine.Entities
         public readonly List<Decal> Decals;
         public readonly EnvironmentProbe EnvProbe;
 
-        public EntitySceneGroup(List<ModelEntity> entities, List<DirectionalLight> directionalLights, List<PointLight> pointLights, List<Decal> decals, EnvironmentProbe envProbe)
+        public EntityScene(List<ModelEntity> entities, List<DirectionalLight> directionalLights, List<PointLight> pointLights, List<Decal> decals, EnvironmentProbe envProbe)
         {
             this.Entities = entities;
             this.DirectionalLights = directionalLights;
