@@ -1,9 +1,7 @@
 ﻿using DeferredEngine.Pipeline;
 using DeferredEngine.Recources;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
-using SharpDX.Direct3D9;
 
 namespace DeferredEngine.Rendering.PostProcessing
 {
@@ -36,7 +34,6 @@ namespace DeferredEngine.Rendering.PostProcessing
 
 
         public float Time { set { _fxSetup.Param_Time.SetValue(value); } }
-        public Vector2 Resolution { set { _fxSetup.Param_Resolution.SetValue(value); } }
 
         public RenderTarget2D DepthMap { set { _fxSetup.Param_DepthMap.SetValue(value); } }
         public RenderTarget2D NormalMap { set { _fxSetup.Param_NormalMap.SetValue(value); } }
@@ -71,6 +68,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
             _fxSetup.Param_SourceMap.SetValue(sourceRT);
             _fxSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
+            _fxSetup.Param_Resolution.SetValue(_resolution);
             _fxSetup.Param_FrustumCorners.SetValue(this.Frustum.ViewSpaceFrustum);
             _fxSetup.Param_Projection.SetValue(this.Matrices.Projection);
 

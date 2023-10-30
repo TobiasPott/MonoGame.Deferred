@@ -1,6 +1,5 @@
 ﻿using DeferredEngine.Pipeline;
 using DeferredEngine.Recources;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 
@@ -24,7 +23,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         public bool IsOffFrame { get; protected set; } = true;
         public int JitterMode = 2;
 
-        public Vector2 Resolution { set { _fxSetup.Param_Resolution.SetValue(value); } }
+
         public RenderTarget2D DepthMap { set { _fxSetup.Param_DepthMap.SetValue(value); } }
         public SSFxTargets SSFxTargets { set { _ssfxTargets = value; } }
         public bool UseTonemap
@@ -47,7 +46,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
             if (previousRT == null && sourceRT == null)
                 _ssfxTargets?.GetTemporalAARenderTargets(this.IsOffFrame, out sourceRT, out previousRT);
-            else if(previousRT == null)
+            else if (previousRT == null)
                 _ssfxTargets?.GetTemporalAARenderTargets(this.IsOffFrame, out _, out previousRT);
             else if (sourceRT == null)
                 _ssfxTargets?.GetTemporalAARenderTargets(this.IsOffFrame, out sourceRT, out _);
@@ -55,6 +54,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             _graphicsDevice.SetRenderTarget(sourceRT);
             _graphicsDevice.SetState(BlendStateOption.Opaque);
 
+            _fxSetup.Param_Resolution.SetValue(_resolution);
             _fxSetup.Param_FrustumCorners.SetValue(this.Frustum.ViewSpaceFrustum);
 
             _fxSetup.Param_UpdateMap.SetValue(destRT);

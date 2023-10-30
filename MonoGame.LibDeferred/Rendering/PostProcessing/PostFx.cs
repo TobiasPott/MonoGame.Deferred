@@ -1,4 +1,5 @@
 ﻿using DeferredEngine.Pipeline;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Rendering.PostProcessing
@@ -14,7 +15,21 @@ namespace DeferredEngine.Rendering.PostProcessing
         protected virtual bool GetEnabled() => _enabled;
 
 
+        protected Vector2 _resolution = Vector2.One;
+        protected Vector2 _inverseResolution = Vector2.One;
+        protected Vector2 _aspectRatios = Vector2.One;
         protected FullscreenTriangleBuffer _fullscreenTarget;
+
+        public Vector2 Resolution
+        {
+            get => _resolution;
+            set
+            {
+                _resolution = value;
+                _inverseResolution = Vector2.One / value;
+                _aspectRatios = new Vector2(Math.Min(1.0f, value.X / value.Y), Math.Min(1.0f, value.Y / value.X));
+            }
+        }
 
 
         public virtual void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, FullscreenTriangleBuffer fullscreenTarget)

@@ -27,9 +27,6 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         private SSAmbientOcclusionFxSetup _fxSetup = new SSAmbientOcclusionFxSetup();
 
-        public Vector2 AspectRatios
-        { set { _fxSetup.Param_AspectRatio.SetValue(value); } }
-        public Vector2 InverseResolution { set { _fxSetup.Param_InverseResolution.SetValue(value); } }
 
         public RenderTarget2D DepthMap { set { _fxSetup.Param_DepthMap.SetValue(value); } }
         public RenderTarget2D NormalMap { set { _fxSetup.Param_NormalMap.SetValue(value); } }
@@ -57,6 +54,8 @@ namespace DeferredEngine.Rendering.PostProcessing
             _graphicsDevice.SetRenderTarget(destRT);
             _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.KeepState);
 
+            _fxSetup.Param_AspectRatio.SetValue(_aspectRatios);
+            _fxSetup.Param_InverseResolution.SetValue(_inverseResolution);
             _fxSetup.Param_FrustumCorners.SetValue(this.Frustum.ViewSpaceFrustum);
 
             _fxSetup.Param_FalloffMin.SetValue(SSAmbientOcclustionFx.g_ssao_falloffmin);

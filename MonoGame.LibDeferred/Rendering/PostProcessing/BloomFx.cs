@@ -3,7 +3,6 @@ using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
-using Windows.Gaming.Input.ForceFeedback;
 
 namespace DeferredEngine.Rendering.PostProcessing
 {
@@ -64,7 +63,6 @@ namespace DeferredEngine.Rendering.PostProcessing
 
 
 
-        private Vector2 _resolution;
         //Preset variables for different mip levels
         private readonly float[] _radius = new float[5];
         private readonly float[] _strength = new float[5];

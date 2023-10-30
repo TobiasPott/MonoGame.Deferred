@@ -63,11 +63,9 @@ namespace DeferredEngine.Rendering.PostProcessing
             {
                 TemporalAA.Resolution = value;
                 SSReflection.Resolution = value;
-                ///////////////////
                 // HALF RESOLUTION
                 value /= 2;
-                SSAmbientOcclusion.InverseResolution = Vector2.One / value;
-                SSAmbientOcclusion.AspectRatios = new Vector2(Math.Min(1.0f, value.X / value.Y), Math.Min(1.0f, value.Y / value.X));
+                SSAmbientOcclusion.Resolution = value;
             }
         }
 
