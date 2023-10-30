@@ -37,12 +37,6 @@ namespace DeferredEngine.Rendering
         ///// </summary>
         public const int SSR_MAIN = 6;
 
-        /// <summary>
-        /// Index to the bloom render target
-        /// </summary>
-        public const int BLOOM_MAIN = 7;
-
-
 
 
         private static readonly RenderTarget2DDefinition[] Definitions = new RenderTarget2DDefinition[] {
@@ -52,7 +46,6 @@ namespace DeferredEngine.Rendering
             RenderTarget2DDefinition.SSFx_AO_Blur_Final,
             RenderTarget2DDefinition.SSFx_TAA_Even, RenderTarget2DDefinition.SSFx_TAA_Odd,
             RenderTarget2DDefinition.SSFx_Reflections,
-            RenderTarget2DDefinition.SSFx_Bloom
         };
 
 
@@ -65,7 +58,6 @@ namespace DeferredEngine.Rendering
         public RenderTarget2D TAA_Odd => _renderTargets[TAA_ODD];
 
         public RenderTarget2D SSR_Main => _renderTargets[SSR_MAIN];
-        public RenderTarget2D Bloom_Main => _renderTargets[BLOOM_MAIN];
 
 
         public SSFxTargets(GraphicsDevice graphicsDevice, Vector2 resolution)
