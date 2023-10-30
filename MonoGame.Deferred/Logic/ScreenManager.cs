@@ -89,7 +89,7 @@ namespace DeferredEngine.Logic
             _renderer.Draw(_sceneLogic.MeshBatcher, _sceneLogic.Scene, _editorLogic.GetEditorData());
             _renderer.DrawEditor(_sceneLogic.MeshBatcher, _sceneLogic.Scene, _editorLogic.GetEditorData());
 
-            if (RenderingSettings.e_IsEditorEnabled && RenderingSettings.ui_IsUIEnabled)
+            if (RenderingSettings.e_IsEditorEnabled)
                 _guiRenderer.Draw(_guiLogic.GuiCanvas);
             _debug.Draw(gameTime);
         }

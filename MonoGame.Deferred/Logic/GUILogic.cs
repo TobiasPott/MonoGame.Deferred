@@ -4,6 +4,7 @@ using DeferredEngine.Pipeline;
 using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Pipeline.Utilities;
 using DeferredEngine.Recources;
+using DeferredEngine.Rendering;
 using DeferredEngine.Rendering.PostProcessing;
 using HelperSuite.GUI;
 using HelperSuite.GUIHelper;
@@ -131,6 +132,12 @@ namespace DeferredEngine.Logic
             {
                 ToggleField = typeof(ForwardPipelineModule).GetField("g_EnableForward"),
                 Toggle = ForwardPipelineModule.g_EnableForward
+            });
+            _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable CPU Cull")
+            {
+                ToggleProperty = DynamicMeshBatcher.CPUCullingEnabled.GetValuePropertyInfo(),
+                ToggleObject = DynamicMeshBatcher.CPUCullingEnabled,
+                Toggle = DynamicMeshBatcher.CPUCullingEnabled
             });
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Show Controls")
             {
@@ -458,7 +465,7 @@ namespace DeferredEngine.Logic
         public void Update(GameTime gameTime, bool isActive, TransformableObject selectedObject)
         {
             RenderingStats.UIIsHovered = false;
-            if (!isActive || !RenderingSettings.e_IsEditorEnabled || !RenderingSettings.ui_IsUIEnabled) return;
+            if (!isActive || !RenderingSettings.e_IsEditorEnabled) return;
 
             if (RenderingSettings.e_gizmoMode != _gizmoModePrevious)
             {

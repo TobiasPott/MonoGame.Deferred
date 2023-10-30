@@ -40,6 +40,8 @@ namespace DeferredEngine.Rendering
     // Controls all Materials and Meshes, so they are ordered at render time.
     public class DynamicMeshBatcher
     {
+        public readonly static NotifiedProperty<bool> CPUCullingEnabled = new NotifiedProperty<bool>(true);
+
 
         private const int InitialLibrarySize = 16;
 
@@ -50,11 +52,9 @@ namespace DeferredEngine.Rendering
         private readonly FullscreenTriangleBuffer _fullscreenTarget;
         private readonly GraphicsDevice _graphicsDevice;
 
-        private List<MaterialBatch> _batches = new List<MaterialBatch>(InitialLibrarySize);
-
-        private bool _cpuCulling = RenderingSettings.g_CpuCulling;
-
+        private bool _cpuCulling = true;
         private readonly BoundingSphere _defaultBoundingSphere = new BoundingSphere(Vector3.Zero, 0);
+        private readonly List<MaterialBatch> _batches = new List<MaterialBatch>(InitialLibrarySize);
 
 
         public bool BatchByMaterial { get; set; } = false;
@@ -163,7 +163,7 @@ namespace DeferredEngine.Rendering
         public bool FrustumCulling(BoundingFrustum boundingFrustrum, bool hasCameraChanged)
         {
             //Check if the culling mode has changed
-            if (_cpuCulling != RenderingSettings.g_CpuCulling)
+            if (_cpuCulling != CPUCullingEnabled)
             {
                 if (_cpuCulling)
                 {
@@ -172,16 +172,14 @@ namespace DeferredEngine.Rendering
                     {
                         MaterialBatch matBatch = _batches[matBatchIndex];
                         for (int i = 0; i < matBatch.Count; i++)
-                        {
                             matBatch[i].AllRendered = true;
-                        }
                     }
 
                 }
-                _cpuCulling = RenderingSettings.g_CpuCulling;
+                _cpuCulling = CPUCullingEnabled;
 
             }
-            if (!RenderingSettings.g_CpuCulling) return false;
+            if (!CPUCullingEnabled) return false;
 
 
             bool hasAnythingChanged = false;
