@@ -6,7 +6,10 @@ namespace DeferredEngine.Pipeline
 
     public interface IPipelineModule : IDisposable
     {
+        PipelineProfiler Profiler { get; set; }
         PipelineMatrices Matrices { get; set; }
+        PipelineFrustum Frustum { get; set; }
+
         void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch);
     }
 
@@ -14,15 +17,8 @@ namespace DeferredEngine.Pipeline
 
     public abstract class PipelineModule : PipelineModuleCore
     {
-
-        public PipelineProfiler Profiler { get; set; }
-        public PipelineMatrices Matrices { get; set; }
-        public PipelineFrustum Frustum { get; set; }
-
-
         public PipelineModule()
         { }
-      
 
     }
 

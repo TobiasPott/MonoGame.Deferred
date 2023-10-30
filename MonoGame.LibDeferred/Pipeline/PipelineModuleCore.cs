@@ -1,16 +1,24 @@
 ﻿using DeferredEngine.Recources;
+using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 
 namespace DeferredEngine.Pipeline
 {
-    public abstract class PipelineModuleCore : IDisposable
+    public abstract class PipelineModuleCore : IPipelineModule, IDisposable
     {
 
         protected GraphicsDevice _graphicsDevice;
         protected SpriteBatch _spriteBatch;
 
+
+        public PipelineProfiler Profiler { get; set; }
+        public PipelineMatrices Matrices { get; set; }
+        public PipelineFrustum Frustum { get; set; }
+        
+        
+        
         public virtual void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         {
             _graphicsDevice = graphicsDevice;

@@ -1,5 +1,4 @@
 ﻿using DeferredEngine.Recources;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 
@@ -46,6 +45,8 @@ namespace DeferredEngine.Rendering.PostProcessing
         /// </summary>
         public override RenderTarget2D Draw(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
+
+            // ToDo: Resolve this Draw method to return either sourceRT or destRT to match the other behaviours
             //Set up rendertarget
             if (_renderTarget == null || _renderTarget.Width != sourceRT.Width || _renderTarget.Height != sourceRT.Height)
             {

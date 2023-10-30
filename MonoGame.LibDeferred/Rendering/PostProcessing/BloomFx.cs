@@ -3,7 +3,6 @@ using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
-using static DeferredEngine.Recources.RenderingSettings;
 
 namespace DeferredEngine.Rendering.PostProcessing
 {
@@ -302,7 +301,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
                 _spriteBatch.Draw(sourceRT, RenderingSettings.Screen.g_Rect, Color.White);
                 _spriteBatch.Draw(_mipMaps[0], RenderingSettings.Screen.g_Rect, Color.White);
-                
+
                 _spriteBatch.End();
             }
             #endregion
