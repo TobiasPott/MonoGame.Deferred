@@ -304,10 +304,10 @@ namespace DeferredEngine.Rendering
             _moduleStack.Forward.Draw(meshBatcher, null, null, _auxTargets[PipelineTargets.COMPOSE]);
             // Step: 10
             // Compose the image and add information from previous frames to apply temporal super sampling
-            _currentOutput = _fxStack.Draw(PipelineFxStage.TemporalAA, _auxTargets[PipelineTargets.COMPOSE], null, null);
+            _fxStack.Draw(PipelineFxStage.TemporalAA, null, null, _auxTargets[PipelineTargets.COMPOSE]);
             // Step: 11
             //Do Bloom
-            _currentOutput = _fxStack.Draw(PipelineFxStage.Bloom, _currentOutput, null, _ssfxTargets.Bloom_Main);
+            _currentOutput = _fxStack.Draw(PipelineFxStage.Bloom, _auxTargets[PipelineTargets.COMPOSE], null, _ssfxTargets.Bloom_Main);
 
             _profiler.Sample(TimestampIndices.Draw_Total);
 

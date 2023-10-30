@@ -43,43 +43,43 @@ namespace DeferredEngine.Rendering.PostProcessing
         public override RenderTarget2D Draw(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
         {
             if (!this.Enabled)
-                return sourceRT;
+                return destRT;
 
-            if (previousRT == null && destRT == null)
-                _ssfxTargets?.GetTemporalAARenderTargets(this.IsOffFrame, out destRT, out previousRT);
+            if (previousRT == null && sourceRT == null)
+                _ssfxTargets?.GetTemporalAARenderTargets(this.IsOffFrame, out sourceRT, out previousRT);
             else if(previousRT == null)
                 _ssfxTargets?.GetTemporalAARenderTargets(this.IsOffFrame, out _, out previousRT);
-            else if (destRT == null)
-                _ssfxTargets?.GetTemporalAARenderTargets(this.IsOffFrame, out destRT, out _);
+            else if (sourceRT == null)
+                _ssfxTargets?.GetTemporalAARenderTargets(this.IsOffFrame, out sourceRT, out _);
 
-            _graphicsDevice.SetRenderTarget(destRT);
+            _graphicsDevice.SetRenderTarget(sourceRT);
             _graphicsDevice.SetState(BlendStateOption.Opaque);
 
             _fxSetup.Param_FrustumCorners.SetValue(this.Frustum.ViewSpaceFrustum);
 
-            _fxSetup.Param_UpdateMap.SetValue(sourceRT);
+            _fxSetup.Param_UpdateMap.SetValue(destRT);
             _fxSetup.Param_AccumulationMap.SetValue(previousRT);
             _fxSetup.Param_CurrentToPrevious.SetValue(Matrices.CurrentViewToPreviousViewProjection);
 
             this.Draw(_fxSetup.Pass_TemporalAA);
-            this.Blit(destRT, sourceRT);
+            this.Blit(sourceRT, destRT);
 
             if (UseTonemap)
             {
-                _graphicsDevice.SetRenderTarget(sourceRT);
-                _fxSetup.Param_UpdateMap.SetValue(destRT);
+                _graphicsDevice.SetRenderTarget(destRT);
+                _fxSetup.Param_UpdateMap.SetValue(sourceRT);
                 this.Draw(_fxSetup.Pass_TonemapInverse);
 
                 // sample profiler if set
                 this.Profiler?.SampleTimestamp(TimestampIndices.Draw_CombineTAA);
 
-                return sourceRT;
+                return destRT;
             }
 
             // sample profiler if set
             this.Profiler?.SampleTimestamp(TimestampIndices.Draw_CombineTAA);
 
-            return sourceRT;
+            return destRT;
         }
 
         public override void Dispose()
