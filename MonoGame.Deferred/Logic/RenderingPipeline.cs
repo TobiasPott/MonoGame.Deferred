@@ -308,17 +308,14 @@ namespace DeferredEngine.Rendering
             // Step: 11
             //Do Bloom
             _currentOutput = _fxStack.Draw(PipelineFxStage.Bloom, _auxTargets[PipelineTargets.COMPOSE], null, _ssfxTargets.Bloom_Main);
+            _currentOutput = _fxStack.Draw(PipelineFxStage.PostProcessing, _currentOutput, null, _auxTargets[PipelineTargets.OUTPUT]);
+            _currentOutput = _fxStack.Draw(PipelineFxStage.ColorGrading, _auxTargets[PipelineTargets.OUTPUT], null, null);
 
             _profiler.Sample(TimestampIndices.Draw_Total);
 
-            // ToDo: PRIO IV: Calls to a fx stage should not be inside the render pass methods
-            //                  Moving these outside, will remove the ability to keep the HDR buffer (or needs additional blit into custom buffer)
-            _fxStack.Draw(PipelineFxStage.PostProcessing, _currentOutput, null, _auxTargets[PipelineTargets.OUTPUT]);
-            _fxStack.Draw(PipelineFxStage.ColorGrading, _auxTargets[PipelineTargets.OUTPUT], null, null);
-
             // Step: 13
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
-            DrawPipelinePass(RenderingSettings.g_CurrentPass, _currentOutput, null, null);
+            BlitToScreen(RenderingSettings.g_CurrentPass, null);
 
             //Performance Profiler
             _profiler.SampleTimestamp(TimestampIndices.Draw_FinalRender);
@@ -436,45 +433,38 @@ namespace DeferredEngine.Rendering
         /// <summary>
         /// Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
         /// </summary>
-        private void DrawPipelinePass(PipelineOutputPasses pass, RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
+        private void BlitToScreen(PipelineOutputPasses pass, RenderTarget2D destRT)
         {
             switch (pass)
             {
                 case PipelineOutputPasses.Albedo:
-                    BlitTo(_gBufferTarget.Albedo);
+                    BlitTo(_gBufferTarget.Albedo, destRT);
                     break;
                 case PipelineOutputPasses.Normal:
-                    BlitTo(_gBufferTarget.Normal);
+                    BlitTo(_gBufferTarget.Normal, destRT);
                     break;
                 case PipelineOutputPasses.Depth:
-                    BlitTo(_gBufferTarget.Depth);
+                    BlitTo(_gBufferTarget.Depth, destRT);
                     break;
                 case PipelineOutputPasses.Diffuse:
-                    BlitTo(_lightingBufferTarget.Diffuse);
+                    BlitTo(_lightingBufferTarget.Diffuse, destRT);
                     break;
                 case PipelineOutputPasses.Specular:
-                    BlitTo(_lightingBufferTarget.Specular);
+                    BlitTo(_lightingBufferTarget.Specular, destRT);
                     break;
                 case PipelineOutputPasses.Volumetric:
-                    BlitTo(_lightingBufferTarget.Volume);
+                    BlitTo(_lightingBufferTarget.Volume, destRT);
                     break;
                 case PipelineOutputPasses.SSAO:
-                    BlitTo(_ssfxTargets.AO_Main);
+                    BlitTo(_ssfxTargets.AO_Main, destRT);
                     break;
                 case PipelineOutputPasses.SSBlur:
-                    BlitTo(_ssfxTargets.AO_Blur_Final);
+                    BlitTo(_ssfxTargets.AO_Blur_Final, destRT);
                     break;
                 case PipelineOutputPasses.SSR:
-                    BlitTo(_ssfxTargets.SSR_Main);
-                    break;
-                case PipelineOutputPasses.HDR:
-                    BlitTo(sourceRT);
+                    BlitTo(_ssfxTargets.SSR_Main, destRT);
                     break;
                 default:
-                    //// ToDo: PRIO IV: Calls to a fx stage should not be inside the render pass methods
-                    ////                  Moving these outside, will remove the ability to keep the HDR buffer (or needs additional blit into custom buffer)
-                    //_fxStack.Draw(PipelineFxStage.PostProcessing, sourceRT, null, destRT);
-                    //_fxStack.Draw(PipelineFxStage.ColorGrading, destRT, null, null);
                     break;
             }
 

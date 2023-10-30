@@ -4,7 +4,7 @@ namespace DeferredEngine.Pipeline
     //Render modes
     public enum PipelineOutputPasses
     {
-        Deferred,
+        Deferred = 0,
         Albedo,
         Normal,
         Depth,
@@ -14,6 +14,8 @@ namespace DeferredEngine.Pipeline
         SSAO,
         SSBlur,
         SSR,
-        HDR
+        // [Obsolete("HDR buffer is no longer directly available.")]
+        // HDR,
+        Final,
     }
 }
