@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 
-namespace DeferredEngine.Logic
+namespace DeferredEngine.Demo
 {
     public partial class EditorLogic
     {

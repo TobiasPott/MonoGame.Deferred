@@ -1,5 +1,4 @@
-﻿using DeferredEngine.Entities;
-using DeferredEngine.Recources;
+﻿using DeferredEngine.Recources;
 using DeferredEngine.Rendering;
 using HelperSuite.GUIRenderer;
 using Microsoft.Xna.Framework;
@@ -7,7 +6,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
-namespace DeferredEngine.Logic
+namespace DeferredEngine.Demo
 {
     /// <summary>
     /// Manages our different screens and passes information accordingly

@@ -147,9 +147,7 @@ namespace DeferredEngine.Pipeline.Utilities
             if (!mouseMoved)
                 _graphicsDevice.Clear(ClearOptions.Target, Color.Black, 0, 0);
             else
-            {
                 _graphicsDevice.Clear(Color.Black);
-            }
             _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
 
 

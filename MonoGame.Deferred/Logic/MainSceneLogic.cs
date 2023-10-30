@@ -8,10 +8,9 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Collections.Generic;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 
-namespace DeferredEngine.Logic
+namespace DeferredEngine.Demo
 {
     public class MainSceneLogic
     {

@@ -1,5 +1,4 @@
-﻿using DeferredEngine.Logic;
-using DeferredEngine.Recources;
+﻿using DeferredEngine.Recources;
 using DeferredEngine.Rendering;
 using HelperSuite.GUIHelper;
 using Microsoft.Xna.Framework;
@@ -9,7 +8,7 @@ using System.Diagnostics;
 using System.Threading;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
 
-namespace DeferredEngine
+namespace DeferredEngine.Demo
 {
     public class Main : Game
     {

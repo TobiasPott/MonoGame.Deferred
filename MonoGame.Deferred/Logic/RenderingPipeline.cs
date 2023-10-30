@@ -1,5 +1,5 @@
-﻿using DeferredEngine.Entities;
-using DeferredEngine.Logic;
+﻿using DeferredEngine.Demo;
+using DeferredEngine.Entities;
 using DeferredEngine.Pipeline;
 using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Pipeline.Utilities;

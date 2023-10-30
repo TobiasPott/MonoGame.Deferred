@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DeferredEngine
+namespace DeferredEngine.Demo
 {
 #if WINDOWS || LINUX
     /// <summary>

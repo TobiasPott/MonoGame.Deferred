@@ -11,7 +11,7 @@ using HelperSuite.GUIHelper;
 using Microsoft.Xna.Framework;
 using System.Text;
 
-namespace DeferredEngine.Logic
+namespace DeferredEngine.Demo
 {
     public class GUILogic
     {

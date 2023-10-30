@@ -11,7 +11,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
     <Nullable>disable</Nullable>
-    <StartupObject>DeferredEngine.Program</StartupObject>
+    <StartupObject>DeferredEngine.Demo.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.1.303" />
