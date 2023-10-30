@@ -272,38 +272,39 @@ namespace DeferredEngine.Rendering
             if (!this.Enabled)
                 return;
 
-            // Step: 12
+            // Step: -1
             //Draw the elements that we are hovering over with outlines
             if (RenderingSettings.e_EnableSelection)
                 _moduleStack.IdAndOutline.Draw(meshBatcher, scene, gizmoContext, EditorLogic.Instance.HasMouseMoved);
 
             // Step: 01
-            //Render SHADOW MAPS
-            _moduleStack.ShadowMap.Draw(meshBatcher, scene);
-            // Step: 02
-            //Draw our meshes to the G Buffer
+            // Deferred GBuffer
             _moduleStack.GBuffer.Draw(meshBatcher);
-            // Step: 03
-            //Deferred Decals
+            // Deferred Decals
             _moduleStack.Decal.Draw(scene, null, _auxTargets[PipelineTargets.SWAP], _gBufferTarget.Albedo);
 
-            // Step: 06
+            // Step: 02
+            //Render SHADOW MAPS
+            _moduleStack.ShadowMap.Draw(meshBatcher, scene);
+            // Step: 03
             //Light the scene
             _moduleStack.Lighting.Draw(scene);
+
             // ToDo: PRIO II: Is Environment module actually part of lighting? (unsure ahout the sky part though)
             //              I mmight need to split it into Environment and Sky
-            // Step: 07
+            // Step: 04
             //Draw the environment cube map as a fullscreen effect on all meshes
+            //_moduleStack.Environment.DrawSky();
             _moduleStack.Environment.Draw();
-            // Step: 08
+            // Step: 05
             //Compose the scene by combining our lighting data with the gbuffer data
             // ToDo: PRIO III: @tpott: hacky way to disable ssao when disabled on global scale (GUI is insufficient here)
             //      Add NotifiedProperty with wrapper property for UI
             _moduleStack.Deferred.Draw(null, null, _auxTargets[PipelineTargets.SWAP_HALF]);
-            // Step: 09
+            // Step: 06
             //Forward
             _moduleStack.Forward.Draw(meshBatcher, null, null, _auxTargets[PipelineTargets.SWAP_HALF]);
-            // Step: 10
+            // Step: 07
             // Post processing passes
             //SSR
             _fxStack.Draw(PipelineFxStage.SSReflection, _auxTargets[PipelineTargets.SWAP_HALF], null, _ssfxTargets.SSR_Main);
@@ -314,8 +315,8 @@ namespace DeferredEngine.Rendering
             _fxStack.Draw(PipelineFxStage.PostProcessing, _auxTargets[PipelineTargets.SWAP_HALF], null, _auxTargets[PipelineTargets.SWAP]);
             _fxStack.Draw(PipelineFxStage.ColorGrading, _auxTargets[PipelineTargets.SWAP], null, _auxTargets[PipelineTargets.FINALCOLOR]);
 
-
-            this.BlitTo(_auxTargets[PipelineTargets.FINALCOLOR], null);
+            // Step: 08 Blit final color to screen (may blit to a 'viewport' section of the screen, or the full screen
+            this.BlitTo(_auxTargets[PipelineTargets.FINALCOLOR], null, RenderingSettings.Screen.g_Rect);
 
             _profiler.Sample(TimestampIndices.Draw_Total);
 
@@ -485,9 +486,9 @@ namespace DeferredEngine.Rendering
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         //  HELPER FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        private void BlitTo(Texture2D source, RenderTarget2D destRT = null)
+        private void BlitTo(Texture2D source, RenderTarget2D destRT = null, Rectangle? destRectangle = null)
         {
-            _graphicsDevice.Blit(_spriteBatch, source, destRT);
+            _graphicsDevice.Blit(_spriteBatch, source, destRT, destRectangle: destRectangle);
         }
 
 
