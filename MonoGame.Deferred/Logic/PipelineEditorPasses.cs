@@ -11,8 +11,9 @@ namespace DeferredEngine.Rendering
         Billboard = 1,
         IdAndOutline = 2,
         Helper = 4,
-        SDFDistance = 8,
-        SDFVolume = 16,
+        TransformGizmo = 8,
+        SDFDistance = 16,
+        SDFVolume = 32,
     }
 
 }

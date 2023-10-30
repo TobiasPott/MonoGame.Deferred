@@ -285,8 +285,24 @@ namespace DeferredEngine.Rendering
 
             // Step: 15
             //Additional editor elements that overlay our screen
-            DrawEditorOverlays(gizmoContext, scene);
+            if (RenderingSettings.e_EnableSelection)
+            {
+                if (IdAndOutlineRenderModule.e_DrawOutlines)
+                    this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.IdAndOutline);
+                this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.Billboard | PipelineEditorPasses.TransformGizmo);
+                //Draw debug/helper geometry
+                this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.Helper);
+            }
 
+
+
+            if (gizmoContext.SelectedObject != null)
+            {
+                if (gizmoContext.SelectedObject is Decal decal)
+                    _moduleStack.Decal.DrawOutlines(decal);
+                if (RenderingSettings.e_DrawBoundingBox && gizmoContext.SelectedObject is ModelEntity entity)
+                    HelperGeometryManager.GetInstance().AddBoundingBox(entity);
+            }
 
         }
 
@@ -301,38 +317,7 @@ namespace DeferredEngine.Rendering
             return false;
         }
 
-        // ToDo: Rework this method, where I have squashed everything editor like into without further thought!
-        private void DrawEditorOverlays(GizmoDrawContext gizmoContext, EntitySceneGroup scene)
-        {
-            if (RenderingSettings.e_EnableSelection)
-            {
-                if (IdAndOutlineRenderModule.e_DrawOutlines)
-                    _moduleStack.IdAndOutline.Blit(_moduleStack.IdAndOutline.Target, null, BlendState.Additive);
-
-                this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.Billboard | PipelineEditorPasses.IdAndOutline);
-
-                if (gizmoContext.SelectedObject != null)
-                {
-                    if (gizmoContext.SelectedObject is Decal decal)
-                    {
-                        _moduleStack.Decal.DrawOutlines(decal);
-                    }
-                    if (RenderingSettings.e_DrawBoundingBox
-                        && gizmoContext.SelectedObject is ModelEntity entity)
-                    {
-                        HelperGeometryManager.GetInstance().AddBoundingBox(entity);
-                    }
-                }
-            }
-
-
-            // Step: 20
-            //Draw debug geometry
-            DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.Helper);
-
-        }
-
-        private void DrawEditorPasses(EntitySceneGroup scene, GizmoDrawContext gizmoContext, PipelineEditorPasses passes = PipelineEditorPasses.Billboard | PipelineEditorPasses.IdAndOutline)
+        private void DrawEditorPasses(EntitySceneGroup scene, GizmoDrawContext gizmoContext, PipelineEditorPasses passes = PipelineEditorPasses.Billboard | PipelineEditorPasses.TransformGizmo)
         {
             _graphicsDevice.SetRenderTarget(null);
             _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
@@ -343,6 +328,10 @@ namespace DeferredEngine.Rendering
                 _moduleStack.Billboard.DrawEditorBillboards(scene, gizmoContext);
             }
             if (passes.HasFlag(PipelineEditorPasses.IdAndOutline))
+            {
+                _moduleStack.IdAndOutline.Blit(_moduleStack.IdAndOutline.Target, null, BlendState.Additive);
+            }
+            if (passes.HasFlag(PipelineEditorPasses.TransformGizmo))
             {
                 _moduleStack.IdAndOutline.DrawTransformGizmos(gizmoContext, IdAndOutlineRenderModule.Pass.Color);
             }
