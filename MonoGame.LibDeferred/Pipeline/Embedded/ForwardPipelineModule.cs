@@ -29,11 +29,15 @@ namespace DeferredEngine.Pipeline
         { }
         public void Draw(DynamicMeshBatcher meshBatcher, RenderTarget2D sourceRT, RenderTarget2D auxRT, RenderTarget2D destRT)
         {
-            _graphicsDevice.SetRenderTarget(destRT);
-            // reconstruct depth
-            DepthReconstruct?.ReconstructDepth();
-            if (meshBatcher.CheckRequiresRedraw(RenderType.Forward, false, false))
-                meshBatcher.Draw(RenderType.Forward, this.Matrices, RenderContext.Default, this);
+            // ToDo: Wrap into instance property with global override/flag
+            if (ForwardPipelineModule.g_EnableForward)
+            {
+                _graphicsDevice.SetRenderTarget(destRT);
+                // reconstruct depth
+                DepthReconstruct?.ReconstructDepth();
+                if (meshBatcher.CheckRequiresRedraw(RenderType.Forward, false, false))
+                    meshBatcher.Draw(RenderType.Forward, this.Matrices, RenderContext.Default, this);
+            }
         }
 
         public void SetupLighting(Camera camera, List<PointLight> pointLights, BoundingFrustum frustum)

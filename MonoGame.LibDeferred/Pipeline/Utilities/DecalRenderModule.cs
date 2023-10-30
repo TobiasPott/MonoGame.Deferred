@@ -1,5 +1,4 @@
 ﻿using DeferredEngine.Entities;
-using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
@@ -97,31 +96,34 @@ namespace DeferredEngine.Pipeline.Utilities
         public void Draw(EntitySceneGroup scene, RenderTarget2D sourceRT, RenderTarget2D auxRT, RenderTarget2D destRT) => Draw(scene.Decals, sourceRT, auxRT, destRT, this.Matrices.View, this.Matrices.ViewProjection, this.Matrices.InverseView);
         public void Draw(List<Decal> decals, RenderTarget2D sourceRT, RenderTarget2D auxRT, RenderTarget2D destRT, Matrix view, Matrix viewProjection, Matrix inverseView)
         {
-            // blit current buffer to aux to work on this (decals are not full GBuffer support and misses normals)
-            this.Blit(destRT, auxRT);
-
-            _graphicsDevice.SetVertexBuffer(_vertexBuffer);
-            _graphicsDevice.Indices = _indexBufferCube;
-            _graphicsDevice.SetState(RasterizerStateOption.CullClockwise);
-            _graphicsDevice.BlendState = _decalBlend;
-
-
-            _effectSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
-
-            foreach (Decal decal in decals)
+            if (DecalRenderModule.g_EnableDecals)
             {
-                Matrix localMatrix = decal.World;
+                // blit current buffer to aux to work on this (decals are not full GBuffer support and misses normals)
+                this.Blit(destRT, auxRT);
 
-                _effectSetup.Param_DecalMap.SetValue(decal.Texture);
-                _effectSetup.Param_WorldView.SetValue(localMatrix * view);
-                _effectSetup.Param_WorldViewProj.SetValue(localMatrix * viewProjection);
-                _effectSetup.Param_InverseWorldView.SetValue(inverseView * decal.InverseWorld);
+                _graphicsDevice.SetVertexBuffer(_vertexBuffer);
+                _graphicsDevice.Indices = _indexBufferCube;
+                _graphicsDevice.SetState(RasterizerStateOption.CullClockwise);
+                _graphicsDevice.BlendState = _decalBlend;
 
-                _effectSetup.Pass_Decal.Apply();
-                _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 12);
+
+                _effectSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
+
+                foreach (Decal decal in decals)
+                {
+                    Matrix localMatrix = decal.World;
+
+                    _effectSetup.Param_DecalMap.SetValue(decal.Texture);
+                    _effectSetup.Param_WorldView.SetValue(localMatrix * view);
+                    _effectSetup.Param_WorldViewProj.SetValue(localMatrix * viewProjection);
+                    _effectSetup.Param_InverseWorldView.SetValue(inverseView * decal.InverseWorld);
+
+                    _effectSetup.Pass_Decal.Apply();
+                    _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 12);
+                }
+
+                this.Blit(auxRT, destRT);
             }
-
-            this.Blit(auxRT, destRT);
         }
 
         public void DrawOutlines(Decal decal)

@@ -44,13 +44,15 @@ namespace DeferredEngine.Pipeline
 
     public class PipelineProfiler
     {
+        public static bool IsProfilerEnabled = false;
+
+
         public const int InitialTimestamps = 64;
         private static double[] _timestamps = new double[InitialTimestamps];
         public static double GetTimestamp(int index) => _timestamps[index];
 
 
         //Profiler
-        public static bool IsProfilerEnabled = true;
 
         //Performance Profiler
         private readonly Stopwatch _timer = new Stopwatch();

@@ -1,4 +1,5 @@
 ﻿using DeferredEngine.Entities;
+using DeferredEngine.Recources;
 using DeferredEngine.Rendering;
 using DeferredEngine.Rendering.PostProcessing;
 using Microsoft.Xna.Framework;
@@ -16,7 +17,7 @@ namespace DeferredEngine.Pipeline
 
         public Texture2D SSRMap
         { set { _effectSetup.Param_SSRMap.SetValue(value); } }
-        
+
         public Vector2 Resolution
         { set { _effectSetup.Param_Resolution.SetValue(value); } }
         public float Time
@@ -100,15 +101,18 @@ namespace DeferredEngine.Pipeline
         public void Draw() => DrawEnvironmentMap();
         private void DrawEnvironmentMap()
         {
-            _effectSetup.Param_FrustumCorners.SetValue(this.Frustum.WorldSpaceFrustum);
-            _effectSetup.Param_TransposeView.SetValue(Matrix.Transpose(this.Matrices.View));
-            _effectSetup.Pass_Basic.Apply();
+            if (RenderingSettings.Environment.Enabled)
+            {
+                _effectSetup.Param_FrustumCorners.SetValue(this.Frustum.WorldSpaceFrustum);
+                _effectSetup.Param_TransposeView.SetValue(Matrix.Transpose(this.Matrices.View));
+                _effectSetup.Pass_Basic.Apply();
 
-            _graphicsDevice.SetStates(DepthStencilStateOption.None, RasterizerStateOption.CullCounterClockwise);
-            _fullscreenTarget.Draw(_graphicsDevice);
+                _graphicsDevice.SetStates(DepthStencilStateOption.None, RasterizerStateOption.CullCounterClockwise);
+                _fullscreenTarget.Draw(_graphicsDevice);
 
-            // sample profiler if set
-            this.Profiler?.SampleTimestamp(TimestampIndices.Draw_EnvironmentMap);
+                // sample profiler if set
+                this.Profiler?.SampleTimestamp(TimestampIndices.Draw_EnvironmentMap);
+            }
         }
         public void DrawSky()
         {

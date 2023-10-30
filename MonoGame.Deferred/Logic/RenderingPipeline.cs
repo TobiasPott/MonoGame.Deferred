@@ -231,39 +231,27 @@ namespace DeferredEngine.Rendering
             // Step: 01
             //Render SHADOW MAPS
             _moduleStack.ShadowMap.Draw(meshBatcher, scene);
-
             // Step: 02
             //Draw our meshes to the G Buffer
             _moduleStack.GBuffer.Draw(meshBatcher);
-
             // Step: 03
             //Deferred Decals
-            if (DecalRenderModule.g_EnableDecals)
-                _moduleStack.Decal.Draw(scene, null, _auxTargets[PipelineTargets.DECAL], _gBufferTarget.Albedo);
-
+            _moduleStack.Decal.Draw(scene, null, _auxTargets[PipelineTargets.DECAL], _gBufferTarget.Albedo);
             // STAGE: PreLighting-SSFx
             // Step: 04
             //Draw Screen Space reflections to a different render target
             _fxStack.Draw(PipelineFxStage.SSReflection, _auxTargets[PipelineTargets.COMPOSE], null, _ssfxTargets.SSR_Main);
-
             // Step: 05
             //SSAO
             _fxStack.Draw(PipelineFxStage.SSAmbientOcclusion, null, null, _ssfxTargets.AO_Main);
-
-            // STAGE: Lighting
             // Step: 06
             //Light the scene
-            //// ToDo: PRIO I: Extract camera.HasChanged and Position and move to reference inside the module
             _moduleStack.Lighting.Draw(scene);
-
             // ToDo: PRIO II: Is Environment module actually part of lighting? (unsure ahout the sky part though)
             //              I mmight need to split it into Environment and Sky
             // Step: 07
             //Draw the environment cube map as a fullscreen effect on all meshes
-            if (RenderingSettings.Environment.Enabled)
-                _moduleStack.Environment.Draw();
-
-
+            _moduleStack.Environment.Draw();
             // Step: 08
             //Compose the scene by combining our lighting data with the gbuffer data
             // ToDo: PRIO III: @tpott: hacky way to disable ssao when disabled on global scale (GUI is insufficient here)
@@ -271,17 +259,18 @@ namespace DeferredEngine.Rendering
             _moduleStack.Deferred.Draw(null, null, _auxTargets[PipelineTargets.COMPOSE]);
             // Step: 09
             //Forward
-            if (ForwardPipelineModule.g_EnableForward)
-                _moduleStack.Forward.Draw(meshBatcher, null, null, _auxTargets[PipelineTargets.COMPOSE]);
+            _moduleStack.Forward.Draw(meshBatcher, null, null, _auxTargets[PipelineTargets.COMPOSE]);
 
             // Step: 10
             //Compose the image and add information from previous frames to apply temporal super sampling
             _ssfxTargets.GetTemporalAARenderTargets(_fxStack.TemporalAA.IsOffFrame, out RenderTarget2D taaDestRT, out RenderTarget2D taaPreviousRT);
             _currentOutput = _fxStack.Draw(PipelineFxStage.TemporalAA, _auxTargets[PipelineTargets.COMPOSE], taaPreviousRT, taaDestRT);
-            
+
             // Step: 11
             //Do Bloom
             _currentOutput = _fxStack.Draw(PipelineFxStage.Bloom, _currentOutput, null, _ssfxTargets.Bloom_Main);
+
+
             _profiler.Sample(TimestampIndices.Draw_Total);
 
             // Step: 13
@@ -293,7 +282,7 @@ namespace DeferredEngine.Rendering
 
             this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.SDFDistance);
             this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.SDFVolume);
-            
+
             // Step: 15
             //Additional editor elements that overlay our screen
             DrawEditorOverlays(gizmoContext, scene);
@@ -312,6 +301,7 @@ namespace DeferredEngine.Rendering
             return false;
         }
 
+        // ToDo: Rework this method, where I have squashed everything editor like into without further thought!
         private void DrawEditorOverlays(GizmoDrawContext gizmoContext, EntitySceneGroup scene)
         {
             if (RenderingSettings.e_EnableSelection)
