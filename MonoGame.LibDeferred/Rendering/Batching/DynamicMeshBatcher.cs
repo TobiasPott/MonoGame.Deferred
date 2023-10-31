@@ -136,19 +136,16 @@ namespace DeferredEngine.Rendering
 
         private void DeleteFromRegistry(MaterialEffect mat, ModelMeshPart mesh, TransformableObject transform)
         {
-            // ToDo: @tpott: add index lookup of the mat argument to only delete from library of the correct material
             Debug.WriteLine($"DeleteFromRegistry: Unused {mat} argument.");
             for (var i = 0; i < _batches.Count; i++)
             {
                 MaterialBatch matLib = _batches[i];
-                //if (matLib.HasMaterial(mat))
-                //{
-                if (matLib.DeleteFromRegistry(mesh, transform))
-                {
-                    _batches.RemoveAt(i);
-                    break;
-                }
-                //}
+                if (matLib.HasMaterial(mat))
+                    if (matLib.DeleteFromRegistry(mesh, transform))
+                    {
+                        _batches.RemoveAt(i);
+                        break;
+                    }
             }
         }
 

@@ -70,8 +70,6 @@ namespace DeferredEngine.Pipeline.Utilities
                 meshBatcher.Draw(RenderType.IdRender, matrices, RenderContext.Default);
 
             //Now onto the billboards
-            // ToDo: @tpott: Consider moving Billboards into entities like Decals (but with different effect?! O.o)
-
             BillboardRenderer?.DrawSceneBillboards(scene);
 
             //Now onto the gizmos

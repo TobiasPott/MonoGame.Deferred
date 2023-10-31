@@ -397,7 +397,7 @@ namespace DeferredEngine.Demo
                 SliderValue = BloomFx.ModuleThreshold,
             });
 
-            // ToDo: @tpott: Reintroduce UI for bloom values
+            // ToDo: @tpott: UI Controls: Reintroduce UI for bloom values
             //for (int i = 0; i < 5; i++)
             //{
             //    bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 8, 1, "MIP0 Radius: ")

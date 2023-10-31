@@ -88,7 +88,7 @@ namespace DeferredEngine.Rendering.Helper.HelperGeometry
             Param_WorldViewProjection.SetValue(viewProjection);
 
             Pass_VertexColor.Apply();
-            // ToDo: @tpott: Change rendering lines to build the vertex and index buffer when adding lines
+            // ToDo: @tpott: Optimize: Change rendering lines to build the vertex and index buffer when adding lines
             //          This should allow to remove the LineHelper type as overhead
             for (int i = 0; i < Lines.Count; i++)
             {
