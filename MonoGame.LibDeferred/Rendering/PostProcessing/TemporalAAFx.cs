@@ -14,9 +14,9 @@ namespace DeferredEngine.Rendering.PostProcessing
 
 
 
-        private TemporalAAFxSetup _fxSetup = new TemporalAAFxSetup();
         private bool _useTonemapping = true;
-        private HaltonSequence _haltonSequence = new HaltonSequence();
+        private readonly TemporalAAFxSetup _fxSetup = new TemporalAAFxSetup();
+        private readonly HaltonSequence _haltonSequence = new HaltonSequence();
 
         private SSFxTargets _ssfxTargets;
 

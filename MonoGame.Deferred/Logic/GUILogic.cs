@@ -451,7 +451,7 @@ namespace DeferredEngine.Demo
             }
         }
 
-        private string CreateHelperText()
+        private static string CreateHelperText()
         {
             return "Deferred Engine Controls\n" +
                     "Space - toggle on/off tools\n" +

@@ -26,12 +26,10 @@ namespace HelperSuite.GUI
             textColor: guitStyle.TextColorStyle,
             textAlignment: guitStyle.TextAlignmentStyle,
             textBorder: guitStyle.TextBorderStyle,
-            layer: 0,
-            alignment: guitStyle.GuiAlignmentStyle,
-            parentDimensions: guitStyle.ParentDimensionsStyle)
+            layer: 0)
         { }
 
-        public GUITextBlockToggle(Vector2 position, Vector2 dimensions, String text, SpriteFont font, Color blockColor, Color textColor, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Left, Vector2 textBorder = default(Vector2), int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, Vector2 parentDimensions = default(Vector2)) : base(position, dimensions, text, font, blockColor, textColor, textAlignment, textBorder, layer)
+        public GUITextBlockToggle(Vector2 position, Vector2 dimensions, String text, SpriteFont font, Color blockColor, Color textColor, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Left, Vector2 textBorder = default, int layer = 0) : base(position, dimensions, text, font, blockColor, textColor, textAlignment, textBorder, layer)
         {
 
         }
@@ -56,20 +54,13 @@ namespace HelperSuite.GUI
 
             FontWrap(ref textDimensions, Dimensions - Vector2.UnitX * (ToggleIndicatorSize + ToggleIndicatorBorder * 2));
 
-            switch (TextAlignment)
+            _fontPosition = TextAlignment switch
             {
-                case GUIStyle.TextAlignment.Left:
-                    _fontPosition = (Dimensions - Vector2.UnitX * (ToggleIndicatorSize + ToggleIndicatorBorder * 2)) / 2 * Vector2.UnitY + _textBorder * Vector2.UnitX - textDimensions / 2 * Vector2.UnitY;
-                    break;
-                case GUIStyle.TextAlignment.Center:
-                    _fontPosition = (Dimensions - Vector2.UnitX * (ToggleIndicatorSize + ToggleIndicatorBorder * 2)) / 2 - textDimensions / 2;
-                    break;
-                case GUIStyle.TextAlignment.Right:
-                    _fontPosition = (Dimensions - Vector2.UnitX * (ToggleIndicatorSize + ToggleIndicatorBorder * 2))  * new Vector2(1, 0.5f) - _textBorder * Vector2.UnitX - textDimensions / 2;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                GUIStyle.TextAlignment.Left     => (Dimensions - Vector2.UnitX * (ToggleIndicatorSize + ToggleIndicatorBorder * 2)) / 2 * Vector2.UnitY + _textBorder * Vector2.UnitX - textDimensions / 2 * Vector2.UnitY,
+                GUIStyle.TextAlignment.Center   => (Dimensions - Vector2.UnitX * (ToggleIndicatorSize + ToggleIndicatorBorder * 2)) / 2 - textDimensions / 2,
+                GUIStyle.TextAlignment.Right    => (Dimensions - Vector2.UnitX * (ToggleIndicatorSize + ToggleIndicatorBorder * 2)) * new Vector2(1, 0.5f) - _textBorder * Vector2.UnitX - textDimensions / 2,
+                _ => throw new ArgumentOutOfRangeException(),
+            };
         }
 
         public override void Draw(GUIRenderer.GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)

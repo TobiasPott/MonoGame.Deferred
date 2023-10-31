@@ -25,7 +25,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
 
 
-        private SSAmbientOcclusionFxSetup _fxSetup = new SSAmbientOcclusionFxSetup();
+        private readonly SSAmbientOcclusionFxSetup _fxSetup = new SSAmbientOcclusionFxSetup();
 
 
         public RenderTarget2D DepthMap { set { _fxSetup.Param_DepthMap.SetValue(value); } }

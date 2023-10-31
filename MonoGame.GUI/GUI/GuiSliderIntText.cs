@@ -53,7 +53,7 @@ namespace HelperSuite.GUI
             )
         { }
 
-        public GuiSliderIntText(Vector2 position, Vector2 sliderDimensions, Vector2 textdimensions, int min, int max, int stepSize, String text, SpriteFont font, Color blockColor, Color sliderColor, int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Left, Vector2 textBorder = default(Vector2), Vector2 ParentDimensions = new Vector2()) : base(position, sliderDimensions, textdimensions, min, max, 0, text, font, blockColor, sliderColor, layer, alignment, textAlignment, textBorder, ParentDimensions)
+        public GuiSliderIntText(Vector2 position, Vector2 sliderDimensions, Vector2 textdimensions, int min, int max, int stepSize, String text, SpriteFont font, Color blockColor, Color sliderColor, int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Left, Vector2 textBorder = default, Vector2 ParentDimensions = new Vector2()) : base(position, sliderDimensions, textdimensions, min, max, 0, text, font, blockColor, sliderColor, layer, alignment, textAlignment, textBorder, ParentDimensions)
         {
             MaxValueInt = max;
             MinValueInt = min;
@@ -118,12 +118,12 @@ namespace HelperSuite.GUI
                 if (SliderObject != null)
                 {
                     if (SliderField != null) SliderField.SetValue(SliderObject, SliderValue, BindingFlags.Public, null, null);
-                    else if (SliderProperty != null) SliderProperty.SetValue(SliderObject, SliderValue);
+                    else SliderProperty?.SetValue(SliderObject, SliderValue);
                 }
                 else
                 {
                     if (SliderField != null) SliderField.SetValue(null, SliderValue, BindingFlags.Static | BindingFlags.Public, null, null);
-                    else if (SliderProperty != null) SliderProperty.SetValue(null, SliderValue);
+                    else SliderProperty?.SetValue(null, SliderValue);
                 }
             }
         }

@@ -88,7 +88,7 @@ namespace DeferredEngine.Rendering
         }
 
 
-        private List<PipelineModule> _modules = new List<PipelineModule>();
+        private readonly List<PipelineModule> _modules = new List<PipelineModule>();
 
         public PipelineModuleStack()
         {

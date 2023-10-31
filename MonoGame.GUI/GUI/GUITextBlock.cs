@@ -67,7 +67,7 @@ namespace HelperSuite.GUI
         /// <summary>
         /// A default colored block with text on top
         /// </summary>
-        public GUITextBlock(Vector2 position, Vector2 dimensions, String text, SpriteFont font, Color blockColor, Color textColor, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Left, Vector2 textBorder = default(Vector2), int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, Vector2 parentDimensions = default(Vector2)) : base(position,dimensions, blockColor, layer, alignment, parentDimensions)
+        public GUITextBlock(Vector2 position, Vector2 dimensions, String text, SpriteFont font, Color blockColor, Color textColor, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Left, Vector2 textBorder = default, int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, Vector2 parentDimensions = default) : base(position, dimensions, blockColor, layer, alignment, parentDimensions)
         {
             _text = new StringBuilder(text);
             TextColor = textColor;
@@ -111,20 +111,13 @@ namespace HelperSuite.GUI
 
             FontWrap(ref textDimension, Dimensions);
 
-            switch (_textAlignment)
+            _fontPosition = _textAlignment switch
             {
-                case GUIStyle.TextAlignment.Left:
-                    _fontPosition = Dimensions * 0.5f * Vector2.UnitY + _textBorder * Vector2.UnitX - textDimension * 0.5f * Vector2.UnitY;
-                    break;
-                case GUIStyle.TextAlignment.Center:
-                    _fontPosition = Dimensions * 0.5f - textDimension * 0.5f;
-                    break;
-                case GUIStyle.TextAlignment.Right:
-                    _fontPosition = Dimensions * new Vector2(1, 0.5f) - _textBorder * Vector2.UnitX - textDimension * 0.5f;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                GUIStyle.TextAlignment.Left => Dimensions * 0.5f * Vector2.UnitY + _textBorder * Vector2.UnitX - textDimension * 0.5f * Vector2.UnitY,
+                GUIStyle.TextAlignment.Center => Dimensions * 0.5f - textDimension * 0.5f,
+                GUIStyle.TextAlignment.Right => Dimensions * new Vector2(1, 0.5f) - _textBorder * Vector2.UnitX - textDimension * 0.5f,
+                _ => throw new ArgumentOutOfRangeException(),
+            };
         }
 
         public override void Draw(GUIRenderer.GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)

@@ -44,8 +44,10 @@ namespace DeferredEngine.Demo
         {
             _assets = assets;
 
-            MeshBatcher = new DynamicMeshBatcher(graphicsDevice);
-            MeshBatcher.BatchByMaterial = false;
+            MeshBatcher = new DynamicMeshBatcher(graphicsDevice)
+            {
+                BatchByMaterial = false
+            };
 
             SetupSponzaSampleSscenne();
         }
@@ -99,9 +101,11 @@ namespace DeferredEngine.Demo
 
             for (int i = 0; i < 10; i++)
             {
-                MaterialEffect test = new MaterialEffect(_assets.SilverMaterial);
-                test.Roughness = i / 9.0f + 0.1f;
-                test.Metallic = 1;
+                MaterialEffect test = new MaterialEffect(_assets.SilverMaterial)
+                {
+                    Roughness = i / 9.0f + 0.1f,
+                    Metallic = 1
+                };
                 AddEntity(StaticAssets.Instance.IsoSphere,
                     test,
                     new Vector3(30 + i * 10, 0, 10), new Vector3((float)(Math.PI / 2.0f), 0, 0), Vector3.One * 5, MeshBatcher);
@@ -204,7 +208,7 @@ namespace DeferredEngine.Demo
         /// <param name="shadowResolution"></param>
         /// <param name="shadowFilteringFiltering"></param>
         /// <returns></returns>
-        private Pipeline.Lighting.DirectionalLight AddDirectionalLight(Vector3 direction, int intensity, Color color, Vector3 position = default(Vector3),
+        private Pipeline.Lighting.DirectionalLight AddDirectionalLight(Vector3 direction, int intensity, Color color, Vector3 position = default,
             bool drawShadows = false, float shadowWorldSize = 100, float shadowDepth = 100, int shadowResolution = 512,
             Pipeline.Lighting.DirectionalLight.ShadowFilteringTypes shadowFilteringFiltering = Pipeline.Lighting.DirectionalLight.ShadowFilteringTypes.Poisson)
         {
