@@ -124,7 +124,7 @@ namespace DeferredEngine.Pipeline
         /// <summary>
         /// Update our function
         /// </summary>
-        public override void Update(Camera camera, DynamicMeshBatcher meshBatcher, EntityScene scene, GizmoDrawContext gizmoContext)
+        public override void Update(Camera camera, DynamicMeshBatcher meshBatcher, EntityScene scene)
         {
             if (!this.Enabled)
                 return;
