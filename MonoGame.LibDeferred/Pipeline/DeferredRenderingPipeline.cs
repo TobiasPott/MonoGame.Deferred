@@ -133,23 +133,33 @@ namespace DeferredEngine.Pipeline
             //Update our view projection matrices if the camera moved
             if (_redrawRequested)
             {
-                UpdateViewProjection(camera);
+                //View matrix
                 camera.FarClip = RenderingSettings.Screen.g_FarClip;
+                _matrices.SetFromCamera(camera);
 
-                //We need to update whether or not entities are in our boundingFrustum and then cull them or not!
-                meshBatcher.FrustumCulling(_frustum.Frustum, _redrawRequested);
+                //Temporal AA - alternate frames for temporal anti-aliasing
+                if (_fxStack.TemporalAA.Enabled)
+                {
+                    _fxStack.TemporalAA.SwapOffFrame();
+                    _matrices.ApplyViewProjectionJitter(_fxStack.TemporalAA.JitterMode, _fxStack.TemporalAA.IsOffFrame, _fxStack.TemporalAA.HaltonSequence);
+                }
+                _fxStack.SSAmbientOcclusion.SetViewPosition(camera.Position);
+
+                _frustum.Frustum.Matrix = _matrices.StaticViewProjection;
                 // Compute the frustum corners for cheap view direction computation in shaders
                 _frustum.UpdateVertices(_matrices.View, camera.Position);
 
+
                 _moduleStack.Lighting.SetViewPosition(camera.Position);
-                _moduleStack.Lighting.RequestRedraw();
                 _moduleStack.Environment.SetViewPosition(camera.Position);
+                _moduleStack.Lighting.RequestRedraw();
                 _moduleStack.Environment.SetEnvironmentProbe(scene.EnvProbe);
                 _moduleStack.Deferred.UseSSAOMap = _fxStack.SSAmbientOcclusion?.Enabled ?? false;
                 _moduleStack.Forward.SetupLighting(camera.Position, scene.PointLights, _frustum.Frustum);
                 _moduleStack.DistanceField.SetViewPosition(camera.Position);
 
-                _fxStack.SSAmbientOcclusion.SetViewPosition(camera.Position);
+                //We need to update whether or not entities are in our boundingFrustum and then cull them or not!
+                meshBatcher.FrustumCulling(_frustum.Frustum, _redrawRequested);
 
                 //Performance Profiler
                 _profiler.SampleTimestamp(ProfilerTimestamps.Update_ViewProjection);
@@ -162,13 +172,13 @@ namespace DeferredEngine.Pipeline
                     _moduleStack.DistanceField.UpdateDistanceFieldTransformations(scene.Entities);
                 }
 
+                //Performance Profiler
+                _profiler.SampleTimestamp(ProfilerTimestamps.Update_SDF);
             }
 
             //Reset the stat counter, so we can count stats/information for this frame only
             ResetStats();
 
-            //Performance Profiler
-            _profiler.SampleTimestamp(ProfilerTimestamps.Update_SDF);
             _redrawRequested = false;
         }
 
@@ -230,8 +240,6 @@ namespace DeferredEngine.Pipeline
 
             //Performance Profiler
             _profiler.SampleTimestamp(ProfilerTimestamps.Draw_FinalRender);
-
-
         }
 
         /// <summary>
@@ -290,29 +298,6 @@ namespace DeferredEngine.Pipeline
         {
             RenderingStats.ResetStats();
             _profiler.Reset();
-        }
-        /// <summary>
-        /// Create the projection matrices
-        /// </summary>
-        protected virtual void UpdateViewProjection(Camera camera)
-        {
-            // ToDo: @tpott: This boolean flag controls general update and draw, though it should only determine if matrices and such should be updated
-            //      if a frame should be drawn is a conditioned layered on top of this and may be required regardless of camera change
-            //If the camera didn't do anything we don't need to update this stuff
-            if (camera.HasChanged)
-            {
-                //View matrix
-                _matrices.SetFromCamera(camera);
-
-                //Temporal AA - alternate frames for temporal anti-aliasing
-                if (_fxStack.TemporalAA.Enabled)
-                {
-                    _fxStack.TemporalAA.SwapOffFrame();
-                    _matrices.ApplyViewProjectionJitter(_fxStack.TemporalAA.JitterMode, _fxStack.TemporalAA.IsOffFrame, _fxStack.TemporalAA.HaltonSequence);
-                }
-                _frustum.Frustum.Matrix = _matrices.StaticViewProjection;
-            }
-
         }
 
         public override void Dispose()
