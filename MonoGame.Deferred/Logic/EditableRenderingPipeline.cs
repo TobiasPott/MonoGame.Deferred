@@ -10,7 +10,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
-using System;
 using System.Collections.Generic;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,20 +43,12 @@ namespace DeferredEngine.Rendering
         // AfterAll
     };
 
-    public partial class RenderingPipeline : IDisposable
+
+    public class EditableRenderingPipeline : RenderingPipelineBase
     {
-        public event Action<DrawEvents> EventTriggered;
-        public bool Enabled { get; set; } = true;
-
-
-
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  VARIABLES
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        //Graphics & Helpers
-        private GraphicsDevice _graphicsDevice;
-        private SpriteBatch _spriteBatch;
 
         //Projection Matrices and derivates used in shaders
         private PipelineMatrices _matrices;
@@ -94,7 +85,7 @@ namespace DeferredEngine.Rendering
         /// Initialize variables
         /// </summary>
         /// <param name="content"></param>
-        public void Load(ContentManager content)
+        public override void Load(ContentManager content)
         {
             _matrices = new PipelineMatrices();
             _profiler = new PipelineProfiler();
@@ -115,10 +106,9 @@ namespace DeferredEngine.Rendering
         /// Initialize all our rendermodules and helpers. Done after the Load() function
         /// </summary>
         /// <param name="graphicsDevice"></param>
-        public void Initialize(GraphicsDevice graphicsDevice)
+        public override void Initialize(GraphicsDevice graphicsDevice)
         {
-            _graphicsDevice = graphicsDevice;
-            _spriteBatch = new SpriteBatch(graphicsDevice);
+            base.Initialize(graphicsDevice);
 
             Vector2 resolution = RenderingSettings.Screen.g_Resolution;
             _gBufferTarget = new GBufferTarget(graphicsDevice, resolution);
@@ -201,7 +191,7 @@ namespace DeferredEngine.Rendering
         /// <summary>
         /// Update our function
         /// </summary>
-        public void Update(Camera camera, DynamicMeshBatcher meshBatcher, EntityScene scene, GizmoDrawContext gizmoContext)
+        public override void Update(Camera camera, DynamicMeshBatcher meshBatcher, EntityScene scene, GizmoDrawContext gizmoContext)
         {
             if (!this.Enabled)
                 return;
@@ -260,14 +250,10 @@ namespace DeferredEngine.Rendering
 
         }
 
-        // ! ! ! ! ! ! ! ! ! ! !
-        // ToDo: PRIO I: Reduce Draw method to only call profiler and .Draw calls from modules
-        //              Setup and processing should be internalized and done before any drawing takes place
-
         /// <summary>
         /// Main Draw function of the game
         /// </summary>
-        public void Draw(DynamicMeshBatcher meshBatcher, EntityScene scene)
+        public override void Draw(DynamicMeshBatcher meshBatcher, EntityScene scene)
         {
             if (!this.Enabled)
                 return;
@@ -490,19 +476,9 @@ namespace DeferredEngine.Rendering
         }
 
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        //  HELPER FUNCTIONS
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        private void BlitTo(Texture2D source, RenderTarget2D destRT = null, Rectangle? destRectangle = null)
+        public override void Dispose()
         {
-            _graphicsDevice.Blit(_spriteBatch, source, destRT, destRectangle: destRectangle);
-        }
-
-
-        public void Dispose()
-        {
-            _graphicsDevice?.Dispose();
-            _spriteBatch?.Dispose();
+            base.Dispose();
 
             _moduleStack?.Dispose();
             _fxStack?.Dispose();

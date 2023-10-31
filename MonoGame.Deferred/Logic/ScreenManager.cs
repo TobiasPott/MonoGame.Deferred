@@ -17,7 +17,7 @@ namespace DeferredEngine.Demo
         //  VARIABLES
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        private RenderingPipeline _renderer;
+        private EditableRenderingPipeline _renderer;
         private MainSceneLogic _sceneLogic;
         private GUIRenderer _guiRenderer;
         private GUILogic _guiLogic;
@@ -45,7 +45,7 @@ namespace DeferredEngine.Demo
 
         public void Load(ContentManager content, GraphicsDevice graphicsDevice)
         {
-            _renderer = new RenderingPipeline();
+            _renderer = new EditableRenderingPipeline();
             _sceneLogic = new MainSceneLogic();
             _guiLogic = new GUILogic();
             _editorLogic = new EditorLogic();
