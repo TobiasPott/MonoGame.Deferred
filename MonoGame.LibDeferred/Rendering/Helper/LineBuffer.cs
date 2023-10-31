@@ -20,8 +20,6 @@ namespace DeferredEngine.Rendering.Helper
         { }
         public LineBuffer(Vector3 start, Vector3 end, short time, Color starColor, Color endColor, LineHelperManager lineHelperManager)
         {
-            if (!RenderingSettings.d_EnableLineHelper) return;
-
             _start = start;
             _end = end;
 

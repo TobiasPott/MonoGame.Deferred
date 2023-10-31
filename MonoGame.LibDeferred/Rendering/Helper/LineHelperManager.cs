@@ -1,12 +1,16 @@
 ﻿using DeferredEngine.Entities;
-using DeferredEngine.Recources;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Ext;
 
 namespace DeferredEngine.Rendering.Helper.HelperGeometry
 {
     public class LineHelperManager
     {
+        public static NotifiedProperty<bool> ModuleEnabled = new NotifiedProperty<bool>(true);
+
+
+
         private readonly List<LineBuffer> Lines = new List<LineBuffer>();
 
         private int _tempVertsPoolLength = 100;
@@ -49,7 +53,7 @@ namespace DeferredEngine.Rendering.Helper.HelperGeometry
             _tempVertsPoolIndex = 0;
         }
 
-        public void AddLineStartEnd(Vector3 start, Vector3 end, short timer) 
+        public void AddLineStartEnd(Vector3 start, Vector3 end, short timer)
             => Lines.Add(new LineBuffer(start, end, timer, this));
 
         public void AddLineStartDir(Vector3 start, Vector3 dir, short timer)
@@ -84,7 +88,7 @@ namespace DeferredEngine.Rendering.Helper.HelperGeometry
 
         public void Draw(GraphicsDevice graphicsDevice, Matrix viewProjection, EffectParameter Param_WorldViewProjection, EffectPass Pass_VertexColor)
         {
-            if (!RenderingSettings.d_EnableLineHelper) return;
+            if (!LineHelperManager.ModuleEnabled) return;
 
             Param_WorldViewProjection.SetValue(viewProjection);
 
@@ -98,7 +102,7 @@ namespace DeferredEngine.Rendering.Helper.HelperGeometry
                 {
 
                     //Gather
-                    graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineList, line.Verts, 0, 2, LineBuffer.Indices, 0, 1);
+                    graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineList, line.Verts, 0, line.Verts.Length, LineBuffer.Indices, 0, LineBuffer.Indices.Length / 2);
 
                     line.Timer--;
                     if (line.Timer <= 0)
