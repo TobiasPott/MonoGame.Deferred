@@ -8,9 +8,8 @@ namespace DeferredEngine.Rendering.PostProcessing
     //Just a template
     public class TemporalAAFx : PostFx
     {
-        public static bool g_Enabled { get; set; } = true;
-        public static bool g_UseTonemapping { get; set; } = true;
-
+        public readonly static NotifiedProperty<bool> ModuleEnabled = new NotifiedProperty<bool>(true);
+        public readonly static NotifiedProperty<bool> ModuleTonemapEnabled = new NotifiedProperty<bool>(true);
 
 
 
@@ -28,14 +27,14 @@ namespace DeferredEngine.Rendering.PostProcessing
         public SSFxTargets SSFxTargets { set { _ssfxTargets = value; } }
         public bool UseTonemap
         {
-            get { return _useTonemapping && TemporalAAFx.g_UseTonemapping; }
+            get { return _useTonemapping && TemporalAAFx.ModuleTonemapEnabled; }
             set { _useTonemapping = value; _fxSetup.Param_UseTonemap.SetValue(value); }
         }
         public HaltonSequence HaltonSequence => _haltonSequence;
 
 
 
-        protected override bool GetEnabled() => _enabled && TemporalAAFx.g_Enabled;
+        protected override bool GetEnabled() => _enabled && TemporalAAFx.ModuleEnabled;
         public void SwapOffFrame()
         { IsOffFrame = !IsOffFrame; }
 

@@ -251,16 +251,18 @@ namespace DeferredEngine.Demo
                 Toggle = ColorGradingFx.ModuleEnabled
             });
 
-            postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Temporal AA")
+            postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "TAA ")
             {
-                ToggleProperty = typeof(TemporalAAFx).GetProperty(nameof(TemporalAAFx.g_Enabled)),
-                Toggle = TemporalAAFx.g_Enabled
+                ToggleProperty = TemporalAAFx.ModuleEnabled.GetValuePropertyInfo(),
+                ToggleObject = TemporalAAFx.ModuleEnabled,
+                Toggle = TemporalAAFx.ModuleEnabled
             });
 
-            postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Tonemap TAA")
+            postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "TAA Tonemap")
             {
-                ToggleProperty = typeof(TemporalAAFx).GetProperty(nameof(TemporalAAFx.g_UseTonemapping)),
-                Toggle = TemporalAAFx.g_UseTonemapping
+                ToggleProperty = TemporalAAFx.ModuleTonemapEnabled.GetValuePropertyInfo(),
+                ToggleObject = TemporalAAFx.ModuleTonemapEnabled,
+                Toggle = TemporalAAFx.ModuleTonemapEnabled
             });
 
 
@@ -388,21 +390,6 @@ namespace DeferredEngine.Demo
                 SliderValue = BloomFx.ModuleThreshold,
             });
 
-
-            optionList.AddElement(new GUITextBlock(Vector2.Zero, new Vector2(200, 10), "Environment",
-                defaultStyle.TextFontStyle, Color.DarkSlateGray, Color.White, GUIStyle.TextAlignment.Center,
-                Vector2.Zero));
-
-            GuiListToggle environmentGroup = new GuiListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
-            optionList.AddElement(environmentGroup);
-
-            environmentGroup.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Environment")
-            {
-                ToggleProperty = EnvironmentPipelineModule.ModuleEnabled.GetValuePropertyInfo(),
-                ToggleObject = EnvironmentPipelineModule.ModuleEnabled,
-                Toggle = EnvironmentPipelineModule.ModuleEnabled
-            });
-
             // ToDo: @tpott: Reintroduce UI for bloom values
             //for (int i = 0; i < 5; i++)
             //{
@@ -418,6 +405,21 @@ namespace DeferredEngine.Demo
             //        SliderValue = RenderingSettings.Bloom.Strength1
             //    });
             //}
+
+
+            optionList.AddElement(new GUITextBlock(Vector2.Zero, new Vector2(200, 10), "Environment",
+                defaultStyle.TextFontStyle, Color.DarkSlateGray, Color.White, GUIStyle.TextAlignment.Center,
+                Vector2.Zero));
+
+            GuiListToggle environmentGroup = new GuiListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
+            optionList.AddElement(environmentGroup);
+
+            environmentGroup.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Environment")
+            {
+                ToggleProperty = EnvironmentPipelineModule.ModuleEnabled.GetValuePropertyInfo(),
+                ToggleObject = EnvironmentPipelineModule.ModuleEnabled,
+                Toggle = EnvironmentPipelineModule.ModuleEnabled
+            });
 
             _rightSideList.Alignment = GUIStyle.GUIAlignment.TopRight;
         }
