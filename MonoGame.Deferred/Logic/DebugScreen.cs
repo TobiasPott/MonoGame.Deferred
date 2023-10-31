@@ -1,6 +1,5 @@
 ﻿using DeferredEngine.Pipeline;
 using DeferredEngine.Recources;
-using DeferredEngine.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
