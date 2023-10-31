@@ -353,20 +353,23 @@ namespace DeferredEngine.Demo
 
             ssaoList.AddElement(new GuiSliderIntText(defaultStyle, 1, 32, 1, "SSAO Samples: ")
             {
-                SliderProperty = typeof(SSAmbientOcclustionFx).GetProperty(nameof(SSAmbientOcclustionFx.g_Samples)),
-                SliderValue = SSAmbientOcclustionFx.g_Samples
+                SliderProperty = SSAmbientOcclustionFx.ModuleSamples.GetValuePropertyInfo(),
+                SliderObject = SSAmbientOcclustionFx.ModuleSamples,
+                SliderValue = SSAmbientOcclustionFx.ModuleSamples
             });
 
             ssaoList.AddElement(new GuiSliderFloatText(defaultStyle, 1, 100, 2, "Sample Radius: ")
             {
-                SliderProperty = typeof(SSAmbientOcclustionFx).GetProperty(nameof(SSAmbientOcclustionFx.g_Radius)),
-                SliderValue = SSAmbientOcclustionFx.g_Radius
+                SliderProperty = SSAmbientOcclustionFx.ModuleRadius.GetValuePropertyInfo(),
+                SliderObject = SSAmbientOcclustionFx.ModuleRadius,
+                SliderValue = SSAmbientOcclustionFx.ModuleRadius
             });
 
             ssaoList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 4, 1, "SSAO Strength: ")
             {
-                SliderProperty = typeof(SSAmbientOcclustionFx).GetProperty(nameof(SSAmbientOcclustionFx.g_Strength)),
-                SliderValue = SSAmbientOcclustionFx.g_Strength
+                SliderProperty = SSAmbientOcclustionFx.ModuleStrength.GetValuePropertyInfo(),
+                SliderObject = SSAmbientOcclustionFx.ModuleStrength,
+                SliderValue = SSAmbientOcclustionFx.ModuleStrength
             });
 
             /////////////////////////////////////////////////////////////////

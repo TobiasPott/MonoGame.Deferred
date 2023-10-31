@@ -13,12 +13,11 @@ namespace DeferredEngine.Rendering.PostProcessing
         public readonly static NotifiedProperty<bool> ModuleEnabled = new NotifiedProperty<bool>(true);
         public readonly static NotifiedProperty<bool> ModuleEnableBlur = new NotifiedProperty<bool>(true);
 
-
-        public static float g_FalloffMin { get; set; } = 0.001f;
-        public static float g_FalloffMax { get; set; } = 0.03f;
-        public static int g_Samples { get; set; } = 8;
-        public static float g_Radius { get; set; } = 30.0f;
-        public static float g_Strength { get; set; } = 0.5f;
+        public readonly static NotifiedProperty<float> ModuleFalloffMin = new NotifiedProperty<float>(0.001f);
+        public readonly static NotifiedProperty<float> ModuleFalloffMax = new NotifiedProperty<float>(0.03f);
+        public readonly static NotifiedProperty<int> ModuleSamples = new NotifiedProperty<int>(8);
+        public readonly static NotifiedProperty<float> ModuleRadius = new NotifiedProperty<float>(30.0f);
+        public readonly static NotifiedProperty<float> ModuleStrength = new NotifiedProperty<float>(0.5f);
 
 
         protected override bool GetEnabled() => _enabled && SSAmbientOcclustionFx.ModuleEnabled;
@@ -60,11 +59,11 @@ namespace DeferredEngine.Rendering.PostProcessing
             _fxSetup.Param_InverseResolution.SetValue(_inverseResolution);
             _fxSetup.Param_FrustumCorners.SetValue(this.Frustum.ViewSpaceFrustum);
 
-            _fxSetup.Param_FalloffMin.SetValue(SSAmbientOcclustionFx.g_FalloffMin);
-            _fxSetup.Param_FalloffMax.SetValue(SSAmbientOcclustionFx.g_FalloffMax);
-            _fxSetup.Param_Samples.SetValue(SSAmbientOcclustionFx.g_Samples);
-            _fxSetup.Param_SampleRadius.SetValue(SSAmbientOcclustionFx.g_Radius);
-            _fxSetup.Param_Strength.SetValue(SSAmbientOcclustionFx.g_Strength);
+            _fxSetup.Param_FalloffMin.SetValue(SSAmbientOcclustionFx.ModuleFalloffMin);
+            _fxSetup.Param_FalloffMax.SetValue(SSAmbientOcclustionFx.ModuleFalloffMax);
+            _fxSetup.Param_Samples.SetValue(SSAmbientOcclustionFx.ModuleSamples);
+            _fxSetup.Param_SampleRadius.SetValue(SSAmbientOcclustionFx.ModuleRadius);
+            _fxSetup.Param_Strength.SetValue(SSAmbientOcclustionFx.ModuleStrength);
 
             _fxSetup.Effect.CurrentTechnique = _fxSetup.Technique_SSAO;
             _fxSetup.Effect.CurrentTechnique.Passes[0].Apply();
