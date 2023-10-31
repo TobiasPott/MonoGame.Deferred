@@ -145,6 +145,7 @@ namespace DeferredEngine.Pipeline
                 _moduleStack.Lighting.RequestRedraw();
                 _moduleStack.Environment.SetViewPosition(camera.Position);
                 _moduleStack.Environment.SetEnvironmentProbe(scene.EnvProbe);
+                _moduleStack.Deferred.UseSSAOMap = _fxStack.SSAmbientOcclusion?.Enabled ?? false;
                 _moduleStack.Forward.SetupLighting(camera, scene.PointLights, _frustum.Frustum);
                 _moduleStack.DistanceField.SetViewPosition(camera.Position);
 

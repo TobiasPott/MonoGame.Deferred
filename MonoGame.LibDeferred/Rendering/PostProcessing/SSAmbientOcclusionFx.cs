@@ -10,19 +10,21 @@ namespace DeferredEngine.Rendering.PostProcessing
     public partial class SSAmbientOcclustionFx : PostFx
     {
         //Screen Space Ambient Occlusion
-        public static bool g_ssao_blur { get; set; } = true;
-
-        public static bool g_ssao_draw { get; set; } = true;
-
-        public static float g_ssao_falloffmin { get; set; } = 0.001f;
-        public static float g_ssao_falloffmax { get; set; } = 0.03f;
-        public static int g_ssao_samples { get; set; } = 8;
-        public static float g_ssao_radius { get; set; } = 30.0f;
-        public static float g_ssao_strength { get; set; } = 0.5f;
+        public readonly static NotifiedProperty<bool> ModuleEnabled = new NotifiedProperty<bool>(true);
+        public readonly static NotifiedProperty<bool> ModuleEnableBlur = new NotifiedProperty<bool>(true);
 
 
-        protected override bool GetEnabled() => _enabled && SSAmbientOcclustionFx.g_ssao_draw;
+        public static float g_FalloffMin { get; set; } = 0.001f;
+        public static float g_FalloffMax { get; set; } = 0.03f;
+        public static int g_Samples { get; set; } = 8;
+        public static float g_Radius { get; set; } = 30.0f;
+        public static float g_Strength { get; set; } = 0.5f;
 
+
+        protected override bool GetEnabled() => _enabled && SSAmbientOcclustionFx.ModuleEnabled;
+
+        protected bool _enableBlur = true;
+        public bool EnableBlur { get => _enableBlur && ModuleEnableBlur; set => _enableBlur = value; }
 
 
         private readonly SSAmbientOcclusionFxSetup _fxSetup = new SSAmbientOcclusionFxSetup();
@@ -58,11 +60,11 @@ namespace DeferredEngine.Rendering.PostProcessing
             _fxSetup.Param_InverseResolution.SetValue(_inverseResolution);
             _fxSetup.Param_FrustumCorners.SetValue(this.Frustum.ViewSpaceFrustum);
 
-            _fxSetup.Param_FalloffMin.SetValue(SSAmbientOcclustionFx.g_ssao_falloffmin);
-            _fxSetup.Param_FalloffMax.SetValue(SSAmbientOcclustionFx.g_ssao_falloffmax);
-            _fxSetup.Param_Samples.SetValue(SSAmbientOcclustionFx.g_ssao_samples);
-            _fxSetup.Param_SampleRadius.SetValue(SSAmbientOcclustionFx.g_ssao_radius);
-            _fxSetup.Param_Strength.SetValue(SSAmbientOcclustionFx.g_ssao_strength);
+            _fxSetup.Param_FalloffMin.SetValue(SSAmbientOcclustionFx.g_FalloffMin);
+            _fxSetup.Param_FalloffMax.SetValue(SSAmbientOcclustionFx.g_FalloffMax);
+            _fxSetup.Param_Samples.SetValue(SSAmbientOcclustionFx.g_Samples);
+            _fxSetup.Param_SampleRadius.SetValue(SSAmbientOcclustionFx.g_Radius);
+            _fxSetup.Param_Strength.SetValue(SSAmbientOcclustionFx.g_Strength);
 
             _fxSetup.Effect.CurrentTechnique = _fxSetup.Technique_SSAO;
             _fxSetup.Effect.CurrentTechnique.Passes[0].Apply();
@@ -90,7 +92,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         /// </summary>
         public void DrawSSAOBilateralBlur()
         {
-            if (SSAmbientOcclustionFx.g_ssao_blur && this.Enabled)
+            if (this.EnableBlur)
             {
                 _graphicsDevice.SetRenderTarget(_ssfxTargets.AO_Blur_H);
                 _graphicsDevice.SetState(RasterizerStateOption.CullNone);

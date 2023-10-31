@@ -56,7 +56,6 @@ namespace DeferredEngine.Pipeline
             _graphicsDevice.SetRenderTarget(destRT);
             _graphicsDevice.SetStates(DepthStencilStateOption.KeepState, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
             
-            _fxSetup.Param_UseSSAO.SetValue(SSAmbientOcclustionFx.g_ssao_draw);
             _fxSetup.Effect_Compose.CurrentTechnique = _colorSpace == DeferredColorSpace.Linear ? _fxSetup.Technique_Linear : _fxSetup.Technique_NonLinear;
             //combine!
             _fxSetup.Effect_Compose.CurrentTechnique.Passes[0].Apply();

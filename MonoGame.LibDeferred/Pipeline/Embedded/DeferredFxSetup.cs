@@ -30,9 +30,6 @@ namespace DeferredEngine.Pipeline
         public EffectParameter Param_VolumeLightMap { get; protected set; }
         public EffectParameter Param_SSAOMap { get; protected set; }
         public EffectParameter Param_UseSSAO { get; protected set; }
-        //public EffectParameter Param_HologramMap { get; protected set; } // Unused
-        //public EffectParameter Param_LinearMap { get; protected set; } // Unused
-        //public EffectParameter Param_SSRMap { get; protected set; } // Unused
 
 
         public DeferredFxSetup(string shaderPath = "Shaders/Deferred/DeferredCompose", string shaderPathClear = "Shaders/Deferred/DeferredClear") : base()

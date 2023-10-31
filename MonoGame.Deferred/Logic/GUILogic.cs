@@ -337,32 +337,34 @@ namespace DeferredEngine.Demo
 
             ssaoList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable SSAO")
             {
-                ToggleProperty = typeof(SSAmbientOcclustionFx).GetProperty(nameof(SSAmbientOcclustionFx.g_ssao_draw)),
-                Toggle = SSAmbientOcclustionFx.g_ssao_draw
+                ToggleProperty = SSAmbientOcclustionFx.ModuleEnabled.GetValuePropertyInfo(),
+                ToggleObject = SSAmbientOcclustionFx.ModuleEnabled,
+                Toggle = SSAmbientOcclustionFx.ModuleEnabled
             });
 
             ssaoList.AddElement(new GUITextBlockToggle(defaultStyle, "SSAO Blur: ")
             {
-                ToggleField = typeof(SSAmbientOcclustionFx).GetField(nameof(SSAmbientOcclustionFx.g_ssao_blur)),
-                Toggle = SSAmbientOcclustionFx.g_ssao_blur
+                ToggleProperty = SSAmbientOcclustionFx.ModuleEnableBlur.GetValuePropertyInfo(),
+                ToggleObject = SSAmbientOcclustionFx.ModuleEnableBlur,
+                Toggle = SSAmbientOcclustionFx.ModuleEnableBlur
             });
 
             ssaoList.AddElement(new GuiSliderIntText(defaultStyle, 1, 32, 1, "SSAO Samples: ")
             {
-                SliderProperty = typeof(SSAmbientOcclustionFx).GetProperty(nameof(SSAmbientOcclustionFx.g_ssao_samples)),
-                SliderValue = SSAmbientOcclustionFx.g_ssao_samples
+                SliderProperty = typeof(SSAmbientOcclustionFx).GetProperty(nameof(SSAmbientOcclustionFx.g_Samples)),
+                SliderValue = SSAmbientOcclustionFx.g_Samples
             });
 
             ssaoList.AddElement(new GuiSliderFloatText(defaultStyle, 1, 100, 2, "Sample Radius: ")
             {
-                SliderProperty = typeof(SSAmbientOcclustionFx).GetProperty(nameof(SSAmbientOcclustionFx.g_ssao_radius)),
-                SliderValue = SSAmbientOcclustionFx.g_ssao_radius
+                SliderProperty = typeof(SSAmbientOcclustionFx).GetProperty(nameof(SSAmbientOcclustionFx.g_Radius)),
+                SliderValue = SSAmbientOcclustionFx.g_Radius
             });
 
             ssaoList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 4, 1, "SSAO Strength: ")
             {
-                SliderProperty = typeof(SSAmbientOcclustionFx).GetProperty(nameof(SSAmbientOcclustionFx.g_ssao_strength)),
-                SliderValue = SSAmbientOcclustionFx.g_ssao_strength
+                SliderProperty = typeof(SSAmbientOcclustionFx).GetProperty(nameof(SSAmbientOcclustionFx.g_Strength)),
+                SliderValue = SSAmbientOcclustionFx.g_Strength
             });
 
             /////////////////////////////////////////////////////////////////
