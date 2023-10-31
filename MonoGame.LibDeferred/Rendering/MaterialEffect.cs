@@ -105,7 +105,7 @@ namespace DeferredEngine.Recources
         public enum MaterialTypes
         {
             Basic = 0,
-            ForwardShaded = 1, // ToDo: Values related to shader code?!
+            ForwardShaded = 1,
             Emissive = 2,
         }
 
