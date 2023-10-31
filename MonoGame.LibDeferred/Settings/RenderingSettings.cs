@@ -26,7 +26,7 @@ namespace DeferredEngine.Recources
         public static float m_DefaultRoughness = 0.5f;
 
         //Settings
-        public static PipelineOutputPasses g_CurrentPass = PipelineOutputPasses.Deferred;
+        public static DeferredRenderingPasses g_CurrentPass = DeferredRenderingPasses.Deferred;
         public static bool g_CpuCulling = true;
 
 

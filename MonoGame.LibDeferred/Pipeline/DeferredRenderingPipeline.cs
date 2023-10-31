@@ -10,6 +10,22 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Pipeline
 {
+    public enum DeferredRenderingPasses
+    {
+        Deferred = 0,
+        Albedo,
+        Normal,
+        Depth,
+        Diffuse,
+        Specular,
+        Volumetric,
+        SSAO,
+        SSBlur,
+        SSR,
+        // [Obsolete("HDR buffer is no longer directly available.")]
+        // HDR,
+        Final,
+    }
 
     public abstract class DeferredRenderingPipeline : RenderingPipelineBase
     {
@@ -216,35 +232,35 @@ namespace DeferredEngine.Pipeline
         /// <summary>
         /// Draw the given pass to the destination target
         /// </summary>
-        protected void BlitToScreen(PipelineOutputPasses pass, RenderTarget2D destRT)
+        protected void BlitToScreen(DeferredRenderingPasses pass, RenderTarget2D destRT)
         {
             switch (pass)
             {
-                case PipelineOutputPasses.Albedo:
+                case DeferredRenderingPasses.Albedo:
                     BlitTo(_gBufferTarget.Albedo, destRT);
                     break;
-                case PipelineOutputPasses.Normal:
+                case DeferredRenderingPasses.Normal:
                     BlitTo(_gBufferTarget.Normal, destRT);
                     break;
-                case PipelineOutputPasses.Depth:
+                case DeferredRenderingPasses.Depth:
                     BlitTo(_gBufferTarget.Depth, destRT);
                     break;
-                case PipelineOutputPasses.Diffuse:
+                case DeferredRenderingPasses.Diffuse:
                     BlitTo(_lightingBufferTarget.Diffuse, destRT);
                     break;
-                case PipelineOutputPasses.Specular:
+                case DeferredRenderingPasses.Specular:
                     BlitTo(_lightingBufferTarget.Specular, destRT);
                     break;
-                case PipelineOutputPasses.Volumetric:
+                case DeferredRenderingPasses.Volumetric:
                     BlitTo(_lightingBufferTarget.Volume, destRT);
                     break;
-                case PipelineOutputPasses.SSAO:
+                case DeferredRenderingPasses.SSAO:
                     BlitTo(_ssfxTargets.AO_Main, destRT);
                     break;
-                case PipelineOutputPasses.SSBlur:
+                case DeferredRenderingPasses.SSBlur:
                     BlitTo(_ssfxTargets.AO_Blur_Final, destRT);
                     break;
-                case PipelineOutputPasses.SSR:
+                case DeferredRenderingPasses.SSR:
                     BlitTo(_ssfxTargets.SSR_Main, destRT);
                     break;
                 default:
