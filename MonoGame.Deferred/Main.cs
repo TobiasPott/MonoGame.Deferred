@@ -129,6 +129,7 @@ namespace DeferredEngine.Demo
 
                 //RenderingSettings.Screen.SetResolution(Window.ClientBounds.Width, Window.ClientBounds.Height);
                 RenderingSettings.Screen.g_TargetRect = new Rectangle(0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height);
+                RenderingSettings.Screen.g_UIResolution = new Vector2(Window.ClientBounds.Width, Window.ClientBounds.Height);
 
                 _screenManager.UpdateResolution();
 

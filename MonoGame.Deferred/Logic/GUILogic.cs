@@ -145,12 +145,6 @@ namespace DeferredEngine.Demo
                 ToggleObject = DynamicMeshBatcher.CPUCullingEnabled,
                 Toggle = DynamicMeshBatcher.CPUCullingEnabled
             });
-            _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Show Controls")
-            {
-                ToggleProperty = typeof(GUITextBlock).GetProperty("IsVisible"),
-                ToggleObject = helperText,
-                Toggle = helperText.IsVisible
-            });
             _rightSideList.AddElement(new GuiSliderFloatText(defaultStyle, 16.0f, 1024.0f, 2, "Far Clip: ")
             {
                 SliderProperty = RenderingSettings.Screen.g_FarClip.GetValuePropertyInfo(),
@@ -158,17 +152,24 @@ namespace DeferredEngine.Demo
                 SliderValue = RenderingSettings.Screen.g_FarClip,
             });
 
-            _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Default Material")
-            {
-                ToggleField = typeof(RenderingSettings).GetField("d_DefaultMaterial"),
-                Toggle = RenderingSettings.d_DefaultMaterial
-            });
-
             _rightSideList.AddElement(new GuiSliderFloatText(defaultStyle, 0.1f, 3/*(float) (Math.PI - 0.1)*/, 2, "Field Of View: ")
             {
                 SliderObject = sceneLogicCamera,
                 SliderProperty = typeof(Camera).GetProperty("FieldOfView"),
                 SliderValue = sceneLogicCamera.FieldOfView
+            });
+
+
+            _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Show Controls")
+            {
+                ToggleProperty = typeof(GUITextBlock).GetProperty("IsVisible"),
+                ToggleObject = helperText,
+                Toggle = helperText.IsVisible
+            });
+            _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Default Material")
+            {
+                ToggleField = typeof(RenderingSettings).GetField("d_DefaultMaterial"),
+                Toggle = RenderingSettings.d_DefaultMaterial
             });
 
             //_rightSideList.AddElement(new GuiDropList(defaultStyle, "Show: ")
@@ -632,10 +633,10 @@ namespace DeferredEngine.Demo
             GuiCanvas.Update(gameTime, GUIControl.GetMousePosition(), Vector2.Zero);
         }
 
-        public void UpdateResolution()
+        public void SetResolution(Vector2 resolution)
         {
-            GUIControl.UpdateResolution(RenderingSettings.Screen.g_Resolution);
-            GuiCanvas.Resize(RenderingSettings.Screen.g_Resolution);
+            GUIControl.UpdateResolution(resolution);
+            GuiCanvas.Resize(resolution);
         }
     }
 }

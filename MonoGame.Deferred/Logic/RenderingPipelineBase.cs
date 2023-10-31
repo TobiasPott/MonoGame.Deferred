@@ -11,7 +11,6 @@ namespace DeferredEngine.Rendering
 {
     public abstract class RenderingPipelineBase : IDisposable
     {
-        public event Action<DrawEvents> EventTriggered;
         public virtual bool Enabled { get; set; } = true;
 
         //Graphics & Helpers

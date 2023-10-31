@@ -14,6 +14,7 @@ namespace DeferredEngine.Recources
             public static int g_Height => (int)g_Resolution.Y;
 
             public static Vector2 g_Resolution = new Vector2(1280, 720);
+            public static Vector2 g_UIResolution = new Vector2(1280, 720);
             public static Vector2 g_InverseResolution => Vector2.One / g_Resolution;
             public static Rectangle g_Rect => new Rectangle(0, 0, (int)g_Resolution.X, (int)g_Resolution.Y);
             public static Rectangle g_TargetRect = new Rectangle(0, 0, (int)g_Resolution.X, (int)g_Resolution.Y);

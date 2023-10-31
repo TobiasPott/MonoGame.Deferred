@@ -82,9 +82,7 @@ namespace DeferredEngine.Demo
         public void Draw(GameTime gameTime)
         {
             //Our renderer gives us information on what id is currently hovered over so we can update / manipulate objects in the logic functions
-            _renderer.DrawEditorPrePass(_sceneLogic.MeshBatcher, _sceneLogic.Scene, _editorLogic.GetEditorData());
             _renderer.Draw(_sceneLogic.MeshBatcher, _sceneLogic.Scene);
-            _renderer.DrawEditor(_sceneLogic.MeshBatcher, _sceneLogic.Scene, _editorLogic.GetEditorData());
 
             if (RenderingSettings.e_IsEditorEnabled)
                 _guiRenderer.Draw(_guiLogic.GuiCanvas);
@@ -95,8 +93,8 @@ namespace DeferredEngine.Demo
         {
             if (_renderer != null)
             {
-                _guiLogic.UpdateResolution();
-                _renderer.UpdateResolution();
+                _guiLogic.SetResolution(RenderingSettings.Screen.g_UIResolution);
+                _renderer.SetResolution(RenderingSettings.Screen.g_Resolution);
             }
         }
 

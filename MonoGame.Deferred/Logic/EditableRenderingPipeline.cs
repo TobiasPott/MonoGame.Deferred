@@ -1,69 +1,24 @@
 ﻿using DeferredEngine.Demo;
 using DeferredEngine.Entities;
-using DeferredEngine.Pipeline;
-using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Pipeline.Utilities;
 using DeferredEngine.Recources;
 using DeferredEngine.Rendering.Helper.HelperGeometry;
 using DeferredEngine.Rendering.PostProcessing;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
-using System.Collections.Generic;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //    MAIN RENDER FUNCTIONS, TheKosmonaut 2016
 
 namespace DeferredEngine.Rendering
 {
-    public enum DrawEvents
-    {
-        // BeforeAll
-        ShadowMap,
-        // PreGBuffer
-        GBuffer,
-        // PostGBuffer
-        Decal,
-        FxReflection,
-        FxAmbientOcclusion,
-        // PreLighting
-        Lighting,
-        // PostLighting
-        Environment,
-        // PreDefeerred
-        Deferred,
-        // PostDeferred
-        // PreForward
-        Forward,
-        // PostForward
-        // ScreenSpace
-        FxTAA,
-        Bloom,
-        // AfterAll
-    };
 
-
-    public class EditableRenderingPipeline : RenderingPipelineBase
+    public class EditableRenderingPipeline : DefaultRenderingPipeline
     {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  VARIABLES
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        //Projection Matrices and derivates used in shaders
-        private PipelineMatrices _matrices;
-        private PipelineModuleStack _moduleStack;
-        private PipelineFxStack _fxStack;
-        private PipelineProfiler _profiler;
-
-        //Used for the view space directions in our shaders. Far edges of our view frustum
-        private PipelineFrustum _frustum = new PipelineFrustum();
-
-        //Render targets
-        private GBufferTarget _gBufferTarget;
-        private LightingBufferTarget _lightingBufferTarget;
-        private PipelineTargets _auxTargets;
-        private SSFxTargets _ssfxTargets;
 
         // Final output
         private RenderTarget2D _currentOutput;
@@ -81,26 +36,6 @@ namespace DeferredEngine.Rendering
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  BASE FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// <summary>
-        /// Initialize variables
-        /// </summary>
-        /// <param name="content"></param>
-        public override void Load(ContentManager content)
-        {
-            _matrices = new PipelineMatrices();
-            _profiler = new PipelineProfiler();
-
-            _moduleStack = new PipelineModuleStack();
-            _moduleStack.Matrices = _matrices;
-            _moduleStack.Frustum = _frustum;
-            _moduleStack.Profiler = _profiler;
-
-            _fxStack = new PipelineFxStack(content);
-            _fxStack.Matrices = _matrices;
-            _fxStack.Frustum = _frustum;
-            _fxStack.Profiler = _profiler;
-
-        }
 
         /// <summary>
         /// Initialize all our rendermodules and helpers. Done after the Load() function
@@ -110,24 +45,8 @@ namespace DeferredEngine.Rendering
         {
             base.Initialize(graphicsDevice);
 
-            Vector2 resolution = RenderingSettings.Screen.g_Resolution;
-            _gBufferTarget = new GBufferTarget(graphicsDevice, resolution);
-            _lightingBufferTarget = new LightingBufferTarget(graphicsDevice, resolution);
-            _auxTargets = new PipelineTargets(graphicsDevice, resolution);
-            _ssfxTargets = new SSFxTargets(graphicsDevice, resolution);
-
-            _moduleStack.Initialize(graphicsDevice, _spriteBatch);
-            _moduleStack.GBufferTarget = _gBufferTarget;
-            _moduleStack.LightingBufferTarget = _lightingBufferTarget;
-            _moduleStack.SSFxTargets = _ssfxTargets;
-
-            _fxStack.Initialize(graphicsDevice, _spriteBatch);
-            _fxStack.GBufferTarget = _gBufferTarget;
-            _fxStack.SSFxTargets = _ssfxTargets;
-
             // update directional light module
-            SetResolution(resolution);
-
+            SetResolution(RenderingSettings.Screen.g_Resolution);
 
             RenderingSettings.Screen.g_FarClip.Changed += FarClip_OnChanged;
             RenderingSettings.Screen.g_FarClip.Set(512);
@@ -152,23 +71,15 @@ namespace DeferredEngine.Rendering
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  RENDERTARGET SETUP FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
-        private void SetResolution(Vector2 resolution)
+        public override void RequestRedraw(GameTime gameTime)
         {
-            // Update multi render target size
-            _gBufferTarget.Resize(resolution);
-            _lightingBufferTarget.Resize(resolution);
-            _auxTargets.Resize(resolution);
-            _ssfxTargets.Resize(resolution);
+            base.RequestRedraw(gameTime);
 
-            _moduleStack.Resolution = resolution;
-            _fxStack.Resolution = resolution;
+            _moduleStack.Lighting.UpdateGameTime(gameTime);
+            if (SSReflectionFx.g_Noise)
+                _fxStack.SSReflection.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
+            _moduleStack.Environment.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
         }
-
-        public void UpdateResolution()
-        {
-            this.SetResolution(RenderingSettings.Screen.g_Resolution);
-        }
-
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  RENDER FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -177,144 +88,19 @@ namespace DeferredEngine.Rendering
         //  MAIN DRAW FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        private bool _redrawRequested = false;
-        public void RequestRedraw(GameTime gameTime)
-        {
-            _redrawRequested = true;
-
-            _moduleStack.Lighting.UpdateGameTime(gameTime);
-            if (SSReflectionFx.g_Noise)
-                _fxStack.SSReflection.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
-            _moduleStack.Environment.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
-        }
-
-        /// <summary>
-        /// Update our function
-        /// </summary>
-        public override void Update(Camera camera, DynamicMeshBatcher meshBatcher, EntityScene scene, GizmoDrawContext gizmoContext)
-        {
-            if (!this.Enabled)
-                return;
-
-            //Reset the stat counter, so we can count stats/information for this frame only
-            ResetStats();
-
-            // Step: 04
-            //Update our view projection matrices if the camera moved
-            if (_redrawRequested)
-            {
-                UpdateViewProjection(camera);
-                camera.FarClip = RenderingSettings.Screen.g_FarClip;
-
-                //We need to update whether or not entities are in our boundingFrustum and then cull them or not!
-                meshBatcher.FrustumCulling(_frustum.Frustum, _redrawRequested);
-                // Compute the frustum corners for cheap view direction computation in shaders
-                _frustum.UpdateVertices(_matrices.View, camera.Position);
-
-                _moduleStack.Lighting.SetViewPosition(camera.Position);
-                _moduleStack.Lighting.RequestRedraw();
-                _moduleStack.Environment.SetViewPosition(camera.Position);
-                _moduleStack.Environment.SetEnvironmentProbe(scene.EnvProbe);
-                _moduleStack.Forward.SetupLighting(camera, scene.PointLights, _frustum.Frustum);
-                _moduleStack.DistanceField.SetViewPosition(camera.Position);
-
-                _fxStack.SSAmbientOcclusion.SetViewPosition(camera.Position);
-            }
-
-            //Performance Profiler
-            _profiler.SampleTimestamp(TimestampIndices.Update_ViewProjection);
-
-
-            // Step: 03
-            //Update SDFs
-            if (IsSDFUsed(scene.PointLights))
-            {
-                _moduleStack.DistanceField.UpdateSdfGenerator(scene.Entities);
-                _moduleStack.DistanceField.UpdateDistanceFieldTransformations(scene.Entities);
-            }
-            //Performance Profiler
-            _profiler.SampleTimestamp(TimestampIndices.Update_SDF);
-
-
-
-            // Step: 15
-            //Additional editor elements that overlay our screen
-            if (gizmoContext.SelectedObject != null)
-            {
-                if (gizmoContext.SelectedObject is Decal decal)
-                    _moduleStack.Decal.DrawOutlines(decal);
-                else if (RenderingSettings.e_DrawBoundingBox && gizmoContext.SelectedObject is ModelEntity entity)
-                    HelperGeometryManager.GetInstance().AddBoundingBox(entity);
-            }
-
-
-        }
-
-        /// <summary>
-        /// Main Draw function of the game
-        /// </summary>
         public override void Draw(DynamicMeshBatcher meshBatcher, EntityScene scene)
         {
             if (!this.Enabled)
                 return;
-
-            // Step: 01
-            // Deferred GBuffer
-            _moduleStack.GBuffer.Draw(meshBatcher);
-            // Deferred Decals
-            _moduleStack.Decal.Draw(scene, null, _auxTargets[PipelineTargets.SWAP], _gBufferTarget.Albedo);
-
-            // Step: 02
-            //Render SHADOW MAPS
-            _moduleStack.ShadowMap.Draw(meshBatcher, scene);
-            // Step: 03
-            //Light the scene
-            _moduleStack.Lighting.Draw(scene);
-
-            // ToDo: PRIO II: Is Environment module actually part of lighting? (unsure ahout the sky part though)
-            //              I mmight need to split it into Environment and Sky
-            // Step: 04
-            //Draw the environment cube map as a fullscreen effect on all meshes
-            //_moduleStack.Environment.DrawSky();
-            _moduleStack.Environment.Draw();
-            // Step: 05
-            //Compose the scene by combining our lighting data with the gbuffer data
-            // ToDo: PRIO III: @tpott: hacky way to disable ssao when disabled on global scale (GUI is insufficient here)
-            //      Add NotifiedProperty with wrapper property for UI
-            _moduleStack.Deferred.Draw(null, null, _auxTargets[PipelineTargets.SWAP_HALF]);
-            // Step: 06
-            //Forward
-            _moduleStack.Forward.Draw(meshBatcher, null, null, _auxTargets[PipelineTargets.SWAP_HALF]);
-            // Step: 07
-            // Post processing passes
-            //SSR
-            _fxStack.Draw(PipelineFxStage.SSReflection, _auxTargets[PipelineTargets.SWAP_HALF], null, _ssfxTargets.SSR_Main);
-            //SSAO
-            _fxStack.Draw(PipelineFxStage.SSAmbientOcclusion, null, null, _ssfxTargets.AO_Main);
-            _fxStack.Draw(PipelineFxStage.TemporalAA, null, null, _auxTargets[PipelineTargets.SWAP_HALF]);
-            _fxStack.Draw(PipelineFxStage.Bloom, null, null, _auxTargets[PipelineTargets.SWAP_HALF]);
-            _fxStack.Draw(PipelineFxStage.PostProcessing, _auxTargets[PipelineTargets.SWAP_HALF], null, _auxTargets[PipelineTargets.SWAP]);
-            _fxStack.Draw(PipelineFxStage.ColorGrading, _auxTargets[PipelineTargets.SWAP], null, _auxTargets[PipelineTargets.FINALCOLOR]);
-
-            // Step: 08 Blit final color to screen (may blit to a 'viewport' section of the screen, or the full screen
-            this.BlitTo(_auxTargets[PipelineTargets.FINALCOLOR], null, RenderingSettings.Screen.g_TargetRect);
-
-            _profiler.Sample(TimestampIndices.Draw_Total);
-
-            // Step: 13
-            //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
-            BlitToScreen(RenderingSettings.g_CurrentPass, null);
-
-            //Performance Profiler
-            _profiler.SampleTimestamp(TimestampIndices.Draw_FinalRender);
-
-
+            this.DrawEditorPrePass(meshBatcher, scene, EditorLogic.Instance.GetEditorData());
+            base.Draw(meshBatcher, scene);
+            this.DrawEditor(meshBatcher, scene, EditorLogic.Instance.GetEditorData());
         }
-        public void DrawEditorPrePass(DynamicMeshBatcher meshBatcher, EntityScene scene, GizmoDrawContext gizmoContext)
+
+        private void DrawEditorPrePass(DynamicMeshBatcher meshBatcher, EntityScene scene, GizmoDrawContext gizmoContext)
         {
             if (!this.Enabled)
                 return;
-
             // Step: -1
             //Draw the elements that we are hovering over with outlines
             if (RenderingSettings.e_EnableSelection)
@@ -324,7 +110,7 @@ namespace DeferredEngine.Rendering
         /// <summary>
         /// Main Draw function of the game
         /// </summary>
-        public void DrawEditor(DynamicMeshBatcher meshBatcher, EntityScene scene, GizmoDrawContext gizmoContext)
+        private void DrawEditor(DynamicMeshBatcher meshBatcher, EntityScene scene, GizmoDrawContext gizmoContext)
         {
             this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.SDFDistance);
             this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.SDFVolume);
@@ -386,107 +172,9 @@ namespace DeferredEngine.Rendering
         }
 
 
-        private bool IsSDFUsed(List<PointLight> pointLights)
-        {
-            if (!RenderingSettings.SDF.DrawDistance)
-                return false;
-
-            foreach (PointLight light in pointLights)
-                if (light.HasChanged && light.CastSDFShadows)
-                    return true;
-            return false;
-        }
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////
-        //  DEFERRED RENDERING FUNCTIONS, IN ORDER OF USAGE
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        /// <summary>
-        /// Reset our stat counting for this frame
-        /// </summary>
-        private void ResetStats()
-        {
-            RenderingStats.ResetStats();
-            _profiler.Reset();
-        }
-
-        /// <summary>
-        /// Create the projection matrices
-        /// </summary>
-        private void UpdateViewProjection(Camera camera)
-        {
-            // ToDo: @tpott: This boolean flag controls general update and draw, though it should only determine if matrices and such should be updated
-            //      if a frame should be drawn is a conditioned layered on top of this and may be required regardless of camera change
-            //If the camera didn't do anything we don't need to update this stuff
-            if (camera.HasChanged)
-            {
-                //View matrix
-                _matrices.SetFromCamera(camera);
-
-                //Temporal AA - alternate frames for temporal anti-aliasing
-                if (_fxStack.TemporalAA.Enabled)
-                {
-                    _fxStack.TemporalAA.SwapOffFrame();
-                    _matrices.ApplyViewProjectionJitter(_fxStack.TemporalAA.JitterMode, _fxStack.TemporalAA.IsOffFrame, _fxStack.TemporalAA.HaltonSequence);
-                }
-        ;
-                _frustum.Frustum.Matrix = _matrices.StaticViewProjection;
-            }
-
-        }
-
-        /// <summary>
-        /// Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
-        /// </summary>
-        private void BlitToScreen(PipelineOutputPasses pass, RenderTarget2D destRT)
-        {
-            switch (pass)
-            {
-                case PipelineOutputPasses.Albedo:
-                    BlitTo(_gBufferTarget.Albedo, destRT);
-                    break;
-                case PipelineOutputPasses.Normal:
-                    BlitTo(_gBufferTarget.Normal, destRT);
-                    break;
-                case PipelineOutputPasses.Depth:
-                    BlitTo(_gBufferTarget.Depth, destRT);
-                    break;
-                case PipelineOutputPasses.Diffuse:
-                    BlitTo(_lightingBufferTarget.Diffuse, destRT);
-                    break;
-                case PipelineOutputPasses.Specular:
-                    BlitTo(_lightingBufferTarget.Specular, destRT);
-                    break;
-                case PipelineOutputPasses.Volumetric:
-                    BlitTo(_lightingBufferTarget.Volume, destRT);
-                    break;
-                case PipelineOutputPasses.SSAO:
-                    BlitTo(_ssfxTargets.AO_Main, destRT);
-                    break;
-                case PipelineOutputPasses.SSBlur:
-                    BlitTo(_ssfxTargets.AO_Blur_Final, destRT);
-                    break;
-                case PipelineOutputPasses.SSR:
-                    BlitTo(_ssfxTargets.SSR_Main, destRT);
-                    break;
-                default:
-                    break;
-            }
-
-        }
-
-
         public override void Dispose()
         {
             base.Dispose();
-
-            _moduleStack?.Dispose();
-            _fxStack?.Dispose();
-
-            _gBufferTarget?.Dispose();
-            _lightingBufferTarget?.Dispose();
-            _auxTargets?.Dispose();
-
             _currentOutput?.Dispose();
         }
 
