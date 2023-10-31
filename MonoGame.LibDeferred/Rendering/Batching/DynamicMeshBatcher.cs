@@ -21,7 +21,6 @@ namespace DeferredEngine.Rendering
         Opaque,
         ShadowOmnidirectional,
         ShadowLinear,
-        Hologram,
         Forward,
         IdRender,
         IdOutline,
@@ -208,10 +207,6 @@ namespace DeferredEngine.Rendering
                 //Check if alpha or opaque!
                 if (renderType == RenderType.Opaque && material.IsTransparent
                     || renderType == RenderType.Opaque && material.Type == MaterialEffect.MaterialTypes.ForwardShaded)
-                    continue;
-                if (renderType == RenderType.Hologram && material.Type != MaterialEffect.MaterialTypes.Hologram)
-                    continue;
-                if (renderType != RenderType.Hologram && material.Type == MaterialEffect.MaterialTypes.Hologram)
                     continue;
                 if (renderType == RenderType.Forward && material.Type != MaterialEffect.MaterialTypes.ForwardShaded)
                     continue;

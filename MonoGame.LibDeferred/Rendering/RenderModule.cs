@@ -26,9 +26,6 @@ namespace DeferredEngine.Rendering.RenderModules.Default
                 case RenderType.Forward:
                     renderModule.Apply(localToWorldMatrix, view, viewProjection);
                     break;
-                case RenderType.Hologram:
-                    ApplyHologramShaders(localToWorldMatrix, viewProjection);
-                    break;
                 case RenderType.IdRender:
                 case RenderType.IdOutline:
                     if (!ApplyIdAndOutlineShaders(graphicsDevice, renderType, localToWorldMatrix, viewProjection, transformId, outlineId, outlined))

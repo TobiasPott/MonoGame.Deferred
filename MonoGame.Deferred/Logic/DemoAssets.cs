@@ -39,8 +39,6 @@ namespace DeferredEngine.Recources
         private Texture2D sponza_fabric_spec;
         private Texture2D sponza_curtain_metallic;
 
-        public Model HelmetModel;
-
         public ModelDefinition StanfordDragon;
         public ModelDefinition StanfordDragonLowpoly;
 
@@ -84,7 +82,6 @@ namespace DeferredEngine.Recources
 
             DragonLowPolyMaterial = CreateMaterialEffect(Color.Red, 0.5f, 0, type: MaterialEffect.MaterialTypes.Basic, normalMap: content.Load<Texture2D>("Art/default/dragon_normal"));
 
-            HelmetModel = content.Load<Model>("Art/default/daft_helmets");
             //
 
             SponzaModel = new SdfModelDefinition(content, "Sponza/Sponza", graphicsDevice, false);
@@ -126,8 +123,6 @@ namespace DeferredEngine.Recources
 
             ProcessSponza();
 
-            ProcessHelmets();
-
             //Fonts
 
             DefaultFont = content.Load<SpriteFont>("Fonts/defaultFont");
@@ -143,69 +138,6 @@ namespace DeferredEngine.Recources
             MaterialEffect mat = new MaterialEffect(DeferredFxSetup.Instance.Effect_Clear);
             mat.Initialize(color, roughness, metallic, albedoMap, normalMap, roughnessMap, metallicMap, mask, displacementMap, type, emissiveStrength);
             return mat;
-        }
-
-        /// <summary>
-        /// The helmets have many submaterials and I want specific values for each one of them!
-        /// </summary>
-        private void ProcessHelmets()
-        {
-            for (int i = 0; i < HelmetModel.Meshes.Count; i++)
-            {
-                ModelMesh mesh = HelmetModel.Meshes[i];
-                for (int index = 0; index < mesh.MeshParts.Count; index++)
-                {
-                    ModelMeshPart meshPart = mesh.MeshParts[index];
-                    MaterialEffect matEffect = new MaterialEffect(meshPart.Effect) { DiffuseColor = Color.Gray.ToVector3() };
-
-                    if (mesh.Name == "Helmet1_Interior")
-                    {
-                        matEffect.DiffuseColor = Color.White.ToVector3();
-                    }
-
-                    if (i == 5)
-                    {
-                        matEffect.DiffuseColor = new Color(0, 0.49f, 0.95f).ToVector3();
-                        matEffect.Type = MaterialEffect.MaterialTypes.Hologram;
-                    }
-
-                    if (i == 0)
-                    {
-                        matEffect.DiffuseColor = Color.Black.ToVector3();
-                        matEffect.Roughness = 0.1f;
-                        matEffect.Type = MaterialEffect.MaterialTypes.ProjectHologram;
-                    }
-
-                    if (i == 1)
-                    {
-                        matEffect.DiffuseColor = new Color(0, 0.49f, 0.95f).ToVector3();
-                    }
-
-                    if (i == 2)
-                    {
-                        matEffect.DiffuseColor = Color.Silver.ToVector3();
-                        matEffect.Metallic = 1;
-                        matEffect.Roughness = 0.1f;
-                    }
-
-                    //Helmet color - should be gold!
-                    if (i == 4)
-                    {
-                        matEffect.DiffuseColor = new Color(255, 255, 155).ToVector3() * 0.5f;
-                        matEffect.Roughness = 0.3f;
-                        matEffect.Metallic = 0.8f;
-                    }
-
-                    if (i == 13)
-                    {
-                        matEffect.DiffuseColor = Color.Black.ToVector3();
-                        matEffect.Roughness = 0.05f;
-                        matEffect.Type = MaterialEffect.MaterialTypes.ProjectHologram;
-                    }
-
-                    meshPart.Effect = matEffect;
-                }
-            }
         }
 
         //Assign specific materials to submeshes

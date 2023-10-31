@@ -13,25 +13,6 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin Art/Default/daft_helmets.obj
-/importer:FbxImporter
-/processor:ModelProcessor
-/processorParam:ColorKeyColor=0,0,0,0
-/processorParam:ColorKeyEnabled=True
-/processorParam:DefaultEffect=BasicEffect
-/processorParam:GenerateMipmaps=True
-/processorParam:GenerateTangentFrames=True
-/processorParam:PremultiplyTextureAlpha=True
-/processorParam:PremultiplyVertexColors=True
-/processorParam:ResizeTexturesToPowerOfTwo=False
-/processorParam:RotationX=0
-/processorParam:RotationY=0
-/processorParam:RotationZ=0
-/processorParam:Scale=1
-/processorParam:SwapWindingOrder=False
-/processorParam:TextureFormat=DxtCompressed
-/build:Art/Default/daft_helmets.obj
-
 #begin Art/Default/dragon_lowpoly.fbx
 /importer:FbxImporter
 /processor:ModelProcessor
@@ -305,6 +286,7 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Sponza/textures/background.jpg
+
 #begin Sponza/textures/chain_texture_ddn.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
