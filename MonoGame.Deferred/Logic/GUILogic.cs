@@ -286,7 +286,8 @@ namespace DeferredEngine.Demo
 
             ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Stochastic distr.")
             {
-                ToggleProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_UseTaa)),
+                ToggleProperty = SSReflectionFx.g_UseTaa.GetValuePropertyInfo(),
+                ToggleObject = SSReflectionFx.g_UseTaa,
                 Toggle = SSReflectionFx.g_UseTaa
             });
 

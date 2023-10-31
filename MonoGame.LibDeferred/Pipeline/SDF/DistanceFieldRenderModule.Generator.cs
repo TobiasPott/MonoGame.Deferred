@@ -19,7 +19,7 @@ namespace DeferredEngine.Rendering.SDF
 
             private readonly List<SignedDistanceField> sdfDefinitions = new List<SignedDistanceField>();
 
-            public void GenerateTriangles(Model model, ref SdfTriangle[] triangles)
+            public static void GenerateTriangles(Model model, ref SdfTriangle[] triangles)
             {
                 GeometryDataExtractor.GetVerticesAndIndicesFromModel(model, out Vector3[] vertexPositions, out int[] indices);
                 if (triangles.Length != indices.Length / 3)

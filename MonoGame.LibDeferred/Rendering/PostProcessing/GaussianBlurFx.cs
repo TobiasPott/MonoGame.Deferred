@@ -10,7 +10,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         protected override bool GetEnabled() => _enabled;
 
 
-        private GaussianBlurFxSetup _fxSetup = new GaussianBlurFxSetup();
+        private readonly GaussianBlurFxSetup _fxSetup = new GaussianBlurFxSetup();
 
         private RenderTarget2D _rt2562;
         private RenderTarget2D _rt5122;

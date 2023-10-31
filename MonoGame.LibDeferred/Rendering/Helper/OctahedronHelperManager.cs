@@ -7,14 +7,14 @@ namespace DeferredEngine.Rendering.Helper
     {
         private OctahedronBuffer _octahedronMesh;
 
-        private List<Vector3> positions = new List<Vector3>();
-        private List<Vector4> colors = new List<Vector4>();
-        private Matrix scale = Matrix.CreateScale(.005f);
+        private readonly List<Vector3> _positions = new List<Vector3>();
+        private readonly List<Vector4> _colors = new List<Vector4>();
+        private readonly Matrix _scale = Matrix.CreateScale(0.005f);
 
         public void AddOctahedron(Vector3 position, Vector4 color)
         {
-            positions.Add(position);
-            colors.Add(color);
+            _positions.Add(position);
+            _colors.Add(color);
         }
 
         public void Draw(GraphicsDevice graphicsDevice, Matrix viewProjection, EffectParameter Param_WorldViewProjection, EffectParameter Param_GlobalColor, EffectPass Pass_GlobalColor)
@@ -24,13 +24,13 @@ namespace DeferredEngine.Rendering.Helper
             graphicsDevice.SetVertexBuffer(_octahedronMesh.VertexBuffer);
             graphicsDevice.Indices = _octahedronMesh.IndexBuffer;
 
-            for (int i = 0; i < positions.Count; i++)
+            for (int i = 0; i < _positions.Count; i++)
             {
 
-                Matrix wvp = scale * Matrix.CreateTranslation(positions[i]) * viewProjection;
+                Matrix wvp = _scale * Matrix.CreateTranslation(_positions[i]) * viewProjection;
 
                 Param_WorldViewProjection.SetValue(wvp);
-                Param_GlobalColor.SetValue(colors[i]);
+                Param_GlobalColor.SetValue(_colors[i]);
 
                 Pass_GlobalColor.Apply();
 
@@ -39,8 +39,8 @@ namespace DeferredEngine.Rendering.Helper
 
             //Clear
 
-            positions.Clear();
-            colors.Clear();
+            _positions.Clear();
+            _colors.Clear();
         }
 
     }

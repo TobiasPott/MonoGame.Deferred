@@ -18,7 +18,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
 
         public static NotifiedProperty<bool> g_Noise = new NotifiedProperty<bool>(true);
-        public static bool g_UseTaa { get; set; } = true;
+        public static NotifiedProperty<bool> g_UseTaa = new NotifiedProperty<bool>(true);
 
         //5 and 5 are good, 3 and 3 are cheap#
         public static NotifiedProperty<int> g_Samples = new NotifiedProperty<int>(3);

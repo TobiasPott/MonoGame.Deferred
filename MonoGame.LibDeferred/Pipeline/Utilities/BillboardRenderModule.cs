@@ -16,7 +16,7 @@ namespace DeferredEngine.Pipeline.Utilities
 
 
         public IdAndOutlineRenderModule IdAndOutlineRenderer;
-        private BillboardEffectSetup _fxSetup = new BillboardEffectSetup();
+        private readonly BillboardEffectSetup _fxSetup = new BillboardEffectSetup();
         private BillboardBuffer _billboardBuffer;
 
         public Texture2D DepthMap { set { _fxSetup.Param_DepthMap.SetValue(value); } }
