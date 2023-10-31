@@ -24,9 +24,7 @@ namespace DeferredEngine.Entities
 
             Material = material;
 
-            if (batcher != null)
-                batcher.Register(Material, ModelDefinition.Model, this);
-
+            batcher?.Register(Material, ModelDefinition.Model, this);
             this.UpdateMatrices();
         }
 

@@ -125,7 +125,7 @@ namespace DeferredEngine.Entities
 
         public void SetLookAt(Vector3 value)
         {
-            value = (value - Position);
+            value -= Position;
             value.Normalize();
             Forward = value;
         }

@@ -113,8 +113,8 @@ namespace DeferredEngine.Demo
 
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Selection")
             {
-                ToggleProperty = typeof(RenderingSettings).GetProperty(nameof(RenderingSettings.e_EnableSelection)),
-                Toggle = RenderingSettings.e_EnableSelection
+                ToggleProperty = typeof(RenderingSettings).GetProperty(nameof(RenderingSettings.EnableSelection)),
+                Toggle = RenderingSettings.EnableSelection
             });
 
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Draw Mesh Outl.")
@@ -488,7 +488,7 @@ namespace DeferredEngine.Demo
                 RenderingStats.UIIsHovered = true;
             }
 
-            _leftSideList.IsHidden = !RenderingSettings.e_EnableSelection;
+            _leftSideList.IsHidden = !RenderingSettings.EnableSelection;
 
             if (selectedObject != null)
             {

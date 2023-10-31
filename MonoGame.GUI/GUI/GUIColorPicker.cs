@@ -20,9 +20,9 @@ namespace HelperSuite.GUI
 
         private Vector2 _mousePointerFine; 
         private Vector2 _mousePointerFull;
-        private float _mousePointerLength = 5;
-        private float _mousePointerThickness = 1;
-        private float _mousePointerOffset = 3;
+        private readonly float _mousePointerLength = 5;
+        private readonly float _mousePointerThickness = 1;
+        private readonly float _mousePointerOffset = 3;
 
         private float _mouseFineX = 1;
         private float _mouseFineY;
@@ -219,13 +219,13 @@ namespace HelperSuite.GUI
 
                 if (ReferenceObject != null)
                 {
-                    if (ReferenceField != null) ReferenceField.SetValue(ReferenceObject, CurrentFineColor, BindingFlags.Public, null, null);
-                    if (ReferenceProperty != null) ReferenceProperty.SetValue(ReferenceObject, CurrentFineColor);
+                    ReferenceField?.SetValue(ReferenceObject, CurrentFineColor, BindingFlags.Public, null, null);
+                    ReferenceProperty?.SetValue(ReferenceObject, CurrentFineColor);
                 }
                 else
                 {
-                    if (ReferenceField != null) ReferenceField.SetValue(null, CurrentFineColor, BindingFlags.Static | BindingFlags.Public, null, null);
-                    if (ReferenceProperty != null) ReferenceProperty.SetValue(null, CurrentFineColor);
+                    ReferenceField?.SetValue(null, CurrentFineColor, BindingFlags.Static | BindingFlags.Public, null, null);
+                    ReferenceProperty?.SetValue(null, CurrentFineColor);
                 }
 
 

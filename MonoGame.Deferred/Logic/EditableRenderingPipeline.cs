@@ -63,7 +63,7 @@ namespace DeferredEngine.Rendering
                 return;
             // Step: -1
             //Draw the elements that we are hovering over with outlines
-            if (RenderingSettings.e_EnableSelection)
+            if (RenderingSettings.EnableSelection)
                 _moduleStack.IdAndOutline.Draw(meshBatcher, scene, gizmoContext, EditorLogic.Instance.HasMouseMoved);
 
             _profiler?.SampleTimestamp(TimestampIndices.Draw_EditorPrePass);
@@ -75,7 +75,7 @@ namespace DeferredEngine.Rendering
 
             // Step: 15
             //Additional editor elements that overlay our screen
-            if (RenderingSettings.e_EnableSelection)
+            if (RenderingSettings.EnableSelection)
             {
                 this.DrawEditorPasses(scene, gizmoContext, IdAndOutlineRenderModule.e_DrawOutlines ? PipelineEditorPasses.IdAndOutline : 0);
                 this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.Billboard | PipelineEditorPasses.TransformGizmo);

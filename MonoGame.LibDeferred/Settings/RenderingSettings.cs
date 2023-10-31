@@ -8,7 +8,7 @@ namespace DeferredEngine.Recources
     {
 
         private static bool _enabledSelection = false;
-        public static bool e_EnableSelection { get { return _enabledSelection && RenderingSettings.e_IsEditorEnabled; } set => _enabledSelection = value; }
+        public static bool EnableSelection { get { return _enabledSelection && RenderingSettings.e_IsEditorEnabled; } set => _enabledSelection = value; }
 
         public static GizmoModes e_gizmoMode = GizmoModes.Translation;
         public static bool e_LocalTransformation = false;
