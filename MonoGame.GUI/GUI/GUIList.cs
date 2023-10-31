@@ -45,7 +45,7 @@ namespace HelperSuite.GUI
         /// <param name="layer"></param>
         /// <param name="alignment"></param>
         /// <param name="parentDimensions"></param>
-        public GUIList(Vector2 position, Vector2 defaultDimensions, int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, Vector2 parentDimensions = default(Vector2))
+        public GUIList(Vector2 position, Vector2 defaultDimensions, int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, Vector2 parentDimensions = default)
         {
             DefaultDimensions = defaultDimensions;
             ParentDimensions = parentDimensions;

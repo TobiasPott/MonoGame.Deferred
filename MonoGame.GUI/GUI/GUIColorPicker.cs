@@ -28,8 +28,8 @@ namespace HelperSuite.GUI
         private float _mouseFineY;
         public float border = 5f;
 
-        private SpriteFont _font;
-        private StringBuilder _colorString;
+        private readonly SpriteFont _font;
+        private readonly StringBuilder _colorString;
 
         public GUIColorPicker(GUIStyle guiStyle) : this(
             position: Vector2.Zero, 

@@ -43,7 +43,7 @@ namespace DeferredEngine.Recources.Helper //StringBuilderII
     {
         private static char decimalseperator = '.';
         private static readonly char minus = '-';
-        private static char plus = '+';
+        private static readonly char plus = '+';
         private static readonly char space = ' ';
 
         private static StringBuilder last;
@@ -101,7 +101,6 @@ namespace DeferredEngine.Recources.Helper //StringBuilderII
 
         public void AppendAt(int index, StringBuilder s)
         {
-            int len = this.StringBuilder.Length;
             int reqcapacity = (index + s.Length + 1) - this.StringBuilder.Capacity;
             if (reqcapacity > 0)
                 this.StringBuilder.Capacity += reqcapacity;
@@ -374,7 +373,7 @@ namespace DeferredEngine.Recources.Helper //StringBuilderII
                 {
                     if (addzeros) { sb.Append('0'); }
                 }
-                placed = placed * .1f;
+                placed *= .1f;
             }
         }
         public void Append(double number)
@@ -442,7 +441,7 @@ namespace DeferredEngine.Recources.Helper //StringBuilderII
                 {
                     if (addzeros) { sb.Append('0'); }
                 }
-                placed = placed * .1;
+                placed *= .1;
             }
         }
         public void AppendTrim(float value)
@@ -506,7 +505,7 @@ namespace DeferredEngine.Recources.Helper //StringBuilderII
                 {
                     if (addzeros) { sb.Append('0'); }
                 }
-                placed = placed * .1f;
+                placed *= .1f;
             }
         }
         public void AppendTrim(double number)
@@ -569,7 +568,7 @@ namespace DeferredEngine.Recources.Helper //StringBuilderII
                 {
                     if (addzeros) { sb.Append('0'); }
                 }
-                placed = placed * .1;
+                placed *= .1;
             }
         }
 

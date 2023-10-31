@@ -15,7 +15,7 @@ namespace DeferredEngine.Rendering.SDF
         {
             private Task generateTask;
 
-            private List<SignedDistanceField> sdfDefinitions = new List<SignedDistanceField>();
+            private readonly List<SignedDistanceField> sdfDefinitions = new List<SignedDistanceField>();
 
             public void GenerateTriangles(Model model, ref SdfTriangle[] triangles)
             {

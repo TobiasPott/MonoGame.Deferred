@@ -16,12 +16,12 @@ namespace DeferredEngine.Pipeline.Utilities
 
 
         public IdAndOutlineRenderModule IdAndOutlineRenderer;
-        private BillboardEffectSetup _effectSetup = new BillboardEffectSetup();
+        private BillboardEffectSetup _fxSetup = new BillboardEffectSetup();
         private BillboardBuffer _billboardBuffer;
 
-        public Texture2D DepthMap { set { _effectSetup.Param_DepthMap.SetValue(value); } }
+        public Texture2D DepthMap { set { _fxSetup.Param_DepthMap.SetValue(value); } }
         public float AspectRatio
-        { set { _effectSetup.Param_AspectRatio.SetValue(value); } }
+        { set { _fxSetup.Param_AspectRatio.SetValue(value); } }
 
         public override void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         {
@@ -36,9 +36,9 @@ namespace DeferredEngine.Pipeline.Utilities
             _graphicsDevice.SetVertexBuffer(_billboardBuffer.VertexBuffer);
             _graphicsDevice.Indices = (_billboardBuffer.IndexBuffer);
 
-            _effectSetup.Param_Texture.SetValue(StaticAssets.Instance.IconLight);
-            _effectSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
-            _effectSetup.Effect.CurrentTechnique = _effectSetup.Technique_Id;
+            _fxSetup.Param_Texture.SetValue(StaticAssets.Instance.IconLight);
+            _fxSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
+            _fxSetup.Effect.CurrentTechnique = _fxSetup.Technique_Id;
 
             List<Decal> decals = scene.Decals;
             List<PointLight> pointLights = scene.PointLights;
@@ -63,16 +63,16 @@ namespace DeferredEngine.Pipeline.Utilities
             }
 
             Debug.WriteLine("DrawSceneBillboards: " + this + " => " + scene.EnvProbe.World);
-            _effectSetup.Param_Texture.SetValue(StaticAssets.Instance.IconEnvmap);
+            _fxSetup.Param_Texture.SetValue(StaticAssets.Instance.IconEnvmap);
             DrawSceneBillboard(scene.EnvProbe.World, this.Matrices, scene.EnvProbe.Id);
 
         }
         private void DrawSceneBillboard(Matrix world, PipelineMatrices matrices, int id)
         {
-            _effectSetup.Param_WorldViewProj.SetValue(world * matrices.StaticViewProjection);
-            _effectSetup.Param_WorldView.SetValue(world * matrices.View);
-            _effectSetup.Param_IdColor.SetValue(IdGenerator.GetColorFromId(id).ToVector3());
-            _effectSetup.Effect.CurrentTechnique.Passes[0].Apply();
+            _fxSetup.Param_WorldViewProj.SetValue(world * matrices.StaticViewProjection);
+            _fxSetup.Param_WorldView.SetValue(world * matrices.View);
+            _fxSetup.Param_IdColor.SetValue(IdGenerator.GetColorFromId(id).ToVector3());
+            _fxSetup.Effect.CurrentTechnique.Passes[0].Apply();
             _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 2);
         }
 
@@ -84,19 +84,19 @@ namespace DeferredEngine.Pipeline.Utilities
             _graphicsDevice.SetVertexBuffer(_billboardBuffer.VertexBuffer);
             _graphicsDevice.Indices = (_billboardBuffer.IndexBuffer);
 
-            _effectSetup.Effect.CurrentTechnique = _effectSetup.Technique_Billboard;
-            _effectSetup.Param_IdColor.SetValue(Color.Gray.ToVector3());
-            _effectSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
+            _fxSetup.Effect.CurrentTechnique = _fxSetup.Technique_Billboard;
+            _fxSetup.Param_IdColor.SetValue(Color.Gray.ToVector3());
+            _fxSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
 
             // Decals
             List<Decal> decals = scene.Decals;
-            _effectSetup.Param_Texture.SetValue(StaticAssets.Instance.IconDecal);
+            _fxSetup.Param_Texture.SetValue(StaticAssets.Instance.IconDecal);
             for (int i = 0; i < decals.Count; i++)
                 DrawEditorBillboard(decals[i], gizmoContext);
 
             // Point Lights
             List<PointLight> pointLights = scene.PointLights;
-            _effectSetup.Param_Texture.SetValue(StaticAssets.Instance.IconLight);
+            _fxSetup.Param_Texture.SetValue(StaticAssets.Instance.IconLight);
             for (int i = 0; i < pointLights.Count; i++)
                 DrawEditorBillboard(pointLights[i], gizmoContext);
 
@@ -127,32 +127,32 @@ namespace DeferredEngine.Pipeline.Utilities
             //EnvMap
             if (scene.EnvProbe != null)
             {
-                _effectSetup.Param_Texture.SetValue(StaticAssets.Instance.IconEnvmap);
+                _fxSetup.Param_Texture.SetValue(StaticAssets.Instance.IconEnvmap);
                 DrawEditorBillboard(scene.EnvProbe, gizmoContext);
             }
         }
         private void DrawEditorBillboard(TransformableObject billboardObject, GizmoDrawContext gizmoContext)
         {
             Matrix world = Matrix.CreateTranslation(billboardObject.Position);
-            _effectSetup.Param_WorldViewProj.SetValue(world * this.Matrices.StaticViewProjection);
-            _effectSetup.Param_WorldView.SetValue(world * this.Matrices.View);
+            _fxSetup.Param_WorldViewProj.SetValue(world * this.Matrices.StaticViewProjection);
+            _fxSetup.Param_WorldView.SetValue(world * this.Matrices.View);
 
             if (billboardObject.Id == IdAndOutlineRenderer.HoveredId)
-                _effectSetup.Param_IdColor.SetValue(Color.White.ToVector3());
+                _fxSetup.Param_IdColor.SetValue(Color.White.ToVector3());
             if (billboardObject.Id == gizmoContext.SelectedObjectId)
-                _effectSetup.Param_IdColor.SetValue(Color.Gold.ToVector3());
+                _fxSetup.Param_IdColor.SetValue(Color.Gold.ToVector3());
 
-            _effectSetup.Effect.CurrentTechnique.Passes[0].Apply();
+            _fxSetup.Effect.CurrentTechnique.Passes[0].Apply();
 
             _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 2);
 
             if (billboardObject.Id == IdAndOutlineRenderer.HoveredId || billboardObject.Id == gizmoContext.SelectedObjectId)
-                _effectSetup.Param_IdColor.SetValue(Color.Gray.ToVector3());
+                _fxSetup.Param_IdColor.SetValue(Color.Gray.ToVector3());
         }
 
         public override void Dispose()
         {
-            _effectSetup?.Dispose();
+            _fxSetup?.Dispose();
         }
     }
 }

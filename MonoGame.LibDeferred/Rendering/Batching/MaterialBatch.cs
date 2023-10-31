@@ -15,7 +15,7 @@ namespace DeferredEngine.Rendering
         public MaterialEffect Material { get; protected set; }
 
         //Determines how many different meshes we have per texture. 
-        private List<MeshBatch> _batches = new List<MeshBatch>(InitialLibrarySize);
+        private readonly List<MeshBatch> _batches = new List<MeshBatch>(InitialLibrarySize);
 
         //efficiency: REnder front to back. So we must know the distance!
 

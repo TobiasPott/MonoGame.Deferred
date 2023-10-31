@@ -82,7 +82,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         {
             _graphicsDevice.SetRenderTarget(_ssfxTargets.AO_Blur_V);
             _spriteBatch.Begin(0, BlendState.Additive);
-            _spriteBatch.Draw(_ssfxTargets.AO_Main, RenderingSettings.Screen.g_Rect, Color.White);
+            _spriteBatch.Draw(_ssfxTargets.AO_Main, RenderingSettings.Screen.Rect, Color.White);
             _spriteBatch.End();
         }
         /// <summary>

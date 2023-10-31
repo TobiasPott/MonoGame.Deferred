@@ -22,7 +22,7 @@ namespace HelperSuite.GUIRenderer
         public static SpriteFont MonospaceFont;
 
         private int _foregroundIndex;
-        private ForegroundImage[] foregroundImages = new ForegroundImage[10];
+        private readonly ForegroundImage[] foregroundImages = new ForegroundImage[10];
 
         public struct ForegroundImage
         {
@@ -113,7 +113,7 @@ namespace HelperSuite.GUIRenderer
         }
 
 
-        private Rectangle RectangleFromVectors(Vector2 pos, Vector2 dim)
+        private static Rectangle RectangleFromVectors(Vector2 pos, Vector2 dim)
         {
             return new Rectangle((int)pos.X, (int)pos.Y, (int)dim.X, (int)dim.Y);
         }
@@ -123,7 +123,7 @@ namespace HelperSuite.GUIRenderer
             _spriteBatch.DrawString(textFont, text, new Vector2((int)position.X, (int)position.Y), textColor);
         }
 
-        public void CalculateCoordinates(float x, float y, float w, float h, Vector2 resolution, out Vector2 v1, out Vector2 v2)
+        public static void CalculateCoordinates(float x, float y, float w, float h, Vector2 resolution, out Vector2 v1, out Vector2 v2)
         {
             v1 = new Vector2(x, y) / resolution;
             v2 = new Vector2(x + w, y + h) / resolution;

@@ -54,7 +54,7 @@ namespace DeferredEngine.Rendering
             base.Draw(meshBatcher, scene);
 
             if (RenderingSettings.e_IsEditorEnabled)
-                this.DrawEditor(meshBatcher, scene, EditorLogic.Instance.GetEditorData());
+                this.DrawEditor(scene, EditorLogic.Instance.GetEditorData());
         }
 
         private void DrawEditorPrePass(DynamicMeshBatcher meshBatcher, EntityScene scene, GizmoDrawContext gizmoContext)
@@ -68,7 +68,7 @@ namespace DeferredEngine.Rendering
 
             _profiler?.SampleTimestamp(TimestampIndices.Draw_EditorPrePass);
         }
-        private void DrawEditor(DynamicMeshBatcher meshBatcher, EntityScene scene, GizmoDrawContext gizmoContext)
+        private void DrawEditor(EntityScene scene, GizmoDrawContext gizmoContext)
         {
             this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.SDFDistance);
             this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.SDFVolume);

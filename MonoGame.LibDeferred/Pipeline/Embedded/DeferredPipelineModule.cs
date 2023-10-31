@@ -15,14 +15,14 @@ namespace DeferredEngine.Pipeline
     public class DeferredPipelineModule : PipelineModule
     {
 
-        private DeferredFxSetup _effectSetup = new DeferredFxSetup();
+        private readonly DeferredFxSetup _fxSetup = new DeferredFxSetup();
         private FullscreenTriangleBuffer _fullscreenTarget;
         private DeferredColorSpace _colorSpace = DeferredColorSpace.Linear;
 
         public bool UseSSAOMap
         {
-            get { return _effectSetup.Param_UseSSAO.GetValueBoolean(); }
-            set { _effectSetup.Param_UseSSAO.SetValue(value); }
+            get { return _fxSetup.Param_UseSSAO.GetValueBoolean(); }
+            set { _fxSetup.Param_UseSSAO.SetValue(value); }
         }
         public DeferredColorSpace ColorSpace
         {
@@ -30,7 +30,7 @@ namespace DeferredEngine.Pipeline
             set
             {
                 _colorSpace = value;
-                _effectSetup.Effect_Compose.CurrentTechnique = value == DeferredColorSpace.Linear ? _effectSetup.Technique_Linear : _effectSetup.Technique_NonLinear;
+                _fxSetup.Effect_Compose.CurrentTechnique = value == DeferredColorSpace.Linear ? _fxSetup.Technique_Linear : _fxSetup.Technique_NonLinear;
             }
         }
 
@@ -43,8 +43,8 @@ namespace DeferredEngine.Pipeline
         {
             base.Initialize(graphicsDevice, spriteBatch);
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
-            _effectSetup.Param_UseSSAO.SetValue(true);
-            _effectSetup.Effect_Compose.CurrentTechnique = _colorSpace == DeferredColorSpace.Linear ? _effectSetup.Technique_Linear : _effectSetup.Technique_NonLinear;
+            _fxSetup.Param_UseSSAO.SetValue(true);
+            _fxSetup.Effect_Compose.CurrentTechnique = _colorSpace == DeferredColorSpace.Linear ? _fxSetup.Technique_Linear : _fxSetup.Technique_NonLinear;
         }
 
 
@@ -57,10 +57,10 @@ namespace DeferredEngine.Pipeline
             _graphicsDevice.SetRenderTarget(destRT);
             _graphicsDevice.SetStates(DepthStencilStateOption.KeepState, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
             
-            _effectSetup.Param_UseSSAO.SetValue(SSAmbientOcclustionFx.g_ssao_draw);
-            _effectSetup.Effect_Compose.CurrentTechnique = _colorSpace == DeferredColorSpace.Linear ? _effectSetup.Technique_Linear : _effectSetup.Technique_NonLinear;
+            _fxSetup.Param_UseSSAO.SetValue(SSAmbientOcclustionFx.g_ssao_draw);
+            _fxSetup.Effect_Compose.CurrentTechnique = _colorSpace == DeferredColorSpace.Linear ? _fxSetup.Technique_Linear : _fxSetup.Technique_NonLinear;
             //combine!
-            _effectSetup.Effect_Compose.CurrentTechnique.Passes[0].Apply();
+            _fxSetup.Effect_Compose.CurrentTechnique.Passes[0].Apply();
             _fullscreenTarget.Draw(_graphicsDevice);
 
             // sample profiler if set
@@ -71,23 +71,23 @@ namespace DeferredEngine.Pipeline
 
         public void SetGBufferParams(GBufferTarget gBuffer)
         {
-            _effectSetup.Param_ColorMap.SetValue(gBuffer.Albedo);
-            _effectSetup.Param_NormalMap.SetValue(gBuffer.Normal);
+            _fxSetup.Param_ColorMap.SetValue(gBuffer.Albedo);
+            _fxSetup.Param_NormalMap.SetValue(gBuffer.Normal);
         }
         public void SetLightingParams(LightingBufferTarget lightBuffer)
         {
-            _effectSetup.Param_DiffuseLightMap.SetValue(lightBuffer.Diffuse);
-            _effectSetup.Param_SpecularLightMap.SetValue(lightBuffer.Specular);
-            _effectSetup.Param_VolumeLightMap.SetValue(lightBuffer.Volume);
+            _fxSetup.Param_DiffuseLightMap.SetValue(lightBuffer.Diffuse);
+            _fxSetup.Param_SpecularLightMap.SetValue(lightBuffer.Specular);
+            _fxSetup.Param_VolumeLightMap.SetValue(lightBuffer.Volume);
         }
         public void SetSSAOMap(RenderTarget2D ssaoTarget)
         {
-            _effectSetup.Param_SSAOMap.SetValue(ssaoTarget);
+            _fxSetup.Param_SSAOMap.SetValue(ssaoTarget);
         }
 
         public override void Dispose()
         {
-            _effectSetup?.Dispose();
+            _fxSetup?.Dispose();
         }
     }
 

@@ -9,14 +9,13 @@ namespace DeferredEngine.Rendering
         public static FullscreenTriangleBuffer Instance { get; private set; }
         public static void InitClass(GraphicsDevice graphicsDevice)
         {
-            if (Instance == null)
-                Instance = new FullscreenTriangleBuffer(graphicsDevice);
+            Instance ??= new FullscreenTriangleBuffer(graphicsDevice);
         }
         public static void UnloadClass() => Instance?.Dispose();
 
         #endregion
 
-        private VertexBuffer vertexBuffer;
+        private readonly VertexBuffer _vertexBuffer;
 
         public struct FullScreenQuadVertex
         {
@@ -43,20 +42,20 @@ namespace DeferredEngine.Rendering
             vertices[1] = new FullScreenQuadVertex(new Vector2(-1, 3));
             vertices[2] = new FullScreenQuadVertex(new Vector2(3, -1));
 
-            vertexBuffer = new VertexBuffer(graphics, FullScreenQuadVertex.VertexDeclaration, 3, BufferUsage.WriteOnly);
-            vertexBuffer.SetData(vertices);
+            _vertexBuffer = new VertexBuffer(graphics, FullScreenQuadVertex.VertexDeclaration, 3, BufferUsage.WriteOnly);
+            _vertexBuffer.SetData(vertices);
         }
 
         public void Draw(GraphicsDevice graphics)
         {
-            graphics.SetVertexBuffer(vertexBuffer);
+            graphics.SetVertexBuffer(_vertexBuffer);
             graphics.Indices = null;
             graphics.DrawPrimitives(PrimitiveType.TriangleList, 0, 1);
         }
 
         public void Dispose()
         {
-            vertexBuffer?.Dispose();
+            _vertexBuffer?.Dispose();
         }
     }
 }

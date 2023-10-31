@@ -114,7 +114,6 @@ namespace HelperSuite.GUIHelper //StringBuilderII
 
         public void AppendAt(int index, StringBuilder s)
         {
-            int len = StringBuilder.Length;
             int reqcapacity = (index + s.Length + 1) - StringBuilder.Capacity;
             if (reqcapacity > 0)
                 StringBuilder.Capacity += reqcapacity;

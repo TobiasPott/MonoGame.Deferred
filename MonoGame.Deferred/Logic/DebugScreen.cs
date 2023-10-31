@@ -330,9 +330,9 @@ namespace DeferredEngine.Demo
                 _mngStringBuilder.Append((int)Math.Round(_minfps));
                 _mngStringBuilder.AppendLine(sb_closeBracket);
 
-                _mngStringBuilder.Append(RenderingSettings.Screen.g_Width);
+                _mngStringBuilder.Append(RenderingSettings.Screen.Width);
                 _mngStringBuilder.Append(sb_multipliedBy);
-                _mngStringBuilder.Append(RenderingSettings.Screen.g_Height);
+                _mngStringBuilder.Append(RenderingSettings.Screen.Height);
                 _mngStringBuilder.Append(sb_emptySpace);
                 _mngStringBuilder.Append(RenderModesToString(RenderingSettings.g_CurrentPass));
                 _mngStringBuilder.Append(sb_memoryGc);

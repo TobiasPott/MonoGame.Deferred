@@ -23,7 +23,7 @@ namespace DeferredEngine.Demo
         public Camera Camera;
         //mesh library, holds all the meshes and their materials
         public DynamicMeshBatcher MeshBatcher;
-        private EntityScene _scene = new EntityScene();
+        private readonly EntityScene _scene = new EntityScene();
 
         //Which render target are we currently displaying?
         private int _renderModeCycle;
@@ -185,12 +185,6 @@ namespace DeferredEngine.Demo
             }
         }
 
-
-        //Load content
-        public void Load(ContentManager content)
-        {
-            //...
-        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  HELPER FUNCTIONS

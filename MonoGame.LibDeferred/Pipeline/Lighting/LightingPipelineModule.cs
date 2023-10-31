@@ -1,5 +1,4 @@
 ﻿using DeferredEngine.Entities;
-using DeferredEngine.Recources;
 using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,7 +12,7 @@ namespace DeferredEngine.Pipeline.Lighting
         private bool _redrawRequested = false;
         private bool _useDepthStencilLightCulling;
 
-        private BlendState _lightBlendState;
+        private readonly BlendState _lightBlendState;
 
         public PointLightPipelineModule PointLightRenderModule;
         public DirectionalLightPipelineModule DirectionalLightRenderModule;

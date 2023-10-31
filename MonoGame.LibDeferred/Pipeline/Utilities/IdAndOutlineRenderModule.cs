@@ -25,10 +25,10 @@ namespace DeferredEngine.Pipeline.Utilities
         }
 
 
-        private Color[] _readbackIdColor = new Color[1];
+        private readonly Color[] _readbackIdColor = new Color[1];
 
         public RenderTarget2D Target { get; protected set; }
-        private RenderContext _renderContext = new RenderContext() { Flags = RenderFlags.Outlined };
+        private readonly RenderContext _renderContext = new RenderContext() { Flags = RenderFlags.Outlined };
 
         public BillboardRenderModule BillboardRenderer;
         public int HoveredId;
@@ -39,8 +39,7 @@ namespace DeferredEngine.Pipeline.Utilities
 
         public void SetUpRenderTarget(Vector2 resolution)
         {
-            if (Target != null)
-                Target.Dispose();
+            Target?.Dispose();
             Target = RenderTarget2DDefinition.Aux_Id.CreateRenderTarget(_graphicsDevice, resolution);
         }
 

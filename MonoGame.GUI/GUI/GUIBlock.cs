@@ -20,7 +20,7 @@ namespace HelperSuite.GUI
             //Filled by GuiStyle
         }
 
-        public GUIBlock(Vector2 position, Vector2 dimensions, Color blockColor, int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, Vector2 ParentDimensions = default(Vector2))
+        public GUIBlock(Vector2 position, Vector2 dimensions, Color blockColor, int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, Vector2 ParentDimensions = default)
         {
             Position = position;
             Dimensions = dimensions;

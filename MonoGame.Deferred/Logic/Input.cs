@@ -37,8 +37,8 @@ namespace DeferredEngine.Demo
                 float y = mouseState.Y - mouseLastState.Y;
                 float x = mouseState.X - mouseLastState.X;
 
-                y *= RenderingSettings.Screen.g_Height / 800.0f;
-                x *= RenderingSettings.Screen.g_Width / 1280.0f;
+                y *= RenderingSettings.Screen.Height / 800.0f;
+                x *= RenderingSettings.Screen.Width / 1280.0f;
 
                 camera.Forward += x * mouseAmount * normal;
 

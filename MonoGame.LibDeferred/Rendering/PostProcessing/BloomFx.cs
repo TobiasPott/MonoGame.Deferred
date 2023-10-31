@@ -67,13 +67,13 @@ namespace DeferredEngine.Rendering.PostProcessing
         private readonly float[] _radius = new float[5];
         private readonly float[] _strength = new float[5];
 
-        private float _radiusMultiplier = 1.0f;
+        private readonly float _radiusMultiplier = 1.0f;
 
         public bool BloomUseLuminance = true;
         public int BloomDownsamplePasses = 5;
 
         //Objects
-        private BloomFxSetup _fxSetup = new BloomFxSetup();
+        private readonly BloomFxSetup _fxSetup = new BloomFxSetup();
         //RenderTargets
         private DynamicMultiRenderTarget _mipMaps;
         private RenderTarget2D _swapBuffer;
@@ -255,8 +255,8 @@ namespace DeferredEngine.Rendering.PostProcessing
                 _graphicsDevice.SetRenderTargets(_swapBuffer);
                 _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointWrap);
 
-                _spriteBatch.Draw(destRT, RenderingSettings.Screen.g_Rect, Color.White);
-                _spriteBatch.Draw(_mipMaps[0], RenderingSettings.Screen.g_Rect, Color.White);
+                _spriteBatch.Draw(destRT, RenderingSettings.Screen.Rect, Color.White);
+                _spriteBatch.Draw(_mipMaps[0], RenderingSettings.Screen.Rect, Color.White);
 
                 _spriteBatch.End();
             }
