@@ -130,9 +130,6 @@ namespace DeferredEngine.Pipeline
             if (!this.Enabled)
                 return;
 
-            //Reset the stat counter, so we can count stats/information for this frame only
-            ResetStats();
-
             // Step: 04
             //Update our view projection matrices if the camera moved
             if (_redrawRequested)
@@ -154,22 +151,26 @@ namespace DeferredEngine.Pipeline
                 _moduleStack.DistanceField.SetViewPosition(camera.Position);
 
                 _fxStack.SSAmbientOcclusion.SetViewPosition(camera.Position);
+
+                //Performance Profiler
+                _profiler.SampleTimestamp(ProfilerTimestamps.Update_ViewProjection);
+
+                // Step: 03
+                //Update SDFs
+                if (IsSDFUsed(scene.PointLights))
+                {
+                    _moduleStack.DistanceField.UpdateSdfGenerator(scene.Entities);
+                    _moduleStack.DistanceField.UpdateDistanceFieldTransformations(scene.Entities);
+                }
+
             }
 
+            //Reset the stat counter, so we can count stats/information for this frame only
+            ResetStats();
+
             //Performance Profiler
-            _profiler.SampleTimestamp(TimestampIndices.Update_ViewProjection);
-
-
-            // Step: 03
-            //Update SDFs
-            if (IsSDFUsed(scene.PointLights))
-            {
-                _moduleStack.DistanceField.UpdateSdfGenerator(scene.Entities);
-                _moduleStack.DistanceField.UpdateDistanceFieldTransformations(scene.Entities);
-            }
-            //Performance Profiler
-            _profiler.SampleTimestamp(TimestampIndices.Update_SDF);
-
+            _profiler.SampleTimestamp(ProfilerTimestamps.Update_SDF);
+            _redrawRequested = false;
         }
 
 
@@ -222,14 +223,14 @@ namespace DeferredEngine.Pipeline
             // Step: 08 Blit final color to screen (may blit to a 'viewport' section of the screen, or the full screen
             this.BlitTo(_auxTargets[PipelineTargets.FINALCOLOR], null, RenderingSettings.Screen.g_TargetRect);
 
-            _profiler.Sample(TimestampIndices.Draw_Total);
+            _profiler.Sample(ProfilerTimestamps.Draw_Total);
 
             // Step: 13
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
             BlitToScreen(RenderingSettings.g_CurrentPass, null);
 
             //Performance Profiler
-            _profiler.SampleTimestamp(TimestampIndices.Draw_FinalRender);
+            _profiler.SampleTimestamp(ProfilerTimestamps.Draw_FinalRender);
 
 
         }

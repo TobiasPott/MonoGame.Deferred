@@ -62,7 +62,7 @@ namespace DeferredEngine.Pipeline
             _fullscreenTarget.Draw(_graphicsDevice);
 
             // sample profiler if set
-            this.Profiler?.SampleTimestamp(TimestampIndices.Draw_DeferredCompose);
+            this.Profiler?.SampleTimestamp(ProfilerTimestamps.Draw_DeferredCompose);
             return destRT;
         }
 

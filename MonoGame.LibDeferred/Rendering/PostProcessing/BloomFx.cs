@@ -265,7 +265,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             this.Blit(_swapBuffer, destRT);
             //Note the final step could be done as a blend to the final texture.
             // sample profiler if set
-            this.Profiler?.SampleTimestamp(TimestampIndices.Draw_Bloom);
+            this.Profiler?.SampleTimestamp(ProfilerTimestamps.Draw_Bloom);
 
             return destRT;
         }

@@ -91,7 +91,7 @@ namespace DeferredEngine.Pipeline
             }
 
             //Performance Profile
-            this.Profiler?.SampleTimestamp(TimestampIndices.Draw_Shadows);
+            this.Profiler?.SampleTimestamp(ProfilerTimestamps.Draw_Shadows);
         }
 
         /// <summary>

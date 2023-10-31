@@ -113,7 +113,7 @@ namespace DeferredEngine.Pipeline
                 _fullscreenTarget.Draw(_graphicsDevice);
 
                 // sample profiler if set
-                this.Profiler?.SampleTimestamp(TimestampIndices.Draw_EnvironmentMap);
+                this.Profiler?.SampleTimestamp(ProfilerTimestamps.Draw_EnvironmentMap);
             }
         }
         public void DrawSky()

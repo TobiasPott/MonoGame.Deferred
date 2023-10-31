@@ -5,30 +5,29 @@ using System.Diagnostics;
 namespace DeferredEngine.Pipeline
 {
 
-    public class PipelineSamples
+    public class ProfilerSamples
     {
         public const string FieldInfoPrefix = "S";
 
-        public static double SDraw_Shadows => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_Shadows);
+        public static double SDraw_Shadows => PipelineProfiler.GetTimestamp(ProfilerTimestamps.Draw_Shadows);
         //public static double SDraw_CubeMap => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_CubeMap);
-        public static double SDraw_GBuffer => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_GBuffer);
-        public static double SDraw_SSFx_SSAO => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_SSFx_SSAO);
+        public static double SDraw_GBuffer => PipelineProfiler.GetTimestamp(ProfilerTimestamps.Draw_GBuffer);
+        public static double SDraw_SSFx_SSAO => PipelineProfiler.GetTimestamp(ProfilerTimestamps.Draw_SSFx_SSAO);
         //public static double SDraw_SSFx_AO_BilateralBlur => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_SSFx_AO_BilateralBlur);
-        public static double SDraw_EnvironmentMap => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_EnvironmentMap);
-        public static double SDraw_SSFx_SSR => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_SSFx_SSR);
-        public static double SDraw_DeferredCompose => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_DeferredCompose);
-        public static double SDraw_CombineTAA => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_CombineTAA);
-        public static double SDraw_FinalRender => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_FinalRender);
-        public static double SDraw_TotalRender => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_Total);
+        public static double SDraw_EnvironmentMap => PipelineProfiler.GetTimestamp(ProfilerTimestamps.Draw_EnvironmentMap);
+        public static double SDraw_SSFx_SSR => PipelineProfiler.GetTimestamp(ProfilerTimestamps.Draw_SSFx_SSR);
+        public static double SDraw_DeferredCompose => PipelineProfiler.GetTimestamp(ProfilerTimestamps.Draw_DeferredCompose);
+        public static double SDraw_CombineTAA => PipelineProfiler.GetTimestamp(ProfilerTimestamps.Draw_CombineTAA);
+        public static double SDraw_FinalRender => PipelineProfiler.GetTimestamp(ProfilerTimestamps.Draw_FinalRender);
+        public static double SDraw_TotalRender => PipelineProfiler.GetTimestamp(ProfilerTimestamps.Draw_Total);
 
-        public static double SUpdate_ViewProjection => PipelineProfiler.GetTimestamp(TimestampIndices.Update_ViewProjection);
-        public static double SUpdate_SDF => PipelineProfiler.GetTimestamp(TimestampIndices.Update_SDF);
+        public static double SUpdate_ViewProjection => PipelineProfiler.GetTimestamp(ProfilerTimestamps.Update_ViewProjection);
+        public static double SUpdate_SDF => PipelineProfiler.GetTimestamp(ProfilerTimestamps.Update_SDF);
 
-        public static double SDraw_EditorPrePass => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_EditorPrePass);
-        public static double SDraw_EditorPass => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_EditorPass);
+        public static double SDraw_EditorPrePass => PipelineProfiler.GetTimestamp(ProfilerTimestamps.Draw_EditorPrePass);
+        public static double SDraw_EditorPass => PipelineProfiler.GetTimestamp(ProfilerTimestamps.Draw_EditorPass);
     }
-
-    public class TimestampIndices
+    public class ProfilerTimestamps
     {
         public const int Draw_Shadows = 1;
         //public const int Draw_CubeMap = 2;
@@ -49,7 +48,6 @@ namespace DeferredEngine.Pipeline
         public const int Draw_EditorPrePass = 15;
         public const int Draw_EditorPass = 16;
     }
-
 
     public class PipelineProfiler
     {

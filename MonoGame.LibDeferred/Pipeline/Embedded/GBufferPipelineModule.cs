@@ -46,7 +46,7 @@ namespace DeferredEngine.Pipeline
                 meshBatcher.Draw(renderType: RenderType.Opaque, this.Matrices, RenderContext.Default, this);
 
             // sample profiler if set
-            this.Profiler?.SampleTimestamp(TimestampIndices.Draw_GBuffer);
+            this.Profiler?.SampleTimestamp(ProfilerTimestamps.Draw_GBuffer);
         }
 
         public void Apply(Matrix localWorldMatrix, Matrix? view, Matrix viewProjection)

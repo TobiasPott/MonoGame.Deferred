@@ -66,7 +66,7 @@ namespace DeferredEngine.Rendering
             if (RenderingSettings.EnableSelection)
                 _moduleStack.IdAndOutline.Draw(meshBatcher, scene, gizmoContext, EditorLogic.Instance.HasMouseMoved);
 
-            _profiler?.SampleTimestamp(TimestampIndices.Draw_EditorPrePass);
+            _profiler?.SampleTimestamp(ProfilerTimestamps.Draw_EditorPrePass);
         }
         private void DrawEditor(EntityScene scene, GizmoDrawContext gizmoContext)
         {
@@ -83,7 +83,7 @@ namespace DeferredEngine.Rendering
                 this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.Helper);
             }
 
-            _profiler?.SampleTimestamp(TimestampIndices.Draw_EditorPass);
+            _profiler?.SampleTimestamp(ProfilerTimestamps.Draw_EditorPass);
         }
         private void DrawEditorPasses(EntityScene scene, GizmoDrawContext gizmoContext, PipelineEditorPasses passes = PipelineEditorPasses.Billboard | PipelineEditorPasses.TransformGizmo)
         {

@@ -383,12 +383,12 @@ namespace DeferredEngine.Demo
             if (!PipelineProfiler.ModuleEnabled)
                 return;
 
-            PropertyInfo[] propertyInfo = typeof(PipelineSamples).GetProperties();
+            PropertyInfo[] propertyInfo = typeof(ProfilerSamples).GetProperties();
             int foundIndex = 0;
             for (int i = 0; i < propertyInfo.Length; i++)
             {
                 PropertyInfo pInfo = propertyInfo[i];
-                if (pInfo.Name.Contains(PipelineSamples.FieldInfoPrefix))
+                if (pInfo.Name.Contains(ProfilerSamples.FieldInfoPrefix))
                 {
                     _spriteBatch.DrawString(_sprFont, $"{pInfo.Name} {string.Format("{0,8:F6}", pInfo.GetValue(null))}", new Vector2(10.0f, 55.0f + (foundIndex * 15)), Color.White);
                     foundIndex++;

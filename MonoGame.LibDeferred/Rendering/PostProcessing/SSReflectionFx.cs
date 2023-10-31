@@ -80,7 +80,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             _fullscreenTarget.Draw(_graphicsDevice);
 
             // sample profiler if set
-            this.Profiler?.SampleTimestamp(TimestampIndices.Draw_SSFx_SSR);
+            this.Profiler?.SampleTimestamp(ProfilerTimestamps.Draw_SSFx_SSR);
             return destRT;
         }
         public RenderTarget2D GetSSReflectionRenderTargets(TemporalAAFx taaFx)

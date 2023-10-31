@@ -73,7 +73,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             DrawSSAOBilateralBlur();
 
             // sample profiler if set
-            this.Profiler?.SampleTimestamp(TimestampIndices.Draw_SSFx_SSAO);
+            this.Profiler?.SampleTimestamp(ProfilerTimestamps.Draw_SSFx_SSAO);
 
             // ToDo: change return render target to be Blur_Final (as it is target in biliteral blur)
             return destRT;

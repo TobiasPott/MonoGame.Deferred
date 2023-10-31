@@ -70,13 +70,13 @@ namespace DeferredEngine.Rendering.PostProcessing
                 this.Draw(_fxSetup.Pass_TonemapInverse);
 
                 // sample profiler if set
-                this.Profiler?.SampleTimestamp(TimestampIndices.Draw_CombineTAA);
+                this.Profiler?.SampleTimestamp(ProfilerTimestamps.Draw_CombineTAA);
 
                 return destRT;
             }
 
             // sample profiler if set
-            this.Profiler?.SampleTimestamp(TimestampIndices.Draw_CombineTAA);
+            this.Profiler?.SampleTimestamp(ProfilerTimestamps.Draw_CombineTAA);
 
             return destRT;
         }
