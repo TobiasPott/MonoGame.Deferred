@@ -30,25 +30,24 @@ namespace DeferredEngine.Pipeline
 
     public class TimestampIndices
     {
-        public static int Draw_Shadows = 1;
-        //public static int Draw_CubeMap = 2;
-        public static int Draw_GBuffer = 3;
-        public static int Draw_SSFx_SSAO = 4;
-        //public static int Draw_SSFx_AO_BilateralBlur = 5;
-        public static int Draw_EnvironmentMap = 6;
-        public static int Draw_SSFx_SSR = 7;
-        public static int Draw_DeferredCompose = 8;
-        public static int Draw_CombineTAA = 9;
-        public static int Draw_Bloom = 10;
-        public static int Draw_FinalRender = 11;
-        public static int Draw_Total = 12;
+        public const int Draw_Shadows = 1;
+        //public const int Draw_CubeMap = 2;
+        public const int Draw_GBuffer = 3;
+        public const int Draw_SSFx_SSAO = 4;
+        //public const int Draw_SSFx_AO_BilateralBlur = 5;
+        public const int Draw_EnvironmentMap = 6;
+        public const int Draw_SSFx_SSR = 7;
+        public const int Draw_DeferredCompose = 8;
+        public const int Draw_CombineTAA = 9;
+        public const int Draw_Bloom = 10;
+        public const int Draw_FinalRender = 11;
+        public const int Draw_Total = 12;
 
-        public static int Update_ViewProjection = 13;
-        public static int Update_SDF = 14;
+        public const int Update_ViewProjection = 13;
+        public const int Update_SDF = 14;
 
-
-        public static int Draw_EditorPrePass = 15;
-        public static int Draw_EditorPass = 16;
+        public const int Draw_EditorPrePass = 15;
+        public const int Draw_EditorPass = 16;
     }
 
 
@@ -59,7 +58,7 @@ namespace DeferredEngine.Pipeline
 
 
         public const int InitialTimestamps = 64;
-        private static double[] _timestamps = new double[InitialTimestamps];
+        private static readonly double[] _timestamps = new double[InitialTimestamps];
         public static double GetTimestamp(int index) => _timestamps[index];
 
 

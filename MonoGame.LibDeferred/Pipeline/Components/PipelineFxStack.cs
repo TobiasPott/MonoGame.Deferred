@@ -29,8 +29,6 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         //GaussianBlurFx _gaussianBlur;
 
-        private GraphicsDevice _graphicsDevice;
-        private SpriteBatch _spriteBatch;
         private FullscreenTriangleBuffer _fullscreenTarget;
 
         public GBufferTarget GBufferTarget
@@ -77,7 +75,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         { set { foreach (PostFx module in _modules) module.Frustum = value; } }
 
 
-        private List<PostFx> _modules = new List<PostFx>();
+        private readonly List<PostFx> _modules = new List<PostFx>();
 
 
         public PipelineFxStack(ContentManager content)
@@ -96,8 +94,6 @@ namespace DeferredEngine.Rendering.PostProcessing
         }
         public void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         {
-            _graphicsDevice = graphicsDevice;
-            _spriteBatch = spriteBatch;
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
 
             Bloom.Initialize(graphicsDevice, spriteBatch, _fullscreenTarget);
@@ -150,8 +146,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         private RenderTarget2D DrawSSReflection(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
         {
             // optional: use TemporalAA buffers as sourceRT
-            if (sourceRT == null)
-                sourceRT = this.SSReflection.GetSSReflectionRenderTargets(TemporalAA);
+            sourceRT ??= this.SSReflection.GetSSReflectionRenderTargets(TemporalAA);
 
             if (!this.SSReflection.Enabled)
                 return sourceRT;
@@ -169,18 +164,6 @@ namespace DeferredEngine.Rendering.PostProcessing
             return this.SSAmbientOcclusion.Draw(sourceRT, previousRT, destRT);
         }
 
-        private void DrawTextureToScreenToFullScreen(Texture2D source, BlendState blendState = null, RenderTarget2D destRT = null)
-        {
-            if (blendState == null) blendState = BlendState.Opaque;
-
-            RenderingSettings.Screen.GetDestinationRectangle(source.GetAspect(), out Rectangle destRectangle);
-            _graphicsDevice.SetRenderTarget(destRT);
-            _spriteBatch.Begin(SpriteSortMode.Deferred, blendState, SamplerState.PointClamp);
-            _spriteBatch.Draw(source, destRectangle, Color.White);
-            _spriteBatch.End();
-        }
-
-
 
         public void Dispose()
         {
@@ -191,7 +174,6 @@ namespace DeferredEngine.Rendering.PostProcessing
             SSReflection?.Dispose();
             SSAmbientOcclusion?.Dispose();
             //_gaussianBlur?.Dispose();
-
         }
 
     }
