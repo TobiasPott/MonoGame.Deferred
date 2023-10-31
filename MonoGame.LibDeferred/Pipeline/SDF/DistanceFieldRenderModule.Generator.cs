@@ -242,7 +242,8 @@ namespace DeferredEngine.Rendering.SDF
                 sdfDefinitionsOut = sdfDefinitions;
             }
 
-            private void GenerateData(int xsteps, int ysteps, int zsteps, SignedDistanceField volumeTex, ref float[] data, int threadindex, int numberOfThreads, SdfTriangle[] triangles)
+            private static void GenerateData(int xsteps, int ysteps, int zsteps, SignedDistanceField volumeTex, 
+                ref float[] data, int threadindex, int numberOfThreads, SdfTriangle[] triangles)
             {
                 int xi, yi, zi;
 

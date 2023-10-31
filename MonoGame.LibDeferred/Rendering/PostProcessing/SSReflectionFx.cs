@@ -30,7 +30,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         public SSFxTargets SSFxTargets { set { _ssfxTargets = value; } }
 
 
-        private SSReflectionFxSetup _fxSetup = new SSReflectionFxSetup();
+        private readonly SSReflectionFxSetup _fxSetup = new SSReflectionFxSetup();
 
 
         public float Time { set { _fxSetup.Param_Time.SetValue(value); } }

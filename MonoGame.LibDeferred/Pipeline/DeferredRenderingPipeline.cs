@@ -71,15 +71,19 @@ namespace DeferredEngine.Pipeline
             _matrices = new PipelineMatrices();
             _profiler = new PipelineProfiler();
 
-            _moduleStack = new PipelineModuleStack();
-            _moduleStack.Matrices = _matrices;
-            _moduleStack.Frustum = _frustum;
-            _moduleStack.Profiler = _profiler;
+            _moduleStack = new PipelineModuleStack
+            {
+                Matrices = _matrices,
+                Frustum = _frustum,
+                Profiler = _profiler
+            };
 
-            _fxStack = new PipelineFxStack(content);
-            _fxStack.Matrices = _matrices;
-            _fxStack.Frustum = _frustum;
-            _fxStack.Profiler = _profiler;
+            _fxStack = new PipelineFxStack(content)
+            {
+                Matrices = _matrices,
+                Frustum = _frustum,
+                Profiler = _profiler
+            };
 
         }
         /// <summary>

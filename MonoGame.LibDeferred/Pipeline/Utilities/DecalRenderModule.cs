@@ -94,7 +94,7 @@ namespace DeferredEngine.Pipeline.Utilities
         }
 
         public void Draw(EntityScene scene, RenderTarget2D sourceRT, RenderTarget2D auxRT, RenderTarget2D destRT) => Draw(scene.Decals, sourceRT, auxRT, destRT, this.Matrices.View, this.Matrices.ViewProjection, this.Matrices.InverseView);
-        public void Draw(List<Decal> decals, RenderTarget2D sourceRT, RenderTarget2D auxRT, RenderTarget2D destRT, Matrix view, Matrix viewProjection, Matrix inverseView)
+        private void Draw(List<Decal> decals, RenderTarget2D sourceRT, RenderTarget2D auxRT, RenderTarget2D destRT, Matrix view, Matrix viewProjection, Matrix inverseView)
         {
             if (DecalRenderModule.g_EnableDecals)
             {

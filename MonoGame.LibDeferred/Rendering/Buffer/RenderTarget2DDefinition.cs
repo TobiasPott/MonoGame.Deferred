@@ -23,7 +23,7 @@ namespace DeferredEngine.Rendering
         Upsample_x5 = 32
     }
 
-    public struct RenderTarget2DDefinition
+    public readonly struct RenderTarget2DDefinition
     {
         public static readonly RenderTarget2DDefinition Albedo = new RenderTarget2DDefinition(nameof(Albedo), false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
         public static readonly RenderTarget2DDefinition Normal = new RenderTarget2DDefinition(nameof(Normal), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);

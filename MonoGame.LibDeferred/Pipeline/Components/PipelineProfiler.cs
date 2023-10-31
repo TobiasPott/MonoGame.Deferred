@@ -67,8 +67,8 @@ namespace DeferredEngine.Pipeline
         //Performance Profiler
         private readonly Stopwatch _timer = new Stopwatch();
         private double _lastTimestamp;
-
-        public bool IsEnabled => ModuleEnabled;
+        private bool _enabled = true;
+        public bool Enabled { get => _enabled && ModuleEnabled; set => _enabled = value; }
 
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace DeferredEngine.Pipeline
         public void SampleTimestamp(int timestampIndex)
         {
             //Performance Profiler
-            if (IsEnabled)
+            if (Enabled)
             {
                 double currentTime = _timer.Elapsed.TotalMilliseconds;
                 _timestamps[timestampIndex] = currentTime - _lastTimestamp;
@@ -90,7 +90,7 @@ namespace DeferredEngine.Pipeline
         public void Sample(int timestampIndex)
         {
             //Performance Profiler
-            if (IsEnabled)
+            if (Enabled)
                 _timestamps[timestampIndex] = _timer.Elapsed.TotalMilliseconds;
         }
 
@@ -101,7 +101,7 @@ namespace DeferredEngine.Pipeline
         public void Timestamp()
         {
             //Performance Profiler
-            if (IsEnabled)
+            if (Enabled)
                 _lastTimestamp = _timer.ElapsedTicks;
         }
         /// <summary>
@@ -110,7 +110,7 @@ namespace DeferredEngine.Pipeline
         public void Reset()
         {
             //Profiler
-            if (IsEnabled)
+            if (Enabled)
             {
                 _timer.Restart();
                 _lastTimestamp = 0;

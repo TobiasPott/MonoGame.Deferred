@@ -82,8 +82,10 @@ namespace DeferredEngine.Rendering.PostProcessing
         {
             Bloom = new BloomFx();
             TemporalAA = new TemporalAAFx();
-            ColorGrading = new ColorGradingFx();
-            ColorGrading.LookUpTable = content.Load<Texture2D>("Shaders/PostProcessing/lut");
+            ColorGrading = new ColorGradingFx
+            {
+                LookUpTable = content.Load<Texture2D>("Shaders/PostProcessing/lut")
+            };
             PostProcessing = new PostProcessingFx();
             SSReflection = new SSReflectionFx();
             SSAmbientOcclusion = new SSAmbientOcclustionFx();
