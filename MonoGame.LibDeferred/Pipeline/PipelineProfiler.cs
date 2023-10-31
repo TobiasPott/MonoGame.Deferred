@@ -23,6 +23,9 @@ namespace DeferredEngine.Pipeline
 
         public static double SUpdate_ViewProjection => PipelineProfiler.GetTimestamp(TimestampIndices.Update_ViewProjection);
         public static double SUpdate_SDF => PipelineProfiler.GetTimestamp(TimestampIndices.Update_SDF);
+
+        public static double SDraw_EditorPrePass => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_EditorPrePass);
+        public static double SDraw_EditorPass => PipelineProfiler.GetTimestamp(TimestampIndices.Draw_EditorPass);
     }
 
     public class TimestampIndices
@@ -42,6 +45,10 @@ namespace DeferredEngine.Pipeline
 
         public static int Update_ViewProjection = 13;
         public static int Update_SDF = 14;
+
+
+        public static int Draw_EditorPrePass = 15;
+        public static int Draw_EditorPass = 16;
     }
 
 

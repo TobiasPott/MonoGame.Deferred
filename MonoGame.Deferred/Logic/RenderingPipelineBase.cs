@@ -33,22 +33,14 @@ namespace DeferredEngine.Rendering
             _spriteBatch = new SpriteBatch(graphicsDevice);
         }
 
-
         /// <summary>
         /// Update our function
         /// </summary>
         public abstract void Update(Camera camera, DynamicMeshBatcher meshBatcher, EntityScene scene, GizmoDrawContext gizmoContext);
-
-        // ! ! ! ! ! ! ! ! ! ! !
-        // ToDo: PRIO I: Reduce Draw method to only call profiler and .Draw calls from modules
-        //              Setup and processing should be internalized and done before any drawing takes place
-
         /// <summary>
         /// Main Draw function of the game
         /// </summary>
         public abstract void Draw(DynamicMeshBatcher meshBatcher, EntityScene scene);
-
-
 
 
         public virtual void Dispose()

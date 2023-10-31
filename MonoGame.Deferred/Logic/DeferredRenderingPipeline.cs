@@ -10,7 +10,8 @@ using System.Collections.Generic;
 
 namespace DeferredEngine.Rendering
 {
-    public abstract class DefaultRenderingPipeline : RenderingPipelineBase
+
+    public abstract class DeferredRenderingPipeline : RenderingPipelineBase
     {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  VARIABLES
@@ -39,6 +40,11 @@ namespace DeferredEngine.Rendering
         public virtual void RequestRedraw(GameTime gameTime)
         {
             _redrawRequested = true;
+
+            _moduleStack.Lighting.UpdateGameTime(gameTime);
+            if (SSReflectionFx.g_Noise)
+                _fxStack.SSReflection.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
+            _moduleStack.Environment.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
         }
 
         /// <summary>
@@ -74,11 +80,13 @@ namespace DeferredEngine.Rendering
             _ssfxTargets = new SSFxTargets(graphicsDevice, resolution);
 
             _moduleStack.Initialize(graphicsDevice, _spriteBatch);
+            _moduleStack.Resolution = resolution;
             _moduleStack.GBufferTarget = _gBufferTarget;
             _moduleStack.LightingBufferTarget = _lightingBufferTarget;
             _moduleStack.SSFxTargets = _ssfxTargets;
 
             _fxStack.Initialize(graphicsDevice, _spriteBatch);
+            _fxStack.Resolution = resolution;
             _fxStack.GBufferTarget = _gBufferTarget;
             _fxStack.SSFxTargets = _ssfxTargets;
         }

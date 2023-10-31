@@ -1,10 +1,8 @@
 ﻿using DeferredEngine.Demo;
 using DeferredEngine.Entities;
+using DeferredEngine.Pipeline;
 using DeferredEngine.Pipeline.Utilities;
 using DeferredEngine.Recources;
-using DeferredEngine.Rendering.Helper.HelperGeometry;
-using DeferredEngine.Rendering.PostProcessing;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 
@@ -14,14 +12,11 @@ using MonoGame.Ext;
 namespace DeferredEngine.Rendering
 {
 
-    public class EditableRenderingPipeline : DefaultRenderingPipeline
+    public class EditableRenderingPipeline : DemoRenderingPipeline
     {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  VARIABLES
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        // Final output
-        private RenderTarget2D _currentOutput;
 
         /// <summary>
         /// Main Draw function of the game
@@ -33,57 +28,6 @@ namespace DeferredEngine.Rendering
         //  FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //  BASE FUNCTIONS
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        /// <summary>
-        /// Initialize all our rendermodules and helpers. Done after the Load() function
-        /// </summary>
-        /// <param name="graphicsDevice"></param>
-        public override void Initialize(GraphicsDevice graphicsDevice)
-        {
-            base.Initialize(graphicsDevice);
-
-            // update directional light module
-            SetResolution(RenderingSettings.Screen.g_Resolution);
-
-            RenderingSettings.Screen.g_FarClip.Changed += FarClip_OnChanged;
-            RenderingSettings.Screen.g_FarClip.Set(512);
-            SSReflectionFx.ModuleEnabled.Changed += SSR_Enabled_Changed;
-            BloomFx.ModuleThreshold.Set(0.0f);
-        }
-
-        private void SSR_Enabled_Changed(bool enabled)
-        {
-            // clear SSReflection buffer if disabled/enabled
-            if (!enabled)
-            {
-                _graphicsDevice.SetRenderTarget(_ssfxTargets.SSR_Main);
-                _graphicsDevice.Clear(new Color(0, 0, 0, 0.0f));
-            }
-        }
-        private void FarClip_OnChanged(float farClip)
-        {
-            _frustum.FarClip = farClip;
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //  RENDERTARGET SETUP FUNCTIONS
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////
-        public override void RequestRedraw(GameTime gameTime)
-        {
-            base.RequestRedraw(gameTime);
-
-            _moduleStack.Lighting.UpdateGameTime(gameTime);
-            if (SSReflectionFx.g_Noise)
-                _fxStack.SSReflection.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
-            _moduleStack.Environment.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
-        }
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //  RENDER FUNCTIONS
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////
-
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         //  MAIN DRAW FUNCTIONS
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -92,9 +36,14 @@ namespace DeferredEngine.Rendering
         {
             if (!this.Enabled)
                 return;
-            this.DrawEditorPrePass(meshBatcher, scene, EditorLogic.Instance.GetEditorData());
+            
+            if (RenderingSettings.e_IsEditorEnabled)
+                this.DrawEditorPrePass(meshBatcher, scene, EditorLogic.Instance.GetEditorData());
+
             base.Draw(meshBatcher, scene);
-            this.DrawEditor(meshBatcher, scene, EditorLogic.Instance.GetEditorData());
+
+            if (RenderingSettings.e_IsEditorEnabled)
+                this.DrawEditor(meshBatcher, scene, EditorLogic.Instance.GetEditorData());
         }
 
         private void DrawEditorPrePass(DynamicMeshBatcher meshBatcher, EntityScene scene, GizmoDrawContext gizmoContext)
@@ -106,10 +55,8 @@ namespace DeferredEngine.Rendering
             if (RenderingSettings.e_EnableSelection)
                 _moduleStack.IdAndOutline.Draw(meshBatcher, scene, gizmoContext, EditorLogic.Instance.HasMouseMoved);
 
+            _profiler?.SampleTimestamp(TimestampIndices.Draw_EditorPrePass);
         }
-        /// <summary>
-        /// Main Draw function of the game
-        /// </summary>
         private void DrawEditor(DynamicMeshBatcher meshBatcher, EntityScene scene, GizmoDrawContext gizmoContext)
         {
             this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.SDFDistance);
@@ -124,6 +71,8 @@ namespace DeferredEngine.Rendering
                 //Draw debug/helper geometry
                 this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.Helper);
             }
+
+            _profiler?.SampleTimestamp(TimestampIndices.Draw_EditorPass);
         }
         private void DrawEditorPasses(EntityScene scene, GizmoDrawContext gizmoContext, PipelineEditorPasses passes = PipelineEditorPasses.Billboard | PipelineEditorPasses.TransformGizmo)
         {
@@ -169,13 +118,6 @@ namespace DeferredEngine.Rendering
             //        _spriteBatch.End();
             //    }
             //}
-        }
-
-
-        public override void Dispose()
-        {
-            base.Dispose();
-            _currentOutput?.Dispose();
         }
 
     }
