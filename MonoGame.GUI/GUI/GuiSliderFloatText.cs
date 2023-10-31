@@ -7,51 +7,15 @@ using System.Text;
 
 namespace HelperSuite.GUI
 {
-    public class GuiSliderFloatText : GUIBlock
+
+    public class GuiSliderFloatText : GuiSliderBaseText<float>
     {
-        protected bool IsEngaged = false;
-
-        protected const float SliderIndicatorSize = 15;
-        protected const float SliderIndicatorBorder = 10;
-        protected const float SliderBaseHeight = 5;
-
-        private Vector2 _tempPosition = Vector2.One;
-
-        protected Vector2 SliderDimensions;
-
-        protected float _sliderPercent;
-
-        private float _sliderValue;
-        public float SliderValue
-        {
-            get { return _sliderValue; }
-            set
-            {
-                _sliderValue = value;
-                _sliderPercent = (_sliderValue - MinValue) / (MaxValue - MinValue);
-                UpdateText();
-            }
-        }
-
-        public float MaxValue = 1;
-        public float MinValue;
-
-        protected Color _sliderColor;
-
-        //TextBlock associated
-        protected GUITextBlock _textBlock;
         private uint roundDecimals = 1;
-        protected String baseText;
-
-        //Associated reference
-        public PropertyInfo SliderProperty;
-        public FieldInfo SliderField;
-        public Object SliderObject;
 
         public GuiSliderFloatText(GUIStyle guiStyle, float min, float max, uint decimals, String text) : this(
             position: Vector2.Zero,
             sliderDimensions: new Vector2(guiStyle.DimensionsStyle.X, 35),
-            textdimensions: new Vector2(guiStyle.DimensionsStyle.X, 20),
+            textDimensions: new Vector2(guiStyle.DimensionsStyle.X, 20),
             min: min,
             max: max,
             decimals: decimals,
@@ -67,44 +31,15 @@ namespace HelperSuite.GUI
             )
         { }
 
-        public GuiSliderFloatText(Vector2 position, Vector2 sliderDimensions, Vector2 textdimensions, float min, float max, uint decimals, String text, SpriteFont font, Color blockColor, Color sliderColor, int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Left, Vector2 textBorder = default, Vector2 ParentDimensions = new Vector2()) : base(position, sliderDimensions, blockColor, layer, alignment, ParentDimensions)
+        public GuiSliderFloatText(Vector2 position, Vector2 sliderDimensions, Vector2 textDimensions, float min, float max, uint decimals,
+            String text, SpriteFont font, Color blockColor, Color sliderColor,
+            int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Left, Vector2 textBorder = default, Vector2 ParentDimensions = new Vector2())
+            : base(position, sliderDimensions, textDimensions, min, max, text, font, blockColor, sliderColor, layer, alignment, textAlignment, textBorder, ParentDimensions)
         {
-            _textBlock = new GUITextBlock(position, textdimensions, text, font, blockColor, sliderColor, textAlignment, textBorder, layer, alignment, ParentDimensions);
-
-            Dimensions = sliderDimensions + _textBlock.Dimensions * Vector2.UnitY;
-            SliderDimensions = sliderDimensions;
-            _sliderColor = sliderColor;
-            MinValue = min;
-            MaxValue = max;
-            _sliderValue = min;
             roundDecimals = decimals;
-            baseText = text;
-
             UpdateText();
         }
 
-        public void SetText(StringBuilder text)
-        {
-            baseText = text.ToString();
-            _textBlock.Text = text;
-            UpdateText();
-        }
-
-        public void SetField(Object obj, string field)
-        {
-            SliderObject = obj;
-            SliderField = obj.GetType().GetField(field);
-            SliderProperty = null;
-            SliderValue = (float)SliderField.GetValue(obj);
-        }
-
-        public void SetProperty(Object obj, string property)
-        {
-            SliderObject = obj;
-            SliderProperty = obj.GetType().GetProperty(property);
-            SliderField = null;
-            SliderValue = (float)SliderProperty.GetValue(obj);
-        }
 
         public void SetValues(string text, float minValue, float maxValue, uint decimals)
         {
@@ -165,10 +100,10 @@ namespace HelperSuite.GUI
             }
         }
 
-        protected virtual void UpdateText()
+        protected override void UpdateText()
         {
-            _textBlock.Text.Clear();
-            _textBlock.Text.Append(baseText);
+            base.UpdateText();
+            _sliderPercent = (_sliderValue - MinValue) / (MaxValue - MinValue);
             _textBlock.Text.Concat(_sliderValue, roundDecimals);
         }
 
