@@ -24,6 +24,21 @@ namespace DeferredEngine.Rendering
             _renderTargets = new RenderTarget2D[numberOfTargets];
             this.Resize(width, height);
         }
+        public MultiRenderTargetBase(GraphicsDevice graphicsDevice, int width, int height, RenderTarget2DDefinition[] definitions)
+        {
+            _graphicsDevice = graphicsDevice;
+            _bindings = new RenderTargetBinding[definitions.Length];
+            _renderTargets = new RenderTarget2D[definitions.Length];
+
+            for (int i = 0; i < definitions.Length; i++)
+            {
+                _renderTargets[i]?.Dispose();
+                _renderTargets[i] = definitions[i].CreateRenderTarget(_graphicsDevice, width, height);
+                _bindings[i] = new RenderTargetBinding(_renderTargets[i]);
+            }
+
+            this.Resize(width, height);
+        }
 
         public void Resize(Vector2 resolution) => this.Resize((int)resolution.X, (int)resolution.Y);
         public virtual void Resize(int width, int height)

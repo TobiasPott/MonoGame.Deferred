@@ -49,7 +49,7 @@ namespace DeferredEngine.Rendering
         public static readonly RenderTarget2DDefinition Aux_Id = new RenderTarget2DDefinition(nameof(Aux_Id), false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
        
         
-        public static readonly RenderTarget2DDefinition Shadow_PointLight = new RenderTarget2DDefinition(nameof(Shadow_PointLight), false, SurfaceFormat.HalfSingle, DepthFormat.Depth24, 0, RenderTargetUsage.PreserveContents);
+        public static readonly RenderTarget2DDefinition Shadow_PointLight = new RenderTarget2DDefinition(nameof(Shadow_PointLight), false, SurfaceFormat.HalfSingle, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
         public static readonly RenderTarget2DDefinition Shadow_DirectionalLight = new RenderTarget2DDefinition(nameof(Shadow_DirectionalLight), false, SurfaceFormat.HalfSingle, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
 
 

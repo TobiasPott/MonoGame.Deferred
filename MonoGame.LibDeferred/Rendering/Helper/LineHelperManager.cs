@@ -25,7 +25,7 @@ namespace DeferredEngine.Rendering.Helper.HelperGeometry
 
         public VertexPositionColor GetVertexPositionColor(Vector3 point, Color color)
         {
-            // ToDo: @tpott: change to use either list or 
+            // ToDo: @tpott: change to use list
             if (_tempVertsPoolIndex < _tempVertsPoolLength - 3) //Buffer
             {
                 _tempVertsPool[_tempVertsPoolIndex].Position = point;

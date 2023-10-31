@@ -96,8 +96,6 @@ namespace DeferredEngine.Rendering.PostProcessing
             //BlendStateBloom.ColorDestinationBlend = Blend.BlendFactor;
             //BlendStateBloom.BlendFactor = new Color(0.5f, 0.5f, 0.5f);
 
-            // ToDo: Bloom Threshold by UI seems broken (check if manual changing works)
-            //          Threshold is only set at BloomFx() and should recieve a notified property for runtime notification
             //Setup the default preset values.
             SetBloomPreset(BloomPresets.Default);
 

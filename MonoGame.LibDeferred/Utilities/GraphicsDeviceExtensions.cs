@@ -30,8 +30,6 @@ namespace MonoGame.Ext
     public static class GraphicsDeviceExtensions
     {
 
-        // ToDo: Extend to cover BlendState and wrap target state to map to an enum which includes a "keep" option to leave a state unchanged
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetStates(this GraphicsDevice graphicsDevice,
             DepthStencilStateOption depthStencil = DepthStencilStateOption.KeepState,

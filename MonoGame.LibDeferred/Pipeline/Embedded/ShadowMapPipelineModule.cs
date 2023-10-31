@@ -101,7 +101,6 @@ namespace DeferredEngine.Pipeline
         {
             int shadowResolution = light.ShadowResolution;
             //For VSM we need 2 channels, -> Vector2
-            //todo: check if we need preserve contents
             if (light.ShadowMap == null)
                 light.ShadowMap = RenderTarget2DDefinition.Shadow_PointLight.CreateRenderTarget(_graphicsDevice, shadowResolution, shadowResolution * 6);
 
