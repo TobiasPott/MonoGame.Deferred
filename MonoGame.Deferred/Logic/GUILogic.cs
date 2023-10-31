@@ -137,8 +137,9 @@ namespace DeferredEngine.Demo
             });
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Forward")
             {
-                ToggleField = typeof(ForwardPipelineModule).GetField("g_EnableForward"),
-                Toggle = ForwardPipelineModule.g_EnableForward
+                ToggleProperty = ForwardPipelineModule.ModuleEnabled.GetValuePropertyInfo(),
+                ToggleObject = ForwardPipelineModule.ModuleEnabled,
+                Toggle = ForwardPipelineModule.ModuleEnabled
             });
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable CPU Cull")
             {

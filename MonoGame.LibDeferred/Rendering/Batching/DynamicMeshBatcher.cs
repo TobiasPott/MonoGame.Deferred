@@ -324,7 +324,8 @@ namespace DeferredEngine.Rendering
             //{
             //    Shaders.IdRenderEffectParameterColorId.SetValue(Color.Transparent.ToVector4());
             //}
-            //todo: We only need textures for non shadow mapping, right? Not quite actually, for alpha textures we need materials
+            // ToDo: @tpott: Clearification: Its unclear what the below comment refers to, evaluate this!
+            //  "todo: We only need textures for non shadow mapping, right? Not quite actually, for alpha textures we need materials"
             else if (renderType == RenderType.Opaque)
             {
                 ((GBufferPipelineModule)renderModule).SetMaterialSettings(material);
