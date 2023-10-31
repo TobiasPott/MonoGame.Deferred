@@ -1,13 +1,13 @@
 ﻿using DeferredEngine.Entities;
 using DeferredEngine.Recources;
+using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
-using System;
 
 
-namespace DeferredEngine.Rendering
+namespace DeferredEngine.Pipeline
 {
     public abstract class RenderingPipelineBase : IDisposable
     {

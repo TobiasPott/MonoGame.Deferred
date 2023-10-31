@@ -1,14 +1,14 @@
 ﻿using DeferredEngine.Entities;
-using DeferredEngine.Pipeline;
 using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Recources;
+using DeferredEngine.Rendering;
 using DeferredEngine.Rendering.PostProcessing;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
 
-namespace DeferredEngine.Rendering
+
+namespace DeferredEngine.Pipeline
 {
 
     public abstract class DeferredRenderingPipeline : RenderingPipelineBase
