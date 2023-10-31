@@ -50,11 +50,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         public override RenderTarget2D Draw(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
             if (!this.Enabled)
-            {
-                return sourceRT;
-                this.Blit(sourceRT, destRT);
                 return destRT;
-            }
 
             _graphicsDevice.SetRenderTarget(destRT);
             _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.KeepState);

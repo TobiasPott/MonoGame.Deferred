@@ -113,55 +113,15 @@ namespace DeferredEngine.Rendering.PostProcessing
         {
             return stage switch
             {
-                PipelineFxStage.Bloom => DrawBloom(sourceRT, previousRT, destRT),
-                PipelineFxStage.TemporalAA => DrawTemporalAA(sourceRT, previousRT, destRT),
-                PipelineFxStage.PostProcessing => DrawPostProcessing(sourceRT, previousRT, destRT),
-                PipelineFxStage.ColorGrading => DrawColorGrading(sourceRT, previousRT, destRT),
-                PipelineFxStage.SSReflection => DrawSSReflection(sourceRT, previousRT, destRT),
-                PipelineFxStage.SSAmbientOcclusion => DrawSSAmbientOcclusion(sourceRT, previousRT, destRT),
+                PipelineFxStage.Bloom => this.Bloom.Draw(sourceRT, previousRT, destRT),
+                PipelineFxStage.TemporalAA => this.TemporalAA.Draw(sourceRT, previousRT, destRT),
+                PipelineFxStage.PostProcessing => this.PostProcessing.Draw(sourceRT, previousRT, destRT),
+                PipelineFxStage.ColorGrading => this.ColorGrading.Draw(sourceRT, previousRT, destRT),
+                PipelineFxStage.SSReflection => this.SSReflection.Draw(sourceRT, previousRT, destRT),
+                PipelineFxStage.SSAmbientOcclusion => this.SSAmbientOcclusion.Draw(sourceRT, previousRT, destRT),
                 _ => sourceRT,
             }; ;
         }
-
-        private RenderTarget2D DrawPostProcessing(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
-        {
-            return this.PostProcessing.Draw(sourceRT, previousRT, destRT);
-        }
-        private RenderTarget2D DrawColorGrading(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
-        {
-            return this.ColorGrading.Draw(sourceRT, previousRT, destRT);
-        }
-        private RenderTarget2D DrawBloom(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
-        {
-            return this.Bloom.Draw(sourceRT, previousRT, destRT);
-
-        }
-        /// <summary>
-        /// Combine the render with previous frames to get more information per sample and make the image anti-aliased / super sampled
-        /// </summary>
-        private RenderTarget2D DrawTemporalAA(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
-        {
-            return this.TemporalAA.Draw(sourceRT, previousRT, destRT);
-        }
-
-        /// <summary>
-        /// Combine the render with previous frames to get more information per sample and make the image anti-aliased / super sampled
-        /// </summary>
-        private RenderTarget2D DrawSSReflection(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
-        {
-            // optional: use TemporalAA buffers as sourceRT
-            //sourceRT ??= this.SSReflection.GetSSReflectionRenderTargets(TemporalAA);
-            return this.SSReflection.Draw(sourceRT, previousRT, destRT);
-        }
-
-        /// <summary>
-        /// Combine the render with previous frames to get more information per sample and make the image anti-aliased / super sampled
-        /// </summary>
-        private RenderTarget2D DrawSSAmbientOcclusion(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
-        {
-            return this.SSAmbientOcclusion.Draw(sourceRT, previousRT, destRT);
-        }
-
 
         public void Dispose()
         {
