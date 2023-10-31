@@ -12,14 +12,14 @@ namespace DeferredEngine.Pipeline.Lighting
 
 
         private readonly PointLightFxSetup _fxSetup = new PointLightFxSetup();
-        private GameTime _gameTime;
+        private float _time;
         private Vector3 _viewOrigin;
 
         private readonly DepthStencilState _stencilCullPass1;
         private readonly DepthStencilState _stencilCullPass2;
 
 
-        public GameTime GameTime { set { _gameTime = value; } }
+        public float Time { set { _time = value; } }
         public Vector3 ViewOrigin { set => _viewOrigin = value; get => _viewOrigin; }
 
         public Vector2 Resolution { set { _fxSetup.Param_Resolution.SetValue(value); } }
@@ -97,10 +97,10 @@ namespace DeferredEngine.Pipeline.Lighting
             _graphicsDevice.SetVertexBuffer(meshpart.VertexBuffer);
             _graphicsDevice.Indices = meshpart.IndexBuffer;
 
-            if (PointLightPipelineModule.g_VolumetricLights && _gameTime != null)
-                _fxSetup.Param_Time.SetValue((float)_gameTime.TotalGameTime.TotalSeconds % 1000);
+            if (PointLightPipelineModule.g_VolumetricLights)
+                _fxSetup.Param_Time.SetValue(_time);
             _fxSetup.Param_InverseView.SetValue(Matrices.InverseView);
-           
+
             _fxSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
 
             int primitiveCount = meshpart.PrimitiveCount;

@@ -40,7 +40,7 @@ namespace DeferredEngine.Pipeline
             }
         }
 
-        public void SetupLighting(Camera camera, List<PointLight> pointLights, BoundingFrustum frustum)
+        public void SetupLighting(Vector3 viewOrigin, List<PointLight> pointLights, BoundingFrustum frustum)
         {
             int count = pointLights.Count > MAXLIGHTS ? MAXLIGHTS : pointLights.Count;
 
@@ -68,7 +68,7 @@ namespace DeferredEngine.Pipeline
             }
 
             //Setup camera
-            _fxSetup.Param_CameraPositionWS.SetValue(camera.Position);
+            _fxSetup.Param_CameraPositionWS.SetValue(viewOrigin);
 
             _fxSetup.Param_LightAmount.SetValue(lightsInBounds);
             _fxSetup.Param_LightPositionWS.SetValue(LightPositionWS);

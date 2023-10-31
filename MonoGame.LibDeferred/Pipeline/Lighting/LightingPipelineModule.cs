@@ -44,10 +44,6 @@ namespace DeferredEngine.Pipeline.Lighting
             PointLightRenderModule.ViewOrigin = viewPosition;
             DirectionalLightRenderModule.ViewOrigin = viewPosition;
         }
-        public void UpdateGameTime(GameTime gameTime)
-        {
-            PointLightRenderModule.GameTime = gameTime;
-        }
 
         /// <summary>
         /// Draw our lights to the diffuse/specular/volume buffer

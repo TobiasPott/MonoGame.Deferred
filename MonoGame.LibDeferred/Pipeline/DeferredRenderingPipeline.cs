@@ -57,9 +57,8 @@ namespace DeferredEngine.Pipeline
         {
             _redrawRequested = true;
 
-            _moduleStack.Lighting.UpdateGameTime(gameTime);
-            if (SSReflectionFx.g_Noise)
-                _fxStack.SSReflection.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
+            _moduleStack.PointLight.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
+            _fxStack.SSReflection.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
             _moduleStack.Environment.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
         }
 
@@ -147,7 +146,7 @@ namespace DeferredEngine.Pipeline
                 _moduleStack.Environment.SetViewPosition(camera.Position);
                 _moduleStack.Environment.SetEnvironmentProbe(scene.EnvProbe);
                 _moduleStack.Deferred.UseSSAOMap = _fxStack.SSAmbientOcclusion?.Enabled ?? false;
-                _moduleStack.Forward.SetupLighting(camera, scene.PointLights, _frustum.Frustum);
+                _moduleStack.Forward.SetupLighting(camera.Position, scene.PointLights, _frustum.Frustum);
                 _moduleStack.DistanceField.SetViewPosition(camera.Position);
 
                 _fxStack.SSAmbientOcclusion.SetViewPosition(camera.Position);
