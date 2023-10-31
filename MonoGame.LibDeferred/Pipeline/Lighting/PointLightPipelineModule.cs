@@ -11,18 +11,18 @@ namespace DeferredEngine.Pipeline.Lighting
         public static bool g_VolumetricLights = true;
 
 
-        private PointLightFxSetup _effectSetup = new PointLightFxSetup();
-        private GameTime _gameTime;
+        private readonly PointLightFxSetup _fxSetup = new PointLightFxSetup();
+        private float _time;
         private Vector3 _viewOrigin;
 
-        private DepthStencilState _stencilCullPass1;
-        private DepthStencilState _stencilCullPass2;
+        private readonly DepthStencilState _stencilCullPass1;
+        private readonly DepthStencilState _stencilCullPass2;
 
 
-        public GameTime GameTime { set { _gameTime = value; } }
+        public float Time { set { _time = value; } }
         public Vector3 ViewOrigin { set => _viewOrigin = value; get => _viewOrigin; }
 
-        public Vector2 Resolution { set { _effectSetup.Param_Resolution.SetValue(value); } }
+        public Vector2 Resolution { set { _fxSetup.Param_Resolution.SetValue(value); } }
 
 
         public PointLightPipelineModule()
@@ -67,22 +67,22 @@ namespace DeferredEngine.Pipeline.Lighting
 
         public void SetGBufferParams(GBufferTarget gBufferTarget)
         {
-            _effectSetup.Param_AlbedoMap.SetValue(gBufferTarget.Albedo);
-            _effectSetup.Param_NormalMap.SetValue(gBufferTarget.Normal);
-            _effectSetup.Param_DepthMap.SetValue(gBufferTarget.Depth);
+            _fxSetup.Param_AlbedoMap.SetValue(gBufferTarget.Albedo);
+            _fxSetup.Param_NormalMap.SetValue(gBufferTarget.Normal);
+            _fxSetup.Param_DepthMap.SetValue(gBufferTarget.Depth);
         }
         public void SetInstanceData(Matrix[] inverseMatrices, Vector3[] scales, float[] sdfIndices, int count)
         {
-            _effectSetup.Param_InstanceInverseMatrix.SetValue(inverseMatrices);
-            _effectSetup.Param_InstanceScale.SetValue(scales);
-            _effectSetup.Param_InstanceSDFIndex.SetValue(sdfIndices);
-            _effectSetup.Param_InstancesCount.SetValue((float)count);
+            _fxSetup.Param_InstanceInverseMatrix.SetValue(inverseMatrices);
+            _fxSetup.Param_InstanceScale.SetValue(scales);
+            _fxSetup.Param_InstanceSDFIndex.SetValue(sdfIndices);
+            _fxSetup.Param_InstancesCount.SetValue((float)count);
         }
         public void SetVolumeTexParams(Texture atlas, Vector3[] texSizes, Vector4[] texResolutions)
         {
-            _effectSetup.Param_VolumeTex.SetValue(atlas);
-            _effectSetup.Param_VolumeTexSize.SetValue(texSizes);
-            _effectSetup.Param_VolumeTexResolution.SetValue(texResolutions);
+            _fxSetup.Param_VolumeTex.SetValue(atlas);
+            _fxSetup.Param_VolumeTexSize.SetValue(texSizes);
+            _fxSetup.Param_VolumeTexResolution.SetValue(texResolutions);
         }
 
 
@@ -97,11 +97,11 @@ namespace DeferredEngine.Pipeline.Lighting
             _graphicsDevice.SetVertexBuffer(meshpart.VertexBuffer);
             _graphicsDevice.Indices = meshpart.IndexBuffer;
 
-            if (PointLightPipelineModule.g_VolumetricLights && _gameTime != null)
-                _effectSetup.Param_Time.SetValue((float)_gameTime.TotalGameTime.TotalSeconds % 1000);
-            _effectSetup.Param_InverseView.SetValue(Matrices.InverseView);
-           
-            _effectSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
+            if (PointLightPipelineModule.g_VolumetricLights)
+                _fxSetup.Param_Time.SetValue(_time);
+            _fxSetup.Param_InverseView.SetValue(Matrices.InverseView);
+
+            _fxSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
 
             int primitiveCount = meshpart.PrimitiveCount;
             int vertexOffset = meshpart.VertexOffset;
@@ -134,18 +134,18 @@ namespace DeferredEngine.Pipeline.Lighting
                 light.Matrices.WorldViewProj = light.Matrices.WorldMatrix * viewProjection;
             }
 
-            _effectSetup.Param_WorldView.SetValue(light.Matrices.ViewSpace);
-            _effectSetup.Param_WorldViewProjection.SetValue(light.Matrices.WorldViewProj);
-            _effectSetup.Param_LightPosition.SetValue(light.Matrices.ViewSpace.Translation);
+            _fxSetup.Param_WorldView.SetValue(light.Matrices.ViewSpace);
+            _fxSetup.Param_WorldViewProjection.SetValue(light.Matrices.WorldViewProj);
+            _fxSetup.Param_LightPosition.SetValue(light.Matrices.ViewSpace.Translation);
 
-            _effectSetup.Param_LightColor.SetValue(light.Color_sRGB);
-            _effectSetup.Param_LightRadius.SetValue(light.Radius);
-            _effectSetup.Param_LightIntensity.SetValue(light.Intensity);
+            _fxSetup.Param_LightColor.SetValue(light.Color_sRGB);
+            _fxSetup.Param_LightRadius.SetValue(light.Radius);
+            _fxSetup.Param_LightIntensity.SetValue(light.Intensity);
 
             //Compute whether we are inside or outside and use 
             float cameraToCenter = Vector3.Distance(this.ViewOrigin, light.Position);
             int inside = cameraToCenter < light.Radius * 1.2f ? 1 : -1;
-            _effectSetup.Param_Inside.SetValue(inside);
+            _fxSetup.Param_Inside.SetValue(inside);
 
             if (LightingPipelineModule.g_UseDepthStencilLightCulling == 2)
             {
@@ -153,7 +153,7 @@ namespace DeferredEngine.Pipeline.Lighting
                 _graphicsDevice.DepthStencilState = _stencilCullPass1;
                 _graphicsDevice.SetState(RasterizerStateOption.CullCounterClockwise);
 
-                _effectSetup.Pass_WriteStencil.Apply();
+                _fxSetup.Pass_WriteStencil.Apply();
 
                 _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, vertexOffset, startIndex, primitiveCount);
 
@@ -185,36 +185,36 @@ namespace DeferredEngine.Pipeline.Lighting
             // Experimental
             if (light.CastSDFShadows)
             {
-                _effectSetup.Pass_ShadowedSDF.Apply();
+                _fxSetup.Pass_ShadowedSDF.Apply();
             }
             else if (light.ShadowMap != null && light.CastShadows)
             {
-                _effectSetup.Param_ShadowMap.SetValue(light.ShadowMap);
-                _effectSetup.Param_ShadowMapRadius.SetValue((float)light.ShadowMapRadius);
-                _effectSetup.Param_ShadowMapSize.SetValue((float)light.ShadowResolution);
+                _fxSetup.Param_ShadowMap.SetValue(light.ShadowMap);
+                _fxSetup.Param_ShadowMapRadius.SetValue((float)light.ShadowMapRadius);
+                _fxSetup.Param_ShadowMapSize.SetValue((float)light.ShadowResolution);
 
                 if (light.IsVolumetric && PointLightPipelineModule.g_VolumetricLights)
                 {
-                    _effectSetup.Param_LightVolumeDensity.SetValue(light.LightVolumeDensity);
-                    _effectSetup.Pass_ShadowedVolumetric.Apply();
+                    _fxSetup.Param_LightVolumeDensity.SetValue(light.LightVolumeDensity);
+                    _fxSetup.Pass_ShadowedVolumetric.Apply();
                 }
                 else
                 {
-                    _effectSetup.Pass_Shadowed.Apply();
+                    _fxSetup.Pass_Shadowed.Apply();
                 }
             }
             else
             {
-                _effectSetup.Param_ShadowMapRadius.SetValue((float)light.ShadowMapRadius);
+                _fxSetup.Param_ShadowMapRadius.SetValue((float)light.ShadowMapRadius);
 
                 if (light.IsVolumetric && PointLightPipelineModule.g_VolumetricLights)
                 {
-                    _effectSetup.Param_LightVolumeDensity.SetValue(light.LightVolumeDensity);
-                    _effectSetup.Pass_UnshadowedVolumetric.Apply();
+                    _fxSetup.Param_LightVolumeDensity.SetValue(light.LightVolumeDensity);
+                    _fxSetup.Pass_UnshadowedVolumetric.Apply();
                 }
                 else
                 {
-                    _effectSetup.Pass_Unshadowed.Apply();
+                    _fxSetup.Pass_Unshadowed.Apply();
                 }
             }
         }
@@ -223,7 +223,7 @@ namespace DeferredEngine.Pipeline.Lighting
         {
             _stencilCullPass1?.Dispose();
             _stencilCullPass2?.Dispose();
-            _effectSetup?.Dispose();
+            _fxSetup?.Dispose();
         }
     }
 }

@@ -17,7 +17,7 @@ namespace DeferredEngine.Pipeline
         private ShadowPasses _pass;
 
         private BoundingFrustum _boundingFrustumShadow;
-        private ShadowMapFxSetup _effectSetup = new ShadowMapFxSetup();
+        private readonly ShadowMapFxSetup _fxSetup = new ShadowMapFxSetup();
 
 
         private enum ShadowPasses
@@ -91,7 +91,7 @@ namespace DeferredEngine.Pipeline
             }
 
             //Performance Profile
-            this.Profiler?.SampleTimestamp(TimestampIndices.Draw_Shadows);
+            this.Profiler?.SampleTimestamp(ProfilerTimestamps.Draw_Shadows);
         }
 
         /// <summary>
@@ -131,8 +131,8 @@ namespace DeferredEngine.Pipeline
                     meshBatcher.FrustumCulling(_boundingFrustumShadow, true);
 
                     // Rendering!
-                    _effectSetup.Param_FarClip.SetValue(light.Radius);
-                    _effectSetup.Param_LightPositionWS.SetValue(light.Position);
+                    _fxSetup.Param_FarClip.SetValue(light.Radius);
+                    _fxSetup.Param_LightPositionWS.SetValue(light.Position);
 
                     _graphicsDevice.Viewport = new Viewport(0, shadowResolution * (int)cubeMapFace, shadowResolution, shadowResolution);
                     _graphicsDevice.ScissorRectangle = new Rectangle(0, shadowResolution * (int)cubeMapFace, shadowResolution, shadowResolution);
@@ -215,8 +215,8 @@ namespace DeferredEngine.Pipeline
                 meshBatcher.FrustumCulling(_boundingFrustumShadow, true);
 
                 // Rendering!
-                _effectSetup.Param_FarClip.SetValue(light.ShadowFarClip);
-                _effectSetup.Param_SizeBias.SetValue(ShadowMapPipelineModule.ShadowBias * 2048 / light.ShadowResolution);
+                _fxSetup.Param_FarClip.SetValue(light.ShadowFarClip);
+                _fxSetup.Param_SizeBias.SetValue(ShadowMapPipelineModule.ShadowBias * 2048 / light.ShadowResolution);
 
 
                 if (meshBatcher.CheckRequiresRedraw(RenderType.ShadowOmnidirectional, true, light.HasChanged))
@@ -235,8 +235,8 @@ namespace DeferredEngine.Pipeline
                 _graphicsDevice.SetRenderTarget(light.ShadowMap);
                 _graphicsDevice.Clear(ClearOptions.DepthBuffer, Color.White, 1, 0);
 
-                _effectSetup.Param_FarClip.SetValue(light.ShadowFarClip);
-                _effectSetup.Param_SizeBias.SetValue(ShadowMapPipelineModule.ShadowBias * 2048 / light.ShadowResolution);
+                _fxSetup.Param_FarClip.SetValue(light.ShadowFarClip);
+                _fxSetup.Param_SizeBias.SetValue(ShadowMapPipelineModule.ShadowBias * 2048 / light.ShadowResolution);
 
                 if (meshBatcher.CheckRequiresRedraw(RenderType.ShadowLinear, false, true))
                     meshBatcher.Draw(RenderType.ShadowLinear, light.Matrices.ViewProjection, light.Matrices.View, RenderContext.Default, this);
@@ -254,21 +254,21 @@ namespace DeferredEngine.Pipeline
 
         public void Apply(Matrix localWorldMatrix, Matrix? view, Matrix viewProjection)
         {
-            _effectSetup.Param_WorldViewProj.SetValue(localWorldMatrix * viewProjection);
+            _fxSetup.Param_WorldViewProj.SetValue(localWorldMatrix * viewProjection);
 
             switch (_pass)
             {
                 case ShadowPasses.Directional:
-                    _effectSetup.Param_WorldView.SetValue(localWorldMatrix * (Matrix)view);
-                    _effectSetup.Pass_LinearPass.Apply();
+                    _fxSetup.Param_WorldView.SetValue(localWorldMatrix * (Matrix)view);
+                    _fxSetup.Pass_LinearPass.Apply();
                     break;
                 case ShadowPasses.Omnidirectional:
-                    _effectSetup.Param_World.SetValue(localWorldMatrix);
-                    _effectSetup.Pass_DistancePass.Apply();
+                    _fxSetup.Param_World.SetValue(localWorldMatrix);
+                    _fxSetup.Pass_DistancePass.Apply();
                     break;
                 case ShadowPasses.OmnidirectionalAlpha:
-                    _effectSetup.Param_World.SetValue(localWorldMatrix);
-                    _effectSetup.Pass_DistanceAlphaPass.Apply();
+                    _fxSetup.Param_World.SetValue(localWorldMatrix);
+                    _fxSetup.Pass_DistanceAlphaPass.Apply();
                     break;
             }
         }
@@ -279,7 +279,7 @@ namespace DeferredEngine.Pipeline
             if (material.HasMask)
             {
                 _pass = ShadowPasses.OmnidirectionalAlpha;
-                _effectSetup.Param_MaskTexture.SetValue(material.Mask);
+                _fxSetup.Param_MaskTexture.SetValue(material.Mask);
             }
             else
             {
@@ -289,7 +289,7 @@ namespace DeferredEngine.Pipeline
 
         public override void Dispose()
         {
-            _effectSetup?.Dispose();
+            _fxSetup?.Dispose();
         }
     }
 }

@@ -13,7 +13,7 @@ namespace DeferredEngine.Rendering.SDF
     public partial class DistanceFieldRenderModule : PipelineModule, IDisposable
     {
 
-        private DistanceFieldEffectSetup _effectSetup = new DistanceFieldEffectSetup();
+        private readonly DistanceFieldEffectSetup _fxSetup = new DistanceFieldEffectSetup();
 
         public Generator _sdfGenerator;
         public PointLightPipelineModule PointLightRenderModule;
@@ -24,22 +24,22 @@ namespace DeferredEngine.Rendering.SDF
 
         private const int InstanceMaxCount = 40;
 
-        private Matrix[] _instanceInverseMatrixArray = new Matrix[InstanceMaxCount];
-        private Vector3[] _instanceScaleArray = new Vector3[InstanceMaxCount];
-        private float[] _instanceSDFIndexArray = new float[InstanceMaxCount];
+        private readonly Matrix[] _instanceInverseMatrixArray = new Matrix[InstanceMaxCount];
+        private readonly Vector3[] _instanceScaleArray = new Vector3[InstanceMaxCount];
+        private readonly float[] _instanceSDFIndexArray = new float[InstanceMaxCount];
         private int _instancesCount = 0;
 
-        private Vector3[] _volumeTexSizeArray = new Vector3[40];
-        private Vector4[] _volumeTexResolutionArray = new Vector4[40];
+        private readonly Vector3[] _volumeTexSizeArray = new Vector3[40];
+        private readonly Vector4[] _volumeTexResolutionArray = new Vector4[40];
 
         private List<SignedDistanceField> _sdfDefinitions;
-        private SignedDistanceField[] _signedDistanceFieldDefinitions = new SignedDistanceField[40];
+        private readonly SignedDistanceField[] _signedDistanceFieldDefinitions = new SignedDistanceField[40];
         private int _signedDistanceFieldDefinitionsCount = 0;
 
 
-        public Vector3 ViewPosition { set { _effectSetup.Param_CameraPositon.SetValue(value); } }
-        public Texture2D DepthMap { set { _effectSetup.Param_DepthMap.SetValue(value); } }
-        public Vector3 MeshOffset { set { _effectSetup.Param_MeshOffset.SetValue(value); } }
+        public Vector3 ViewPosition { set { _fxSetup.Param_CameraPositon.SetValue(value); } }
+        public Texture2D DepthMap { set { _fxSetup.Param_DepthMap.SetValue(value); } }
+        public Vector3 MeshOffset { set { _fxSetup.Param_MeshOffset.SetValue(value); } }
 
 
         public DistanceFieldRenderModule()
@@ -49,20 +49,20 @@ namespace DeferredEngine.Rendering.SDF
 
         public void SetInstanceData(Matrix[] inverseMatrices, Vector3[] scales, float[] sdfIndices, int count)
         {
-            _effectSetup.Param_InstanceInverseMatrix.SetValue(inverseMatrices);
-            _effectSetup.Param_InstanceScale.SetValue(scales);
-            _effectSetup.Param_InstanceSDFIndex.SetValue(sdfIndices);
-            _effectSetup.Param_InstancesCount.SetValue((float)count);
+            _fxSetup.Param_InstanceInverseMatrix.SetValue(inverseMatrices);
+            _fxSetup.Param_InstanceScale.SetValue(scales);
+            _fxSetup.Param_InstanceSDFIndex.SetValue(sdfIndices);
+            _fxSetup.Param_InstancesCount.SetValue((float)count);
         }
         public void SetVolumeTexParams(Texture atlas, Vector3[] texSizes, Vector4[] texResolutions)
         {
-            _effectSetup.Param_VolumeTex.SetValue(atlas);
-            _effectSetup.Param_VolumeTexSize.SetValue(texSizes);
-            _effectSetup.Param_VolumeTexResolution.SetValue(texResolutions);
+            _fxSetup.Param_VolumeTex.SetValue(atlas);
+            _fxSetup.Param_VolumeTexSize.SetValue(texSizes);
+            _fxSetup.Param_VolumeTexResolution.SetValue(texResolutions);
         }
         public void SetViewPosition(Vector3 viewPosition)
         {
-            _effectSetup.Param_CameraPositon.SetValue(viewPosition);
+            _fxSetup.Param_CameraPositon.SetValue(viewPosition);
         }
 
 
@@ -70,8 +70,8 @@ namespace DeferredEngine.Rendering.SDF
         {
             if (RenderingSettings.SDF.DrawDistance)
             {
-                _effectSetup.Param_FrustumCorners.SetValue(this.Frustum.WorldSpaceFrustum);
-                _effectSetup.Pass_Distance.Apply();
+                _fxSetup.Param_FrustumCorners.SetValue(this.Frustum.WorldSpaceFrustum);
+                _fxSetup.Pass_Distance.Apply();
                 FullscreenTriangleBuffer.Instance.Draw(_graphicsDevice);
             }
         }
@@ -79,8 +79,8 @@ namespace DeferredEngine.Rendering.SDF
         {
             if (RenderingSettings.SDF.DrawVolume)
             {
-                _effectSetup.Param_FrustumCorners.SetValue(this.Frustum.WorldSpaceFrustum);
-                _effectSetup.Pass_Volume.Apply();
+                _fxSetup.Param_FrustumCorners.SetValue(this.Frustum.WorldSpaceFrustum);
+                _fxSetup.Pass_Volume.Apply();
                 FullscreenTriangleBuffer.Instance.Draw(_graphicsDevice);
             }
         }
@@ -210,10 +210,10 @@ namespace DeferredEngine.Rendering.SDF
 
             MeshOffset = sdf.Offset;
 
-            _effectSetup.Param_TriangleTexResolution.SetValue(new Vector2(triangleData.Width, triangleData.Height));
-            _effectSetup.Param_TriangleAmount.SetValue((float)trianglesLength);
+            _fxSetup.Param_TriangleTexResolution.SetValue(new Vector2(triangleData.Width, triangleData.Height));
+            _fxSetup.Param_TriangleAmount.SetValue((float)trianglesLength);
 
-            _effectSetup.Pass_GenerateSDF.Apply();
+            _fxSetup.Pass_GenerateSDF.Apply();
             FullscreenTriangleBuffer.Instance.Draw(graphics);
 
             _signedDistanceFieldDefinitionsCount = -1;
@@ -228,7 +228,7 @@ namespace DeferredEngine.Rendering.SDF
 
         public override void Dispose()
         {
-            _effectSetup.Dispose();
+            _fxSetup.Dispose();
         }
 
     }

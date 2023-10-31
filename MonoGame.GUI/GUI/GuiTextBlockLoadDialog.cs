@@ -28,8 +28,8 @@ namespace HelperSuite.GUI
         private Task _loadTaskReference;
         public object LoadedObject;
         private int _loadedObjectPointer = -1;
-        private StringBuilder _loadedObjectName = new StringBuilder(100);
-        private StringBuilder _loadingStringBuilder = new StringBuilder("loading...");
+        private readonly StringBuilder _loadedObjectName = new StringBuilder(100);
+        private readonly StringBuilder _loadingStringBuilder = new StringBuilder("loading...");
         
         public MethodInfo LoaderMethod;
         public GUIContentLoader GUILoader;
@@ -50,13 +50,10 @@ namespace HelperSuite.GUI
             textColor: style.TextColorStyle,
             textAlignment: GUIStyle.TextAlignment.Left,
             textBorder: style.TextBorderStyle,
-            layer: 0,
-            alignment: style.GuiAlignmentStyle,
-            parentDimensions: style.ParentDimensionsStyle
-            )
+            layer: 0)
         {
         }
-        public GuiTextBlockLoadDialog(Vector2 position, Vector2 dimensions, string text, GUIContentLoader guiContentLoader, ContentType contentType, SpriteFont font, Color blockColor, Color textColor, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Center, Vector2 textBorder = default(Vector2), int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, Vector2 parentDimensions = default(Vector2)) : base(position, dimensions, text, font, blockColor, textColor, textAlignment, textBorder, layer)
+        public GuiTextBlockLoadDialog(Vector2 position, Vector2 dimensions, string text, GUIContentLoader guiContentLoader, ContentType contentType, SpriteFont font, Color blockColor, Color textColor, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Center, Vector2 textBorder = default, int layer = 0) : base(position, dimensions, text, font, blockColor, textColor, textAlignment, textBorder, layer)
         {
             _loadedObjectName.Append("...");
 
@@ -192,8 +189,8 @@ namespace HelperSuite.GUI
                 {
                     string s = null;
                     object[] args = {_loadTaskReference, _loadedObjectPointer, s};
-                    if (LoaderMethod != null) LoaderMethod.Invoke(GUILoader, args);
-                    
+                    LoaderMethod?.Invoke(GUILoader, args);
+
                     _loadTaskReference = (Task) args[0];
                     _loadedObjectPointer = (int) args[1];
                     _loadedObjectName.Clear();

@@ -10,7 +10,7 @@ namespace DeferredEngine.Pipeline
     //Just a template
     public class GBufferPipelineModule : PipelineModule, IRenderModule
     {
-        private GBufferFxSetup _effectSetup = new GBufferFxSetup();
+        private readonly GBufferFxSetup _fxSetup = new GBufferFxSetup();
         private GBufferTarget _gBufferTarget;
         private FullscreenTriangleBuffer _fullscreenTarget;
 
@@ -37,7 +37,7 @@ namespace DeferredEngine.Pipeline
             if (this.ClearGBuffer)
             {
                 _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullNone, BlendStateOption.Opaque);
-                _effectSetup.Pass_ClearGBuffer.Apply();
+                _fxSetup.Pass_ClearGBuffer.Apply();
                 _fullscreenTarget.Draw(_graphicsDevice);
             }
 
@@ -46,43 +46,43 @@ namespace DeferredEngine.Pipeline
                 meshBatcher.Draw(renderType: RenderType.Opaque, this.Matrices, RenderContext.Default, this);
 
             // sample profiler if set
-            this.Profiler?.SampleTimestamp(TimestampIndices.Draw_GBuffer);
+            this.Profiler?.SampleTimestamp(ProfilerTimestamps.Draw_GBuffer);
         }
 
         public void Apply(Matrix localWorldMatrix, Matrix? view, Matrix viewProjection)
         {
             Matrix worldView = localWorldMatrix * (Matrix)view;
-            _effectSetup.Param_WorldView.SetValue(worldView);
-            _effectSetup.Param_WorldViewProj.SetValue(localWorldMatrix * viewProjection);
+            _fxSetup.Param_WorldView.SetValue(worldView);
+            _fxSetup.Param_WorldViewProj.SetValue(localWorldMatrix * viewProjection);
 
             worldView = Matrix.Invert(Matrix.Transpose(worldView));
-            _effectSetup.Param_WorldViewIT.SetValue(worldView);
-            _effectSetup.Effect_GBuffer.CurrentTechnique.Passes[0].Apply();
+            _fxSetup.Param_WorldViewIT.SetValue(worldView);
+            _fxSetup.Effect_GBuffer.CurrentTechnique.Passes[0].Apply();
 
-            _effectSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
+            _fxSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
         }
 
         public void SetMaterialSettings(MaterialEffect material)
         {
             if (RenderingSettings.d_DefaultMaterial)
             {
-                _effectSetup.Param_Material_DiffuseColor.SetValue(Color.Gray.ToVector3());
-                _effectSetup.Param_Material_Roughness.SetValue(RenderingSettings.m_DefaultRoughness > 0
+                _fxSetup.Param_Material_DiffuseColor.SetValue(Color.Gray.ToVector3());
+                _fxSetup.Param_Material_Roughness.SetValue(RenderingSettings.m_DefaultRoughness > 0
                                                                                         ? RenderingSettings.m_DefaultRoughness
                                                                                         : 0.3f);
-                _effectSetup.Param_Material_Metallic.SetValue(0.0f);
-                _effectSetup.Param_Material_MaterialType.SetValue(0);
-                _effectSetup.Effect_GBuffer.CurrentTechnique = _effectSetup.Technique_DrawBasic;
+                _fxSetup.Param_Material_Metallic.SetValue(0.0f);
+                _fxSetup.Param_Material_MaterialType.SetValue(0);
+                _fxSetup.Effect_GBuffer.CurrentTechnique = _fxSetup.Technique_DrawBasic;
             }
             else
             {
-                _effectSetup.Param_Material_Texture.SetValue(material.HasAlbedoMap ? material.AlbedoMap : null);
-                _effectSetup.Param_Material_NormalMap.SetValue(material.HasNormalMap ? material.NormalMap : null);
-                _effectSetup.Param_Material_RoughnessMap.SetValue(material.HasRoughnessMap ? material.RoughnessMap : null);
-                _effectSetup.Param_Material_MetallicMap.SetValue(material.HasMetallicMap ? material.MetallicMap : null);
-                _effectSetup.Param_Material_MaskMap.SetValue(material.HasMask ? material.Mask : null);
+                _fxSetup.Param_Material_Texture.SetValue(material.HasAlbedoMap ? material.AlbedoMap : null);
+                _fxSetup.Param_Material_NormalMap.SetValue(material.HasNormalMap ? material.NormalMap : null);
+                _fxSetup.Param_Material_RoughnessMap.SetValue(material.HasRoughnessMap ? material.RoughnessMap : null);
+                _fxSetup.Param_Material_MetallicMap.SetValue(material.HasMetallicMap ? material.MetallicMap : null);
+                _fxSetup.Param_Material_MaskMap.SetValue(material.HasMask ? material.Mask : null);
 
-                _effectSetup.Effect_GBuffer.CurrentTechnique = material.GetGBufferTechnique(_effectSetup);
+                _fxSetup.Effect_GBuffer.CurrentTechnique = material.GetGBufferTechnique(_fxSetup);
 
                 // -------------------------
                 // Set value base material parameters
@@ -90,27 +90,27 @@ namespace DeferredEngine.Pipeline
                 {
                     if (material.Type == MaterialEffect.MaterialTypes.Emissive && material.EmissiveStrength > 0)
                     {
-                        _effectSetup.Param_Material_DiffuseColor.SetValue(material.DiffuseColor);
-                        _effectSetup.Param_Material_Metallic.SetValue(material.EmissiveStrength / 8);
+                        _fxSetup.Param_Material_DiffuseColor.SetValue(material.DiffuseColor);
+                        _fxSetup.Param_Material_Metallic.SetValue(material.EmissiveStrength / 8);
                     }
                     else
                     {
-                        _effectSetup.Param_Material_DiffuseColor.SetValue(material.DiffuseColor);
+                        _fxSetup.Param_Material_DiffuseColor.SetValue(material.DiffuseColor);
                     }
                 }
 
                 if (!material.HasRoughnessMap)
-                    _effectSetup.Param_Material_Roughness.SetValue(RenderingSettings.m_DefaultRoughness > 0
+                    _fxSetup.Param_Material_Roughness.SetValue(RenderingSettings.m_DefaultRoughness > 0
                                                                                             ? RenderingSettings.m_DefaultRoughness
                                                                                             : material.Roughness);
-                _effectSetup.Param_Material_Metallic.SetValue(material.Metallic);
-                _effectSetup.Param_Material_MaterialType.SetValue(material.MaterialTypeNumber);
+                _fxSetup.Param_Material_Metallic.SetValue(material.Metallic);
+                _fxSetup.Param_Material_MaterialType.SetValue(material.MaterialTypeNumber);
             }
         }
 
         public override void Dispose()
         {
-            _effectSetup?.Dispose();
+            _fxSetup?.Dispose();
         }
     }
 

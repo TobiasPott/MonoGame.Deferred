@@ -13,7 +13,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         protected override bool GetEnabled() => _enabled && ModuleEnabled;
 
 
-        private PostProcssingFxSetup _fxSetup = new PostProcssingFxSetup();
+        private readonly PostProcssingFxSetup _fxSetup = new PostProcssingFxSetup();
 
 
         // PostProcessing

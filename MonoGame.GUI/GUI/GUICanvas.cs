@@ -9,9 +9,9 @@ namespace HelperSuite.GUI
     {
         public bool IsEnabled = true;
 
-        private List<GUIElement> _children = new List<GUIElement>();
+        private readonly List<GUIElement> _children = new List<GUIElement>();
 
-        public GUICanvas(Vector2 position, Vector2 dimensions, int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, Vector2 ParentDimensions = default(Vector2))
+        public GUICanvas(Vector2 position, Vector2 dimensions, int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, Vector2 ParentDimensions = default)
         {
             Dimensions = dimensions;
             Alignment = alignment;

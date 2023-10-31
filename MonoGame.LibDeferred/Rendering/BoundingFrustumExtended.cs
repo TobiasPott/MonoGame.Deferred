@@ -434,7 +434,7 @@ namespace DeferredEngine.Rendering
         }
 
 
-        internal PlaneIntersectionType PlaneIntersects(ref Vector3 point, ref Plane plane)
+        internal static PlaneIntersectionType PlaneIntersects(ref Vector3 point, ref Plane plane)
         {
             plane.DotCoordinate(ref point, out float distance);
 
@@ -523,12 +523,12 @@ namespace DeferredEngine.Rendering
             this._planes[4] = new Plane(this._matrix.M12 - this._matrix.M14, this._matrix.M22 - this._matrix.M24, this._matrix.M32 - this._matrix.M34, this._matrix.M42 - this._matrix.M44);
             this._planes[5] = new Plane(-this._matrix.M14 - this._matrix.M12, -this._matrix.M24 - this._matrix.M22, -this._matrix.M34 - this._matrix.M32, -this._matrix.M44 - this._matrix.M42);
 
-            this.NormalizePlane(ref this._planes[0]);
-            this.NormalizePlane(ref this._planes[1]);
-            this.NormalizePlane(ref this._planes[2]);
-            this.NormalizePlane(ref this._planes[3]);
-            this.NormalizePlane(ref this._planes[4]);
-            this.NormalizePlane(ref this._planes[5]);
+            NormalizePlane(ref this._planes[0]);
+            NormalizePlane(ref this._planes[1]);
+            NormalizePlane(ref this._planes[2]);
+            NormalizePlane(ref this._planes[3]);
+            NormalizePlane(ref this._planes[4]);
+            NormalizePlane(ref this._planes[5]);
         }
 
         public void SetCorners(ref Vector3[] corners)
@@ -554,12 +554,12 @@ namespace DeferredEngine.Rendering
             //Bottom
             _planes[5] = new Plane(_corners[3], _corners[7], _corners[6]);
 
-            this.NormalizePlane(ref this._planes[0]);
-            this.NormalizePlane(ref this._planes[1]);
-            this.NormalizePlane(ref this._planes[2]);
-            this.NormalizePlane(ref this._planes[3]);
-            this.NormalizePlane(ref this._planes[4]);
-            this.NormalizePlane(ref this._planes[5]);
+            NormalizePlane(ref this._planes[0]);
+            NormalizePlane(ref this._planes[1]);
+            NormalizePlane(ref this._planes[2]);
+            NormalizePlane(ref this._planes[3]);
+            NormalizePlane(ref this._planes[4]);
+            NormalizePlane(ref this._planes[5]);
         }
 
         private static void IntersectionPoint(ref Plane a, ref Plane b, ref Plane c, out Vector3 result)
@@ -595,7 +595,7 @@ namespace DeferredEngine.Rendering
             result.Z = (v1.Z + v2.Z + v3.Z) / f;
         }
 
-        private void NormalizePlane(ref Plane p)
+        private static void NormalizePlane(ref Plane p)
         {
             float factor = 1f / p.Normal.Length();
             p.Normal.X *= factor;

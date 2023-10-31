@@ -95,12 +95,12 @@ namespace HelperSuite.GUI
                 if (SliderObject != null)
                 {
                     if (SliderField != null) SliderField.SetValue(SliderObject, SliderValue, BindingFlags.Public, null, null);
-                    else if (SliderProperty != null) SliderProperty.SetValue(SliderObject, SliderValue);
+                    else SliderProperty?.SetValue(SliderObject, SliderValue);
                 }
                 else
                 {
                     if (SliderField != null) SliderField.SetValue(null, SliderValue, BindingFlags.Static | BindingFlags.Public, null, null);
-                    else if (SliderProperty != null) SliderProperty.SetValue(null, SliderValue);
+                    else SliderProperty?.SetValue(null, SliderValue);
                 }
             }
         }

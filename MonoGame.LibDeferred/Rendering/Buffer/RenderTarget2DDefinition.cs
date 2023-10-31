@@ -23,7 +23,7 @@ namespace DeferredEngine.Rendering
         Upsample_x5 = 32
     }
 
-    public struct RenderTarget2DDefinition
+    public readonly struct RenderTarget2DDefinition
     {
         public static readonly RenderTarget2DDefinition Albedo = new RenderTarget2DDefinition(nameof(Albedo), false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
         public static readonly RenderTarget2DDefinition Normal = new RenderTarget2DDefinition(nameof(Normal), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
@@ -73,11 +73,11 @@ namespace DeferredEngine.Rendering
             this.Resampling = resModifier;
         }
 
-        public RenderTarget2D CreateRenderTarget(GraphicsDevice graphicsDevice, Vector2 resolution) => CreateRenderTarget(graphicsDevice, (int)resolution.X, (int)resolution.Y);
-        public RenderTarget2D CreateRenderTarget(GraphicsDevice graphicsDevice, int width, int height)
+        public readonly RenderTarget2D CreateRenderTarget(GraphicsDevice graphicsDevice, Vector2 resolution) => CreateRenderTarget(graphicsDevice, (int)resolution.X, (int)resolution.Y);
+        public readonly RenderTarget2D CreateRenderTarget(GraphicsDevice graphicsDevice, int width, int height)
         {
             if (this.Resampling != ResamplingModes.Original)
-                this.Resample(this.Resampling, ref width, ref height);
+                Resample(this.Resampling, ref width, ref height);
 
             long size = width * height;
             if (this.Format == SurfaceFormat.Color || this.Format == SurfaceFormat.ColorSRgb
@@ -99,7 +99,7 @@ namespace DeferredEngine.Rendering
             return new RenderTarget2D(graphicsDevice, width, height, MipMap, Format, DepthFormat, MultiSampleCount, Usage);
         }
 
-        private void Resample(ResamplingModes resampling, ref int width, ref int height)
+        private static void Resample(ResamplingModes resampling, ref int width, ref int height)
         {
             if (resampling < 0)
             {

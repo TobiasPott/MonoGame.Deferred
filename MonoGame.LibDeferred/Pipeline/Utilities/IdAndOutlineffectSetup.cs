@@ -11,7 +11,7 @@ namespace DeferredEngine.Pipeline.Utilities
         {
             get
             {
-                if (_instance == null) _instance = new IdAndOutlineEffectSetup();
+                _instance ??= new IdAndOutlineEffectSetup();
                 return _instance;
             }
         }

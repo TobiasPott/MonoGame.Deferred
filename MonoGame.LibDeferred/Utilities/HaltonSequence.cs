@@ -18,7 +18,7 @@ namespace DeferredEngine.Rendering
         /// <returns></returns>
         public Vector3 GetNext(bool rebuild = false)
         {
-            Vector2 invResolution = RenderingSettings.Screen.g_InverseResolution * 2;
+            Vector2 invResolution = RenderingSettings.Screen.InverseResolution * 2;
             //First time? Create the sequence
             if (_haltonSequence == null)
             {

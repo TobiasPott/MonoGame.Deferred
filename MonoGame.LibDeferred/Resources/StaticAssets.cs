@@ -9,16 +9,11 @@ namespace DeferredEngine.Recources
         public static StaticAssets Instance { get; private set; }
         public static void InitClass(ContentManager content, GraphicsDevice graphicsDevice)
         {
-            if (Instance == null)
-                Instance = new StaticAssets(content, graphicsDevice);
+            Instance ??= new StaticAssets(content, graphicsDevice);
         }
         public static void UnloadClass() => Instance?.Dispose();
         
         #endregion
-
-        private GraphicsDevice _graphicsDevice;
-        private ContentManager _content;
-
 
 
         public Texture2D IconLight { get; protected set; }
@@ -41,9 +36,6 @@ namespace DeferredEngine.Recources
 
         private StaticAssets(ContentManager content, GraphicsDevice graphicsDevice)
         {
-            _graphicsDevice = graphicsDevice;
-            _content = content;
-
             // Icons and UI Textures
             IconDecal = content.Load<Texture2D>("Art/Editor/icon_decal");
             IconLight = content.Load<Texture2D>("Art/Editor/icon_light");

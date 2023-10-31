@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using HelperSuite.ContentLoader;
+﻿using HelperSuite.ContentLoader;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Diagnostics;
+using System.Text;
+using System.Windows.Forms;
 
 namespace HelperSuite.GUIHelper
 {
@@ -18,25 +14,25 @@ namespace HelperSuite.GUIHelper
         private ContentManager _contentManager;
 
         public readonly List<object> ContentArray = new List<object>();
-        
-        enum buildMode
-        { defaultMode, retryWithoutAnimation, retryWithoutTangents, finished, failed };
+
+        public enum BuildMode
+        { DefaultMode, RetryWithoutAnimation, RetryWithoutTangents, Finished, Failed };
 
 
         public void Load(ContentManager contentManager)
         {
-            _contentManager = new ThreadSafeContentManager(contentManager.ServiceProvider) {RootDirectory = "Content"};
+            _contentManager = new ThreadSafeContentManager(contentManager.ServiceProvider) { RootDirectory = "Content" };
         }
 
         public void LoadContentFile<T>(out Task loadTaskOut, ref int pointerPositionInOut, out string filenameOut/*, string path*/)
         {
             GUIControl.LastMouseState = Mouse.GetState();
             GUIControl.CurrentMouseState = Mouse.GetState();
-            
+
             string dialogFilter = "All files(*.*) | *.*";
             string pipeLineFile = "runtime.txt";
             //Switch the content pipeline parameters depending on the content type
-            
+
             if (typeof(T) == typeof(Texture2D))
             {
                 dialogFilter =
@@ -61,7 +57,7 @@ namespace HelperSuite.GUIHelper
             string fileName = null;
             string copiedFilePath = null;
             string shortFileName = null;
-            
+
             string fileEnding = null;
             OpenFileDialog openFileDialog1 = new OpenFileDialog
             {
@@ -96,7 +92,7 @@ namespace HelperSuite.GUIHelper
             else
             {
                 loadTaskOut = null;
-                if(pointerPositionInOut!=-1)
+                if (pointerPositionInOut != -1)
                     ContentArray[pointerPositionInOut] = null;
 
                 filenameOut = "...";
@@ -139,15 +135,15 @@ namespace HelperSuite.GUIHelper
 
                 completeFilePath = completeFilePath.Replace("\\", "/");
 
-                buildMode mode = buildMode.defaultMode;
+                BuildMode mode = BuildMode.DefaultMode;
 
-                while (mode != buildMode.finished)
+                while (mode != BuildMode.Finished)
                 {
-                    if (mode == buildMode.retryWithoutAnimation)
+                    if (mode == BuildMode.RetryWithoutAnimation)
                     {
                         pipeLineFile = "runtimemodel.txt";
                     }
-                    else if (mode == buildMode.retryWithoutTangents)
+                    else if (mode == BuildMode.RetryWithoutTangents)
                     {
                         pipeLineFile = "runtimemodelnotangent.txt";
                     }
@@ -171,7 +167,7 @@ namespace HelperSuite.GUIHelper
                     //Get program output
                     string stdError = null;
                     StringBuilder stdOutput = new StringBuilder();
-                    pProcess.OutputDataReceived += (sender, args) => stdOutput.Append( args.Data );
+                    pProcess.OutputDataReceived += (sender, args) => stdOutput.Append(args.Data);
 
                     try
                     {
@@ -188,7 +184,7 @@ namespace HelperSuite.GUIHelper
                     if (pProcess.ExitCode == 0)
                     {
 
-                       mode = buildMode.finished;
+                        mode = BuildMode.Finished;
                     }
                     else
                     {
@@ -208,9 +204,9 @@ namespace HelperSuite.GUIHelper
                             message.AppendLine("Std output:");
                             message.AppendLine(stout);
 
-                            if (stout.Contains("tangent") && mode == buildMode.defaultMode)
+                            if (stout.Contains("tangent") && mode == BuildMode.DefaultMode)
                             {
-                                mode = buildMode.retryWithoutTangents;
+                                mode = BuildMode.RetryWithoutTangents;
                                 fail = false;
                             }
                         }

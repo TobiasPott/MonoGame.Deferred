@@ -56,7 +56,7 @@ namespace DeferredEngine.Pipeline.Lighting
 
         public PointLightFxSetup(string shaderPath = "Shaders/Deferred/DeferredPointLight") : base()
         {
-            Effect = Globals.content.Load<Effect>("Shaders/Deferred/DeferredPointLight");
+            Effect = Globals.content.Load<Effect>(shaderPath);
 
             Technique_Unshadowed = Effect.Techniques["Unshadowed"];
             Technique_UnshadowedVolumetric = Effect.Techniques["UnshadowedVolume"];

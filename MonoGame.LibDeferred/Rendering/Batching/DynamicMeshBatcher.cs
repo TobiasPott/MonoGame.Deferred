@@ -16,15 +16,6 @@ namespace DeferredEngine.Rendering
         None = 0,
         Outlined = 1,
     }
-    public class RenderContext
-    {
-        public static readonly RenderContext Default = new RenderContext();
-
-
-        public RenderFlags Flags = RenderFlags.None;
-        public int OutlineId = 0;
-    }
-
     public enum RenderType
     {
         Opaque,
@@ -34,6 +25,14 @@ namespace DeferredEngine.Rendering
         Forward,
         IdRender,
         IdOutline,
+    }
+
+    public class RenderContext
+    {
+        public static readonly RenderContext Default = new RenderContext();
+
+        public RenderFlags Flags = RenderFlags.None;
+        public int OutlineId = 0;
     }
 
 
@@ -57,7 +56,9 @@ namespace DeferredEngine.Rendering
         private readonly List<MaterialBatch> _batches = new List<MaterialBatch>(InitialLibrarySize);
 
 
-        public bool BatchByMaterial { get; set; } = false;
+
+        protected bool _enableBatchByMaterial = false;
+        public bool BatchByMaterial { get => _enableBatchByMaterial; set => _enableBatchByMaterial = value; }
         public bool IsAnyRendered => _batches.Any(x => x.IsAnyRendered);
 
 
@@ -89,13 +90,9 @@ namespace DeferredEngine.Rendering
             if (mat == null)
             {
                 if (mesh.Effect is MaterialEffect effect)
-                {
                     mat = effect;
-                }
                 else
-                {
                     mat = new MaterialEffect(mesh.Effect);
-                }
             }
 
             //Check if we already have a material like that, if yes put it in there!
@@ -117,7 +114,6 @@ namespace DeferredEngine.Rendering
                 batch.SetMaterial(mat);
                 batch.Register(mesh, transform, boundingSphere);
                 _batches.Add(batch);
-                //Debug.WriteLine($"Created new material batch array (GC!): {MaterialBatch.Count}");
             }
 
         }

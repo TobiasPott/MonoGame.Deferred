@@ -38,7 +38,7 @@ namespace DeferredEngine.Demo
             _guiLogic.Initialize(_assets, _sceneLogic.Camera);
             _editorLogic.Initialize(graphicsDevice);
             _debug.Initialize(graphicsDevice);
-            _guiRenderer.Initialize(graphicsDevice, RenderingSettings.Screen.g_Width, RenderingSettings.Screen.g_Height);
+            _guiRenderer.Initialize(graphicsDevice, RenderingSettings.Screen.Width, RenderingSettings.Screen.Height);
         }
 
         //Load content
@@ -57,7 +57,6 @@ namespace DeferredEngine.Demo
 
             _assets.Load(content, graphicsDevice);
             _renderer.Load(content);
-            _sceneLogic.Load(content);
             _debug.LoadContent(content);
             _guiRenderer.Load(content);
         }
@@ -74,7 +73,7 @@ namespace DeferredEngine.Demo
             _editorLogic.Update(gameTime, _sceneLogic.Scene, _renderer.CurrentHoverContext, _sceneLogic.MeshBatcher);
             _sceneLogic.Update(gameTime, isActive);
             _renderer.RequestRedraw(gameTime);
-            _renderer.Update(_sceneLogic.Camera, _sceneLogic.MeshBatcher, _sceneLogic.Scene, _editorLogic.GetEditorData());
+            _renderer.Update(_sceneLogic.MeshBatcher, _sceneLogic.Scene, _sceneLogic.Camera);
 
             _debug.Update(gameTime);
         }

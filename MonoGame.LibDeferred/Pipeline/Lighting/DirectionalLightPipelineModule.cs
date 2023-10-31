@@ -8,10 +8,9 @@ namespace DeferredEngine.Pipeline.Lighting
     public class DirectionalLightPipelineModule : PipelineModule
     {
 
-        private FullscreenTriangleBuffer _fullscreenTarget;
-
         private Vector3 _viewOrigin;
-        private DirectionalLightFxSetup _effectSetup = new DirectionalLightFxSetup();
+        private readonly FullscreenTriangleBuffer _fullscreenTarget;
+        private readonly DirectionalLightFxSetup _fxSetup = new DirectionalLightFxSetup();
 
         public Vector3 ViewOrigin { set => _viewOrigin = value; get => _viewOrigin; }
 
@@ -23,12 +22,12 @@ namespace DeferredEngine.Pipeline.Lighting
 
 
 
-        public void SetScreenSpaceShadowMap(RenderTarget2D renderTarget2D) => _effectSetup.Param_SSShadowMap.SetValue(renderTarget2D);
+        public void SetScreenSpaceShadowMap(RenderTarget2D renderTarget2D) => _fxSetup.Param_SSShadowMap.SetValue(renderTarget2D);
         public void SetGBufferParams(GBufferTarget gBufferTarget)
         {
-            _effectSetup.Param_AlbedoMap.SetValue(gBufferTarget.Albedo);
-            _effectSetup.Param_NormalMap.SetValue(gBufferTarget.Normal);
-            _effectSetup.Param_DepthMap.SetValue(gBufferTarget.Depth);
+            _fxSetup.Param_AlbedoMap.SetValue(gBufferTarget.Albedo);
+            _fxSetup.Param_NormalMap.SetValue(gBufferTarget.Normal);
+            _fxSetup.Param_DepthMap.SetValue(gBufferTarget.Depth);
         }
 
 
@@ -41,13 +40,13 @@ namespace DeferredEngine.Pipeline.Lighting
                 return;
             _graphicsDevice.SetStates(DepthStencilStateOption.None, RasterizerStateOption.CullCounterClockwise);
 
-            _effectSetup.Param_FrustumCorners.SetValue(this.Frustum.ViewSpaceFrustum);
+            _fxSetup.Param_FrustumCorners.SetValue(this.Frustum.ViewSpaceFrustum);
             //If nothing has changed we don't need to update
             if (viewProjectionHasChanged)
             {
-                _effectSetup.Param_ViewProjection.SetValue(this.Matrices.ViewProjection);
-                _effectSetup.Param_InverseViewProjection.SetValue(this.Matrices.InverseViewProjection);
-                _effectSetup.Param_CameraPosition.SetValue(this.ViewOrigin);
+                _fxSetup.Param_ViewProjection.SetValue(this.Matrices.ViewProjection);
+                _fxSetup.Param_InverseViewProjection.SetValue(this.Matrices.InverseViewProjection);
+                _fxSetup.Param_CameraPosition.SetValue(this.ViewOrigin);
             }
 
             for (int index = 0; index < dirLights.Count; index++)
@@ -73,29 +72,29 @@ namespace DeferredEngine.Pipeline.Lighting
         }
         public void ApplyShader(DirectionalLight light)
         {
-            _effectSetup.Param_LightColor.SetValue(light.ColorV3);
-            _effectSetup.Param_LightDirection.SetValue(light.DirectionViewSpace);
-            _effectSetup.Param_LightIntensity.SetValue(light.Intensity);
+            _fxSetup.Param_LightColor.SetValue(light.ColorV3);
+            _fxSetup.Param_LightDirection.SetValue(light.DirectionViewSpace);
+            _fxSetup.Param_LightIntensity.SetValue(light.Intensity);
 
             if (light.CastShadows)
             {
-                _effectSetup.Param_LightView.SetValue(light.Matrices.View_ViewSpace);
-                _effectSetup.Param_LightViewProjection.SetValue(light.Matrices.ViewProjection_ViewSpace);
-                _effectSetup.Param_LightFarClip.SetValue(light.ShadowFarClip);
-                _effectSetup.Param_ShadowMap.SetValue(light.ShadowMap);
-                _effectSetup.Param_ShadowFiltering.SetValue((int)light.ShadowFiltering);
-                _effectSetup.Param_ShadowMapSize.SetValue((float)light.ShadowResolution);
-                _effectSetup.Technique_Shadowed.Passes[0].Apply();
+                _fxSetup.Param_LightView.SetValue(light.Matrices.View_ViewSpace);
+                _fxSetup.Param_LightViewProjection.SetValue(light.Matrices.ViewProjection_ViewSpace);
+                _fxSetup.Param_LightFarClip.SetValue(light.ShadowFarClip);
+                _fxSetup.Param_ShadowMap.SetValue(light.ShadowMap);
+                _fxSetup.Param_ShadowFiltering.SetValue((int)light.ShadowFiltering);
+                _fxSetup.Param_ShadowMapSize.SetValue((float)light.ShadowResolution);
+                _fxSetup.Technique_Shadowed.Passes[0].Apply();
             }
             else
             {
-                _effectSetup.Technique_Unshadowed.Passes[0].Apply();
+                _fxSetup.Technique_Unshadowed.Passes[0].Apply();
             }
         }
 
         public override void Dispose()
         {
-            _effectSetup?.Dispose();
+            _fxSetup?.Dispose();
         }
 
     }

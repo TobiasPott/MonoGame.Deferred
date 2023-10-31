@@ -57,9 +57,8 @@ namespace DeferredEngine.Pipeline
         {
             _redrawRequested = true;
 
-            _moduleStack.Lighting.UpdateGameTime(gameTime);
-            if (SSReflectionFx.g_Noise)
-                _fxStack.SSReflection.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
+            _moduleStack.PointLight.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
+            _fxStack.SSReflection.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
             _moduleStack.Environment.Time = (float)gameTime.TotalGameTime.TotalSeconds % 1000;
         }
 
@@ -71,15 +70,19 @@ namespace DeferredEngine.Pipeline
             _matrices = new PipelineMatrices();
             _profiler = new PipelineProfiler();
 
-            _moduleStack = new PipelineModuleStack();
-            _moduleStack.Matrices = _matrices;
-            _moduleStack.Frustum = _frustum;
-            _moduleStack.Profiler = _profiler;
+            _moduleStack = new PipelineModuleStack
+            {
+                Matrices = _matrices,
+                Frustum = _frustum,
+                Profiler = _profiler
+            };
 
-            _fxStack = new PipelineFxStack(content);
-            _fxStack.Matrices = _matrices;
-            _fxStack.Frustum = _frustum;
-            _fxStack.Profiler = _profiler;
+            _fxStack = new PipelineFxStack(content)
+            {
+                Matrices = _matrices,
+                Frustum = _frustum,
+                Profiler = _profiler
+            };
 
         }
         /// <summary>
@@ -121,50 +124,62 @@ namespace DeferredEngine.Pipeline
         /// <summary>
         /// Update our function
         /// </summary>
-        public override void Update(Camera camera, DynamicMeshBatcher meshBatcher, EntityScene scene, GizmoDrawContext gizmoContext)
+        public override void Update(DynamicMeshBatcher meshBatcher, EntityScene scene, Camera camera)
         {
             if (!this.Enabled)
                 return;
-
-            //Reset the stat counter, so we can count stats/information for this frame only
-            ResetStats();
 
             // Step: 04
             //Update our view projection matrices if the camera moved
             if (_redrawRequested)
             {
-                UpdateViewProjection(camera);
+                //View matrix
                 camera.FarClip = RenderingSettings.Screen.g_FarClip;
+                _matrices.SetFromCamera(camera);
 
-                //We need to update whether or not entities are in our boundingFrustum and then cull them or not!
-                meshBatcher.FrustumCulling(_frustum.Frustum, _redrawRequested);
+                //Temporal AA - alternate frames for temporal anti-aliasing
+                if (_fxStack.TemporalAA.Enabled)
+                {
+                    _fxStack.TemporalAA.SwapOffFrame();
+                    _matrices.ApplyViewProjectionJitter(_fxStack.TemporalAA.JitterMode, _fxStack.TemporalAA.IsOffFrame, _fxStack.TemporalAA.HaltonSequence);
+                }
+                _fxStack.SSAmbientOcclusion.SetViewPosition(camera.Position);
+
+                _frustum.Frustum.Matrix = _matrices.StaticViewProjection;
                 // Compute the frustum corners for cheap view direction computation in shaders
                 _frustum.UpdateVertices(_matrices.View, camera.Position);
 
+
                 _moduleStack.Lighting.SetViewPosition(camera.Position);
-                _moduleStack.Lighting.RequestRedraw();
                 _moduleStack.Environment.SetViewPosition(camera.Position);
+                _moduleStack.Lighting.RequestRedraw();
                 _moduleStack.Environment.SetEnvironmentProbe(scene.EnvProbe);
-                _moduleStack.Forward.SetupLighting(camera, scene.PointLights, _frustum.Frustum);
+                _moduleStack.Deferred.UseSSAOMap = _fxStack.SSAmbientOcclusion?.Enabled ?? false;
+                _moduleStack.Forward.SetupLighting(camera.Position, scene.PointLights, _frustum.Frustum);
                 _moduleStack.DistanceField.SetViewPosition(camera.Position);
 
-                _fxStack.SSAmbientOcclusion.SetViewPosition(camera.Position);
+                //We need to update whether or not entities are in our boundingFrustum and then cull them or not!
+                meshBatcher.FrustumCulling(_frustum.Frustum, _redrawRequested);
+
+                //Performance Profiler
+                _profiler.SampleTimestamp(ProfilerTimestamps.Update_ViewProjection);
+
+                // Step: 03
+                //Update SDFs
+                if (IsSDFUsed(scene.PointLights))
+                {
+                    _moduleStack.DistanceField.UpdateSdfGenerator(scene.Entities);
+                    _moduleStack.DistanceField.UpdateDistanceFieldTransformations(scene.Entities);
+                }
+
+                //Performance Profiler
+                _profiler.SampleTimestamp(ProfilerTimestamps.Update_SDF);
             }
 
-            //Performance Profiler
-            _profiler.SampleTimestamp(TimestampIndices.Update_ViewProjection);
+            //Reset the stat counter, so we can count stats/information for this frame only
+            ResetStats();
 
-
-            // Step: 03
-            //Update SDFs
-            if (IsSDFUsed(scene.PointLights))
-            {
-                _moduleStack.DistanceField.UpdateSdfGenerator(scene.Entities);
-                _moduleStack.DistanceField.UpdateDistanceFieldTransformations(scene.Entities);
-            }
-            //Performance Profiler
-            _profiler.SampleTimestamp(TimestampIndices.Update_SDF);
-
+            _redrawRequested = false;
         }
 
 
@@ -217,16 +232,14 @@ namespace DeferredEngine.Pipeline
             // Step: 08 Blit final color to screen (may blit to a 'viewport' section of the screen, or the full screen
             this.BlitTo(_auxTargets[PipelineTargets.FINALCOLOR], null, RenderingSettings.Screen.g_TargetRect);
 
-            _profiler.Sample(TimestampIndices.Draw_Total);
+            _profiler.Sample(ProfilerTimestamps.Draw_Total);
 
             // Step: 13
             //Draw the final rendered image, change the output based on user input to show individual buffers/rendertargets
             BlitToScreen(RenderingSettings.g_CurrentPass, null);
 
             //Performance Profiler
-            _profiler.SampleTimestamp(TimestampIndices.Draw_FinalRender);
-
-
+            _profiler.SampleTimestamp(ProfilerTimestamps.Draw_FinalRender);
         }
 
         /// <summary>
@@ -285,29 +298,6 @@ namespace DeferredEngine.Pipeline
         {
             RenderingStats.ResetStats();
             _profiler.Reset();
-        }
-        /// <summary>
-        /// Create the projection matrices
-        /// </summary>
-        protected virtual void UpdateViewProjection(Camera camera)
-        {
-            // ToDo: @tpott: This boolean flag controls general update and draw, though it should only determine if matrices and such should be updated
-            //      if a frame should be drawn is a conditioned layered on top of this and may be required regardless of camera change
-            //If the camera didn't do anything we don't need to update this stuff
-            if (camera.HasChanged)
-            {
-                //View matrix
-                _matrices.SetFromCamera(camera);
-
-                //Temporal AA - alternate frames for temporal anti-aliasing
-                if (_fxStack.TemporalAA.Enabled)
-                {
-                    _fxStack.TemporalAA.SwapOffFrame();
-                    _matrices.ApplyViewProjectionJitter(_fxStack.TemporalAA.JitterMode, _fxStack.TemporalAA.IsOffFrame, _fxStack.TemporalAA.HaltonSequence);
-                }
-                _frustum.Frustum.Matrix = _matrices.StaticViewProjection;
-            }
-
         }
 
         public override void Dispose()

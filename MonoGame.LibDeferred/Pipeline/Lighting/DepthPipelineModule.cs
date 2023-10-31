@@ -7,11 +7,10 @@ namespace DeferredEngine.Pipeline.Lighting
     public class DepthReconstructPipelineModule : PipelineModule
     {
 
-        private FullscreenTriangleBuffer _fullscreenTarget;
+        private readonly FullscreenTriangleBuffer _fullscreenTarget;
+        private readonly ReconstructDepthFxSetup _fxSetup = new ReconstructDepthFxSetup();
 
-        private ReconstructDepthFxSetup _effectSetup = new ReconstructDepthFxSetup();
-
-        public Texture2D DepthMap { set { _effectSetup.Param_DepthMap.SetValue(value); } }
+        public Texture2D DepthMap { set { _fxSetup.Param_DepthMap.SetValue(value); } }
 
 
         public DepthReconstructPipelineModule()
@@ -27,16 +26,16 @@ namespace DeferredEngine.Pipeline.Lighting
         {
             _graphicsDevice.SetState(DepthStencilStateOption.Default);
 
-            _effectSetup.Param_Projection.SetValue(Matrices.Projection);
-            _effectSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
-            _effectSetup.Param_FrustumCorners.SetValue(this.Frustum.ViewSpaceFrustum);
-            _effectSetup.Effect.CurrentTechnique.Passes[0].Apply();
+            _fxSetup.Param_Projection.SetValue(Matrices.Projection);
+            _fxSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
+            _fxSetup.Param_FrustumCorners.SetValue(this.Frustum.ViewSpaceFrustum);
+            _fxSetup.Effect.CurrentTechnique.Passes[0].Apply();
             _fullscreenTarget.Draw(_graphicsDevice);
         }
 
         public override void Dispose()
         {
-            _effectSetup?.Dispose();
+            _fxSetup?.Dispose();
         }
 
     }

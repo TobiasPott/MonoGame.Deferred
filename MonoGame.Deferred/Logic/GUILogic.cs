@@ -6,6 +6,7 @@ using DeferredEngine.Pipeline.Utilities;
 using DeferredEngine.Recources;
 using DeferredEngine.Rendering;
 using DeferredEngine.Rendering.PostProcessing;
+using DeferredEngine.Utilities;
 using HelperSuite.GUI;
 using HelperSuite.GUIHelper;
 using Microsoft.Xna.Framework;
@@ -113,8 +114,8 @@ namespace DeferredEngine.Demo
 
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Selection")
             {
-                ToggleProperty = typeof(RenderingSettings).GetProperty(nameof(RenderingSettings.e_EnableSelection)),
-                Toggle = RenderingSettings.e_EnableSelection
+                ToggleProperty = typeof(RenderingSettings).GetProperty(nameof(RenderingSettings.EnableSelection)),
+                Toggle = RenderingSettings.EnableSelection
             });
 
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Draw Mesh Outl.")
@@ -251,16 +252,18 @@ namespace DeferredEngine.Demo
                 Toggle = ColorGradingFx.ModuleEnabled
             });
 
-            postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Temporal AA")
+            postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "TAA ")
             {
-                ToggleProperty = typeof(TemporalAAFx).GetProperty(nameof(TemporalAAFx.g_Enabled)),
-                Toggle = TemporalAAFx.g_Enabled
+                ToggleProperty = TemporalAAFx.ModuleEnabled.GetValuePropertyInfo(),
+                ToggleObject = TemporalAAFx.ModuleEnabled,
+                Toggle = TemporalAAFx.ModuleEnabled
             });
 
-            postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Tonemap TAA")
+            postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "TAA Tonemap")
             {
-                ToggleProperty = typeof(TemporalAAFx).GetProperty(nameof(TemporalAAFx.g_UseTonemapping)),
-                Toggle = TemporalAAFx.g_UseTonemapping
+                ToggleProperty = TemporalAAFx.ModuleTonemapEnabled.GetValuePropertyInfo(),
+                ToggleObject = TemporalAAFx.ModuleTonemapEnabled,
+                Toggle = TemporalAAFx.ModuleTonemapEnabled
             });
 
 
@@ -284,7 +287,8 @@ namespace DeferredEngine.Demo
 
             ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Stochastic distr.")
             {
-                ToggleProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_UseTaa)),
+                ToggleProperty = SSReflectionFx.g_UseTaa.GetValuePropertyInfo(),
+                ToggleObject = SSReflectionFx.g_UseTaa,
                 Toggle = SSReflectionFx.g_UseTaa
             });
 
@@ -335,32 +339,37 @@ namespace DeferredEngine.Demo
 
             ssaoList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable SSAO")
             {
-                ToggleProperty = typeof(SSAmbientOcclustionFx).GetProperty(nameof(SSAmbientOcclustionFx.g_ssao_draw)),
-                Toggle = SSAmbientOcclustionFx.g_ssao_draw
+                ToggleProperty = SSAmbientOcclustionFx.ModuleEnabled.GetValuePropertyInfo(),
+                ToggleObject = SSAmbientOcclustionFx.ModuleEnabled,
+                Toggle = SSAmbientOcclustionFx.ModuleEnabled
             });
 
             ssaoList.AddElement(new GUITextBlockToggle(defaultStyle, "SSAO Blur: ")
             {
-                ToggleField = typeof(SSAmbientOcclustionFx).GetField(nameof(SSAmbientOcclustionFx.g_ssao_blur)),
-                Toggle = SSAmbientOcclustionFx.g_ssao_blur
+                ToggleProperty = SSAmbientOcclustionFx.ModuleEnableBlur.GetValuePropertyInfo(),
+                ToggleObject = SSAmbientOcclustionFx.ModuleEnableBlur,
+                Toggle = SSAmbientOcclustionFx.ModuleEnableBlur
             });
 
             ssaoList.AddElement(new GuiSliderIntText(defaultStyle, 1, 32, 1, "SSAO Samples: ")
             {
-                SliderProperty = typeof(SSAmbientOcclustionFx).GetProperty(nameof(SSAmbientOcclustionFx.g_ssao_samples)),
-                SliderValue = SSAmbientOcclustionFx.g_ssao_samples
+                SliderProperty = SSAmbientOcclustionFx.ModuleSamples.GetValuePropertyInfo(),
+                SliderObject = SSAmbientOcclustionFx.ModuleSamples,
+                SliderValue = SSAmbientOcclustionFx.ModuleSamples
             });
 
             ssaoList.AddElement(new GuiSliderFloatText(defaultStyle, 1, 100, 2, "Sample Radius: ")
             {
-                SliderProperty = typeof(SSAmbientOcclustionFx).GetProperty(nameof(SSAmbientOcclustionFx.g_ssao_radius)),
-                SliderValue = SSAmbientOcclustionFx.g_ssao_radius
+                SliderProperty = SSAmbientOcclustionFx.ModuleRadius.GetValuePropertyInfo(),
+                SliderObject = SSAmbientOcclustionFx.ModuleRadius,
+                SliderValue = SSAmbientOcclustionFx.ModuleRadius
             });
 
             ssaoList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 4, 1, "SSAO Strength: ")
             {
-                SliderProperty = typeof(SSAmbientOcclustionFx).GetProperty(nameof(SSAmbientOcclustionFx.g_ssao_strength)),
-                SliderValue = SSAmbientOcclustionFx.g_ssao_strength
+                SliderProperty = SSAmbientOcclustionFx.ModuleStrength.GetValuePropertyInfo(),
+                SliderObject = SSAmbientOcclustionFx.ModuleStrength,
+                SliderValue = SSAmbientOcclustionFx.ModuleStrength
             });
 
             /////////////////////////////////////////////////////////////////
@@ -388,21 +397,6 @@ namespace DeferredEngine.Demo
                 SliderValue = BloomFx.ModuleThreshold,
             });
 
-
-            optionList.AddElement(new GUITextBlock(Vector2.Zero, new Vector2(200, 10), "Environment",
-                defaultStyle.TextFontStyle, Color.DarkSlateGray, Color.White, GUIStyle.TextAlignment.Center,
-                Vector2.Zero));
-
-            GuiListToggle environmentGroup = new GuiListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
-            optionList.AddElement(environmentGroup);
-
-            environmentGroup.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Environment")
-            {
-                ToggleProperty = EnvironmentPipelineModule.ModuleEnabled.GetValuePropertyInfo(),
-                ToggleObject = EnvironmentPipelineModule.ModuleEnabled,
-                Toggle = EnvironmentPipelineModule.ModuleEnabled
-            });
-
             // ToDo: @tpott: Reintroduce UI for bloom values
             //for (int i = 0; i < 5; i++)
             //{
@@ -418,6 +412,21 @@ namespace DeferredEngine.Demo
             //        SliderValue = RenderingSettings.Bloom.Strength1
             //    });
             //}
+
+
+            optionList.AddElement(new GUITextBlock(Vector2.Zero, new Vector2(200, 10), "Environment",
+                defaultStyle.TextFontStyle, Color.DarkSlateGray, Color.White, GUIStyle.TextAlignment.Center,
+                Vector2.Zero));
+
+            GuiListToggle environmentGroup = new GuiListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
+            optionList.AddElement(environmentGroup);
+
+            environmentGroup.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Environment")
+            {
+                ToggleProperty = EnvironmentPipelineModule.ModuleEnabled.GetValuePropertyInfo(),
+                ToggleObject = EnvironmentPipelineModule.ModuleEnabled,
+                Toggle = EnvironmentPipelineModule.ModuleEnabled
+            });
 
             _rightSideList.Alignment = GUIStyle.GUIAlignment.TopRight;
         }
@@ -451,7 +460,7 @@ namespace DeferredEngine.Demo
             }
         }
 
-        private string CreateHelperText()
+        private static string CreateHelperText()
         {
             return "Deferred Engine Controls\n" +
                     "Space - toggle on/off tools\n" +
@@ -488,7 +497,7 @@ namespace DeferredEngine.Demo
                 RenderingStats.UIIsHovered = true;
             }
 
-            _leftSideList.IsHidden = !RenderingSettings.e_EnableSelection;
+            _leftSideList.IsHidden = !RenderingSettings.EnableSelection;
 
             if (selectedObject != null)
             {

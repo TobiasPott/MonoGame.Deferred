@@ -20,7 +20,7 @@ namespace DeferredEngine.Pipeline
         private float[] LightIntensity;
         private Vector3[] LightColor;
 
-        private ForwardFxSetup _effectSetup = new ForwardFxSetup();
+        private readonly ForwardFxSetup _fxSetup = new ForwardFxSetup();
 
         public DepthReconstructPipelineModule DepthReconstruct;
 
@@ -40,7 +40,7 @@ namespace DeferredEngine.Pipeline
             }
         }
 
-        public void SetupLighting(Camera camera, List<PointLight> pointLights, BoundingFrustum frustum)
+        public void SetupLighting(Vector3 viewOrigin, List<PointLight> pointLights, BoundingFrustum frustum)
         {
             int count = pointLights.Count > MAXLIGHTS ? MAXLIGHTS : pointLights.Count;
 
@@ -68,27 +68,27 @@ namespace DeferredEngine.Pipeline
             }
 
             //Setup camera
-            _effectSetup.Param_CameraPositionWS.SetValue(camera.Position);
+            _fxSetup.Param_CameraPositionWS.SetValue(viewOrigin);
 
-            _effectSetup.Param_LightAmount.SetValue(lightsInBounds);
-            _effectSetup.Param_LightPositionWS.SetValue(LightPositionWS);
-            _effectSetup.Param_LightColor.SetValue(LightColor);
-            _effectSetup.Param_LightIntensity.SetValue(LightIntensity);
-            _effectSetup.Param_LightRadius.SetValue(LightRadius);
+            _fxSetup.Param_LightAmount.SetValue(lightsInBounds);
+            _fxSetup.Param_LightPositionWS.SetValue(LightPositionWS);
+            _fxSetup.Param_LightColor.SetValue(LightColor);
+            _fxSetup.Param_LightIntensity.SetValue(LightIntensity);
+            _fxSetup.Param_LightRadius.SetValue(LightRadius);
         }
 
 
         public override void Dispose()
         {
-            _effectSetup?.Dispose();
+            _fxSetup?.Dispose();
         }
 
         public void Apply(Matrix localWorldMatrix, Matrix? view, Matrix viewProjection)
         {
-            _effectSetup.Param_World.SetValue(localWorldMatrix);
-            _effectSetup.Param_WorldViewProj.SetValue(localWorldMatrix * viewProjection);
-            _effectSetup.Param_WorldViewIT.SetValue(Matrix.Transpose(Matrix.Invert(localWorldMatrix)));
-            _effectSetup.Pass_Default.Apply();
+            _fxSetup.Param_World.SetValue(localWorldMatrix);
+            _fxSetup.Param_WorldViewProj.SetValue(localWorldMatrix * viewProjection);
+            _fxSetup.Param_WorldViewIT.SetValue(Matrix.Transpose(Matrix.Invert(localWorldMatrix)));
+            _fxSetup.Pass_Default.Apply();
         }
 
     }

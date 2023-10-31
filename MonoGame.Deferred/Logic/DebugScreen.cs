@@ -1,6 +1,6 @@
 ﻿using DeferredEngine.Pipeline;
 using DeferredEngine.Recources;
-using DeferredEngine.Recources.Helper;
+using DeferredEngine.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -21,7 +21,7 @@ namespace DeferredEngine.Demo
         private SpriteFont _sprFont;
         private SpriteFont _monospaceFont;
 
-        private readonly MngStringBuilder _mngStringBuilder = new MngStringBuilder(2048);
+        private readonly StringBuilder _mngStringBuilder = new StringBuilder(2048);
 
         private static readonly List<string> StringList = new List<string>();
         public static readonly List<StringColor> AiDebugString = new List<StringColor>();
@@ -319,20 +319,20 @@ namespace DeferredEngine.Demo
                 _mngStringBuilder.Length = 0;
 
                 _mngStringBuilder.Append(sb_frameTime);
-                _mngStringBuilder.AppendTrim(gameTime.ElapsedGameTime.TotalMilliseconds);
+                _mngStringBuilder.Append(gameTime.ElapsedGameTime.TotalMilliseconds.ToString("0.000000"));
                 _mngStringBuilder.Append(sb_ms);
 
-                _mngStringBuilder.AppendAt(30, sb_fps);
+                _mngStringBuilder.Append(sb_fps);
                 _mngStringBuilder.Append((int)Math.Round(_fps));
                 _mngStringBuilder.Append(sb_dotdotdot);
                 _mngStringBuilder.Append((int)Math.Round(_smoothfpsShow));
                 _mngStringBuilder.Append(sb_greaterthan);
                 _mngStringBuilder.Append((int)Math.Round(_minfps));
-                _mngStringBuilder.AppendLine(sb_closeBracket);
+                _mngStringBuilder.AppendLine(sb_closeBracket.ToString());
 
-                _mngStringBuilder.Append(RenderingSettings.Screen.g_Width);
+                _mngStringBuilder.Append(RenderingSettings.Screen.Width);
                 _mngStringBuilder.Append(sb_multipliedBy);
-                _mngStringBuilder.Append(RenderingSettings.Screen.g_Height);
+                _mngStringBuilder.Append(RenderingSettings.Screen.Height);
                 _mngStringBuilder.Append(sb_emptySpace);
                 _mngStringBuilder.Append(RenderModesToString(RenderingSettings.g_CurrentPass));
                 _mngStringBuilder.Append(sb_memoryGc);
@@ -359,9 +359,9 @@ namespace DeferredEngine.Demo
                     _mngStringBuilder.Append(RenderingStats.sdf_load);
                 }
 
-                _spriteBatch.DrawString(_monospaceFont, _mngStringBuilder.StringBuilder,
+                _spriteBatch.DrawString(_monospaceFont, _mngStringBuilder,
                     new Vector2(11.0f, 11.0f), Color.Black, 0, Vector2.Zero, 1.5f, SpriteEffects.None, 0);
-                _spriteBatch.DrawString(_monospaceFont, _mngStringBuilder.StringBuilder,
+                _spriteBatch.DrawString(_monospaceFont, _mngStringBuilder,
                     new Vector2(10.0f, 10.0f), consoleColor, 0, Vector2.Zero, 1.5f, SpriteEffects.None, 0);
 
                 _spriteBatch.End();
@@ -383,12 +383,12 @@ namespace DeferredEngine.Demo
             if (!PipelineProfiler.ModuleEnabled)
                 return;
 
-            PropertyInfo[] propertyInfo = typeof(PipelineSamples).GetProperties();
+            PropertyInfo[] propertyInfo = typeof(ProfilerSamples).GetProperties();
             int foundIndex = 0;
             for (int i = 0; i < propertyInfo.Length; i++)
             {
                 PropertyInfo pInfo = propertyInfo[i];
-                if (pInfo.Name.Contains(PipelineSamples.FieldInfoPrefix))
+                if (pInfo.Name.Contains(ProfilerSamples.FieldInfoPrefix))
                 {
                     _spriteBatch.DrawString(_sprFont, $"{pInfo.Name} {string.Format("{0,8:F6}", pInfo.GetValue(null))}", new Vector2(10.0f, 55.0f + (foundIndex * 15)), Color.White);
                     foundIndex++;

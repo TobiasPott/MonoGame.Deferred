@@ -23,7 +23,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
 
         private Texture2D _lookupTable;
-        private ColorGradingFxSetup _fxSetup = new ColorGradingFxSetup();
+        private readonly ColorGradingFxSetup _fxSetup = new ColorGradingFxSetup();
         public enum LUTSizes { Size16, Size32 };
 
 

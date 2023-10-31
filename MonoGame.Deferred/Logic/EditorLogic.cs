@@ -300,18 +300,15 @@ namespace DeferredEngine.Demo
                     {
                         if (gizmoId == 1)
                         {
-                            SelectedObject.RotationMatrix = SelectedObject.RotationMatrix *
-                                                            Matrix.CreateRotationZ((float)diffL);
+                            SelectedObject.RotationMatrix *= Matrix.CreateRotationZ((float)diffL);
                         }
                         if (gizmoId == 2)
                         {
-                            SelectedObject.RotationMatrix = SelectedObject.RotationMatrix *
-                                                            Matrix.CreateRotationY((float)diffL);
+                            SelectedObject.RotationMatrix *= Matrix.CreateRotationY((float)diffL);
                         }
                         if (gizmoId == 3)
                         {
-                            SelectedObject.RotationMatrix = SelectedObject.RotationMatrix *
-                                                            Matrix.CreateRotationX((float)diffL);
+                            SelectedObject.RotationMatrix *= Matrix.CreateRotationX((float)diffL);
                         }
                     }
                     else

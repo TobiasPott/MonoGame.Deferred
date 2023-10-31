@@ -15,8 +15,8 @@ namespace DeferredEngine.Rendering.Helper.HelperGeometry
         private int _tempVertsPoolIndex;
         private int _tempVertsPoolOverCount;
 
-        private Vector3[] _frustumCorners = new Vector3[8];
-        private Vector3[] _bBoxCorners = new Vector3[8];
+        private readonly Vector3[] _frustumCorners = new Vector3[8];
+        private readonly Vector3[] _bBoxCorners = new Vector3[8];
 
         public LineHelperManager()
         {
@@ -65,20 +65,20 @@ namespace DeferredEngine.Rendering.Helper.HelperGeometry
         {
             Vector3[] corners = frustum.GetCornersNoCopy();
             //Front
-            Lines.Add(new LineBuffer(corners[0], corners[1], 1, color, color, this));
-            Lines.Add(new LineBuffer(corners[1], corners[2], 1, color, color, this));
-            Lines.Add(new LineBuffer(corners[2], corners[3], 1, color, color, this));
-            Lines.Add(new LineBuffer(corners[3], corners[0], 1, color, color, this));
+            Lines.Add(new LineBuffer(corners[0], corners[1], timer, color, color, this));
+            Lines.Add(new LineBuffer(corners[1], corners[2], timer, color, color, this));
+            Lines.Add(new LineBuffer(corners[2], corners[3], timer, color, color, this));
+            Lines.Add(new LineBuffer(corners[3], corners[0], timer, color, color, this));
             //Back
-            Lines.Add(new LineBuffer(corners[4], corners[5], 1, color, color, this));
-            Lines.Add(new LineBuffer(corners[5], corners[6], 1, color, color, this));
-            Lines.Add(new LineBuffer(corners[6], corners[7], 1, color, color, this));
-            Lines.Add(new LineBuffer(corners[7], corners[4], 1, color, color, this));
+            Lines.Add(new LineBuffer(corners[4], corners[5], timer, color, color, this));
+            Lines.Add(new LineBuffer(corners[5], corners[6], timer, color, color, this));
+            Lines.Add(new LineBuffer(corners[6], corners[7], timer, color, color, this));
+            Lines.Add(new LineBuffer(corners[7], corners[4], timer, color, color, this));
             //Between
-            Lines.Add(new LineBuffer(corners[4], corners[0], 1, color, color, this));
-            Lines.Add(new LineBuffer(corners[5], corners[1], 1, color, color, this));
-            Lines.Add(new LineBuffer(corners[6], corners[2], 1, color, color, this));
-            Lines.Add(new LineBuffer(corners[7], corners[3], 1, color, color, this));
+            Lines.Add(new LineBuffer(corners[4], corners[0], timer, color, color, this));
+            Lines.Add(new LineBuffer(corners[5], corners[1], timer, color, color, this));
+            Lines.Add(new LineBuffer(corners[6], corners[2], timer, color, color, this));
+            Lines.Add(new LineBuffer(corners[7], corners[3], timer, color, color, this));
         }
 
         public void Draw(GraphicsDevice graphicsDevice, Matrix viewProjection, EffectParameter Param_WorldViewProjection, EffectPass Pass_VertexColor)

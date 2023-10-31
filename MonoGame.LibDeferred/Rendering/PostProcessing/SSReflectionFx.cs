@@ -18,7 +18,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
 
         public static NotifiedProperty<bool> g_Noise = new NotifiedProperty<bool>(true);
-        public static bool g_UseTaa { get; set; } = true;
+        public static NotifiedProperty<bool> g_UseTaa = new NotifiedProperty<bool>(true);
 
         //5 and 5 are good, 3 and 3 are cheap#
         public static NotifiedProperty<int> g_Samples = new NotifiedProperty<int>(3);
@@ -30,10 +30,10 @@ namespace DeferredEngine.Rendering.PostProcessing
         public SSFxTargets SSFxTargets { set { _ssfxTargets = value; } }
 
 
-        private SSReflectionFxSetup _fxSetup = new SSReflectionFxSetup();
+        private readonly SSReflectionFxSetup _fxSetup = new SSReflectionFxSetup();
 
 
-        public float Time { set { _fxSetup.Param_Time.SetValue(value); } }
+        public float Time { set { _fxSetup.Param_Time.SetValue(SSReflectionFx.g_Noise ? value : 0.0f); } }
 
         public RenderTarget2D DepthMap { set { _fxSetup.Param_DepthMap.SetValue(value); } }
         public RenderTarget2D NormalMap { set { _fxSetup.Param_NormalMap.SetValue(value); } }
@@ -80,7 +80,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             _fullscreenTarget.Draw(_graphicsDevice);
 
             // sample profiler if set
-            this.Profiler?.SampleTimestamp(TimestampIndices.Draw_SSFx_SSR);
+            this.Profiler?.SampleTimestamp(ProfilerTimestamps.Draw_SSFx_SSR);
             return destRT;
         }
         public RenderTarget2D GetSSReflectionRenderTargets(TemporalAAFx taaFx)

@@ -33,7 +33,7 @@ namespace DeferredEngine.Rendering
         /// Main Draw function of the game
         /// </summary>
         public ObjectHoverContext CurrentHoverContext => new ObjectHoverContext(_moduleStack.IdAndOutline.HoveredId, _matrices);
-
+        private GizmoDrawContext _currentGizmoContext;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  FUNCTIONS
@@ -47,45 +47,48 @@ namespace DeferredEngine.Rendering
         {
             if (!this.Enabled)
                 return;
-            
+
+            // retrieve curreentn gizmo draw data
+            _currentGizmoContext = EditorLogic.Instance.GetEditorData();
+
             if (RenderingSettings.e_IsEditorEnabled)
-                this.DrawEditorPrePass(meshBatcher, scene, EditorLogic.Instance.GetEditorData());
+                this.DrawEditorPrePass(meshBatcher, scene);
 
             base.Draw(meshBatcher, scene);
 
             if (RenderingSettings.e_IsEditorEnabled)
-                this.DrawEditor(meshBatcher, scene, EditorLogic.Instance.GetEditorData());
+                this.DrawEditor(scene);
         }
 
-        private void DrawEditorPrePass(DynamicMeshBatcher meshBatcher, EntityScene scene, GizmoDrawContext gizmoContext)
+        private void DrawEditorPrePass(DynamicMeshBatcher meshBatcher, EntityScene scene)
         {
             if (!this.Enabled)
                 return;
             // Step: -1
             //Draw the elements that we are hovering over with outlines
-            if (RenderingSettings.e_EnableSelection)
-                _moduleStack.IdAndOutline.Draw(meshBatcher, scene, gizmoContext, EditorLogic.Instance.HasMouseMoved);
+            if (RenderingSettings.EnableSelection)
+                _moduleStack.IdAndOutline.Draw(meshBatcher, scene, _currentGizmoContext, EditorLogic.Instance.HasMouseMoved);
 
-            _profiler?.SampleTimestamp(TimestampIndices.Draw_EditorPrePass);
+            _profiler?.SampleTimestamp(ProfilerTimestamps.Draw_EditorPrePass);
         }
-        private void DrawEditor(DynamicMeshBatcher meshBatcher, EntityScene scene, GizmoDrawContext gizmoContext)
+        private void DrawEditor(EntityScene scene)
         {
-            this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.SDFDistance);
-            this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.SDFVolume);
+            this.DrawEditorPasses(scene, PipelineEditorPasses.SDFDistance);
+            this.DrawEditorPasses(scene, PipelineEditorPasses.SDFVolume);
 
             // Step: 15
             //Additional editor elements that overlay our screen
-            if (RenderingSettings.e_EnableSelection)
+            if (RenderingSettings.EnableSelection)
             {
-                this.DrawEditorPasses(scene, gizmoContext, IdAndOutlineRenderModule.e_DrawOutlines ? PipelineEditorPasses.IdAndOutline : 0);
-                this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.Billboard | PipelineEditorPasses.TransformGizmo);
+                this.DrawEditorPasses(scene, IdAndOutlineRenderModule.e_DrawOutlines ? PipelineEditorPasses.IdAndOutline : 0);
+                this.DrawEditorPasses(scene, PipelineEditorPasses.Billboard | PipelineEditorPasses.TransformGizmo);
                 //Draw debug/helper geometry
-                this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.Helper);
+                this.DrawEditorPasses(scene, PipelineEditorPasses.Helper);
             }
 
-            _profiler?.SampleTimestamp(TimestampIndices.Draw_EditorPass);
+            _profiler?.SampleTimestamp(ProfilerTimestamps.Draw_EditorPass);
         }
-        private void DrawEditorPasses(EntityScene scene, GizmoDrawContext gizmoContext, PipelineEditorPasses passes = PipelineEditorPasses.Billboard | PipelineEditorPasses.TransformGizmo)
+        private void DrawEditorPasses(EntityScene scene, PipelineEditorPasses passes = PipelineEditorPasses.Billboard | PipelineEditorPasses.TransformGizmo)
         {
             if (passes == 0)
                 return;
@@ -96,7 +99,7 @@ namespace DeferredEngine.Rendering
             // render directly to the output buffer
             if (passes.HasFlag(PipelineEditorPasses.Billboard))
             {
-                _moduleStack.Billboard.DrawEditorBillboards(scene, gizmoContext);
+                _moduleStack.Billboard.DrawEditorBillboards(scene, _currentGizmoContext);
             }
             if (passes.HasFlag(PipelineEditorPasses.IdAndOutline))
             {
@@ -104,7 +107,7 @@ namespace DeferredEngine.Rendering
             }
             if (passes.HasFlag(PipelineEditorPasses.TransformGizmo))
             {
-                _moduleStack.IdAndOutline.DrawTransformGizmos(gizmoContext, IdAndOutlineRenderModule.Pass.Color);
+                _moduleStack.IdAndOutline.DrawTransformGizmos(_currentGizmoContext, IdAndOutlineRenderModule.Pass.Color);
             }
             if (passes.HasFlag(PipelineEditorPasses.Helper))
             {

@@ -125,7 +125,7 @@ namespace DeferredEngine.Entities
 
         public void SetLookAt(Vector3 value)
         {
-            value = (value - Position);
+            value -= Position;
             value.Normalize();
             Forward = value;
         }
@@ -136,7 +136,7 @@ namespace DeferredEngine.Entities
             base.UpdateMatrices();
             //View matrix
             _view = Matrix.CreateLookAt(_position, _position + _forward, _up);
-            _projection = Matrix.CreatePerspectiveFieldOfView(_fieldOfView, RenderingSettings.Screen.g_Aspect, 1, _farClip);
+            _projection = Matrix.CreatePerspectiveFieldOfView(_fieldOfView, RenderingSettings.Screen.Aspect, 1, _farClip);
             _viewProjection = _view * _projection;
         }
 

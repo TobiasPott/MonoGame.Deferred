@@ -5,15 +5,24 @@ namespace DeferredEngine.Rendering.Helper
 {
     public class OctahedronBuffer : IDisposable
     {
-        private static short[] IndexBufferData = new short[] { 2, 0, 1, 1, 0, 4, 4, 0, 3, 3, 0, 2, 5, 2, 1, 5, 1, 4, 5, 4, 3, 5, 3, 2 };
-        private static VertexPosition[] VertexBufferData = new VertexPosition[] {
-                                                            new VertexPosition(new Vector3(0, 0, -1)),
-                                                            new VertexPosition(new Vector3(0, -1, 0)),
-                                                            new VertexPosition(new Vector3(1, 0, 0)),
-                                                            new VertexPosition(new Vector3(0, 1, 0)),
-                                                            new VertexPosition(new Vector3(-1, 0, 0)),
-                                                            new VertexPosition(new Vector3(0, 0, 1))
-                                                        };
+        private static readonly short[] IndexBufferData = new short[] { 
+                                                                        2, 0, 1, 
+                                                                        1, 0, 4, 
+                                                                        4, 0, 3, 
+                                                                        3, 0, 2, 
+                                                                        5, 2, 1, 
+                                                                        5, 1, 4, 
+                                                                        5, 4, 3, 
+                                                                        5, 3, 2 
+                                                                    };
+        private static readonly VertexPosition[] VertexBufferData = new VertexPosition[] {
+                                                                        new VertexPosition(new Vector3(0, 0, -1)),
+                                                                        new VertexPosition(new Vector3(0, -1, 0)),
+                                                                        new VertexPosition(new Vector3(1, 0, 0)),
+                                                                        new VertexPosition(new Vector3(0, 1, 0)),
+                                                                        new VertexPosition(new Vector3(-1, 0, 0)),
+                                                                        new VertexPosition(new Vector3(0, 0, 1))
+                                                                    };
 
         public VertexBuffer VertexBuffer { get; protected set; }
         public IndexBuffer IndexBuffer { get; protected set; }

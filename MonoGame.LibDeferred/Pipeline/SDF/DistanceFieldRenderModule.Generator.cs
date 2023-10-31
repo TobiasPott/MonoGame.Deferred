@@ -13,11 +13,13 @@ namespace DeferredEngine.Rendering.SDF
     {
         public class Generator
         {
-            private Task generateTask;
+            private Task _generateTask;
+            private CancellationTokenSource _generateTaskTokenSource = new CancellationTokenSource();
 
-            private List<SignedDistanceField> sdfDefinitions = new List<SignedDistanceField>();
 
-            public void GenerateTriangles(Model model, ref SdfTriangle[] triangles)
+            private readonly List<SignedDistanceField> sdfDefinitions = new List<SignedDistanceField>();
+
+            public static void GenerateTriangles(Model model, ref SdfTriangle[] triangles)
             {
                 GeometryDataExtractor.GetVerticesAndIndicesFromModel(model, out Vector3[] vertexPositions, out int[] indices);
                 if (triangles.Length != indices.Length / 3)
@@ -42,150 +44,159 @@ namespace DeferredEngine.Rendering.SDF
             // ToDo: @tpott: temporarily extract to static method to move SDFGenerator to LibDeferred (due to DistanceFieldRenderModule use)
             public void GenerateDistanceFields(ModelDefinition modelDefinition, GraphicsDevice graphics, DistanceFieldRenderModule distanceFieldRenderModule)
             {
-                if (modelDefinition is SdfModelDefinition)
+                if (_generateTaskTokenSource != null)
                 {
-                    SdfModelDefinition sdfModelDefinition = (SdfModelDefinition)modelDefinition;
-                    SignedDistanceField uncomputedSdf = sdfModelDefinition.SDF;
-                    Model unprocessedModel = sdfModelDefinition.Model;
+                    _generateTaskTokenSource.Cancel();
+                    _generateTaskTokenSource.Dispose();
+                    _generateTaskTokenSource = null;
+                }
+                _generateTaskTokenSource = new CancellationTokenSource();
 
-                    //Set to false so it won't get covered in future
-                    uncomputedSdf.NeedsToBeGenerated = false;
-                    uncomputedSdf.IsLoaded = false;
-                    uncomputedSdf.SdfTexture?.Dispose();
+                if (_generateTask != null)
 
-                    //First generate tris
-                    GenerateTriangles(unprocessedModel, ref sdfModelDefinition.SdfTriangles);
-                    SdfTriangle[] triangles = sdfModelDefinition.SdfTriangles;
-
-
-                    Vector3 steps = uncomputedSdf.TextureResolution.Xyz();
-                    int xsteps = (int)uncomputedSdf.TextureResolution.X;
-                    int ysteps = (int)uncomputedSdf.TextureResolution.Y;
-                    int zsteps = (int)uncomputedSdf.TextureResolution.Z;
-
-                    Texture2D output;
-
-                    if (!RenderingSettings.SDF.UseCpu)
+                    if (modelDefinition is SdfModelDefinition)
                     {
-                        Stopwatch stopwatch = Stopwatch.StartNew();
+                        SdfModelDefinition sdfModelDefinition = (SdfModelDefinition)modelDefinition;
+                        SignedDistanceField uncomputedSdf = sdfModelDefinition.SDF;
+                        Model unprocessedModel = sdfModelDefinition.Model;
 
-                        int maxwidth = 4096; //16384
-                        int requiredData = triangles.Length * 3;
+                        //Set to false so it won't get covered in future
+                        uncomputedSdf.NeedsToBeGenerated = false;
+                        uncomputedSdf.IsLoaded = false;
+                        uncomputedSdf.SdfTexture?.Dispose();
 
-                        int x = maxwidth;//Math.Min(requiredData, maxwidth);
-                        int y = requiredData / x + 1;
+                        //First generate tris
+                        GenerateTriangles(unprocessedModel, ref sdfModelDefinition.SdfTriangles);
+                        SdfTriangle[] triangles = sdfModelDefinition.SdfTriangles;
 
-                        Vector4[] data = new Vector4[x * y];
 
-                        int index = 0;
-                        for (int i = 0; i < triangles.Length; i++, index += 3)
+                        Vector3 steps = uncomputedSdf.TextureResolution.Xyz();
+                        int xsteps = (int)uncomputedSdf.TextureResolution.X;
+                        int ysteps = (int)uncomputedSdf.TextureResolution.Y;
+                        int zsteps = (int)uncomputedSdf.TextureResolution.Z;
+
+                        Texture2D output;
+
+                        if (!RenderingSettings.SDF.UseCpu)
                         {
-                            data[index] = new Vector4(triangles[i].a, 0);
-                            data[index + 1] = new Vector4(triangles[i].b, 0);
-                            data[index + 2] = new Vector4(triangles[i].c, 0);
-                        }
-
-                        //16k
-
-                        Texture2D triangleData = new Texture2D(graphics, x, y, false, SurfaceFormat.Vector4);
-
-                        triangleData.SetData(data);
-
-                        output = distanceFieldRenderModule.CreateSDFTexture(graphics, triangleData, steps, uncomputedSdf, triangles.Length);
-
-                        stopwatch.Stop();
-
-                        Debug.Write("\nSDF generated in " + stopwatch.ElapsedMilliseconds + "ms on GPU");
-
-                        float[] texData = new float[xsteps * ysteps * zsteps];
-
-                        output.GetData(texData);
-
-                        string path = uncomputedSdf.TexturePath;
-                        DataStream.SaveImageData(texData, xsteps, ysteps, zsteps, path);
-                        uncomputedSdf.TextureResolution = new Vector4(xsteps, ysteps, zsteps, 0);
-                        uncomputedSdf.SdfTexture = output;
-                        uncomputedSdf.IsLoaded = true;
-
-                    }
-                    else
-                    {
-                        generateTask = Task.Factory.StartNew(() =>
-                        {
-                            output = new Texture2D(graphics, xsteps * zsteps, ysteps, false, SurfaceFormat.Single);
-
-                            float[] data = new float[xsteps * ysteps * zsteps];
-
                             Stopwatch stopwatch = Stopwatch.StartNew();
 
-                            int numberOfThreads = RenderingSettings.SDF.NumOfCpuThreads;
-                            if (numberOfThreads > 1)
+                            int maxwidth = 4096; //16384
+                            int requiredData = triangles.Length * 3;
+
+                            int x = maxwidth;//Math.Min(requiredData, maxwidth);
+                            int y = requiredData / x + 1;
+
+                            Vector4[] data = new Vector4[x * y];
+
+                            int index = 0;
+                            for (int i = 0; i < triangles.Length; i++, index += 3)
                             {
-                                Task[] threads = new Task[numberOfThreads - 1];
-
-                                //Make local datas
-
-                                float[][] dataArray = new float[numberOfThreads][];
-
-                                for (int index = 0; index < threads.Length; index++)
-                                {
-                                    int i = index;
-                                    dataArray[index + 1] = new float[xsteps * ysteps * zsteps];
-                                    threads[i] = Task.Factory.StartNew(() =>
-                                    {
-                                        GenerateData(xsteps, ysteps, zsteps, uncomputedSdf,
-                                            ref dataArray[i + 1], i + 1,
-                                            numberOfThreads, triangles);
-                                    });
-                                }
-
-                                dataArray[0] = data;
-                                GenerateData(xsteps, ysteps, zsteps, uncomputedSdf, ref dataArray[0], 0,
-                                    numberOfThreads, triangles);
-
-                                Task.WaitAll(threads);
-
-                                //Something broke?
-                                for (int i = 0; i < data.Length; i++)
-                                {
-                                    //data[i] = dataArray[i % numberOfThreads][i];
-                                    for (int j = 0; j < numberOfThreads; j++)
-                                    {
-                                        if (dataArray[j][i] != 0)
-                                        {
-                                            data[i] = dataArray[j][i];
-                                            break;
-                                        }
-                                    }
-                                }
-
-                                for (var index2 = 0; index2 < threads.Length; index2++)
-                                {
-                                    threads[index2].Dispose();
-                                }
+                                data[index] = new Vector4(triangles[i].a, 0);
+                                data[index + 1] = new Vector4(triangles[i].b, 0);
+                                data[index + 2] = new Vector4(triangles[i].c, 0);
                             }
-                            else
-                            {
-                                GenerateData(xsteps, ysteps, zsteps, uncomputedSdf, ref data, 0,
-                                    numberOfThreads, triangles);
-                            }
+
+                            //16k
+
+                            Texture2D triangleData = new Texture2D(graphics, x, y, false, SurfaceFormat.Vector4);
+
+                            triangleData.SetData(data);
+
+                            output = distanceFieldRenderModule.CreateSDFTexture(graphics, triangleData, steps, uncomputedSdf, triangles.Length);
 
                             stopwatch.Stop();
 
-                            Debug.Write("\nSDF generated in " + stopwatch.ElapsedMilliseconds + "ms with " + numberOfThreads + " thread(s)");
+                            Debug.Write("\nSDF generated in " + stopwatch.ElapsedMilliseconds + "ms on GPU");
+
+                            float[] texData = new float[xsteps * ysteps * zsteps];
+
+                            output.GetData(texData);
 
                             string path = uncomputedSdf.TexturePath;
-                            DataStream.SaveImageData(data, xsteps, ysteps, zsteps, path);
-                            output.SetData(data);
+                            DataStream.SaveImageData(texData, xsteps, ysteps, zsteps, path);
                             uncomputedSdf.TextureResolution = new Vector4(xsteps, ysteps, zsteps, 0);
                             uncomputedSdf.SdfTexture = output;
                             uncomputedSdf.IsLoaded = true;
 
-                        });
-                    }
-                }
-            }
+                        }
+                        else
+                        {
+                            _generateTask = Task.Factory.StartNew(() =>
+                            {
+                                output = new Texture2D(graphics, xsteps * zsteps, ysteps, false, SurfaceFormat.Single);
 
+                                float[] data = new float[xsteps * ysteps * zsteps];
+
+                                Stopwatch stopwatch = Stopwatch.StartNew();
+
+                                int numberOfThreads = RenderingSettings.SDF.NumOfCpuThreads;
+                                if (numberOfThreads > 1)
+                                {
+                                    Task[] threads = new Task[numberOfThreads - 1];
+
+                                    //Make local datas
+
+                                    float[][] dataArray = new float[numberOfThreads][];
+
+                                    for (int index = 0; index < threads.Length; index++)
+                                    {
+                                        int i = index;
+                                        dataArray[index + 1] = new float[xsteps * ysteps * zsteps];
+                                        threads[i] = Task.Factory.StartNew(() =>
+                                        {
+                                            GenerateData(xsteps, ysteps, zsteps, uncomputedSdf,
+                                                ref dataArray[i + 1], i + 1,
+                                                numberOfThreads, triangles);
+                                        });
+                                    }
+
+                                    dataArray[0] = data;
+                                    GenerateData(xsteps, ysteps, zsteps, uncomputedSdf, ref dataArray[0], 0,
+                                        numberOfThreads, triangles);
+
+                                    Task.WaitAll(threads);
+
+                                    //Something broke?
+                                    for (int i = 0; i < data.Length; i++)
+                                    {
+                                        //data[i] = dataArray[i % numberOfThreads][i];
+                                        for (int j = 0; j < numberOfThreads; j++)
+                                        {
+                                            if (dataArray[j][i] != 0)
+                                            {
+                                                data[i] = dataArray[j][i];
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    for (var index2 = 0; index2 < threads.Length; index2++)
+                                    {
+                                        threads[index2].Dispose();
+                                    }
+                                }
+                                else
+                                {
+                                    GenerateData(xsteps, ysteps, zsteps, uncomputedSdf, ref data, 0,
+                                        numberOfThreads, triangles);
+                                }
+
+                                stopwatch.Stop();
+
+                                Debug.Write("\nSDF generated in " + stopwatch.ElapsedMilliseconds + "ms with " + numberOfThreads + " thread(s)");
+
+                                string path = uncomputedSdf.TexturePath;
+                                DataStream.SaveImageData(data, xsteps, ysteps, zsteps, path);
+                                output.SetData(data);
+                                uncomputedSdf.TextureResolution = new Vector4(xsteps, ysteps, zsteps, 0);
+                                uncomputedSdf.SdfTexture = output;
+                                uncomputedSdf.IsLoaded = true;
+
+                            }, _generateTaskTokenSource.Token);
+                        }
+                    }
+            }
 
             internal void Update(GraphicsDevice graphics, List<ModelEntity> entities,
                 DistanceFieldRenderModule distanceFieldRenderModule, ref List<SignedDistanceField> sdfDefinitionsOut)
@@ -231,7 +242,8 @@ namespace DeferredEngine.Rendering.SDF
                 sdfDefinitionsOut = sdfDefinitions;
             }
 
-            private void GenerateData(int xsteps, int ysteps, int zsteps, SignedDistanceField volumeTex, ref float[] data, int threadindex, int numberOfThreads, SdfTriangle[] triangles)
+            private static void GenerateData(int xsteps, int ysteps, int zsteps, SignedDistanceField volumeTex, 
+                ref float[] data, int threadindex, int numberOfThreads, SdfTriangle[] triangles)
             {
                 int xi, yi, zi;
 
