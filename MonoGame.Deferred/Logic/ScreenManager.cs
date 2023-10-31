@@ -73,7 +73,7 @@ namespace DeferredEngine.Demo
             _editorLogic.Update(gameTime, _sceneLogic.Scene, _renderer.CurrentHoverContext, _sceneLogic.MeshBatcher);
             _sceneLogic.Update(gameTime, isActive);
             _renderer.RequestRedraw(gameTime);
-            _renderer.Update(_sceneLogic.Camera, _sceneLogic.MeshBatcher, _sceneLogic.Scene);
+            _renderer.Update(_sceneLogic.MeshBatcher, _sceneLogic.Scene, _sceneLogic.Camera);
 
             _debug.Update(gameTime);
         }

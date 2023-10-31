@@ -36,7 +36,7 @@ namespace DeferredEngine.Pipeline
         /// <summary>
         /// Update our function
         /// </summary>
-        public abstract void Update(Camera camera, DynamicMeshBatcher meshBatcher, EntityScene scene);
+        public abstract void Update(DynamicMeshBatcher meshBatcher, EntityScene scene, Camera camera);
         /// <summary>
         /// Main Draw function of the game
         /// </summary>
