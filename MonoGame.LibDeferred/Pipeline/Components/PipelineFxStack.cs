@@ -87,7 +87,10 @@ namespace DeferredEngine.Rendering.PostProcessing
                 LookUpTable = content.Load<Texture2D>("Shaders/PostProcessing/lut")
             };
             PostProcessing = new PostProcessingFx();
-            SSReflection = new SSReflectionFx();
+            SSReflection = new SSReflectionFx()
+            {
+                TemporalAA = TemporalAA
+            };
             SSAmbientOcclusion = new SSAmbientOcclustionFx();
 
             _modules.AddRange(new PostFx[] {
@@ -147,7 +150,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         private RenderTarget2D DrawSSReflection(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
         {
             // optional: use TemporalAA buffers as sourceRT
-            sourceRT ??= this.SSReflection.GetSSReflectionRenderTargets(TemporalAA);
+            //sourceRT ??= this.SSReflection.GetSSReflectionRenderTargets(TemporalAA);
             return this.SSReflection.Draw(sourceRT, previousRT, destRT);
         }
 

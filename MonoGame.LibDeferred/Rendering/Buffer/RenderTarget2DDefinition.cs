@@ -29,7 +29,7 @@ namespace DeferredEngine.Rendering
         public static readonly RenderTarget2DDefinition Normal = new RenderTarget2DDefinition(nameof(Normal), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
         public static readonly RenderTarget2DDefinition Depth = new RenderTarget2DDefinition(nameof(Depth), false, SurfaceFormat.Single, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
 
-        public static readonly RenderTarget2DDefinition Aux_FinalColor = new RenderTarget2DDefinition(nameof(Aux_FinalColor), false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+        public static readonly RenderTarget2DDefinition Aux_FinalColor = new RenderTarget2DDefinition(nameof(Aux_FinalColor), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
         public static readonly RenderTarget2DDefinition Aux_Swap = new RenderTarget2DDefinition(nameof(Aux_Swap), false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
         public static readonly RenderTarget2DDefinition Aux_SwapHalf = new RenderTarget2DDefinition(nameof(Aux_SwapHalf), false, SurfaceFormat.HalfVector4, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
 
@@ -43,7 +43,7 @@ namespace DeferredEngine.Rendering
         public static readonly RenderTarget2DDefinition SSFx_AO_Blur_H = new RenderTarget2DDefinition(nameof(SSFx_AO_Blur_H), false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents, ResamplingModes.Downsample_x1);
         public static readonly RenderTarget2DDefinition SSFx_AO_Blur_Final = new RenderTarget2DDefinition(nameof(SSFx_AO_Blur_Final), false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents, ResamplingModes.Downsample_x1);
 
-        public static readonly RenderTarget2DDefinition SSFx_Reflections = new RenderTarget2DDefinition(nameof(SSFx_Reflections), false, SurfaceFormat.HalfVector4, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+        public static readonly RenderTarget2DDefinition SSFx_SSR_Main = new RenderTarget2DDefinition(nameof(SSFx_SSR_Main), false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
 
 
         public static readonly RenderTarget2DDefinition Aux_Id = new RenderTarget2DDefinition(nameof(Aux_Id), false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);

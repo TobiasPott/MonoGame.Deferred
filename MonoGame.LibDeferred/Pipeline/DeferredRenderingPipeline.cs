@@ -223,7 +223,8 @@ namespace DeferredEngine.Pipeline
             // TAA
             _fxStack.Draw(PipelineFxStage.TemporalAA, null, null, _auxTargets[PipelineTargets.SWAP_HALF]);
             // SSR
-            _fxStack.Draw(PipelineFxStage.SSReflection, null, null, _ssfxTargets.SSR_Main);
+            // ToDo: @tpott: Internalize SSRMap buffer creation to SSReflction module as this should render in a off-screen target for later composition
+            _fxStack.Draw(PipelineFxStage.SSReflection, _fxStack.TemporalAA.Enabled ? null : _auxTargets[PipelineTargets.SWAP_HALF], null, _ssfxTargets.SSR_Main);
             // BLOOM
             _fxStack.Draw(PipelineFxStage.Bloom, null, null, _auxTargets[PipelineTargets.SWAP_HALF]);
             // POST PROCESSING
