@@ -14,36 +14,36 @@ namespace DeferredEngine.Pipeline
 
 
         private FullscreenTriangleBuffer _fullscreenTarget;
-        private EnvironmentFxSetup _effectSetup = new EnvironmentFxSetup();
+        private readonly EnvironmentFxSetup _fxSetup = new EnvironmentFxSetup();
 
         public Texture2D SSRMap
-        { set { _effectSetup.Param_SSRMap.SetValue(value); } }
+        { set { _fxSetup.Param_SSRMap.SetValue(value); } }
 
         public Vector2 Resolution
-        { set { _effectSetup.Param_Resolution.SetValue(value); } }
+        { set { _fxSetup.Param_Resolution.SetValue(value); } }
         public float Time
-        { set { _effectSetup.Param_Time.SetValue(value); } }
+        { set { _fxSetup.Param_Time.SetValue(value); } }
 
 
         public bool FireflyReduction
-        { set { _effectSetup.Param_FireflyReduction.SetValue(value); } }
+        { set { _fxSetup.Param_FireflyReduction.SetValue(value); } }
         public float FireflyThreshold
-        { set { _effectSetup.Param_FireflyThreshold.SetValue(value); } }
+        { set { _fxSetup.Param_FireflyThreshold.SetValue(value); } }
 
         public float SpecularStrength
         {
             set
             {
-                _effectSetup.Param_SpecularStrength.SetValue(value);
-                _effectSetup.Param_SpecularStrengthRcp.SetValue(1.0f / value);
+                _fxSetup.Param_SpecularStrength.SetValue(value);
+                _fxSetup.Param_SpecularStrengthRcp.SetValue(1.0f / value);
             }
         }
         public float DiffuseStrength
-        { set { _effectSetup.Param_DiffuseStrength.SetValue(value); } }
+        { set { _fxSetup.Param_DiffuseStrength.SetValue(value); } }
 
 
         public bool UseSDFAO
-        { set { _effectSetup.Param_UseSDFAO.SetValue(value); } }
+        { set { _fxSetup.Param_UseSDFAO.SetValue(value); } }
 
 
         public EnvironmentPipelineModule()
@@ -55,22 +55,22 @@ namespace DeferredEngine.Pipeline
 
         public void SetGBufferParams(GBufferTarget gBufferTarget)
         {
-            _effectSetup.Param_AlbedoMap.SetValue(gBufferTarget.Albedo);
-            _effectSetup.Param_NormalMap.SetValue(gBufferTarget.Normal);
-            _effectSetup.Param_DepthMap.SetValue(gBufferTarget.Depth);
+            _fxSetup.Param_AlbedoMap.SetValue(gBufferTarget.Albedo);
+            _fxSetup.Param_NormalMap.SetValue(gBufferTarget.Normal);
+            _fxSetup.Param_DepthMap.SetValue(gBufferTarget.Depth);
         }
         public void SetInstanceData(Matrix[] inverseMatrices, Vector3[] scales, float[] sdfIndices, int count)
         {
-            _effectSetup.Param_InstanceInverseMatrix.SetValue(inverseMatrices);
-            _effectSetup.Param_InstanceScale.SetValue(scales);
-            _effectSetup.Param_InstanceSDFIndex.SetValue(sdfIndices);
-            _effectSetup.Param_InstancesCount.SetValue((float)count);
+            _fxSetup.Param_InstanceInverseMatrix.SetValue(inverseMatrices);
+            _fxSetup.Param_InstanceScale.SetValue(scales);
+            _fxSetup.Param_InstanceSDFIndex.SetValue(sdfIndices);
+            _fxSetup.Param_InstancesCount.SetValue((float)count);
         }
         public void SetVolumeTexParams(Texture atlas, Vector3[] texSizes, Vector4[] texResolutions)
         {
-            _effectSetup.Param_VolumeTex.SetValue(atlas);
-            _effectSetup.Param_VolumeTexSize.SetValue(texSizes);
-            _effectSetup.Param_VolumeTexResolution.SetValue(texResolutions);
+            _fxSetup.Param_VolumeTex.SetValue(atlas);
+            _fxSetup.Param_VolumeTexSize.SetValue(texSizes);
+            _fxSetup.Param_VolumeTexResolution.SetValue(texResolutions);
         }
         public void SetEnvironmentProbe(EnvironmentProbe probe)
         {
@@ -95,7 +95,7 @@ namespace DeferredEngine.Pipeline
 
         public void SetViewPosition(Vector3 viewPosition)
         {
-            _effectSetup.Param_CameraPositionWS.SetValue(viewPosition);
+            _fxSetup.Param_CameraPositionWS.SetValue(viewPosition);
         }
 
 
@@ -105,9 +105,9 @@ namespace DeferredEngine.Pipeline
             if (EnvironmentPipelineModule.ModuleEnabled)
             {
                 // ToDo: PRIO IV: Environment spec and diffuse strength don't seem to pass to the shader
-                _effectSetup.Param_FrustumCorners.SetValue(this.Frustum.WorldSpaceFrustum);
-                _effectSetup.Param_TransposeView.SetValue(Matrix.Transpose(this.Matrices.View));
-                _effectSetup.Pass_Basic.Apply();
+                _fxSetup.Param_FrustumCorners.SetValue(this.Frustum.WorldSpaceFrustum);
+                _fxSetup.Param_TransposeView.SetValue(Matrix.Transpose(this.Matrices.View));
+                _fxSetup.Pass_Basic.Apply();
 
                 _graphicsDevice.SetStates(DepthStencilStateOption.None, RasterizerStateOption.CullCounterClockwise);
                 _fullscreenTarget.Draw(_graphicsDevice);
@@ -118,9 +118,9 @@ namespace DeferredEngine.Pipeline
         }
         public void DrawSky()
         {
-            _effectSetup.Param_FrustumCorners.SetValue(this.Frustum.WorldSpaceFrustum);
-            _effectSetup.Param_TransposeView.SetValue(Matrix.Transpose(this.Matrices.View));
-            _effectSetup.Pass_Sky.Apply();
+            _fxSetup.Param_FrustumCorners.SetValue(this.Frustum.WorldSpaceFrustum);
+            _fxSetup.Param_TransposeView.SetValue(Matrix.Transpose(this.Matrices.View));
+            _fxSetup.Pass_Sky.Apply();
 
             _graphicsDevice.SetStates(DepthStencilStateOption.None, RasterizerStateOption.CullCounterClockwise);
             _fullscreenTarget.Draw(_graphicsDevice);
@@ -129,7 +129,7 @@ namespace DeferredEngine.Pipeline
 
         public override void Dispose()
         {
-            _effectSetup?.Dispose();
+            _fxSetup?.Dispose();
         }
     }
 }

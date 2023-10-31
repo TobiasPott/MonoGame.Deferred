@@ -32,10 +32,8 @@ namespace DeferredEngine.Pipeline
         public void Blit(Texture2D source, RenderTarget2D destRT = null, BlendState blendState = null, SamplerState samplerState = null,
             Rectangle? destRectangle = null)
         {
-            if (blendState == null)
-                blendState = BlendState.Opaque;
-            if (samplerState == null)
-                samplerState = SamplerState.LinearWrap;
+            blendState ??= BlendState.Opaque;
+            samplerState ??= SamplerState.LinearWrap;
 
 
             _graphicsDevice.SetRenderTarget(destRT);

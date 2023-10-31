@@ -10,8 +10,7 @@ namespace DeferredEngine.Pipeline
         {
             get
             {
-                if (_instance == null)
-                    _instance = new DeferredFxSetup();
+                _instance ??= new DeferredFxSetup();
                 return _instance;
             }
         }

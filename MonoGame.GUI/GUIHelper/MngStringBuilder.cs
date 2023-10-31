@@ -44,9 +44,9 @@ namespace HelperSuite.GUIHelper //StringBuilderII
     public sealed class MngStringBuilder
     {
         private static char decimalseperator = '.';
-        private static char minus = '-';
-        private static char plus = '+';
-        private static char space = ' ';
+        private static readonly char minus = '-';
+        private static readonly char plus = '+';
+        private static readonly char space = ' ';
 
         private static StringBuilder last;
         private StringBuilder sb;
@@ -411,7 +411,7 @@ namespace HelperSuite.GUIHelper //StringBuilderII
                 {
                     sb.Append('0');
                 }
-                placed = placed * .1f;
+                placed *= .1f;
             }
         }
 
@@ -486,7 +486,7 @@ namespace HelperSuite.GUIHelper //StringBuilderII
                         sb.Append('0');
                     }
                 }
-                placed = placed * .1;
+                placed *= .1;
             }
         }
 
@@ -557,7 +557,7 @@ namespace HelperSuite.GUIHelper //StringBuilderII
                         sb.Append('0');
                     }
                 }
-                placed = placed * .1f;
+                placed *= .1f;
             }
         }
 
@@ -627,7 +627,7 @@ namespace HelperSuite.GUIHelper //StringBuilderII
                         sb.Append('0');
                     }
                 }
-                placed = placed * .1;
+                placed *= .1;
             }
         }
 
