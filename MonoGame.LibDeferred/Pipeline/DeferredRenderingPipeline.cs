@@ -211,22 +211,24 @@ namespace DeferredEngine.Pipeline
             //_moduleStack.Environment.DrawSky();
             _moduleStack.Environment.Draw();
             // Step: 05
-            //Compose the scene by combining our lighting data with the gbuffer data
-            // ToDo: PRIO III: @tpott: hacky way to disable ssao when disabled on global scale (GUI is insufficient here)
-            //      Add NotifiedProperty with wrapper property for UI
+            // Compose the scene by combining our lighting data with the gbuffer data
             _moduleStack.Deferred.Draw(null, null, _auxTargets[PipelineTargets.SWAP_HALF]);
             // Step: 06
-            //Forward
+            // Forward
             _moduleStack.Forward.Draw(meshBatcher, null, null, _auxTargets[PipelineTargets.SWAP_HALF]);
             // Step: 07
             // Post processing passes
-            //SSR
-            _fxStack.Draw(PipelineFxStage.SSReflection, _auxTargets[PipelineTargets.SWAP_HALF], null, _ssfxTargets.SSR_Main);
-            //SSAO
+            // SSAO
             _fxStack.Draw(PipelineFxStage.SSAmbientOcclusion, null, null, _ssfxTargets.AO_Main);
+            // TAA
             _fxStack.Draw(PipelineFxStage.TemporalAA, null, null, _auxTargets[PipelineTargets.SWAP_HALF]);
+            // SSR
+            _fxStack.Draw(PipelineFxStage.SSReflection, null, null, _ssfxTargets.SSR_Main);
+            // BLOOM
             _fxStack.Draw(PipelineFxStage.Bloom, null, null, _auxTargets[PipelineTargets.SWAP_HALF]);
+            // POST PROCESSING
             _fxStack.Draw(PipelineFxStage.PostProcessing, _auxTargets[PipelineTargets.SWAP_HALF], null, _auxTargets[PipelineTargets.SWAP]);
+            // COLOR GRADING
             _fxStack.Draw(PipelineFxStage.ColorGrading, _auxTargets[PipelineTargets.SWAP], null, _auxTargets[PipelineTargets.FINALCOLOR]);
 
             // Step: 08 Blit final color to screen (may blit to a 'viewport' section of the screen, or the full screen

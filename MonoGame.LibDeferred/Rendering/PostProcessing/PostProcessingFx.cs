@@ -32,6 +32,7 @@ namespace DeferredEngine.Rendering.PostProcessing
                 this.Blit(sourceRT, destRT);
                 return destRT;
             }
+
             _fxSetup.Param_ChromaticAbberationStrength.SetValue(_chromaticAbberationStrength);
             _fxSetup.Effect.CurrentTechnique = _chromaticAbberationStrength <= 0 ? _fxSetup.Technique_Base : _fxSetup.Technique_VignetteChroma;
             _fxSetup.Param_SCurveStrength.SetValue(_sCurveStrength);

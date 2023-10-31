@@ -249,7 +249,6 @@ namespace DeferredEngine.Rendering.PostProcessing
                 ////UPSAMPLE TO MIP0
                 this.SetPassAndDraw(false, 0, 1, _strength[0], _radius[0]);
 
-                // ToDo: Swap use of render textures to return the sourceRT (is COMPOSE at the moment)
                 _graphicsDevice.SetRenderTargets(_swapBuffer);
                 _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointWrap);
 
