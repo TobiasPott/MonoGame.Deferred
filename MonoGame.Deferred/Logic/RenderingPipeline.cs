@@ -267,15 +267,10 @@ namespace DeferredEngine.Rendering
         /// <summary>
         /// Main Draw function of the game
         /// </summary>
-        public void Draw(DynamicMeshBatcher meshBatcher, EntityScene scene, GizmoDrawContext gizmoContext)
+        public void Draw(DynamicMeshBatcher meshBatcher, EntityScene scene)
         {
             if (!this.Enabled)
                 return;
-
-            // Step: -1
-            //Draw the elements that we are hovering over with outlines
-            if (RenderingSettings.e_EnableSelection)
-                _moduleStack.IdAndOutline.Draw(meshBatcher, scene, gizmoContext, EditorLogic.Instance.HasMouseMoved);
 
             // Step: 01
             // Deferred GBuffer
@@ -329,6 +324,17 @@ namespace DeferredEngine.Rendering
 
 
         }
+        public void DrawEditorPrePass(DynamicMeshBatcher meshBatcher, EntityScene scene, GizmoDrawContext gizmoContext)
+        {
+            if (!this.Enabled)
+                return;
+
+            // Step: -1
+            //Draw the elements that we are hovering over with outlines
+            if (RenderingSettings.e_EnableSelection)
+                _moduleStack.IdAndOutline.Draw(meshBatcher, scene, gizmoContext, EditorLogic.Instance.HasMouseMoved);
+
+        }
         /// <summary>
         /// Main Draw function of the game
         /// </summary>
@@ -347,19 +353,6 @@ namespace DeferredEngine.Rendering
                 this.DrawEditorPasses(scene, gizmoContext, PipelineEditorPasses.Helper);
             }
         }
-
-
-        private bool IsSDFUsed(List<PointLight> pointLights)
-        {
-            if (!RenderingSettings.SDF.DrawDistance)
-                return false;
-
-            foreach (PointLight light in pointLights)
-                if (light.HasChanged && light.CastSDFShadows)
-                    return true;
-            return false;
-        }
-
         private void DrawEditorPasses(EntityScene scene, GizmoDrawContext gizmoContext, PipelineEditorPasses passes = PipelineEditorPasses.Billboard | PipelineEditorPasses.TransformGizmo)
         {
             if (passes == 0)
@@ -404,6 +397,18 @@ namespace DeferredEngine.Rendering
             //        _spriteBatch.End();
             //    }
             //}
+        }
+
+
+        private bool IsSDFUsed(List<PointLight> pointLights)
+        {
+            if (!RenderingSettings.SDF.DrawDistance)
+                return false;
+
+            foreach (PointLight light in pointLights)
+                if (light.HasChanged && light.CastSDFShadows)
+                    return true;
+            return false;
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
