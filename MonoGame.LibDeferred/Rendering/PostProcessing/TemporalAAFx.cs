@@ -42,15 +42,15 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         public override RenderTarget2D Draw(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
         {
-            if (!this.Enabled)
-                return destRT;
-
             if (previousRT == null && sourceRT == null)
                 _ssfxTargets?.GetTemporalAARenderTargets(this.IsOffFrame, out sourceRT, out previousRT);
             else if (previousRT == null)
                 _ssfxTargets?.GetTemporalAARenderTargets(this.IsOffFrame, out _, out previousRT);
             else if (sourceRT == null)
                 _ssfxTargets?.GetTemporalAARenderTargets(this.IsOffFrame, out sourceRT, out _);
+
+            if (!this.Enabled)
+                return sourceRT;
 
             _graphicsDevice.SetRenderTarget(sourceRT);
             _graphicsDevice.SetState(BlendStateOption.Opaque);
