@@ -87,18 +87,14 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         protected RenderTarget2D GetRenderTarget2D(int size)
         {
-            switch (size)
+            return size switch
             {
-                case 256:
-                    return _rt2562;
-                case 512:
-                    return _rt5122;
-                case 1024:
-                    return _rt10242;
-                case 2048:
-                    return _rt20482;
-            }
-            return null;
+                256 => _rt2562,
+                512 => _rt5122,
+                1024 => _rt10242,
+                2048 => _rt20482,
+                _ => throw new ArgumentException("The given size is unsupported. Use 256, 512, 1024 or 2048 innstead."),
+            };
         }
         protected void EnsureRenderTargetFormat(Texture renderTarget, SurfaceFormat format = SurfaceFormat.Vector2)
         {

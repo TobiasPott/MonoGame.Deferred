@@ -6,6 +6,7 @@ using DeferredEngine.Pipeline.Utilities;
 using DeferredEngine.Recources;
 using DeferredEngine.Rendering;
 using DeferredEngine.Rendering.PostProcessing;
+using DeferredEngine.Utilities;
 using HelperSuite.GUI;
 using HelperSuite.GUIHelper;
 using Microsoft.Xna.Framework;

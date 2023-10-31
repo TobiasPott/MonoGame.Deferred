@@ -19,7 +19,7 @@ namespace DeferredEngine.Rendering.Helper
 
         public void Draw(GraphicsDevice graphicsDevice, Matrix viewProjection, EffectParameter Param_WorldViewProjection, EffectParameter Param_GlobalColor, EffectPass Pass_GlobalColor)
         {
-            if (_octahedronMesh == null) _octahedronMesh = new OctahedronBuffer(graphicsDevice);
+            _octahedronMesh ??= new OctahedronBuffer(graphicsDevice);
 
             graphicsDevice.SetVertexBuffer(_octahedronMesh.VertexBuffer);
             graphicsDevice.Indices = _octahedronMesh.IndexBuffer;
