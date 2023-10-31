@@ -133,7 +133,6 @@ namespace DeferredEngine.Rendering.PostProcessing
             return this.Bloom.Draw(sourceRT, previousRT, destRT);
 
         }
-
         /// <summary>
         /// Combine the render with previous frames to get more information per sample and make the image anti-aliased / super sampled
         /// </summary>
@@ -149,10 +148,6 @@ namespace DeferredEngine.Rendering.PostProcessing
         {
             // optional: use TemporalAA buffers as sourceRT
             sourceRT ??= this.SSReflection.GetSSReflectionRenderTargets(TemporalAA);
-
-            if (!this.SSReflection.Enabled)
-                return sourceRT;
-
             return this.SSReflection.Draw(sourceRT, previousRT, destRT);
         }
 
@@ -161,8 +156,6 @@ namespace DeferredEngine.Rendering.PostProcessing
         /// </summary>
         private RenderTarget2D DrawSSAmbientOcclusion(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
         {
-            if (!this.SSAmbientOcclusion.Enabled)
-                return sourceRT;
             return this.SSAmbientOcclusion.Draw(sourceRT, previousRT, destRT);
         }
 
