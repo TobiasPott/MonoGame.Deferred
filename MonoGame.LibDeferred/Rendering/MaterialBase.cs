@@ -16,7 +16,6 @@ namespace DeferredEngine.Recources
             Emissive = 2,
         }
 
-
         private Texture2D _albedoMap;
         private Texture2D _normalMap;
 
@@ -26,23 +25,24 @@ namespace DeferredEngine.Recources
         private Texture2D _mask;
         private Texture2D _displacementMap;
 
-        public bool IsTransparent = false;
-
-
-        public Vector3 DiffuseColor = Color.Gray.ToVector3();
-
-        private float _roughness = 0.5f;
-        private float _metallic;
-        private float _emissiveStrength;
 
         private MaterialTypes _type = MaterialTypes.Basic;
         public int MaterialTypeNumber;
         public bool RenderCCW = false;
         public bool HasShadow = true; // Unclear if this means cast and/or receive
+        public bool IsTransparent = false;
 
 
+        private Vector4 _baseColor = new Vector4(0.5f, 0.5f, 0.5f, 1.0f);
+        public Color BaseColor { get => new Color(_baseColor); set => _baseColor = value.ToVector4(); }
+
+        private float _roughness = 0.5f;
         public float Roughness { get => _roughness; set => _roughness = Math.Max(value, 0.001f); }
+
+        private float _metallic = 0.0f;
         public float Metallic { get => _metallic; set => _metallic = Math.Clamp(value, 0.0f, 1.0f); }
+
+        private float _emissiveStrength = 0.0f;
         public float EmissiveStrength { get => _emissiveStrength; set => _emissiveStrength = value; }
 
 
@@ -87,13 +87,13 @@ namespace DeferredEngine.Recources
         { }
 
 
-        public void Initialize(Color diffuseColor, float roughness, float metalness,
+        public void Initialize(Color baseColor, float roughness, float metalness,
             Texture2D albedoMap = null, Texture2D normalMap = null,
             Texture2D roughnessMap = null, Texture2D metallicMap = null,
             Texture2D mask = null, Texture2D displacementMap = null,
             MaterialTypes type = MaterialTypes.Basic, float emissiveStrength = 0)
         {
-            DiffuseColor = diffuseColor.ToVector3();
+            BaseColor = baseColor;
             Roughness = roughness;
             _metallic = metalness;
 
@@ -138,7 +138,7 @@ namespace DeferredEngine.Recources
 
             if (HasDisplacementMap != b.HasDisplacementMap) return false;
 
-            if (Vector3.DistanceSquared(DiffuseColor, b.DiffuseColor) > 0.01f) return false;
+            if (Vector4.DistanceSquared(_baseColor, b._baseColor) > 0.01f) return false;
 
             if (AlbedoMap != b.AlbedoMap) return false;
 

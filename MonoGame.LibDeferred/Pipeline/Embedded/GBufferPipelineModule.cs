@@ -90,12 +90,12 @@ namespace DeferredEngine.Pipeline
                 {
                     if (material.Type == MaterialBase.MaterialTypes.Emissive && material.EmissiveStrength > 0)
                     {
-                        _fxSetup.Param_Material_DiffuseColor.SetValue(material.DiffuseColor);
+                        _fxSetup.Param_Material_DiffuseColor.SetValue(material.BaseColor);
                         _fxSetup.Param_Material_Metallic.SetValue(material.EmissiveStrength / 8);
                     }
                     else
                     {
-                        _fxSetup.Param_Material_DiffuseColor.SetValue(material.DiffuseColor);
+                        _fxSetup.Param_Material_DiffuseColor.SetValue(material.BaseColor);
                     }
                 }
 

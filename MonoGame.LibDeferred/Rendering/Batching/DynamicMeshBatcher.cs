@@ -18,6 +18,7 @@ namespace DeferredEngine.Rendering
     }
     public enum RenderType
     {
+        // ToDo: Consider renaming it, as it seems to be comparable to the Unity render queue
         Opaque,
         ShadowOmnidirectional,
         ShadowLinear,
