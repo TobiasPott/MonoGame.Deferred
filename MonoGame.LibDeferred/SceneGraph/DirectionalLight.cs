@@ -1,5 +1,4 @@
 ﻿using DeferredEngine.Entities;
-using DeferredEngine.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
@@ -110,6 +109,13 @@ namespace DeferredEngine.Pipeline.Lighting
             _rotationMatrix = Matrix.Identity;
 
             Name = GetType().Name + " " + Id;
+
+            GlobalEvents.FrameStarted += GlobalEvents_FrameStarted;
+        }
+
+        private void GlobalEvents_FrameStarted()
+        {
+            this.HasChanged = false;
         }
 
         public void UpdateViewProjection()
