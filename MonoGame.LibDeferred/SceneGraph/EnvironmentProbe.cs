@@ -6,6 +6,8 @@ namespace DeferredEngine.Entities
     {
         public bool NeedsUpdate = true;
 
+        // ToDo: PRIO II: EnvironmentProbe spec and diff strength are not applied
+        //          Check what the shader does annd where it seems to render to
         public float SpecularStrength = 1;
         public float DiffuseStrength = 0.2f;
         public bool UseSDFAO = false;

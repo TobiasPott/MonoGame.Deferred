@@ -13,10 +13,11 @@ namespace DeferredEngine.Pipeline
         public readonly static NotifiedProperty<bool> ModuleEnabled = new NotifiedProperty<bool>(true);
 
 
+        private EnvironmentProbe _currentProbe;
         private FullscreenTriangleBuffer _fullscreenTarget;
         private readonly EnvironmentFxSetup _fxSetup = new EnvironmentFxSetup();
 
-        public Texture2D SSRMap
+        public Texture2D SSReflectionMap
         { set { _fxSetup.Param_SSRMap.SetValue(value); } }
 
         public Vector2 Resolution
@@ -29,21 +30,6 @@ namespace DeferredEngine.Pipeline
         { set { _fxSetup.Param_FireflyReduction.SetValue(value); } }
         public float FireflyThreshold
         { set { _fxSetup.Param_FireflyThreshold.SetValue(value); } }
-
-        public float SpecularStrength
-        {
-            set
-            {
-                _fxSetup.Param_SpecularStrength.SetValue(value);
-                _fxSetup.Param_SpecularStrengthRcp.SetValue(1.0f / value);
-            }
-        }
-        public float DiffuseStrength
-        { set { _fxSetup.Param_DiffuseStrength.SetValue(value); } }
-
-
-        public bool UseSDFAO
-        { set { _fxSetup.Param_UseSDFAO.SetValue(value); } }
 
 
         public EnvironmentPipelineModule()
@@ -74,17 +60,23 @@ namespace DeferredEngine.Pipeline
         }
         public void SetEnvironmentProbe(EnvironmentProbe probe)
         {
-            if (probe != null)
+            if (_currentProbe != probe)
             {
-                SpecularStrength = probe.SpecularStrength;
-                DiffuseStrength = probe.DiffuseStrength;
-                UseSDFAO = probe.UseSDFAO;
-            }
-            else
-            {
-                SpecularStrength = 0.0f;
-                DiffuseStrength = 0.0f;
-                UseSDFAO = false;
+                _currentProbe = probe;
+                if (probe != null)
+                {
+                    _fxSetup.Param_SpecularStrengthRcp.SetValue(1.0f / probe.SpecularStrength);
+                    _fxSetup.Param_SpecularStrength.SetValue(probe.SpecularStrength);
+                    _fxSetup.Param_DiffuseStrength.SetValue(probe.DiffuseStrength);
+                    _fxSetup.Param_UseSDFAO.SetValue(_currentProbe.UseSDFAO);
+                }
+                else
+                {
+                    _fxSetup.Param_SpecularStrengthRcp.SetValue(1.0f);
+                    _fxSetup.Param_SpecularStrength.SetValue(0.0f);
+                    _fxSetup.Param_DiffuseStrength.SetValue(0.0f);
+                    _fxSetup.Param_UseSDFAO.SetValue(false);
+                }
             }
         }
         public override void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
@@ -118,12 +110,15 @@ namespace DeferredEngine.Pipeline
         }
         public void DrawSky()
         {
-            _fxSetup.Param_FrustumCorners.SetValue(this.Frustum.WorldSpaceFrustum);
-            _fxSetup.Param_TransposeView.SetValue(Matrix.Transpose(this.Matrices.View));
-            _fxSetup.Pass_Sky.Apply();
+            if (EnvironmentPipelineModule.ModuleEnabled)
+            {
+                _fxSetup.Param_FrustumCorners.SetValue(this.Frustum.WorldSpaceFrustum);
+                _fxSetup.Param_TransposeView.SetValue(Matrix.Transpose(this.Matrices.View));
+                _fxSetup.Pass_Sky.Apply();
 
-            _graphicsDevice.SetStates(DepthStencilStateOption.None, RasterizerStateOption.CullCounterClockwise);
-            _fullscreenTarget.Draw(_graphicsDevice);
+                _graphicsDevice.SetStates(DepthStencilStateOption.None, RasterizerStateOption.CullCounterClockwise);
+                _fullscreenTarget.Draw(_graphicsDevice);
+            }
         }
 
 

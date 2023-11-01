@@ -622,13 +622,13 @@ namespace DeferredEngine.Demo
 
                         _objectToggle1.Text = new StringBuilder("Update on move");
 
-                        _objectToggle2.SetField(selectedObject, "UseSDFAO");
+                        _objectToggle2.SetField(selectedObject, nameof(EnvironmentProbe.UseSDFAO));
                         _objectToggle2.Text = new StringBuilder("Use SDFAO");
 
-                        _objectSlider0.SetField(selectedObject, "SpecularStrength");
+                        _objectSlider0.SetField(selectedObject, nameof(EnvironmentProbe.SpecularStrength));
                         _objectSlider0.SetValues("Specular Strength: ", 0.01f, 1, 2);
 
-                        _objectSlider1.SetField(selectedObject, "DiffuseStrength");
+                        _objectSlider1.SetField(selectedObject, nameof(EnvironmentProbe.DiffuseStrength));
                         _objectSlider1.SetValues("Diffuse Strength: ", 0, 1, 2);
                     }
                 }

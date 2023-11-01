@@ -62,7 +62,7 @@ namespace DeferredEngine.Rendering
             set
             {
                 DirectionalLight.SetScreenSpaceShadowMap(value.AO_Blur_Final);
-                Environment.SSRMap = value.SSR_Main;
+                Environment.SSReflectionMap = value.SSR_Main;
                 Deferred.SetSSAOMap(value.AO_Blur_Final);
             }
         }

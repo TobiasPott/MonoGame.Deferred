@@ -62,7 +62,7 @@ namespace DeferredEngine.Pipeline.Utilities
                 DrawSceneBillboard(light.World, this.Matrices, light.Id);
             }
 
-            Debug.WriteLine("DrawSceneBillboards: " + this + " => " + scene.EnvProbe.World);
+            //Debug.WriteLine("DrawSceneBillboards: " + this + " => " + scene.EnvProbe.World);
             _fxSetup.Param_Texture.SetValue(StaticAssets.Instance.IconEnvmap);
             DrawSceneBillboard(scene.EnvProbe.World, this.Matrices, scene.EnvProbe.Id);
 
