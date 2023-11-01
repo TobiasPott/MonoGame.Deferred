@@ -121,14 +121,14 @@ float3 decode(float3 enc)
 
 //Since we encode in fp16 renderformat we can use values > 1.
 //Since I don't plan to have a lot of mattypes I use the mattype as the int and the metalness as the fractional
-float encodeMetallicMattype(float metalness, float /*int*/ mattype)
+float encodeMetallicMattype(float metalness, float /*int*/ matType)
 {
-	return metalness * 0.9f + mattype;
+	return metalness * 0.95f + matType;
 }
 
 float decodeMetalness(float input)
 {
-	const float recip = 1.0f / 0.9f;
+	const float recip = 1.0f / 0.95f;
 	return saturate(frac(input) * recip);
 }
 
@@ -136,24 +136,6 @@ float decodeMattype(float input)
 {
 	return trunc(input);
 }
-
-//Consider using bitmaps, or moving to another, high-precision channel
-//float encodeMetallicMattype(float metalness, float mattype)
-//{
-//	return metalness * 0.1f * 0.5f + mattype * 0.1f;
-//}
-//
-//float decodeMetalness(float input)
-//{
-//	input *= 10;
-//	return frac(input) * 2;
-//}
-//
-//float decodeMattype(float input)
-//{
-//	input *= 10;
-//	return trunc(input);
-//}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
