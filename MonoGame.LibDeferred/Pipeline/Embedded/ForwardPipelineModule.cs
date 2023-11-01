@@ -1,16 +1,20 @@
-﻿using DeferredEngine.Entities;
-using DeferredEngine.Pipeline.Lighting;
+﻿using DeferredEngine.Pipeline.Lighting;
 using DeferredEngine.Rendering;
 using DeferredEngine.Rendering.RenderModules.Default;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Ext;
 
 namespace DeferredEngine.Pipeline
 {
     public class ForwardPipelineModule : PipelineModule, IRenderModule
     {
         //Forward pass
-        public static bool g_EnableForward = true;
+        public static NotifiedProperty<bool> ModuleEnabled = new NotifiedProperty<bool>(true);
+
+
+        private bool _enabled = true;
+        public bool Enabled { get => _enabled && ModuleEnabled; set => _enabled = value; }
 
 
         private const int MAXLIGHTS = 40;
@@ -29,8 +33,7 @@ namespace DeferredEngine.Pipeline
         { }
         public void Draw(DynamicMeshBatcher meshBatcher, RenderTarget2D sourceRT, RenderTarget2D auxRT, RenderTarget2D destRT)
         {
-            // ToDo: Wrap into instance property with global override/flag
-            if (ForwardPipelineModule.g_EnableForward)
+            if (this.Enabled)
             {
                 _graphicsDevice.SetRenderTarget(destRT);
                 // reconstruct depth

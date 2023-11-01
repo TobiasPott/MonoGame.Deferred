@@ -11,9 +11,6 @@ namespace DeferredEngine.Rendering.PostProcessing
         // SSR
         public static NotifiedProperty<bool> ModuleEnabled = new NotifiedProperty<bool>(true);
         public static bool g_FireflyReduction { get; set; } = true;
-
-
-
         public static float g_FireflyThreshold { get; set; } = 1.75f;
 
 
@@ -26,6 +23,7 @@ namespace DeferredEngine.Rendering.PostProcessing
 
 
 
+        public TemporalAAFx TemporalAA;
         private SSFxTargets _ssfxTargets;
         public SSFxTargets SSFxTargets { set { _ssfxTargets = value; } }
 
@@ -37,7 +35,6 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         public RenderTarget2D DepthMap { set { _fxSetup.Param_DepthMap.SetValue(value); } }
         public RenderTarget2D NormalMap { set { _fxSetup.Param_NormalMap.SetValue(value); } }
-        public RenderTarget2D SourceMap { set { _fxSetup.Param_SourceMap.SetValue(value); } }
 
 
 
@@ -60,8 +57,13 @@ namespace DeferredEngine.Rendering.PostProcessing
         /// </summary>
         public override RenderTarget2D Draw(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
+            sourceRT ??= this.GetSSReflectionRenderTargets(TemporalAA);
             if (!this.Enabled)
+            {
                 return sourceRT;
+                this.Blit(sourceRT, destRT);
+                return destRT;
+            }
 
             _graphicsDevice.SetRenderTarget(destRT);
             _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);

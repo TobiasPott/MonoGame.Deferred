@@ -52,7 +52,6 @@ namespace DeferredEngine.Pipeline
         /// </summary>
         public RenderTarget2D Draw(RenderTarget2D sourceRT, RenderTarget2D auxRT, RenderTarget2D destRT)
         {
-            // ToDo: Move 'Compose' to DeferredPipelineModule and pass target buffer as RenderTarget2D parameter
             _graphicsDevice.SetRenderTarget(destRT);
             _graphicsDevice.SetStates(DepthStencilStateOption.KeepState, RasterizerStateOption.CullCounterClockwise, BlendStateOption.Opaque);
             

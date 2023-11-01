@@ -50,7 +50,7 @@ namespace DeferredEngine.Rendering.PostProcessing
         public override RenderTarget2D Draw(RenderTarget2D sourceRT, RenderTarget2D previousRT = null, RenderTarget2D destRT = null)
         {
             if (!this.Enabled)
-                return sourceRT;
+                return destRT;
 
             _graphicsDevice.SetRenderTarget(destRT);
             _graphicsDevice.SetStates(DepthStencilStateOption.Default, RasterizerStateOption.CullCounterClockwise, BlendStateOption.KeepState);
@@ -75,7 +75,6 @@ namespace DeferredEngine.Rendering.PostProcessing
             // sample profiler if set
             this.Profiler?.SampleTimestamp(ProfilerTimestamps.Draw_SSFx_SSAO);
 
-            // ToDo: change return render target to be Blur_Final (as it is target in biliteral blur)
             return destRT;
         }
 

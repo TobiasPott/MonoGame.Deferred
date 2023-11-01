@@ -1,5 +1,4 @@
-﻿using DeferredEngine.Recources;
-using DeferredEngine.Rendering.Helper.HelperGeometry;
+﻿using DeferredEngine.Rendering.Helper.HelperGeometry;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -7,11 +6,7 @@ namespace DeferredEngine.Rendering.Helper
 {
     public class LineBuffer
     {
-        public static short[] Indices = { 0, 1 };
         public VertexPositionColor[] Verts;
-
-        private Vector3 _start;
-        private Vector3 _end;
 
         public short Timer;
 
@@ -20,14 +15,9 @@ namespace DeferredEngine.Rendering.Helper
         { }
         public LineBuffer(Vector3 start, Vector3 end, short time, Color starColor, Color endColor, LineHelperManager lineHelperManager)
         {
-            if (!RenderingSettings.d_EnableLineHelper) return;
-
-            _start = start;
-            _end = end;
-
             Verts = new VertexPositionColor[2];
-            Verts[0] = lineHelperManager.GetVertexPositionColor(_start, starColor);
-            Verts[1] = lineHelperManager.GetVertexPositionColor(_end, endColor);
+            Verts[0] = lineHelperManager.GetVertexPositionColor(start, starColor);
+            Verts[1] = lineHelperManager.GetVertexPositionColor(end, endColor);
 
             Timer = time;
         }

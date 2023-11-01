@@ -105,10 +105,8 @@ namespace DeferredEngine.Recources
         public enum MaterialTypes
         {
             Basic = 0,
-            Emissive = 3,
-            Hologram = 1,
-            ProjectHologram = 2,
-            ForwardShaded = 5,
+            ForwardShaded = 1,
+            Emissive = 2,
         }
 
         public MaterialTypes Type

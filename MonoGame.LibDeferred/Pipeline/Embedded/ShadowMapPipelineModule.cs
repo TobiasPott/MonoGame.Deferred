@@ -101,10 +101,8 @@ namespace DeferredEngine.Pipeline
         {
             int shadowResolution = light.ShadowResolution;
             //For VSM we need 2 channels, -> Vector2
-            //todo: check if we need preserve contents
             if (light.ShadowMap == null)
-                // ToDo: Create Rendertarget definition for shadow map 'cube' (most likely also for directional lights)
-                light.ShadowMap = new RenderTarget2D(_graphicsDevice, shadowResolution, shadowResolution * 6, false, SurfaceFormat.HalfSingle, DepthFormat.Depth24, 0, RenderTargetUsage.PreserveContents);
+                light.ShadowMap = RenderTarget2DDefinition.Shadow_PointLight.CreateRenderTarget(_graphicsDevice, shadowResolution, shadowResolution * 6);
 
             Matrix lightViewProjection = Matrix.Identity;
             CubeMapFace cubeMapFace;
@@ -190,8 +188,7 @@ namespace DeferredEngine.Pipeline
             {
                 //if (lightSource.ShadowFiltering != DirectionalLightSource.ShadowFilteringTypes.VSM)
                 //{
-                light.ShadowMap = new RenderTarget2D(_graphicsDevice, shadowResolution, shadowResolution, false,
-                    SurfaceFormat.Single, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
+                light.ShadowMap = RenderTarget2DDefinition.Shadow_DirectionalLight.CreateRenderTarget(_graphicsDevice, shadowResolution, shadowResolution);
                 //}
                 //else //For a VSM shadowMap we need 2 components
                 //{

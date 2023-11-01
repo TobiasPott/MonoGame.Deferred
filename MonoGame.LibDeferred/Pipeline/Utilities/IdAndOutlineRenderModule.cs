@@ -45,14 +45,6 @@ namespace DeferredEngine.Pipeline.Utilities
 
         public void Draw(DynamicMeshBatcher meshBatcher, EntityScene scene, GizmoDrawContext drawContext, bool mouseMoved)
         {
-            // ToDo: Seemingly doesn't do a thing
-            if (drawContext.GizmoTransformationMode)
-            {
-                _graphicsDevice.SetRenderTarget(Target);
-                _graphicsDevice.Clear(Color.Black);
-                return;
-            }
-
             if (mouseMoved)
                 DrawIds(meshBatcher, scene, this.Matrices, drawContext);
 
@@ -70,8 +62,6 @@ namespace DeferredEngine.Pipeline.Utilities
                 meshBatcher.Draw(RenderType.IdRender, matrices, RenderContext.Default);
 
             //Now onto the billboards
-            // ToDo: @tpott: Consider moving Billboards into entities like Decals (but with different effect?! O.o)
-
             BillboardRenderer?.DrawSceneBillboards(scene);
 
             //Now onto the gizmos

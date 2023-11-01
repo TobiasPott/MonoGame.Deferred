@@ -45,7 +45,7 @@ namespace DeferredEngine.Rendering
             RenderTarget2DDefinition.SSFx_AO_Blur_H,
             RenderTarget2DDefinition.SSFx_AO_Blur_Final,
             RenderTarget2DDefinition.SSFx_TAA_Even, RenderTarget2DDefinition.SSFx_TAA_Odd,
-            RenderTarget2DDefinition.SSFx_Reflections,
+            RenderTarget2DDefinition.SSFx_SSR_Main,
         };
 
 

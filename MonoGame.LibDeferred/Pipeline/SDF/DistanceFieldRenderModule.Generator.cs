@@ -19,6 +19,50 @@ namespace DeferredEngine.Rendering.SDF
 
             private readonly List<SignedDistanceField> sdfDefinitions = new List<SignedDistanceField>();
 
+            public void Update(GraphicsDevice graphics, List<ModelEntity> entities,
+                DistanceFieldRenderModule distanceFieldRenderModule, ref List<SignedDistanceField> sdfDefinitionsOut)
+            {
+                //First let's check which entities need building, if at all!
+                sdfDefinitions.Clear();
+
+                //This should preferably be a list of meshes that are in the scene, instead of a list of entities
+                for (var index0 = 0; index0 < entities.Count; index0++)
+                {
+                    ModelEntity entity = entities[index0];
+
+                    SdfModelDefinition sdfModelDefinition = entity.ModelDefinition as SdfModelDefinition;
+                    if (sdfModelDefinition != null)
+                    {
+                        if (!sdfModelDefinition.SDF.IsUsed) continue;
+                        if (sdfModelDefinition.SDF.NeedsToBeGenerated)
+                            GenerateDistanceFields(entity.ModelDefinition, graphics, distanceFieldRenderModule);
+
+                        bool found = false;
+                        //Compile a list of all mbbs used right now
+                        for (var i = 0; i < sdfDefinitions.Count; i++)
+                        {
+                            if (sdfModelDefinition.SDF == sdfDefinitions[i])
+                            {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found)
+                            sdfDefinitions.Add(sdfModelDefinition.SDF);
+                    }
+
+                }
+
+                //Now for the model definitions
+                for (var i = 0; i < sdfDefinitions.Count; i++)
+                {
+                    if (RenderingSettings.SDF.Regenerate)
+                        sdfDefinitions[i].NeedsToBeGenerated = true;
+                }
+                RenderingSettings.SDF.Regenerate = false;
+                sdfDefinitionsOut = sdfDefinitions;
+            }
+
             public static void GenerateTriangles(Model model, ref SdfTriangle[] triangles)
             {
                 GeometryDataExtractor.GetVerticesAndIndicesFromModel(model, out Vector3[] vertexPositions, out int[] indices);
@@ -41,8 +85,7 @@ namespace DeferredEngine.Rendering.SDF
                 }
             }
 
-            // ToDo: @tpott: temporarily extract to static method to move SDFGenerator to LibDeferred (due to DistanceFieldRenderModule use)
-            public void GenerateDistanceFields(ModelDefinition modelDefinition, GraphicsDevice graphics, DistanceFieldRenderModule distanceFieldRenderModule)
+            private void GenerateDistanceFields(ModelDefinition modelDefinition, GraphicsDevice graphics, DistanceFieldRenderModule distanceFieldRenderModule)
             {
                 if (_generateTaskTokenSource != null)
                 {
@@ -198,50 +241,6 @@ namespace DeferredEngine.Rendering.SDF
                     }
             }
 
-            internal void Update(GraphicsDevice graphics, List<ModelEntity> entities,
-                DistanceFieldRenderModule distanceFieldRenderModule, ref List<SignedDistanceField> sdfDefinitionsOut)
-            {
-                //First let's check which entities need building, if at all!
-                sdfDefinitions.Clear();
-
-                //This should preferably be a list of meshes that are in the scene, instead of a list of entities
-                for (var index0 = 0; index0 < entities.Count; index0++)
-                {
-                    ModelEntity entity = entities[index0];
-
-                    SdfModelDefinition sdfModelDefinition = entity.ModelDefinition as SdfModelDefinition;
-                    if (sdfModelDefinition != null)
-                    {
-                        if (!sdfModelDefinition.SDF.IsUsed) continue;
-                        if (sdfModelDefinition.SDF.NeedsToBeGenerated)
-                            GenerateDistanceFields(entity.ModelDefinition, graphics, distanceFieldRenderModule);
-
-                        bool found = false;
-                        //Compile a list of all mbbs used right now
-                        for (var i = 0; i < sdfDefinitions.Count; i++)
-                        {
-                            if (sdfModelDefinition.SDF == sdfDefinitions[i])
-                            {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found)
-                            sdfDefinitions.Add(sdfModelDefinition.SDF);
-                    }
-
-                }
-
-                //Now for the model definitions
-                for (var i = 0; i < sdfDefinitions.Count; i++)
-                {
-                    if (RenderingSettings.SDF.Regenerate)
-                        sdfDefinitions[i].NeedsToBeGenerated = true;
-                }
-                RenderingSettings.SDF.Regenerate = false;
-                sdfDefinitionsOut = sdfDefinitions;
-            }
-
             private static void GenerateData(int xsteps, int ysteps, int zsteps, SignedDistanceField volumeTex, 
                 ref float[] data, int threadindex, int numberOfThreads, SdfTriangle[] triangles)
             {
@@ -285,10 +284,6 @@ namespace DeferredEngine.Rendering.SDF
                 x += z * xsteps;
                 return x + y * xsteps * zsteps;
             }
-            //private static float Dot2(Vector3 v)
-            //{
-            //    return Vector3.Dot(v, v);
-            //}
 
             private static float Saturate(float x)
             {

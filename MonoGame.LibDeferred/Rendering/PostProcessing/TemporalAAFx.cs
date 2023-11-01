@@ -2,6 +2,7 @@
 using DeferredEngine.Recources;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
+using SharpDX.Direct3D9;
 
 namespace DeferredEngine.Rendering.PostProcessing
 {
@@ -17,18 +18,19 @@ namespace DeferredEngine.Rendering.PostProcessing
         private readonly TemporalAAFxSetup _fxSetup = new TemporalAAFxSetup();
         private readonly HaltonSequence _haltonSequence = new HaltonSequence();
 
-        private SSFxTargets _ssfxTargets;
 
         public bool IsOffFrame { get; protected set; } = true;
         public int JitterMode = 2;
 
 
         public RenderTarget2D DepthMap { set { _fxSetup.Param_DepthMap.SetValue(value); } }
+
+        private SSFxTargets _ssfxTargets;
         public SSFxTargets SSFxTargets { set { _ssfxTargets = value; } }
         public bool UseTonemap
         {
             get { return _useTonemapping && TemporalAAFx.ModuleTonemapEnabled; }
-            set { _useTonemapping = value; _fxSetup.Param_UseTonemap.SetValue(value); }
+            set { _useTonemapping = value;  }
         }
         public HaltonSequence HaltonSequence => _haltonSequence;
 
@@ -40,9 +42,6 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         public override RenderTarget2D Draw(RenderTarget2D sourceRT, RenderTarget2D previousRT, RenderTarget2D destRT)
         {
-            if (!this.Enabled)
-                return destRT;
-
             if (previousRT == null && sourceRT == null)
                 _ssfxTargets?.GetTemporalAARenderTargets(this.IsOffFrame, out sourceRT, out previousRT);
             else if (previousRT == null)
@@ -50,9 +49,13 @@ namespace DeferredEngine.Rendering.PostProcessing
             else if (sourceRT == null)
                 _ssfxTargets?.GetTemporalAARenderTargets(this.IsOffFrame, out sourceRT, out _);
 
+            if (!this.Enabled)
+                return sourceRT;
+
             _graphicsDevice.SetRenderTarget(sourceRT);
             _graphicsDevice.SetState(BlendStateOption.Opaque);
 
+            _fxSetup.Param_UseTonemap.SetValue(this.UseTonemap);
             _fxSetup.Param_Resolution.SetValue(_resolution);
             _fxSetup.Param_FrustumCorners.SetValue(this.Frustum.ViewSpaceFrustum);
 

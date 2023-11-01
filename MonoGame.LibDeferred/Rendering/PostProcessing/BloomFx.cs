@@ -96,8 +96,6 @@ namespace DeferredEngine.Rendering.PostProcessing
             //BlendStateBloom.ColorDestinationBlend = Blend.BlendFactor;
             //BlendStateBloom.BlendFactor = new Color(0.5f, 0.5f, 0.5f);
 
-            // ToDo: Bloom Threshold by UI seems broken (check if manual changing works)
-            //          Threshold is only set at BloomFx() and should recieve a notified property for runtime notification
             //Setup the default preset values.
             SetBloomPreset(BloomPresets.Default);
 
@@ -251,7 +249,6 @@ namespace DeferredEngine.Rendering.PostProcessing
                 ////UPSAMPLE TO MIP0
                 this.SetPassAndDraw(false, 0, 1, _strength[0], _radius[0]);
 
-                // ToDo: Swap use of render textures to return the sourceRT (is COMPOSE at the moment)
                 _graphicsDevice.SetRenderTargets(_swapBuffer);
                 _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointWrap);
 

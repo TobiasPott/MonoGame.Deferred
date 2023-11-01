@@ -15,7 +15,6 @@ namespace DeferredEngine.Recources
 
         //Editor
         public static bool e_IsEditorEnabled = true;
-        public static bool d_EnableLineHelper = false;
         //debug
         public static bool e_DrawBoundingBox = true;
 

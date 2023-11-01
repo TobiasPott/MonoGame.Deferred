@@ -145,13 +145,13 @@ namespace DeferredEngine.Demo
         /// </summary>
         protected override void Initialize()
         {
+            // Add your initialization logic here
             GUIControl.Initialize(RenderingSettings.Screen.g_Resolution);
 
             FullscreenTriangleBuffer.InitClass(GraphicsDevice);
             StaticAssets.InitClass(Content, GraphicsDevice);
 
             _screenManager.Load(Content, GraphicsDevice);
-            // TODO: Add your initialization logic here
             _screenManager.Initialize(GraphicsDevice);
 
             // collect garbage upfront after everything is initialized

@@ -21,7 +21,6 @@ namespace DeferredEngine.Rendering
         Opaque,
         ShadowOmnidirectional,
         ShadowLinear,
-        Hologram,
         Forward,
         IdRender,
         IdOutline,
@@ -137,19 +136,16 @@ namespace DeferredEngine.Rendering
 
         private void DeleteFromRegistry(MaterialEffect mat, ModelMeshPart mesh, TransformableObject transform)
         {
-            // ToDo: @tpott: add index lookup of the mat argument to only delete from library of the correct material
             Debug.WriteLine($"DeleteFromRegistry: Unused {mat} argument.");
             for (var i = 0; i < _batches.Count; i++)
             {
                 MaterialBatch matLib = _batches[i];
-                //if (matLib.HasMaterial(mat))
-                //{
-                if (matLib.DeleteFromRegistry(mesh, transform))
-                {
-                    _batches.RemoveAt(i);
-                    break;
-                }
-                //}
+                if (matLib.HasMaterial(mat))
+                    if (matLib.DeleteFromRegistry(mesh, transform))
+                    {
+                        _batches.RemoveAt(i);
+                        break;
+                    }
             }
         }
 
@@ -208,10 +204,6 @@ namespace DeferredEngine.Rendering
                 //Check if alpha or opaque!
                 if (renderType == RenderType.Opaque && material.IsTransparent
                     || renderType == RenderType.Opaque && material.Type == MaterialEffect.MaterialTypes.ForwardShaded)
-                    continue;
-                if (renderType == RenderType.Hologram && material.Type != MaterialEffect.MaterialTypes.Hologram)
-                    continue;
-                if (renderType != RenderType.Hologram && material.Type == MaterialEffect.MaterialTypes.Hologram)
                     continue;
                 if (renderType == RenderType.Forward && material.Type != MaterialEffect.MaterialTypes.ForwardShaded)
                     continue;
@@ -332,7 +324,8 @@ namespace DeferredEngine.Rendering
             //{
             //    Shaders.IdRenderEffectParameterColorId.SetValue(Color.Transparent.ToVector4());
             //}
-            //todo: We only need textures for non shadow mapping, right? Not quite actually, for alpha textures we need materials
+            // ToDo: @tpott: Clearification: Its unclear what the below comment refers to, evaluate this!
+            //  "todo: We only need textures for non shadow mapping, right? Not quite actually, for alpha textures we need materials"
             else if (renderType == RenderType.Opaque)
             {
                 ((GBufferPipelineModule)renderModule).SetMaterialSettings(material);
