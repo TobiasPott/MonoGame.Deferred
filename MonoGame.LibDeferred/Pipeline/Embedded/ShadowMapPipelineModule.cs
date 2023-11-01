@@ -270,7 +270,7 @@ namespace DeferredEngine.Pipeline
             }
         }
 
-        public void SetMaterialSettings(MaterialEffect material)
+        public void SetMaterialSettings(MaterialBase material)
         {
             //Check if we have a mask texture
             if (material.HasMask)

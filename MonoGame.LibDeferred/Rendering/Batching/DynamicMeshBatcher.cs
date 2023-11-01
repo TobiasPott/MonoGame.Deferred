@@ -68,7 +68,7 @@ namespace DeferredEngine.Rendering
             _fullscreenTarget = FullscreenTriangleBuffer.Instance;
         }
 
-        public void Register(MaterialEffect mat, Model model, TransformableObject transform)
+        public void Register(MaterialBase mat, Model model, TransformableObject transform)
         {
             if (model == null) return;
 
@@ -82,16 +82,16 @@ namespace DeferredEngine.Rendering
             }
         }
 
-        private void Register(MaterialEffect mat, ModelMeshPart mesh, TransformableObject transform, BoundingSphere boundingSphere) //These should be ordered by likeness, so I don't get opaque -> transparent -> opaque
+        private void Register(MaterialBase mat, ModelMeshPart mesh, TransformableObject transform, BoundingSphere boundingSphere) //These should be ordered by likeness, so I don't get opaque -> transparent -> opaque
         {
             bool found = false;
 
             if (mat == null)
             {
-                if (mesh.Effect is MaterialEffect effect)
+                if (mesh.Effect is MaterialBase effect)
                     mat = effect;
                 else
-                    mat = new MaterialEffect(mesh.Effect);
+                    mat = new MaterialBase(mesh.Effect);
             }
 
             //Check if we already have a material like that, if yes put it in there!
@@ -134,7 +134,7 @@ namespace DeferredEngine.Rendering
             }
         }
 
-        private void DeleteFromRegistry(MaterialEffect mat, ModelMeshPart mesh, TransformableObject transform)
+        private void DeleteFromRegistry(MaterialBase mat, ModelMeshPart mesh, TransformableObject transform)
         {
             Debug.WriteLine($"DeleteFromRegistry: Unused {mat} argument.");
             for (var i = 0; i < _batches.Count; i++)
@@ -200,12 +200,12 @@ namespace DeferredEngine.Rendering
                     continue;
 
                 //Count the draws of different materials!
-                MaterialEffect material = materialBatch.Material;
+                MaterialBase material = materialBatch.Material;
                 //Check if alpha or opaque!
                 if (renderType == RenderType.Opaque && material.IsTransparent
-                    || renderType == RenderType.Opaque && material.Type == MaterialEffect.MaterialTypes.ForwardShaded)
+                    || renderType == RenderType.Opaque && material.Type == MaterialBase.MaterialTypes.ForwardShaded)
                     continue;
-                if (renderType == RenderType.Forward && material.Type != MaterialEffect.MaterialTypes.ForwardShaded)
+                if (renderType == RenderType.Forward && material.Type != MaterialBase.MaterialTypes.ForwardShaded)
                     continue;
                 if ((renderType == RenderType.ShadowOmnidirectional || renderType == RenderType.ShadowLinear) && !material.HasShadow)
                     continue;
@@ -257,7 +257,7 @@ namespace DeferredEngine.Rendering
                 }
 
                 //Reset to 
-                if (material.RenderCClockwise)
+                if (material.RenderCCW)
                     _graphicsDevice.SetState(RasterizerStateOption.CullCounterClockwise);
             }
         }
@@ -310,9 +310,9 @@ namespace DeferredEngine.Rendering
         }
 
 
-        private void PerMaterialSettings(RenderType renderType, MaterialEffect material, IRenderModule renderModule)
+        private void PerMaterialSettings(RenderType renderType, MaterialBase material, IRenderModule renderModule)
         {
-            if (material.RenderCClockwise)
+            if (material.RenderCCW)
             {
                 _graphicsDevice.SetState(RasterizerStateOption.CullClockwise);
             }

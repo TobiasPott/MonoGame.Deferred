@@ -19,14 +19,14 @@ namespace DeferredEngine.Recources
 
 
         //Default Materials
-        public MaterialEffect BaseMaterial;
-        public MaterialEffect BaseMaterialGray;
-        public MaterialEffect GoldMaterial;
+        public MaterialBase BaseMaterial;
+        public MaterialBase BaseMaterialGray;
+        public MaterialBase GoldMaterial;
 
-        public MaterialEffect SilverMaterial;
-        public MaterialEffect MetalRough03Material;
-        public MaterialEffect AlphaBlendRim;
-        public MaterialEffect MirrorMaterial;
+        public MaterialBase SilverMaterial;
+        public MaterialBase MetalRough03Material;
+        public MaterialBase AlphaBlendRim;
+        public MaterialBase MirrorMaterial;
 
         //Shader stuff
 
@@ -46,7 +46,7 @@ namespace DeferredEngine.Recources
         public SpriteFont DefaultFont;
         public SpriteFont MonospaceFont;
 
-        public MaterialEffect DragonLowPolyMaterial;
+        public MaterialBase DragonLowPolyMaterial;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  FUNCTIONS
@@ -59,12 +59,12 @@ namespace DeferredEngine.Recources
 
             //Default Materials
 
-            BaseMaterial = CreateMaterialEffect(Color.Red, 0.5f, 0, type: MaterialEffect.MaterialTypes.Basic);
+            BaseMaterial = CreateMaterialEffect(Color.Red, 0.5f, 0, type: MaterialBase.MaterialTypes.Basic);
 
-            BaseMaterialGray = CreateMaterialEffect(Color.LightGray, 0.8f, 0, type: MaterialEffect.MaterialTypes.Basic);
+            BaseMaterialGray = CreateMaterialEffect(Color.LightGray, 0.8f, 0, type: MaterialBase.MaterialTypes.Basic);
 
             MetalRough03Material = CreateMaterialEffect(Color.Silver, 0.2f, 1);
-            AlphaBlendRim = CreateMaterialEffect(Color.Silver, 0.05f, 1, type: MaterialEffect.MaterialTypes.ForwardShaded);
+            AlphaBlendRim = CreateMaterialEffect(Color.Silver, 0.05f, 1, type: MaterialBase.MaterialTypes.ForwardShaded);
             MirrorMaterial = CreateMaterialEffect(Color.White, 0.05f, 1);
 
             GoldMaterial = CreateMaterialEffect(Color.Gold, 0.2f, 1);
@@ -80,7 +80,7 @@ namespace DeferredEngine.Recources
             StanfordDragon = new SdfModelDefinition(content, "Art/default/dragon_uv_smooth", graphicsDevice, false, SdfModelDefinition.DefaultSdfResolution * 1.4f);
             StanfordDragonLowpoly = new SdfModelDefinition(content, "Art/default/dragon_lowpoly", graphicsDevice, true, SdfModelDefinition.DefaultSdfResolution * 1.2f);
 
-            DragonLowPolyMaterial = CreateMaterialEffect(Color.Red, 0.5f, 0, type: MaterialEffect.MaterialTypes.Basic, normalMap: content.Load<Texture2D>("Art/default/dragon_normal"));
+            DragonLowPolyMaterial = CreateMaterialEffect(Color.Red, 0.5f, 0, type: MaterialBase.MaterialTypes.Basic, normalMap: content.Load<Texture2D>("Art/default/dragon_normal"));
 
             //
 
@@ -133,9 +133,9 @@ namespace DeferredEngine.Recources
         /// <summary>
         /// Create custom materials, you can add certain maps like Albedo, normal, etc. if you like.
         /// </summary>
-        private static MaterialEffect CreateMaterialEffect(Color color, float roughness, float metallic, Texture2D albedoMap = null, Texture2D normalMap = null, Texture2D roughnessMap = null, Texture2D metallicMap = null, Texture2D mask = null, Texture2D displacementMap = null, MaterialEffect.MaterialTypes type = 0, float emissiveStrength = 0)
+        private static MaterialBase CreateMaterialEffect(Color color, float roughness, float metallic, Texture2D albedoMap = null, Texture2D normalMap = null, Texture2D roughnessMap = null, Texture2D metallicMap = null, Texture2D mask = null, Texture2D displacementMap = null, MaterialBase.MaterialTypes type = 0, float emissiveStrength = 0)
         {
-            MaterialEffect mat = new MaterialEffect(DeferredFxSetup.Instance.Effect_Clear);
+            MaterialBase mat = new MaterialBase(DeferredFxSetup.Instance.Effect_Clear);
             mat.Initialize(color, roughness, metallic, albedoMap, normalMap, roughnessMap, metallicMap, mask, displacementMap, type, emissiveStrength);
             return mat;
         }
@@ -147,7 +147,7 @@ namespace DeferredEngine.Recources
             {
                 foreach (ModelMeshPart meshPart in mesh.MeshParts)
                 {
-                    MaterialEffect matEffect = new MaterialEffect(meshPart.Effect);
+                    MaterialBase matEffect = new MaterialBase(meshPart.Effect);
 
                     BasicEffect oEffect = meshPart.Effect as BasicEffect;
 

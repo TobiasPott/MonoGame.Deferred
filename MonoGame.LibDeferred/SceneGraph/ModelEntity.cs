@@ -8,13 +8,13 @@ namespace DeferredEngine.Entities
     public sealed class ModelEntity : EntityBase
     {
         public readonly ModelDefinition ModelDefinition;
-        public readonly MaterialEffect Material;
+        public readonly MaterialBase Material;
 
         public readonly BoundingBox BoundingBox;
         public readonly Vector3 BoundingBoxOffset;
 
 
-        public ModelEntity(ModelDefinition modelbb, MaterialEffect material, Vector3 position, Vector3 eulerAngles, Vector3 scale, DynamicMeshBatcher batcher = null)
+        public ModelEntity(ModelDefinition modelbb, MaterialBase material, Vector3 position, Vector3 eulerAngles, Vector3 scale, DynamicMeshBatcher batcher = null)
             : base(position, eulerAngles, scale)
         {
             BoundingBox = modelbb.BoundingBox;

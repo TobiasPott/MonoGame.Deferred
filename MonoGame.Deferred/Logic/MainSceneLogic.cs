@@ -100,7 +100,7 @@ namespace DeferredEngine.Demo
 
             for (int i = 0; i < 10; i++)
             {
-                MaterialEffect test = new MaterialEffect(_assets.SilverMaterial)
+                MaterialBase test = new MaterialBase(_assets.SilverMaterial)
                 {
                     Roughness = i / 9.0f + 0.1f,
                     Metallic = 1
@@ -250,7 +250,7 @@ namespace DeferredEngine.Demo
         /// Create a basic rendered model with custom material
         /// </summary>
         /// <returns>returns the basicEntity we created</returns>
-        private ModelEntity AddEntity(ModelDefinition model, MaterialEffect materialEffect,
+        private ModelEntity AddEntity(ModelDefinition model, MaterialBase materialEffect,
             Vector3 position, Vector3 angles, Vector3 scale, DynamicMeshBatcher batcher)
         {
             return _scene.Add(model, materialEffect, position, angles, scale, batcher);

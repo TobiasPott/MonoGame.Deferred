@@ -38,7 +38,7 @@ namespace DeferredEngine.Pipeline
         public EffectParameter Param_Material_Roughness { get; protected set; }
 
         public EffectParameter Param_Material_MaskMap { get; protected set; }
-        public EffectParameter Param_Material_Texture { get; protected set; }
+        public EffectParameter Param_Material_AlbedoMap { get; protected set; }
         public EffectParameter Param_Material_NormalMap { get; protected set; }
         public EffectParameter Param_Material_RoughnessMap { get; protected set; }
         public EffectParameter Param_Material_DisplacementMap { get; protected set; }
@@ -82,7 +82,7 @@ namespace DeferredEngine.Pipeline
             Param_Material_Roughness = Effect_GBuffer.Parameters["Roughness"];
 
             Param_Material_MaskMap = Effect_GBuffer.Parameters["Mask"];
-            Param_Material_Texture = Effect_GBuffer.Parameters["Texture"];
+            Param_Material_AlbedoMap = Effect_GBuffer.Parameters["AlbedoMap"];
             Param_Material_NormalMap = Effect_GBuffer.Parameters["NormalMap"];
             Param_Material_RoughnessMap = Effect_GBuffer.Parameters["RoughnessMap"];
             Param_Material_DisplacementMap = Effect_GBuffer.Parameters["DisplacementMap"];

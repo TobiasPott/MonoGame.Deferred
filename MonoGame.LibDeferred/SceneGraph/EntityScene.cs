@@ -38,7 +38,7 @@ namespace DeferredEngine.Entities
         /// Create a basic rendered model with custom material
         /// </summary>
         /// <returns>returns the basicEntity we created</returns>
-        public ModelEntity Add(ModelDefinition model, MaterialEffect materialEffect,
+        public ModelEntity Add(ModelDefinition model, MaterialBase materialEffect,
             Vector3 position, Vector3 angles, Vector3 scale, DynamicMeshBatcher batcher)
         {
             ModelEntity entity = new ModelEntity(model, materialEffect, position, angles, scale, batcher);

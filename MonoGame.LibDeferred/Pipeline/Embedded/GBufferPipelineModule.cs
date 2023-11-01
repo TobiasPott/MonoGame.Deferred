@@ -62,7 +62,7 @@ namespace DeferredEngine.Pipeline
             _fxSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
         }
 
-        public void SetMaterialSettings(MaterialEffect material)
+        public void SetMaterialSettings(MaterialBase material)
         {
             if (RenderingSettings.d_DefaultMaterial)
             {
@@ -76,7 +76,7 @@ namespace DeferredEngine.Pipeline
             }
             else
             {
-                _fxSetup.Param_Material_Texture.SetValue(material.HasAlbedoMap ? material.AlbedoMap : null);
+                _fxSetup.Param_Material_AlbedoMap.SetValue(material.HasAlbedoMap ? material.AlbedoMap : null);
                 _fxSetup.Param_Material_NormalMap.SetValue(material.HasNormalMap ? material.NormalMap : null);
                 _fxSetup.Param_Material_RoughnessMap.SetValue(material.HasRoughnessMap ? material.RoughnessMap : null);
                 _fxSetup.Param_Material_MetallicMap.SetValue(material.HasMetallicMap ? material.MetallicMap : null);
@@ -88,7 +88,7 @@ namespace DeferredEngine.Pipeline
                 // Set value base material parameters
                 if (!material.HasAlbedoMap)
                 {
-                    if (material.Type == MaterialEffect.MaterialTypes.Emissive && material.EmissiveStrength > 0)
+                    if (material.Type == MaterialBase.MaterialTypes.Emissive && material.EmissiveStrength > 0)
                     {
                         _fxSetup.Param_Material_DiffuseColor.SetValue(material.DiffuseColor);
                         _fxSetup.Param_Material_Metallic.SetValue(material.EmissiveStrength / 8);
@@ -116,7 +116,7 @@ namespace DeferredEngine.Pipeline
 
     public static class GBufferExtensions
     {
-        public static EffectTechnique GetGBufferTechnique(this MaterialEffect material, GBufferFxSetup effectSetup)
+        public static EffectTechnique GetGBufferTechnique(this MaterialBase material, GBufferFxSetup effectSetup)
         {
             if (material.HasDisplacementMap)
             {
