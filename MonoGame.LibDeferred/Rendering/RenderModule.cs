@@ -34,12 +34,7 @@ namespace DeferredEngine.Rendering.RenderModules.Default
             }
             return true;
         }
-        private static void ApplyHologramShaders(Matrix localToWorldMatrix, Matrix viewProjection)
-        {
-            HologramEffectSetup.Instance.Param_World.SetValue(localToWorldMatrix);
-            HologramEffectSetup.Instance.Param_WorldViewProj.SetValue(localToWorldMatrix * viewProjection);
-            HologramEffectSetup.Instance.Effect.CurrentTechnique.Passes[0].Apply();
-        }
+
         private static bool ApplyIdAndOutlineShaders(GraphicsDevice graphicsDevice, RenderType renderType, Matrix localToWorldMatrix, Matrix viewProjection,
             int transformId, int outlineId, bool outlined)
         {
