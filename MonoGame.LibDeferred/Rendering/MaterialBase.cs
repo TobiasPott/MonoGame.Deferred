@@ -187,7 +187,7 @@ namespace DeferredEngine.Recources
                 _fxSetup.Param_Material_MetallicMap.SetValue(this.HasMetallicMap ? this.MetallicMap : null);
                 _fxSetup.Param_Material_MaskMap.SetValue(this.HasMask ? this.Mask : null);
 
-                _fxSetup.Effect_GBuffer.CurrentTechnique = MaterialBase.GetGBufferTechnique(this, _fxSetup);
+                _fxSetup.Effect_GBuffer.CurrentTechnique = this.GetGBufferTechnique(_fxSetup);
 
                 // -------------------------
                 // Set value base material parameters
@@ -213,38 +213,38 @@ namespace DeferredEngine.Recources
             }
         }
 
-        public static EffectTechnique GetGBufferTechnique(MaterialBase material, GBufferFxSetup effectSetup)
+        public EffectTechnique GetGBufferTechnique(GBufferFxSetup effectSetup)
         {
-            if (material.HasDisplacementMap)
+            if (HasDisplacementMap)
             {
                 return effectSetup.Technique_DrawDisplacement;
             }
-            else if (material.HasMask) //Has diffuse for sure then
+            else if (HasMask) //Has diffuse for sure then
             {
-                if (material.HasNormalMap && material.HasRoughnessMap)
+                if (HasNormalMap && HasRoughnessMap)
                     return effectSetup.Technique_DrawTextureSpecularNormalMask;
-                else if (material.HasNormalMap)
+                else if (HasNormalMap)
                     return effectSetup.Technique_DrawTextureNormalMask;
-                else if (material.HasRoughnessMap)
+                else if (HasRoughnessMap)
                     return effectSetup.Technique_DrawTextureSpecularMask;
                 else
                     return effectSetup.Technique_DrawTextureSpecularMask;
             }
             else
             {
-                if (material.HasNormalMap && material.HasRoughnessMap && material.HasAlbedoMap && material.HasMetallicMap)
+                if (HasNormalMap && HasRoughnessMap && HasAlbedoMap && HasMetallicMap)
                     return effectSetup.Technique_DrawTextureSpecularNormalMetallic;
-                else if (material.HasNormalMap && material.HasRoughnessMap && material.HasAlbedoMap)
+                else if (HasNormalMap && HasRoughnessMap && HasAlbedoMap)
                     return effectSetup.Technique_DrawTextureSpecularNormal;
-                else if (material.HasNormalMap && material.HasAlbedoMap)
+                else if (HasNormalMap && HasAlbedoMap)
                     return effectSetup.Technique_DrawTextureNormal;
-                else if (material.HasMetallicMap && material.HasRoughnessMap && material.HasAlbedoMap)
+                else if (HasMetallicMap && HasRoughnessMap && HasAlbedoMap)
                     return effectSetup.Technique_DrawTextureSpecularMetallic;
-                else if (material.HasRoughnessMap && material.HasAlbedoMap)
+                else if (HasRoughnessMap && HasAlbedoMap)
                     return effectSetup.Technique_DrawTextureSpecular;
-                else if (material.HasNormalMap && !material.HasAlbedoMap)
+                else if (HasNormalMap && !HasAlbedoMap)
                     return effectSetup.Technique_DrawNormal;
-                else if (material.HasAlbedoMap)
+                else if (HasAlbedoMap)
                     return effectSetup.Technique_DrawTexture;
             }
 
