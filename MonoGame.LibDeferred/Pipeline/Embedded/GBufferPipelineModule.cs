@@ -64,94 +64,12 @@ namespace DeferredEngine.Pipeline
 
         public void SetMaterialSettings(MaterialBase material)
         {
-            if (RenderingSettings.d_DefaultMaterial)
-            {
-                _fxSetup.Param_Material_DiffuseColor.SetValue(Color.Gray.ToVector3());
-                _fxSetup.Param_Material_Roughness.SetValue(RenderingSettings.m_DefaultRoughness > 0
-                                                                                        ? RenderingSettings.m_DefaultRoughness
-                                                                                        : 0.3f);
-                _fxSetup.Param_Material_Metallic.SetValue(0.0f);
-                _fxSetup.Param_Material_MaterialType.SetValue(0);
-                _fxSetup.Effect_GBuffer.CurrentTechnique = _fxSetup.Technique_DrawBasic;
-            }
-            else
-            {
-                _fxSetup.Param_Material_AlbedoMap.SetValue(material.HasAlbedoMap ? material.AlbedoMap : null);
-                _fxSetup.Param_Material_NormalMap.SetValue(material.HasNormalMap ? material.NormalMap : null);
-                _fxSetup.Param_Material_RoughnessMap.SetValue(material.HasRoughnessMap ? material.RoughnessMap : null);
-                _fxSetup.Param_Material_MetallicMap.SetValue(material.HasMetallicMap ? material.MetallicMap : null);
-                _fxSetup.Param_Material_MaskMap.SetValue(material.HasMask ? material.Mask : null);
-
-                _fxSetup.Effect_GBuffer.CurrentTechnique = material.GetGBufferTechnique(_fxSetup);
-
-                // -------------------------
-                // Set value base material parameters
-                if (!material.HasAlbedoMap)
-                {
-                    if (material.Type == MaterialBase.MaterialTypes.Emissive && material.EmissiveStrength > 0)
-                    {
-                        _fxSetup.Param_Material_DiffuseColor.SetValue(material.BaseColor.ToVector3());
-                        _fxSetup.Param_Material_Metallic.SetValue(material.EmissiveStrength / 8);
-                    }
-                    else
-                    {
-                        _fxSetup.Param_Material_DiffuseColor.SetValue(material.BaseColor.ToVector3());
-                    }
-                }
-
-                if (!material.HasRoughnessMap)
-                    _fxSetup.Param_Material_Roughness.SetValue(RenderingSettings.m_DefaultRoughness > 0
-                                                                                            ? RenderingSettings.m_DefaultRoughness
-                                                                                            : material.Roughness);
-                _fxSetup.Param_Material_Metallic.SetValue(material.Metallic);
-                _fxSetup.Param_Material_MaterialType.SetValue(material.MaterialTypeNumber);
-            }
+            material.SetGBufferForMaterial(_fxSetup);
         }
 
         public override void Dispose()
         {
             _fxSetup?.Dispose();
-        }
-    }
-
-    public static class GBufferExtensions
-    {
-        public static EffectTechnique GetGBufferTechnique(this MaterialBase material, GBufferFxSetup effectSetup)
-        {
-            if (material.HasDisplacementMap)
-            {
-                return effectSetup.Technique_DrawDisplacement;
-            }
-            else if (material.HasMask) //Has diffuse for sure then
-            {
-                if (material.HasNormalMap && material.HasRoughnessMap)
-                    return effectSetup.Technique_DrawTextureSpecularNormalMask;
-                else if (material.HasNormalMap)
-                    return effectSetup.Technique_DrawTextureNormalMask;
-                else if (material.HasRoughnessMap)
-                    return effectSetup.Technique_DrawTextureSpecularMask;
-                else
-                    return effectSetup.Technique_DrawTextureSpecularMask;
-            }
-            else
-            {
-                if (material.HasNormalMap && material.HasRoughnessMap && material.HasAlbedoMap && material.HasMetallicMap)
-                    return effectSetup.Technique_DrawTextureSpecularNormalMetallic;
-                else if (material.HasNormalMap && material.HasRoughnessMap && material.HasAlbedoMap)
-                    return effectSetup.Technique_DrawTextureSpecularNormal;
-                else if (material.HasNormalMap && material.HasAlbedoMap)
-                    return effectSetup.Technique_DrawTextureNormal;
-                else if (material.HasMetallicMap && material.HasRoughnessMap && material.HasAlbedoMap)
-                    return effectSetup.Technique_DrawTextureSpecularMetallic;
-                else if (material.HasRoughnessMap && material.HasAlbedoMap)
-                    return effectSetup.Technique_DrawTextureSpecular;
-                else if (material.HasNormalMap && !material.HasAlbedoMap)
-                    return effectSetup.Technique_DrawNormal;
-                else if (material.HasAlbedoMap)
-                    return effectSetup.Technique_DrawTexture;
-            }
-
-            return effectSetup.Technique_DrawBasic;
         }
     }
 

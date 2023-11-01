@@ -21,6 +21,7 @@ namespace DeferredEngine.Recources
 
         //Renderer
         //Default Material
+        // ToDo: PRIO II: Move to MaterialBase class and hook up to UI
         public static bool d_DefaultMaterial = false;
         public static float m_DefaultRoughness = 0.5f;
 
