@@ -133,7 +133,11 @@ namespace DeferredEngine.Recources
         /// <summary>
         /// Create custom materials, you can add certain maps like Albedo, normal, etc. if you like.
         /// </summary>
-        private static MaterialBase CreateMaterialEffect(Color color, float roughness, float metallic, Texture2D albedoMap = null, Texture2D normalMap = null, Texture2D roughnessMap = null, Texture2D metallicMap = null, Texture2D mask = null, Texture2D displacementMap = null, MaterialBase.MaterialTypes type = 0, float emissiveStrength = 0)
+        private static MaterialBase CreateMaterialEffect(Color color, float roughness, float metallic, 
+            Texture2D albedoMap = null, Texture2D normalMap = null, 
+            Texture2D roughnessMap = null, Texture2D metallicMap = null, 
+            Texture2D mask = null, Texture2D displacementMap = null, 
+            MaterialBase.MaterialTypes type = MaterialBase.MaterialTypes.Basic, float emissiveStrength = 0)
         {
             MaterialBase mat = new MaterialBase(DeferredFxSetup.Instance.Effect_Clear);
             mat.Initialize(color, roughness, metallic, albedoMap, normalMap, roughnessMap, metallicMap, mask, displacementMap, type, emissiveStrength);

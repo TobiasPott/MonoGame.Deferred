@@ -7,8 +7,19 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeferredEngine.Recources
 {
+    public static class Names
+    {
+        public const string Albedo = nameof(Albedo);
+        public const string Normal = nameof(Normal);
+        public const string Roughness = nameof(Roughness);
+        public const string Metallic = nameof(Metallic);
+        public const string Mask = nameof(Mask);
+        public const string Displacement = nameof(Displacement);
+    }
+
     public class MaterialBase : Effect, IEquatable<MaterialBase>
     {
+
         public enum MaterialTypes
         {
             Basic = 0,
@@ -16,15 +27,21 @@ namespace DeferredEngine.Recources
             Emissive = 2,
         }
 
-        private Texture2D _albedoMap;
-        private Texture2D _normalMap;
-
-        private Texture2D _roughnessMap;
-        private Texture2D _metallicMap;
-
-        private Texture2D _mask;
-        private Texture2D _displacementMap;
-
+        private Dictionary<string, Texture2D> _maps = new Dictionary<string, Texture2D>();
+        private void SetMap(string name, Texture2D map)
+        {
+            if (!_maps.ContainsKey(name))
+            {
+                if (map != null)
+                    _maps.Add(name, map);
+            }
+            else
+            {
+                if (map == null)
+                    _maps.Remove(name);
+                else _maps[name] = map;
+            }
+        }
 
         private MaterialTypes _type = MaterialTypes.Basic;
         public int MaterialTypeNumber;
@@ -33,8 +50,10 @@ namespace DeferredEngine.Recources
         public bool IsTransparent = false;
 
 
-        private Vector4 _baseColor = new Vector4(0.5f, 0.5f, 0.5f, 1.0f);
-        public Color BaseColor { get => new Color(_baseColor); set => _baseColor = value.ToVector4(); }
+        private Vector3 _baseColor = new Vector3(0.5f, 0.5f, 0.5f);
+        public Color BaseColor { get => new Color(_baseColor); set => _baseColor = value.ToVector3(); }
+        public Vector3 BaseColorV3 { get => _baseColor; set => _baseColor = value; }
+
 
         private float _roughness = 0.5f;
         public float Roughness { get => _roughness; set => _roughness = Math.Max(value, 0.001f); }
@@ -47,22 +66,22 @@ namespace DeferredEngine.Recources
 
 
 
-        public bool HasAlbedoMap { get => _albedoMap != null; }
-        public bool HasNormalMap { get => _normalMap != null; }
+        public bool HasAlbedoMap => _maps.ContainsKey(Names.Albedo);
+        public bool HasNormalMap => _maps.ContainsKey(Names.Normal);
 
-        public bool HasRoughnessMap { get => _roughnessMap != null; }
-        public bool HasMetallicMap { get => _metallicMap != null; }
+        public bool HasRoughnessMap => _maps.ContainsKey(Names.Roughness);
+        public bool HasMetallicMap => _maps.ContainsKey(Names.Metallic);
 
-        public bool HasMask { get => _mask != null; }
-        public bool HasDisplacementMap { get => _displacementMap != null; }
+        public bool HasMask => _maps.ContainsKey(Names.Mask);
+        public bool HasDisplacementMap => _maps.ContainsKey(Names.Displacement);
 
 
-        public Texture2D AlbedoMap { get => _albedoMap; set => _albedoMap = value; }
-        public Texture2D RoughnessMap { get => _roughnessMap; set => _roughnessMap = value; }
-        public Texture2D MetallicMap { get => _metallicMap; set => _metallicMap = value; }
-        public Texture2D NormalMap { get => _normalMap; set => _normalMap = value; }
-        public Texture2D Mask { get => _mask; set => _mask = value; }
-        public Texture2D DisplacementMap { get => _displacementMap; set => _displacementMap = value; }
+        public Texture2D AlbedoMap { get => _maps[Names.Albedo]; set => SetMap(Names.Albedo, value); }
+        public Texture2D NormalMap { get => _maps[Names.Normal]; set => SetMap(Names.Normal, value); }
+        public Texture2D RoughnessMap { get => _maps[Names.Roughness]; set => SetMap(Names.Roughness, value); }
+        public Texture2D MetallicMap { get => _maps[Names.Metallic]; set => SetMap(Names.Metallic, value); }
+        public Texture2D Mask { get => _maps[Names.Mask]; set => SetMap(Names.Mask, value); }
+        public Texture2D DisplacementMap { get => _maps[Names.Displacement]; set => SetMap(Names.Displacement, value); }
 
         public MaterialTypes Type
         {
@@ -75,7 +94,7 @@ namespace DeferredEngine.Recources
         }
 
 
-        public MaterialBase(Effect cloneSource) : base(cloneSource)
+        public MaterialBase(Effect sourceEffect) : base(sourceEffect)
         {
 #if FORWARDONLY
             Type = MaterialTypes.ForwardShaded;
@@ -85,38 +104,66 @@ namespace DeferredEngine.Recources
         { }
         public MaterialBase(GraphicsDevice graphicsDevice, byte[] effectCode, int index, int count) : base(graphicsDevice, effectCode, index, count)
         { }
+        public MaterialBase(Effect sourceEffect, Color baseColor, float roughness, float metalness,
+    MaterialTypes type = MaterialTypes.Basic) : base(sourceEffect)
+        {
+#if FORWARDONLY
+            Type = MaterialTypes.ForwardShaded;
+#endif
+            this.Initialize(baseColor, roughness, metalness, null, null, null, null, null, null, type);
+        }
+        public MaterialBase(Effect sourceEffect, Color baseColor,
+            Texture2D albedoMap = null, Texture2D normalMap = null,
+            Texture2D roughnessMap = null, Texture2D metallicMap = null,
+            MaterialTypes type = MaterialTypes.Basic) : base(sourceEffect)
+        {
+#if FORWARDONLY
+            Type = MaterialTypes.ForwardShaded;
+#endif
+            this.Initialize(baseColor, albedoMap, normalMap, roughnessMap, metallicMap, type);
+        }
 
-
+        public void Initialize(Color baseColor, float roughness, float metalness,
+    MaterialTypes type = MaterialTypes.Basic)
+        {
+            this.Initialize(baseColor, roughness, metalness, null, null, null, null, null, null, type, 0);
+        }
+        public void Initialize(Color baseColor,
+            Texture2D albedoMap = null, Texture2D normalMap = null,
+            Texture2D roughnessMap = null, Texture2D metallicMap = null,
+            MaterialTypes type = MaterialTypes.Basic)
+        {
+            this.Initialize(baseColor, 0.001f, 0, albedoMap, normalMap, roughnessMap, metallicMap, null, null, type, 0);
+        }
         public void Initialize(Color baseColor, float roughness, float metalness,
             Texture2D albedoMap = null, Texture2D normalMap = null,
             Texture2D roughnessMap = null, Texture2D metallicMap = null,
             Texture2D mask = null, Texture2D displacementMap = null,
             MaterialTypes type = MaterialTypes.Basic, float emissiveStrength = 0)
         {
-            BaseColor = baseColor;
-            Roughness = roughness;
+            Type = type;
+            _baseColor = baseColor.ToVector3();
+            _roughness = roughness;
             _metallic = metalness;
 
-            _albedoMap = albedoMap;
-            _normalMap = normalMap;
+            this.SetMap(Names.Albedo, albedoMap);
+            this.SetMap(Names.Normal, normalMap);
 
-            _roughnessMap = roughnessMap;
-            _metallicMap = metallicMap;
+            this.SetMap(Names.Roughness, roughnessMap);
+            this.SetMap(Names.Metallic, metallicMap);
 
-            _mask = mask;
-            _displacementMap = displacementMap;
+            this.SetMap(Names.Mask, mask);
+            this.SetMap(Names.Displacement, displacementMap);
 
-            Type = type;
+            //Type = MaterialTypes.Emissive;
+            _emissiveStrength = Math.Clamp(emissiveStrength, 0, float.MaxValue);
+            //if (_emissiveStrength > 0)
+            //    Type = MaterialTypes.Emissive;
 
 #if FORWARDONLY
             Type = MaterialTypes.ForwardShaded;
 #endif
 
-            if (emissiveStrength > 0)
-            {
-                //Type = MaterialTypes.Emissive;
-                _emissiveStrength = emissiveStrength;
-            }
         }
 
 
@@ -138,7 +185,7 @@ namespace DeferredEngine.Recources
 
             if (HasDisplacementMap != b.HasDisplacementMap) return false;
 
-            if (Vector4.DistanceSquared(_baseColor, b._baseColor) > 0.01f) return false;
+            if (Vector3.DistanceSquared(_baseColor, b._baseColor) > 0.01f) return false;
 
             if (AlbedoMap != b.AlbedoMap) return false;
 

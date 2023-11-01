@@ -98,13 +98,10 @@ namespace DeferredEngine.Demo
                 new Vector3(20, 0, 10), new Vector3((float)Math.PI / 2, 0, 0), Vector3.One * 5, MeshBatcher);
 
 
+            Color silverColor = _assets.SilverMaterial.BaseColor;
             for (int i = 0; i < 10; i++)
             {
-                MaterialBase test = new MaterialBase(_assets.SilverMaterial)
-                {
-                    Roughness = i / 9.0f + 0.1f,
-                    Metallic = 1
-                };
+                MaterialBase test = new MaterialBase(_assets.SilverMaterial, silverColor, i / 9.0f + 0.1f, 1);
                 AddEntity(StaticAssets.Instance.IsoSphere,
                     test,
                     new Vector3(30 + i * 10, 0, 10), new Vector3((float)(Math.PI / 2.0f), 0, 0), Vector3.One * 5, MeshBatcher);
