@@ -161,7 +161,7 @@ namespace DeferredEngine.Recources
                         matEffect.IsTransparent = true;
                     }
 
-                    matEffect.BaseColor = oEffect.DiffuseColor;
+                    matEffect.BaseColor = new Color(oEffect.DiffuseColor);
 
                     if (oEffect.TextureEnabled)
                     {
