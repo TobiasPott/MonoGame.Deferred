@@ -84,6 +84,9 @@ namespace DeferredEngine.Pipeline
 
                     CreateShadowMapDirectionalLight(light, meshBatcher);
 
+                    // ToDo: Move the "Changed" = false part to a pass before "Update"
+                    //      Lights and Cameras have this flag (and others might too) and these can be flagged
+                    //      this might be done with a global event or more primitive by iterating over all types and reset
                     light.HasChanged = false;
 
                 }

@@ -26,9 +26,9 @@ namespace DeferredEngine.Rendering.SDF
                 sdfDefinitions.Clear();
 
                 //This should preferably be a list of meshes that are in the scene, instead of a list of entities
-                for (var index0 = 0; index0 < entities.Count; index0++)
+                for (int entityIndex = 0; entityIndex < entities.Count; entityIndex++)
                 {
-                    ModelEntity entity = entities[index0];
+                    ModelEntity entity = entities[entityIndex];
 
                     SdfModelDefinition sdfModelDefinition = entity.ModelDefinition as SdfModelDefinition;
                     if (sdfModelDefinition != null)
@@ -39,9 +39,9 @@ namespace DeferredEngine.Rendering.SDF
 
                         bool found = false;
                         //Compile a list of all mbbs used right now
-                        for (var i = 0; i < sdfDefinitions.Count; i++)
+                        for (int sdfIndex = 0; sdfIndex < sdfDefinitions.Count; sdfIndex++)
                         {
-                            if (sdfModelDefinition.SDF == sdfDefinitions[i])
+                            if (sdfModelDefinition.SDF == sdfDefinitions[sdfIndex])
                             {
                                 found = true;
                                 break;
