@@ -8,14 +8,11 @@
 //#define TESTNORMALENCODING
 
 #include "../Common/helper.fx"
+#include "../Shared.fx"
 
 float4x4  WorldView;
 float4x4  WorldViewProj;
 float3x3  WorldViewIT; //Inverse Transposed
-
-float3 Camera;
-float2 Resolution;
-float FarClip = 200;
 
 float Roughness = 0.3f;
 float Metallic = 0;
@@ -478,7 +475,7 @@ PixelShaderOutput DrawTextureDisplacement_PixelShader(DrawNormals_VSOut input)
     float3x3 worldToTangent = input.WorldToTangentSpace;
 
     float3 tangentPos = mul(input.Position.xyz, worldToTangent);
-    float3 tangentCamera = mul(Camera, worldToTangent);
+    float3 tangentCamera = mul(ViewOrigin, worldToTangent);
     
     float3 viewDir = normalize(tangentPos - tangentCamera);
     //POM

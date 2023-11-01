@@ -35,6 +35,7 @@
     <None Include="$(MSBuildThisFileDirectory)Content\Shaders\ScreenSpace\ScreenSpaceReflections.fx" />
     <None Include="$(MSBuildThisFileDirectory)Content\Shaders\SDF\volumeProjection.fx" />
     <None Include="$(MSBuildThisFileDirectory)Content\Shaders\Shadow\ShadowMap.fx" />
+    <None Include="$(MSBuildThisFileDirectory)content\shaders\Shared.fx" />
     <None Include="$(MSBuildThisFileDirectory)Content\Shaders\TemporalAntiAliasing\TemporalAntiAliasing.fx" />
   </ItemGroup>
   <ItemGroup>
