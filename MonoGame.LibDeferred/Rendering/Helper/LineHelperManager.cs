@@ -7,6 +7,8 @@ namespace DeferredEngine.Rendering.Helper.HelperGeometry
 {
     public class LineHelperManager
     {
+        public static short[] LineIndices = { 0, 1 };
+
         public static NotifiedProperty<bool> ModuleEnabled = new NotifiedProperty<bool>(true);
 
 
@@ -100,9 +102,8 @@ namespace DeferredEngine.Rendering.Helper.HelperGeometry
                 LineBuffer line = Lines[i];
                 if (line != null)
                 {
-
                     //Gather
-                    graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineList, line.Verts, 0, line.Verts.Length, LineBuffer.Indices, 0, LineBuffer.Indices.Length / 2);
+                    graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineList, line.Verts, 0, line.Verts.Length, LineIndices, 0, LineIndices.Length / 2);
 
                     line.Timer--;
                     if (line.Timer <= 0)
