@@ -252,40 +252,11 @@ namespace DeferredEngine.Recources
         }
 
 
-
         public bool Equals(MaterialBase b)
         {
             if (b == null) return false;
-
-            if (HasAlbedoMap != b.HasAlbedoMap) return false;
-
-            if (HasRoughnessMap != b.HasRoughnessMap) return false;
-
-            if (IsTransparent != b.IsTransparent) return false;
-
-            if (HasMask != b.HasMask) return false;
-
-            if (HasNormalMap != b.HasNormalMap) return false;
-
-            if (HasShadow != b.HasShadow) return false;
-
-            if (HasDisplacementMap != b.HasDisplacementMap) return false;
-
-            if (Vector3.DistanceSquared(_baseColor, b._baseColor) > 0.01f) return false;
-
-            if (AlbedoMap != b.AlbedoMap) return false;
-
-            if (Type != b.Type) return false;
-
-            if (Math.Abs(Roughness - b.Roughness) > 0.01f) return false;
-
-            if (Math.Abs(_metallic - b._metallic) > 0.01f) return false;
-
-            if (AlbedoMap != b.AlbedoMap) return false;
-
-            if (NormalMap != b.NormalMap) return false;
-
-            return true;
+            if (b._maps.Count != _maps.Count) return false;
+            return b == this;
         }
 
     }
