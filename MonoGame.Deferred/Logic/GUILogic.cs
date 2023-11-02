@@ -40,6 +40,7 @@ namespace DeferredEngine.Demo
         private GUITextBlockButton _gizmoTranslation;
         private GUITextBlockButton _gizmoRotation;
         private GUITextBlockButton _gizmoScale;
+        private GizmoModes _gizmoMode;
         private GizmoModes _gizmoModePrevious;
 
         //Selected object
@@ -434,7 +435,7 @@ namespace DeferredEngine.Demo
 
         public void ChangeGizmoMode(GizmoModes mode)
         {
-            RenderingSettings.e_gizmoMode = mode;
+            _gizmoMode = mode;
 
             UpdateGizmoSelection(mode);
         }
@@ -484,9 +485,9 @@ namespace DeferredEngine.Demo
             RenderingStats.UIIsHovered = false;
             if (!isActive || !RenderingSettings.e_IsEditorEnabled) return;
 
-            if (RenderingSettings.e_gizmoMode != _gizmoModePrevious)
+            if (_gizmoMode != _gizmoModePrevious)
             {
-                _gizmoModePrevious = RenderingSettings.e_gizmoMode;
+                _gizmoModePrevious = _gizmoMode;
                 UpdateGizmoSelection(_gizmoModePrevious);
             }
 

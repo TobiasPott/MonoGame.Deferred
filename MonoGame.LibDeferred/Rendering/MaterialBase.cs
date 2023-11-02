@@ -4,7 +4,7 @@
 using DeferredEngine.Pipeline;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
+using MonoGame.Ext;
 
 namespace DeferredEngine.Recources
 {
@@ -20,6 +20,7 @@ namespace DeferredEngine.Recources
 
     public class MaterialBase : Effect, IEquatable<MaterialBase>
     {
+        public static NotifiedProperty<float> DefaultRoughness = new NotifiedProperty<float>(0.5f);
 
         public enum MaterialTypes
         {
@@ -172,9 +173,7 @@ namespace DeferredEngine.Recources
             if (RenderingSettings.d_DefaultMaterial)
             {
                 fxSetup.Param_Material_DiffuseColor.SetValue(Color.Gray.ToVector3());
-                fxSetup.Param_Material_Roughness.SetValue(RenderingSettings.m_DefaultRoughness > 0
-                                                                                        ? RenderingSettings.m_DefaultRoughness
-                                                                                        : 0.3f);
+                fxSetup.Param_Material_Roughness.SetValue(MaterialBase.DefaultRoughness);
                 fxSetup.Param_Material_Metallic.SetValue(0.0f);
                 fxSetup.Param_Material_MaterialType.SetValue(0);
                 fxSetup.Effect_GBuffer.CurrentTechnique = fxSetup.Technique_DrawBasic;
@@ -205,9 +204,7 @@ namespace DeferredEngine.Recources
                 }
 
                 if (!this.HasRoughnessMap)
-                    fxSetup.Param_Material_Roughness.SetValue(RenderingSettings.m_DefaultRoughness > 0
-                                                                                            ? RenderingSettings.m_DefaultRoughness
-                                                                                            : this.Roughness);
+                    fxSetup.Param_Material_Roughness.SetValue(this.Roughness);
                 fxSetup.Param_Material_Metallic.SetValue(this.Metallic);
                 fxSetup.Param_Material_MaterialType.SetValue(this.MaterialTypeNumber);
             }

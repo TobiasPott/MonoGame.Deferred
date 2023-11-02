@@ -16,7 +16,6 @@ namespace DeferredEngine.Demo
         private static EditorLogic _instance = null;
         public static EditorLogic Instance => _instance;
 
-
         private bool _gizmoTransformationMode;
         private Vector3 _gizmoPosition;
         private int _gizmoId;
@@ -51,13 +50,12 @@ namespace DeferredEngine.Demo
 
             if (!DebugScreen.ConsoleOpen)
             {
-                if (Input.WasKeyPressed(Keys.R)) RenderingSettings.e_gizmoMode = GizmoModes.Rotation;
-                if (Input.WasKeyPressed(Keys.T)) RenderingSettings.e_gizmoMode = GizmoModes.Translation;
-                if (Input.WasKeyPressed(Keys.Z)) RenderingSettings.e_gizmoMode = GizmoModes.Scale;
+                if (Input.WasKeyPressed(Keys.R)) _gizmoMode = GizmoModes.Rotation;
+                if (Input.WasKeyPressed(Keys.T)) _gizmoMode = GizmoModes.Translation;
+                if (Input.WasKeyPressed(Keys.Z)) _gizmoMode = GizmoModes.Scale;
             }
 
             Update_MouseMoved(gameTime);
-            _gizmoMode = RenderingSettings.e_gizmoMode;
 
             int hoveredId = hoverContext.HoveredId;
 
