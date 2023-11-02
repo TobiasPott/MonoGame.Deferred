@@ -167,27 +167,27 @@ namespace DeferredEngine.Recources
 
         }
 
-        public void SetGBufferForMaterial(GBufferFxSetup _fxSetup)
+        public void SetGBufferForMaterial(GBufferFxSetup fxSetup)
         {
             if (RenderingSettings.d_DefaultMaterial)
             {
-                _fxSetup.Param_Material_DiffuseColor.SetValue(Color.Gray.ToVector3());
-                _fxSetup.Param_Material_Roughness.SetValue(RenderingSettings.m_DefaultRoughness > 0
+                fxSetup.Param_Material_DiffuseColor.SetValue(Color.Gray.ToVector3());
+                fxSetup.Param_Material_Roughness.SetValue(RenderingSettings.m_DefaultRoughness > 0
                                                                                         ? RenderingSettings.m_DefaultRoughness
                                                                                         : 0.3f);
-                _fxSetup.Param_Material_Metallic.SetValue(0.0f);
-                _fxSetup.Param_Material_MaterialType.SetValue(0);
-                _fxSetup.Effect_GBuffer.CurrentTechnique = _fxSetup.Technique_DrawBasic;
+                fxSetup.Param_Material_Metallic.SetValue(0.0f);
+                fxSetup.Param_Material_MaterialType.SetValue(0);
+                fxSetup.Effect_GBuffer.CurrentTechnique = fxSetup.Technique_DrawBasic;
             }
             else
             {
-                _fxSetup.Param_Material_AlbedoMap.SetValue(this.HasAlbedoMap ? this.AlbedoMap : null);
-                _fxSetup.Param_Material_NormalMap.SetValue(this.HasNormalMap ? this.NormalMap : null);
-                _fxSetup.Param_Material_RoughnessMap.SetValue(this.HasRoughnessMap ? this.RoughnessMap : null);
-                _fxSetup.Param_Material_MetallicMap.SetValue(this.HasMetallicMap ? this.MetallicMap : null);
-                _fxSetup.Param_Material_MaskMap.SetValue(this.HasMask ? this.Mask : null);
+                fxSetup.Param_Material_AlbedoMap.SetValue(this.HasAlbedoMap ? this.AlbedoMap : null);
+                fxSetup.Param_Material_NormalMap.SetValue(this.HasNormalMap ? this.NormalMap : null);
+                fxSetup.Param_Material_RoughnessMap.SetValue(this.HasRoughnessMap ? this.RoughnessMap : null);
+                fxSetup.Param_Material_MetallicMap.SetValue(this.HasMetallicMap ? this.MetallicMap : null);
+                fxSetup.Param_Material_MaskMap.SetValue(this.HasMask ? this.Mask : null);
 
-                _fxSetup.Effect_GBuffer.CurrentTechnique = this.GetGBufferTechnique(_fxSetup);
+                fxSetup.Effect_GBuffer.CurrentTechnique = this.GetGBufferTechnique(fxSetup);
 
                 // -------------------------
                 // Set value base material parameters
@@ -195,21 +195,21 @@ namespace DeferredEngine.Recources
                 {
                     if (this.Type == MaterialBase.MaterialTypes.Emissive && this.EmissiveStrength > 0)
                     {
-                        _fxSetup.Param_Material_DiffuseColor.SetValue(this.BaseColor.ToVector3());
-                        _fxSetup.Param_Material_Metallic.SetValue(this.EmissiveStrength / 8);
+                        fxSetup.Param_Material_DiffuseColor.SetValue(this.BaseColor.ToVector3());
+                        fxSetup.Param_Material_Metallic.SetValue(this.EmissiveStrength / 8);
                     }
                     else
                     {
-                        _fxSetup.Param_Material_DiffuseColor.SetValue(this.BaseColor.ToVector3());
+                        fxSetup.Param_Material_DiffuseColor.SetValue(this.BaseColor.ToVector3());
                     }
                 }
 
                 if (!this.HasRoughnessMap)
-                    _fxSetup.Param_Material_Roughness.SetValue(RenderingSettings.m_DefaultRoughness > 0
+                    fxSetup.Param_Material_Roughness.SetValue(RenderingSettings.m_DefaultRoughness > 0
                                                                                             ? RenderingSettings.m_DefaultRoughness
                                                                                             : this.Roughness);
-                _fxSetup.Param_Material_Metallic.SetValue(this.Metallic);
-                _fxSetup.Param_Material_MaterialType.SetValue(this.MaterialTypeNumber);
+                fxSetup.Param_Material_Metallic.SetValue(this.Metallic);
+                fxSetup.Param_Material_MaterialType.SetValue(this.MaterialTypeNumber);
             }
         }
 
