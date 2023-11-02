@@ -125,8 +125,7 @@ namespace DeferredEngine.Recources
             this.Initialize(baseColor, albedoMap, normalMap, roughnessMap, metallicMap, type);
         }
 
-        public void Initialize(Color baseColor, float roughness, float metalness,
-    MaterialTypes type = MaterialTypes.Basic)
+        public void Initialize(Color baseColor, float roughness, float metalness, MaterialTypes type = MaterialTypes.Basic)
         {
             this.Initialize(baseColor, roughness, metalness, null, null, null, null, null, null, type, 0);
         }
@@ -186,27 +185,22 @@ namespace DeferredEngine.Recources
                 fxSetup.Param_Material_MetallicMap.SetValue(this.HasMetallicMap ? this.MetallicMap : null);
                 fxSetup.Param_Material_MaskMap.SetValue(this.HasMask ? this.Mask : null);
 
-                fxSetup.Effect_GBuffer.CurrentTechnique = this.GetGBufferTechnique(fxSetup);
-
                 // -------------------------
                 // Set value base material parameters
                 if (!this.HasAlbedoMap)
                 {
+                    fxSetup.Param_Material_DiffuseColor.SetValue(this.BaseColor.ToVector3());
                     if (this.Type == MaterialBase.MaterialTypes.Emissive && this.EmissiveStrength > 0)
-                    {
-                        fxSetup.Param_Material_DiffuseColor.SetValue(this.BaseColor.ToVector3());
                         fxSetup.Param_Material_Metallic.SetValue(this.EmissiveStrength / 8);
-                    }
-                    else
-                    {
-                        fxSetup.Param_Material_DiffuseColor.SetValue(this.BaseColor.ToVector3());
-                    }
                 }
 
                 if (!this.HasRoughnessMap)
                     fxSetup.Param_Material_Roughness.SetValue(this.Roughness);
                 fxSetup.Param_Material_Metallic.SetValue(this.Metallic);
                 fxSetup.Param_Material_MaterialType.SetValue(this.MaterialTypeNumber);
+
+                fxSetup.Effect_GBuffer.CurrentTechnique = this.GetGBufferTechnique(fxSetup);
+
             }
         }
 
