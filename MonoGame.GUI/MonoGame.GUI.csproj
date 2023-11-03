@@ -4,18 +4,15 @@
     <TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
+    <Configurations>Debug;Release;Debug OpenGL</Configurations>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="..\MonoGame.LibDeferred\GlobalSuppressions.cs" Link="GlobalSuppressions.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.1.303" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MonoGame.LibDeferred\MonoGame.LibDeferred.csproj" />
+    <ProjectReference Include="..\MonoGame.RenderingPipeline\MonoGame.RenderingPipeline.csproj" />
   </ItemGroup>
 
 </Project>
