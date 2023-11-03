@@ -2,7 +2,6 @@
 using DeferredEngine.Recources;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
-using SharpDX.Direct3D9;
 
 namespace DeferredEngine.Rendering.PostProcessing
 {
