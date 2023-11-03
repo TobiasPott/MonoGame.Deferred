@@ -491,10 +491,10 @@ namespace DeferredEngine.Demo
                 UpdateGizmoSelection(_gizmoModePrevious);
             }
 
-            GUIControl.Update(Input.mouseLastState, Input.mouseState);
+            GUIMouseInput.Update(Input.mouseLastState, Input.mouseState);
 
-            if (GUIControl.GetMousePosition().X > _rightSideList.Position.X &&
-                GUIControl.GetMousePosition().Y < _rightSideList.Dimensions.Y)
+            if (GUIMouseInput.GetMousePosition().X > _rightSideList.Position.X &&
+                GUIMouseInput.GetMousePosition().Y < _rightSideList.Dimensions.Y)
             {
                 RenderingStats.UIIsHovered = true;
             }
@@ -641,12 +641,12 @@ namespace DeferredEngine.Demo
                 _objectDescriptionList.IsHidden = true;
             }
 
-            GuiCanvas.Update(gameTime, GUIControl.GetMousePosition(), Vector2.Zero);
+            GuiCanvas.Update(gameTime, GUIMouseInput.GetMousePosition(), Vector2.Zero);
         }
 
         public void SetResolution(Vector2 resolution)
         {
-            GUIControl.UpdateResolution(resolution);
+            GUIMouseInput.UpdateResolution(resolution);
             GuiCanvas.Resize(resolution);
         }
     }

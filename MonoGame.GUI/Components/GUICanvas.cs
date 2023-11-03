@@ -25,7 +25,7 @@ namespace HelperSuite.GUI
         }
 
         //Draw the GUI, cycle through the children
-        public override void Draw(GUIRenderer.GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
+        public override void Draw(GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
         {
             if (!IsEnabled) return;
             for (int index = 0; index < _children.Count; index++)

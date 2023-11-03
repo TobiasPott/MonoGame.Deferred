@@ -63,7 +63,7 @@ namespace HelperSuite.GUI
             };
         }
 
-        public override void Draw(GUIRenderer.GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
+        public override void Draw(GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
         {
             guiRenderer.DrawQuad(parentPosition + Position, Dimensions, BlockColor);
             guiRenderer.DrawQuad(parentPosition + Position + Dimensions * new Vector2(1, 0.5f) - ToggleIndicatorBorder * Vector2.UnitX - ToggleIndicatorSize * new Vector2(1,0.5f) , Vector2.One * ToggleIndicatorSize, Toggle ? Color.LimeGreen : Color.Red);
@@ -72,7 +72,7 @@ namespace HelperSuite.GUI
 
         public override void Update(GameTime gameTime, Vector2 mousePosition, Vector2 parentPosition)
         {
-            if (!GUIControl.WasLMBClicked()) return;
+            if (!GUIMouseInput.WasLMBClicked()) return;
 
             Vector2 bound1 = Position + parentPosition;
             Vector2 bound2 = bound1 + Dimensions;
@@ -81,7 +81,7 @@ namespace HelperSuite.GUI
                 mousePosition.Y < bound2.Y)
             {
                 Toggle = !Toggle;
-                GUIControl.UIWasUsed = true;
+                GUIMouseInput.UIWasUsed = true;
 
                 if (ToggleObject != null)
                 {

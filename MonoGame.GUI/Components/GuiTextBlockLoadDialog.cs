@@ -104,7 +104,7 @@ namespace HelperSuite.GUI
         }
 
 
-        public override void Draw(GUIRenderer.GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
+        public override void Draw(GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
         {
             Vector2 buttonLeft = (_declarationTextDimensions + _fontPosition * 1.2f)*Vector2.UnitX;
             guiRenderer.DrawQuad(parentPosition + Position, Dimensions, BlockColor);
@@ -130,7 +130,7 @@ namespace HelperSuite.GUI
 
                     Vector2 position = mousePosition;
 
-                    float overborder = position.X + HoverImageWidth - GUIControl.ScreenWidth;
+                    float overborder = position.X + HoverImageWidth - GUIMouseInput.ScreenWidth;
 
                     if (overborder > 0)
                         position.X -= overborder;
@@ -181,9 +181,9 @@ namespace HelperSuite.GUI
             {
                 _isHovered = true;
 
-                if (!GUIControl.WasLMBClicked()) return;
+                if (!GUIMouseInput.WasLMBClicked()) return;
 
-                GUIControl.UIWasUsed = true;
+                GUIMouseInput.UIWasUsed = true;
 
                 if (GUILoader != null)
                 {

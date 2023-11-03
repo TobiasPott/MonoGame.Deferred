@@ -9,7 +9,7 @@ namespace HelperSuite.GUI
         public Vector2 ParentDimensions;
         public bool IsHidden;
         public virtual Vector2 Dimensions { get; set; }
-        public abstract void Draw(GUIRenderer.GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition);
+        public abstract void Draw(GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition);
         public abstract void ParentResized(Vector2 dimensions);
         public abstract int Layer { get; set; }
         public abstract void Update(GameTime gameTime, Vector2 mousePosition, Vector2 parentPosition);

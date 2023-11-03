@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
 namespace HelperSuite.GUI
 {
@@ -28,13 +26,13 @@ namespace HelperSuite.GUI
         }
 
         public GUIList(Vector2 position, GUIStyle guiStyle) : this(
-            position: position, 
-            defaultDimensions: guiStyle.DimensionsStyle, 
-            layer: 0, 
-            alignment: guiStyle.GuiAlignmentStyle, 
+            position: position,
+            defaultDimensions: guiStyle.DimensionsStyle,
+            layer: 0,
+            alignment: guiStyle.GuiAlignmentStyle,
             parentDimensions: guiStyle.ParentDimensionsStyle)
         {
-            
+
         }
 
         /// <summary>
@@ -56,7 +54,7 @@ namespace HelperSuite.GUI
         }
 
         //Draw the GUI, cycle through the children
-        public override void Draw(GUIRenderer.GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
+        public override void Draw(GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
         {
             if (IsHidden) return;
 
@@ -73,7 +71,7 @@ namespace HelperSuite.GUI
                 height += _children[index].Dimensions.Y;
             }
         }
-        
+
         //Adjust things when resized
         public override void ParentResized(Vector2 parentDimensions)
         {
@@ -85,14 +83,14 @@ namespace HelperSuite.GUI
 
             Position = GUICanvas.UpdateAlignment(Alignment, parentDimensions, Dimensions, Position, OffsetPosition);
         }
-        
+
 
         public virtual void AddElement(GUIElement element)
         {
             //element.Position = new Vector2(0, _children.Count*DefaultDimensions.Y);
             //element.Dimensions = DefaultDimensions;
 
-           
+
             // I think it is acceptable to make a for loop everytime an element is added
             float height = 0;
             for (int i = 0; i < _children.Count; i++)
@@ -101,8 +99,8 @@ namespace HelperSuite.GUI
             }
             //element.Position = new Vector2(0,height);
 
-            Dimensions = new Vector2(DefaultDimensions.X, height+element.Dimensions.Y);
-            
+            Dimensions = new Vector2(DefaultDimensions.X, height + element.Dimensions.Y);
+
             //In Order
             _children.Add(element);
         }

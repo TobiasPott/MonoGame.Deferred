@@ -58,16 +58,16 @@ namespace HelperSuite.GUI
 
         public override void Update(GameTime gameTime, Vector2 mousePosition, Vector2 parentPosition)
         {
-            if (GUIControl.UIElementEngaged && !IsEngaged) return;
+            if (GUIMouseInput.UIElementEngaged && !IsEngaged) return;
 
             //Break Engagement
-            if (IsEngaged && !GUIControl.IsLMBPressed())
+            if (IsEngaged && !GUIMouseInput.IsLMBPressed())
             {
-                GUIControl.UIElementEngaged = false;
+                GUIMouseInput.UIElementEngaged = false;
                 IsEngaged = false;
             }
 
-            if (!GUIControl.IsLMBPressed()) return;
+            if (!GUIMouseInput.IsLMBPressed()) return;
 
             Vector2 bound1 = Position + parentPosition /*+ SliderIndicatorBorder*Vector2.UnitX*/;
             Vector2 bound2 = bound1 + Dimensions/* - 2*SliderIndicatorBorder * Vector2.UnitX*/;
@@ -75,13 +75,13 @@ namespace HelperSuite.GUI
             if (mousePosition.X >= bound1.X && mousePosition.Y >= bound1.Y && mousePosition.X < bound2.X &&
                 mousePosition.Y < bound2.Y + 1)
             {
-                GUIControl.UIElementEngaged = true;
+                GUIMouseInput.UIElementEngaged = true;
                 IsEngaged = true;
             }
 
             if (IsEngaged)
             {
-                GUIControl.UIWasUsed = true;
+                GUIMouseInput.UIWasUsed = true;
 
                 float lowerx = bound1.X + SliderIndicatorBorder;
                 float upperx = bound2.X - SliderIndicatorBorder;

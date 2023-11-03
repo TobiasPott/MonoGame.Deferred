@@ -79,7 +79,7 @@ namespace HelperSuite.GUI
         }
 
 
-        public override void Draw(GUIRenderer.GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
+        public override void Draw(GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
         {
             Vector2 buttonLeft = (_declarationTextDimensions + _fontPosition * 1.2f) * Vector2.UnitX;
             guiRenderer.DrawQuad(parentPosition + Position, Dimensions, BlockColor);
@@ -104,12 +104,12 @@ namespace HelperSuite.GUI
             {
                 _isHovered = true;
 
-                if (!GUIControl.WasLMBClicked()) return;
+                if (!GUIMouseInput.WasLMBClicked()) return;
 
                 _isToggled = !_isToggled;
                 Dimensions = new Vector2(_baseDimensions.X, _baseDimensions.Y + (_isToggled ? 100 : 0));
 
-                GUIControl.UIWasUsed = true;
+                GUIMouseInput.UIWasUsed = true;
             }
         }
 

@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace HelperSuite.GUIHelper
 {
-    public static class GUIControl
+    public static class GUIMouseInput
     {
 
         //UIWasUsed needs to be resettet each updated period to false.

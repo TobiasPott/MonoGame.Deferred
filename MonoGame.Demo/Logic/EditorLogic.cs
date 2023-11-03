@@ -67,7 +67,7 @@ namespace DeferredEngine.Demo
                 }
                 else _gizmoTransformationMode = false;
             }
-            else if (Input.WasLMBClicked() && !GUIControl.UIWasUsed)
+            else if (Input.WasLMBClicked() && !GUIMouseInput.UIWasUsed)
             {
                 previousMouseX = Input.mouseState.X;
                 previousMouseY = Input.mouseState.Y;

@@ -146,7 +146,7 @@ namespace DeferredEngine.Demo
         protected override void Initialize()
         {
             // Add your initialization logic here
-            GUIControl.Initialize(RenderingSettings.Screen.g_Resolution);
+            GUIMouseInput.Initialize(RenderingSettings.Screen.g_Resolution);
 
             FullscreenTriangleBuffer.InitClass(GraphicsDevice);
             StaticAssets.InitClass(Content, GraphicsDevice);

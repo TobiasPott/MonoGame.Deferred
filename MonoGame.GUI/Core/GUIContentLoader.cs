@@ -26,8 +26,8 @@ namespace HelperSuite.GUIHelper
 
         public void LoadContentFile<T>(out Task loadTaskOut, ref int pointerPositionInOut, out string filenameOut/*, string path*/)
         {
-            GUIControl.LastMouseState = Mouse.GetState();
-            GUIControl.CurrentMouseState = Mouse.GetState();
+            GUIMouseInput.LastMouseState = Mouse.GetState();
+            GUIMouseInput.CurrentMouseState = Mouse.GetState();
 
             string dialogFilter = "All files(*.*) | *.*";
             string pipeLineFile = "runtime.txt";

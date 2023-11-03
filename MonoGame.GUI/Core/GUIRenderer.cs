@@ -7,8 +7,9 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 
-namespace HelperSuite.GUIRenderer
+namespace HelperSuite.GUI
 {
+    // ToDo: UI: Assumption: This is like the GUI pipeline module handling rendering of the UI stack/hierarchy?
     public class GUIRenderer : IDisposable
     {
         private GraphicsDevice _graphicsDevice;
@@ -24,6 +25,7 @@ namespace HelperSuite.GUIRenderer
         private int _foregroundIndex;
         private readonly ForegroundImage[] foregroundImages = new ForegroundImage[10];
 
+        // ToDo: UI: Is this something like a Sprite?
         public struct ForegroundImage
         {
             public Texture2D tex;
@@ -63,7 +65,7 @@ namespace HelperSuite.GUIRenderer
             _graphicsDevice.SetState(RasterizerStateOption.CullNone);
 
             _spriteBatch.Begin();
-            canvas.Draw(this, Vector2.Zero, GUIControl.GetMousePosition());
+            canvas.Draw(this, Vector2.Zero, GUIMouseInput.GetMousePosition());
 
             //Now draw foregroundImages
             for (int index = 0; index <= _foregroundIndex - 1; index++)

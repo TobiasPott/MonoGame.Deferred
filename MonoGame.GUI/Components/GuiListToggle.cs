@@ -76,7 +76,7 @@ namespace HelperSuite.GUI
 
             _isHovered = false;
 
-            if (GUIControl.UIElementEngaged) return;
+            if (GUIMouseInput.UIElementEngaged) return;
 
             Vector2 bound1 = Position + parentPosition;
             Vector2 bound2 = bound1 + _toggleDimensions;
@@ -85,9 +85,9 @@ namespace HelperSuite.GUI
                 mousePosition.Y < bound2.Y)
             {
                 _isHovered = true;
-                if (GUIControl.WasLMBClicked())
+                if (GUIMouseInput.WasLMBClicked())
                 {
-                    GUIControl.UIWasUsed = true;
+                    GUIMouseInput.UIWasUsed = true;
 
                     IsToggled = !IsToggled;
                 }
@@ -95,7 +95,7 @@ namespace HelperSuite.GUI
 
         }
 
-        public override void Draw(GUIRenderer.GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
+        public override void Draw(GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
         {
             if (IsHidden) return;
             //Draw toggle element

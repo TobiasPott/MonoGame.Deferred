@@ -43,7 +43,7 @@ namespace HelperSuite.GUI
             ButtonMethodArgs = args;
         }
 
-        public override void Draw(GUIRenderer.GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
+        public override void Draw(GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
         {
             guiRenderer.DrawQuad(parentPosition + Position, Dimensions, Color.DimGray);
             guiRenderer.DrawQuad(parentPosition + Position + Vector2.One * ButtonBorder, Dimensions - 2*Vector2.One*ButtonBorder, _isHovered ? HoverColor : BlockColor);
@@ -62,9 +62,9 @@ namespace HelperSuite.GUI
             {
                 _isHovered = true;
 
-                if (!GUIControl.WasLMBClicked()) return;
+                if (!GUIMouseInput.WasLMBClicked()) return;
 
-                GUIControl.UIWasUsed = true;
+                GUIMouseInput.UIWasUsed = true;
 
                 if (ButtonObject != null)
                 {

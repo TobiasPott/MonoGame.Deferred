@@ -70,7 +70,7 @@ namespace HelperSuite.GUI
             }
 
             //If this element is not engaged but some other one is, return.
-            if (!IsEngaged && GUIControl.UIElementEngaged) return;
+            if (!IsEngaged && GUIMouseInput.UIElementEngaged) return;
 
             Vector2 bound1 = Position + parentPosition + _toggleDimensions * Vector2.UnitX;
             Vector2 bound2 = bound1 + new Vector2(Scrollwidth, ScrollTotalHeight);
@@ -86,11 +86,11 @@ namespace HelperSuite.GUI
                     {
                         ScrollBarHovered = true;
 
-                        if (GUIControl.IsLMBPressed())
+                        if (GUIMouseInput.IsLMBPressed())
                         {
-                            GUIControl.UIWasUsed = true;
+                            GUIMouseInput.UIWasUsed = true;
 
-                            GUIControl.UIElementEngaged = true;
+                            GUIMouseInput.UIElementEngaged = true;
                             IsEngaged = true;
 
                             // to percent
@@ -109,14 +109,14 @@ namespace HelperSuite.GUI
                 else
                 {
                     //Break engagement
-                    if (!GUIControl.IsLMBPressed())
+                    if (!GUIMouseInput.IsLMBPressed())
                     {
-                        GUIControl.UIElementEngaged = false;
+                        GUIMouseInput.UIElementEngaged = false;
                         IsEngaged = false;
                     }
                     else
                     {
-                        GUIControl.UIWasUsed = true;
+                        GUIMouseInput.UIWasUsed = true;
                         ScrollBarHovered = true;
 
                         percentScroll = (MathHelper.Clamp(mousePosition.Y, bound1.Y, bound2.Y) - bound1.Y) / (bound2.Y - bound1.Y);
@@ -143,9 +143,9 @@ namespace HelperSuite.GUI
                 mousePosition.Y < bound2.Y)
             {
                 _isHovered = true;
-                if (GUIControl.WasLMBClicked())
+                if (GUIMouseInput.WasLMBClicked())
                 {
-                    GUIControl.UIWasUsed = true;
+                    GUIMouseInput.UIWasUsed = true;
 
                     IsToggled = !IsToggled;
                 }
@@ -154,7 +154,7 @@ namespace HelperSuite.GUI
             //Scrollbar
         }
 
-        public override void Draw(GUIRenderer.GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
+        public override void Draw(GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
         {
             if (IsHidden) return;
 
