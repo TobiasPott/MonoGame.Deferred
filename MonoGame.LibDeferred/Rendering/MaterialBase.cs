@@ -1,5 +1,4 @@
-﻿
-//#define FORWARDONLY
+﻿//#define FORWARDONLY
 
 using DeferredEngine.Pipeline;
 using Microsoft.Xna.Framework;

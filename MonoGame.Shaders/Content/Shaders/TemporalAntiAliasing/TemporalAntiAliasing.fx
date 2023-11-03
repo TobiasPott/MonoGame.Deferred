@@ -49,8 +49,8 @@ struct VertexShaderOutput
 
 struct PixelShaderOutput
 {
-	float4 Combine : COLOR0;
-	//float4 Coherence : COLOR1;
+    float4 Combine : SV_Target0;
+	//float4 Coherence : SV_Target1;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////

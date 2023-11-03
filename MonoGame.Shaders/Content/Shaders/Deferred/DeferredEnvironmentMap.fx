@@ -59,8 +59,8 @@ struct VertexShaderOutput
 
 struct PixelShaderOutput
 {
-    float4 Diffuse : COLOR0;
-    float4 Specular : COLOR1;
+    float4 Diffuse : SV_Target0;
+    float4 Specular : SV_Target1;
 };
 
 

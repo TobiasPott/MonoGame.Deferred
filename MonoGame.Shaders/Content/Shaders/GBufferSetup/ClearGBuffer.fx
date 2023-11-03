@@ -4,9 +4,9 @@
 
 struct PixelShaderOutput
 {
-	float4 Color : COLOR0;
-	float4 Normal : COLOR1;
-	float4 Depth : COLOR2;
+    float4 Color : SV_Target0;
+    float4 Normal : SV_Target1;
+    float4 Depth : SV_Target2;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
