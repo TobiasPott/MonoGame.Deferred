@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.GUIHelper;
 using System.Reflection;
 using System.Text;
 
@@ -103,6 +104,73 @@ namespace MonoGame.GUI
             _textBlock.Text.Append(_baseText);
         }
 
+        public override void Update(GameTime gameTime, Vector2 mousePosition, Vector2 parentPosition)
+        {
+            if (GUIMouseInput.UIElementEngaged && !IsEngaged) return;
 
+            //Break Engagement
+            if (IsEngaged && !GUIMouseInput.IsLMBPressed())
+            {
+                GUIMouseInput.UIElementEngaged = false;
+                IsEngaged = false;
+            }
+
+            if (!GUIMouseInput.IsLMBPressed()) return;
+
+            Vector2 bound1 = Position + parentPosition + _textBlock.Dimensions * Vector2.UnitY /*+ SliderIndicatorBorder*Vector2.UnitX*/;
+            Vector2 bound2 = bound1 + SliderDimensions/* - 2*SliderIndicatorBorder * Vector2.UnitX*/;
+
+            if (mousePosition.X >= bound1.X && mousePosition.Y >= bound1.Y && mousePosition.X < bound2.X &&
+                mousePosition.Y < bound2.Y + 1)
+            {
+                GUIMouseInput.UIElementEngaged = true;
+                IsEngaged = true;
+            }
+
+            if (IsEngaged)
+            {
+                GUIMouseInput.UIWasUsed = true;
+
+                float lowerx = bound1.X + SliderIndicatorBorder;
+                float upperx = bound2.X - SliderIndicatorBorder;
+
+                _sliderPercent = MathHelper.Clamp((mousePosition.X - lowerx) / (upperx - lowerx), 0, 1);
+
+                _sliderValue = CalculateSliderValue(_sliderPercent); // _sliderPercent * (MaxValue - MinValue) + MinValue;
+
+                UpdateText();
+
+                if (SliderObject != null)
+                {
+                    if (SliderField != null)
+                        SliderField.SetValue(SliderObject, SliderValue, BindingFlags.Public, null, null);
+                    else SliderProperty?.SetValue(SliderObject, SliderValue);
+                }
+                else
+                {
+                    if (SliderField != null)
+                        SliderField.SetValue(null, SliderValue, BindingFlags.Static | BindingFlags.Public, null, null);
+                    else SliderProperty?.SetValue(null, SliderValue);
+                }
+            }
+        }
+
+        protected abstract T CalculateSliderValue(float percentage);
+
+        public override void Draw(GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
+        {
+            _textBlock.Draw(guiRenderer, parentPosition, mousePosition);
+
+            _tempPosition = parentPosition + Position + _textBlock.Dimensions * Vector2.UnitY;
+            guiRenderer.DrawQuad(_tempPosition, SliderDimensions, SwatchColor);
+
+            Vector2 slideDimensions = new Vector2(SliderDimensions.X - SliderIndicatorBorder * 2, SliderBaseHeight);
+            guiRenderer.DrawQuad(_tempPosition + new Vector2(SliderIndicatorBorder,
+                SliderDimensions.Y * 0.5f - SliderBaseHeight * 0.5f), slideDimensions, Color.DarkGray);
+
+            //slideDimensions = new Vector2(slideDimensions.X + SliderIndicatorSize* 0.5f, slideDimensions.Y);
+            guiRenderer.DrawQuad(_tempPosition + new Vector2(SliderIndicatorBorder - SliderIndicatorSize * 0.5f,
+                 SliderDimensions.Y * 0.5f - SliderIndicatorSize * 0.5f) + _sliderPercent * slideDimensions * Vector2.UnitX, new Vector2(SliderIndicatorSize, SliderIndicatorSize), _sliderColor);
+        }
     }
 }
