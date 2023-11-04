@@ -11,14 +11,14 @@ namespace MonoGame.GUI
 
         private readonly List<GUIElement> _children = new List<GUIElement>();
 
-        public Canvas(Vector2 position, Vector2 dimensions, int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, Vector2 ParentDimensions = default)
+        public Canvas(Vector2 position, Vector2 dimensions, int layer = 0, GUIStyle.Alignment alignment = GUIStyle.Alignment.None, Vector2 ParentDimensions = default)
         {
             Dimensions = dimensions;
             Alignment = alignment;
             Position = position;
             OffsetPosition = position;
             Layer = layer;
-            if (Alignment != GUIStyle.GUIAlignment.None)
+            if (Alignment != GUIStyle.Alignment.None)
             {
                 ParentResized(ParentDimensions);
             }
@@ -57,31 +57,47 @@ namespace MonoGame.GUI
         }
 
         //If the parent resized then our alignemnt may have changed and we need new position coordinates
-        public static Vector2 UpdateAlignment(GUIStyle.GUIAlignment alignment, Vector2 parentDimensions, Vector2 dimensions, Vector2 position, Vector2 offsetPosition)
+        public static Vector2 UpdateAlignment(GUIStyle.Alignment alignment, Vector2 parentDimensions, Vector2 dimensions, Vector2 position, Vector2 offsetPosition)
         {
             if (parentDimensions == Vector2.Zero) throw new NotImplementedException();
 
             switch (alignment)
             {
-                case GUIStyle.GUIAlignment.None:
+                case GUIStyle.Alignment.None:
                     break;
-                case GUIStyle.GUIAlignment.TopLeft:
+                case GUIStyle.Alignment.TopLeft:
                     position.X = 0;
                     position.Y = 0;
                     break;
-                case GUIStyle.GUIAlignment.TopRight:
+                case GUIStyle.Alignment.TopMiddle:
+                    position.X = parentDimensions.X / 2 - dimensions.X / 2;
+                    position.Y = 0;
+                    break;
+                case GUIStyle.Alignment.TopRight:
                     position.X = parentDimensions.X - dimensions.X;
                     position.Y = 0;
                     break;
-                case GUIStyle.GUIAlignment.BottomLeft:
-                    position.Y = parentDimensions.Y - dimensions.Y;
+                case GUIStyle.Alignment.BottomLeft:
                     position.X = 0;
+                    position.Y = parentDimensions.Y - dimensions.Y;
                     break;
-                case GUIStyle.GUIAlignment.BottomRight:
+                case GUIStyle.Alignment.BottomMiddle:
+                    position.X = parentDimensions.X / 2 - dimensions.X / 2;
+                    position.Y = parentDimensions.Y - dimensions.Y;
+                    break;
+                case GUIStyle.Alignment.BottomRight:
                     position = parentDimensions - dimensions;
                     break;
-                case GUIStyle.GUIAlignment.Center:
+                case GUIStyle.Alignment.CenterLeft:
+                    position.X = 0;
+                    position.Y = parentDimensions.Y / 2 - dimensions.Y / 2;
+                    break;
+                case GUIStyle.Alignment.Center:
                     position = parentDimensions / 2 - dimensions / 2;
+                    break;
+                case GUIStyle.Alignment.CenterRight:
+                    position.X = parentDimensions.X - dimensions.X;
+                    position.Y = parentDimensions.Y / 2 - dimensions.Y / 2;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -122,6 +138,6 @@ namespace MonoGame.GUI
             }
         }
 
-        public override GUIStyle.GUIAlignment Alignment { get; set; }
+        public override GUIStyle.Alignment Alignment { get; set; }
     }
 }

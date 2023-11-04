@@ -54,7 +54,7 @@ namespace MonoGame.GUI
             )
         { }
 
-        public GuiSliderIntText(Vector2 position, Vector2 sliderDimensions, Vector2 textdimensions, int min, int max, int stepSize, String text, SpriteFont font, Color blockColor, Color sliderColor, int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Left, Vector2 textBorder = default, Vector2 ParentDimensions = new Vector2()) : base(position, sliderDimensions, textdimensions, min, max, 0, text, font, blockColor, sliderColor, layer, alignment, textAlignment, textBorder, ParentDimensions)
+        public GuiSliderIntText(Vector2 position, Vector2 sliderDimensions, Vector2 textdimensions, int min, int max, int stepSize, String text, SpriteFont font, Color blockColor, Color sliderColor, int layer = 0, GUIStyle.Alignment alignment = GUIStyle.Alignment.None, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Left, Vector2 textBorder = default, Vector2 ParentDimensions = new Vector2()) : base(position, sliderDimensions, textdimensions, min, max, 0, text, font, blockColor, sliderColor, layer, alignment, textAlignment, textBorder, ParentDimensions)
         {
             MaxValueInt = max;
             MinValueInt = min;

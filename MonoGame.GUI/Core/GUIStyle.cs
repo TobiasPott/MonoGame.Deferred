@@ -10,13 +10,13 @@ namespace MonoGame.GUI
         public Color TextColorStyle;
         public Color SliderColorStyle;
         public SpriteFont TextFontStyle;
-        public GUIAlignment GuiAlignmentStyle;
+        public Alignment GuiAlignmentStyle;
         public TextAlignment TextAlignmentStyle;
         public TextAlignment TextButtonAlignmentStyle;
         public Vector2 ParentDimensionsStyle;
         public Vector2 TextBorderStyle;
 
-        public GUIStyle(Vector2 dimensionsStyle, SpriteFont textFontStyle, Color blockColorStyle, Color textColorStyle, Color sliderColorStyle, GUIAlignment guiAlignmentStyle, TextAlignment textAlignmentStyle, TextAlignment textButtonAlignmentStyle, Vector2 textBorderStyle, Vector2 parentDimensionsStyle)
+        public GUIStyle(Vector2 dimensionsStyle, SpriteFont textFontStyle, Color blockColorStyle, Color textColorStyle, Color sliderColorStyle, Alignment guiAlignmentStyle, TextAlignment textAlignmentStyle, TextAlignment textButtonAlignmentStyle, Vector2 textBorderStyle, Vector2 parentDimensionsStyle)
         {
             DimensionsStyle = dimensionsStyle;
             TextFontStyle = textFontStyle;
@@ -30,14 +30,18 @@ namespace MonoGame.GUI
             SliderColorStyle = sliderColorStyle;
         }
 
-        public enum GUIAlignment
+        public enum Alignment
         {
             None,
             TopLeft,
+            TopMiddle,
             TopRight,
+            CenterLeft,
+            Center,
+            CenterRight,
             BottomLeft,
+            BottomMiddle,
             BottomRight,
-            Center
         }
 
         public enum TextAlignment

@@ -35,7 +35,7 @@ namespace MonoGame.GUI
             )
         { }
 
-        public GuiSliderInt(Vector2 position, Vector2 dimensions, int min, int max, int stepSize, Color blockColor, Color sliderColor, int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, Vector2 ParentDimensions = new Vector2()) : base(position, dimensions, min, max, blockColor, sliderColor, layer, alignment, ParentDimensions)
+        public GuiSliderInt(Vector2 position, Vector2 dimensions, int min, int max, int stepSize, Color blockColor, Color sliderColor, int layer = 0, GUIStyle.Alignment alignment = GUIStyle.Alignment.None, Vector2 ParentDimensions = new Vector2()) : base(position, dimensions, min, max, blockColor, sliderColor, layer, alignment, ParentDimensions)
         {
             MaxValueInt = max;
             MinValueInt = min;

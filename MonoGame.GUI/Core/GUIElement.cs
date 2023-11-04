@@ -13,6 +13,6 @@ namespace MonoGame.GUI
         public abstract void ParentResized(Vector2 dimensions);
         public abstract int Layer { get; set; }
         public abstract void Update(GameTime gameTime, Vector2 mousePosition, Vector2 parentPosition);
-        public abstract GUIStyle.GUIAlignment Alignment { get; set; }
+        public abstract GUIStyle.Alignment Alignment { get; set; }
     }
 }

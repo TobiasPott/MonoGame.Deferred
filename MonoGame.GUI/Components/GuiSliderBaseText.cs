@@ -57,7 +57,7 @@ namespace MonoGame.GUI
         { }
         public GuiSliderBaseText(Vector2 position, Vector2 sliderDimensions, Vector2 textDimensions, T min, T max, String text, 
             SpriteFont font, Color blockColor, Color sliderColor, int layer = 0, 
-            GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Left, 
+            GUIStyle.Alignment alignment = GUIStyle.Alignment.None, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Left, 
             Vector2 textBorder = default, Vector2 ParentDimensions = new Vector2()) 
             : base(position, sliderDimensions, blockColor, layer, alignment, ParentDimensions)
         {
