@@ -7,18 +7,19 @@ namespace MonoGame.GUI
 {
     public abstract class SliderBaseText<T> : ColorSwatch
     {
-        protected bool IsEngaged = false;
 
         protected const float SliderIndicatorSize = 15;
         protected const float SliderIndicatorBorder = 10;
         protected const float SliderBaseHeight = 5;
+
+
+        protected bool IsEngaged = false;
 
         protected Vector2 _tempPosition = Vector2.One;
 
         protected Vector2 SliderDimensions;
 
         protected T _sliderPercent;
-
         protected T _sliderValue;
         public T SliderValue
         {
