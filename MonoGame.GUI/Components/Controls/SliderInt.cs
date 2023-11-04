@@ -1,51 +1,32 @@
-﻿using DeferredEngine.Utilities;
-using MonoGame.GUIHelper;
+﻿using MonoGame.GUIHelper;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System.Reflection;
-using System.Text;
 
 namespace MonoGame.GUI
 {
-    public class GuiSliderIntText : GuiSliderFloatText
+    public class SliderInt : SliderFloat
     {
         public int MaxValueInt = 1;
         public int MinValueInt = 0;
         public int StepSize = 1;
 
-
         public int _sliderValue;
-        public int SliderValue
+        public new int SliderValue
         {
             get { return _sliderValue; }
             set
             {
                 _sliderValue = value;
                 _sliderPercent = (float)(_sliderValue - MinValue) / (MaxValue - MinValue);
-
-                UpdateText();
             }
         }
 
-        private void UpdateText()
-        {
-            _textBlock.Text.Clear();
-            _textBlock.Text.Append(baseText);
-            _textBlock.Text.Concat(_sliderValue);
-        }
-
-
-        public GuiSliderIntText(GUIStyle guiStyle, int min, int max, int stepSize, String text) : this(
+        public SliderInt(GUIStyle guiStyle, int min, int max, int stepSize) : this(
             position: Vector2.Zero,
-            sliderDimensions: new Vector2(guiStyle.DimensionsStyle.X, 35),
-            textdimensions: new Vector2(guiStyle.DimensionsStyle.X, 20),
+            dimensions: new Vector2(guiStyle.DimensionsStyle.X, 35),
             min: min,
             max: max,
             stepSize: stepSize,
-            text: text,
-            font: guiStyle.TextFontStyle,
-            textBorder: guiStyle.TextBorderStyle,
-            textAlignment: GUIStyle.TextAlignment.Left,
             blockColor: guiStyle.BlockColorStyle,
             sliderColor: guiStyle.SliderColorStyle,
             layer: 0,
@@ -54,28 +35,25 @@ namespace MonoGame.GUI
             )
         { }
 
-        public GuiSliderIntText(Vector2 position, Vector2 sliderDimensions, Vector2 textdimensions, int min, int max, int stepSize, String text, SpriteFont font, Color blockColor, Color sliderColor, int layer = 0, Alignment alignment = Alignment.None, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Left, Vector2 textBorder = default, Vector2 ParentDimensions = new Vector2()) : base(position, sliderDimensions, textdimensions, min, max, 0, text, font, blockColor, sliderColor, layer, alignment, textAlignment, textBorder, ParentDimensions)
+        public SliderInt(Vector2 position, Vector2 dimensions, int min, int max, int stepSize, Color blockColor, Color sliderColor, int layer = 0, Alignment alignment = Alignment.None, Vector2 ParentDimensions = new Vector2()) : base(position, dimensions, min, max, blockColor, sliderColor, layer, alignment, ParentDimensions)
         {
             MaxValueInt = max;
             MinValueInt = min;
             StepSize = stepSize;
         }
 
-        public new void SetField(Object obj, string field)
+        public void SetField(Object obj, string field)
         {
             SliderObject = obj;
             SliderField = obj.GetType().GetField(field);
             SliderValue = (int)SliderField.GetValue(obj);
         }
 
-        public void SetValues(string text, int minValue, int maxValue, int stepSize)
+        public void SetProperty(Object obj, string property)
         {
-            SetText(new StringBuilder(text));
-            MinValueInt = minValue;
-            MaxValueInt = maxValue;
-            MinValue = minValue;
-            MaxValue = maxValue;
-            StepSize = stepSize;
+            SliderObject = obj;
+            SliderProperty = obj.GetType().GetProperty(property);
+            SliderValue = (int)SliderProperty.GetValue(obj);
         }
 
         public override void Update(GameTime gameTime, Vector2 mousePosition, Vector2 parentPosition)
@@ -91,8 +69,8 @@ namespace MonoGame.GUI
 
             if (!GUIMouseInput.IsLMBPressed()) return;
 
-            Vector2 bound1 = Position + parentPosition + _textBlock.Dimensions * Vector2.UnitY /*+ SliderIndicatorBorder*Vector2.UnitX*/;
-            Vector2 bound2 = bound1 + SliderDimensions/* - 2*SliderIndicatorBorder * Vector2.UnitX*/;
+            Vector2 bound1 = Position + parentPosition /*+ SliderIndicatorBorder*Vector2.UnitX*/;
+            Vector2 bound2 = bound1 + Dimensions/* - 2*SliderIndicatorBorder * Vector2.UnitX*/;
 
             if (mousePosition.X >= bound1.X && mousePosition.Y >= bound1.Y && mousePosition.X < bound2.X &&
                 mousePosition.Y < bound2.Y + 1)
@@ -111,8 +89,6 @@ namespace MonoGame.GUI
                 _sliderPercent = MathHelper.Clamp((mousePosition.X - lowerx) / (upperx - lowerx), 0, 1);
 
                 _sliderValue = (int)Math.Round(_sliderPercent * (float)(MaxValue - MinValue) + MinValue) / StepSize * StepSize;
-
-                UpdateText();
 
                 _sliderPercent = (float)(_sliderValue - MinValueInt) / (MaxValueInt - MinValueInt);
 

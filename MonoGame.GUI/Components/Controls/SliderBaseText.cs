@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MonoGame.GUI
 {
-    public abstract class GuiSliderBaseText<T> : ColorSwatch
+    public abstract class SliderBaseText<T> : ColorSwatch
     {
         protected bool IsEngaged = false;
 
@@ -43,7 +43,7 @@ namespace MonoGame.GUI
         public FieldInfo SliderField;
         public Object SliderObject;
 
-        public GuiSliderBaseText(GUIStyle guiStyle, T min, T max, String text) : this(Vector2.Zero, new Vector2(guiStyle.DimensionsStyle.X, 35),
+        public SliderBaseText(GUIStyle guiStyle, T min, T max, String text) : this(Vector2.Zero, new Vector2(guiStyle.DimensionsStyle.X, 35),
             new Vector2(guiStyle.DimensionsStyle.X, 20), min, max, text,
             font: guiStyle.TextFontStyle,
             blockColor: guiStyle.BlockColorStyle,
@@ -55,7 +55,7 @@ namespace MonoGame.GUI
             ParentDimensions: guiStyle.ParentDimensionsStyle
             )
         { }
-        public GuiSliderBaseText(Vector2 position, Vector2 sliderDimensions, Vector2 textDimensions, T min, T max, String text, 
+        public SliderBaseText(Vector2 position, Vector2 sliderDimensions, Vector2 textDimensions, T min, T max, String text, 
             SpriteFont font, Color blockColor, Color sliderColor, int layer = 0, 
             Alignment alignment = Alignment.None, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Left, 
             Vector2 textBorder = default, Vector2 ParentDimensions = new Vector2()) 

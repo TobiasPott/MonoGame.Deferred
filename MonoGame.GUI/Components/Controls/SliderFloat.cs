@@ -8,7 +8,7 @@ namespace MonoGame.GUI
     /// <summary>
     /// A slider that can reference float values
     /// </summary>
-    public class GuiSliderFloat : ColorSwatch
+    public class SliderFloat : ColorSwatch
     {
         protected bool IsEngaged = false;
 
@@ -38,7 +38,7 @@ namespace MonoGame.GUI
         public FieldInfo SliderField;
         public Object SliderObject;
 
-        public GuiSliderFloat(GUIStyle guiStyle, float min, float max) : this(
+        public SliderFloat(GUIStyle guiStyle, float min, float max) : this(
             position: Vector2.Zero, 
             dimensions: new Vector2(guiStyle.DimensionsStyle.X, 35),
             min: min,
@@ -51,7 +51,7 @@ namespace MonoGame.GUI
             )
         { }
 
-        public GuiSliderFloat(Vector2 position, Vector2 dimensions, float min, float max, Color blockColor, Color sliderColor, int layer = 0, Alignment alignment = Alignment.None, Vector2 ParentDimensions = new Vector2()) : base(position, dimensions, blockColor, layer, alignment, ParentDimensions)
+        public SliderFloat(Vector2 position, Vector2 dimensions, float min, float max, Color blockColor, Color sliderColor, int layer = 0, Alignment alignment = Alignment.None, Vector2 ParentDimensions = new Vector2()) : base(position, dimensions, blockColor, layer, alignment, ParentDimensions)
         {
             _sliderColor = sliderColor;
             MinValue = min;

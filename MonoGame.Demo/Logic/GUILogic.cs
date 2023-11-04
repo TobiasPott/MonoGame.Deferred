@@ -30,9 +30,9 @@ namespace DeferredEngine.Demo
         private GUITextBlockToggle _objectToggle1;
         private GUITextBlockToggle _objectToggle2;
         private GUITextBlockToggle _objectToggle3;
-        private GuiSliderFloatText _objectSlider0;
-        private GuiSliderFloatText _objectSlider1;
-        private GuiSliderIntText _objectSlider2;
+        private SliderFloatText _objectSlider0;
+        private SliderFloatText _objectSlider1;
+        private SliderIntText _objectSlider2;
         private ColorPicker _objectColorPicker1;
 
         private GUIStyle defaultStyle;
@@ -148,14 +148,14 @@ namespace DeferredEngine.Demo
                 ToggleObject = DynamicMeshBatcher.CPUCullingEnabled,
                 Toggle = DynamicMeshBatcher.CPUCullingEnabled
             });
-            _rightSideList.AddElement(new GuiSliderFloatText(defaultStyle, 16.0f, 1024.0f, 2, "Far Clip: ")
+            _rightSideList.AddElement(new SliderFloatText(defaultStyle, 16.0f, 1024.0f, 2, "Far Clip: ")
             {
                 SliderProperty = RenderingSettings.Screen.g_FarClip.GetValuePropertyInfo(),
                 SliderObject = RenderingSettings.Screen.g_FarClip,
                 SliderValue = RenderingSettings.Screen.g_FarClip,
             });
 
-            _rightSideList.AddElement(new GuiSliderFloatText(defaultStyle, 0.1f, 3/*(float) (Math.PI - 0.1)*/, 2, "Field Of View: ")
+            _rightSideList.AddElement(new SliderFloatText(defaultStyle, 0.1f, 3/*(float) (Math.PI - 0.1)*/, 2, "Field Of View: ")
             {
                 SliderObject = sceneLogicCamera,
                 SliderProperty = typeof(Camera).GetProperty("FieldOfView"),
@@ -191,9 +191,9 @@ namespace DeferredEngine.Demo
             _objectDescriptionList.AddElement(_objectToggle1 = new GUITextBlockToggle(defaultStyle, "objToggle1") { IsHidden = true });
             _objectDescriptionList.AddElement(_objectToggle2 = new GUITextBlockToggle(defaultStyle, "objToggle2") { IsHidden = true });
             _objectDescriptionList.AddElement(_objectToggle3 = new GUITextBlockToggle(defaultStyle, "objToggle3") { IsHidden = true });
-            _objectDescriptionList.AddElement(_objectSlider0 = new GuiSliderFloatText(defaultStyle, 0, 1, 2, "objToggle1") { IsHidden = true });
-            _objectDescriptionList.AddElement(_objectSlider1 = new GuiSliderFloatText(defaultStyle, 0, 1, 2, "objToggle2") { IsHidden = true });
-            _objectDescriptionList.AddElement(_objectSlider2 = new GuiSliderIntText(defaultStyle, 0, 10, 1, "objToggle3") { IsHidden = true });
+            _objectDescriptionList.AddElement(_objectSlider0 = new SliderFloatText(defaultStyle, 0, 1, 2, "objToggle1") { IsHidden = true });
+            _objectDescriptionList.AddElement(_objectSlider1 = new SliderFloatText(defaultStyle, 0, 1, 2, "objToggle2") { IsHidden = true });
+            _objectDescriptionList.AddElement(_objectSlider2 = new SliderIntText(defaultStyle, 0, 10, 1, "objToggle3") { IsHidden = true });
             _objectDescriptionList.AddElement(_objectColorPicker1 = new ColorPicker(defaultStyle) { IsHidden = true });
 
             _selectionList.AddElement(_objectDescriptionList);
@@ -308,20 +308,20 @@ namespace DeferredEngine.Demo
                 Toggle = SSReflectionFx.g_FireflyReduction
             });
 
-            ssrList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 5, 2, "Firefly Threshold ")
+            ssrList.AddElement(new SliderFloatText(defaultStyle, 0, 5, 2, "Firefly Threshold ")
             {
                 SliderProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_FireflyThreshold)),
                 SliderValue = SSReflectionFx.g_FireflyThreshold
             });
 
-            ssrList.AddElement(new GuiSliderIntText(defaultStyle, 1, 100, 1, "Samples: ")
+            ssrList.AddElement(new SliderIntText(defaultStyle, 1, 100, 1, "Samples: ")
             {
                 SliderProperty = SSReflectionFx.g_Samples.GetValuePropertyInfo(),
                 SliderObject = SSReflectionFx.g_Samples,
                 SliderValue = SSReflectionFx.g_Samples
             }); ;
 
-            ssrList.AddElement(new GuiSliderIntText(defaultStyle, 1, 100, 1, "Search Samples: ")
+            ssrList.AddElement(new SliderIntText(defaultStyle, 1, 100, 1, "Search Samples: ")
             {
                 SliderProperty = SSReflectionFx.g_RefinementSamples.GetValuePropertyInfo(),
                 SliderObject = SSReflectionFx.g_RefinementSamples,
@@ -353,21 +353,21 @@ namespace DeferredEngine.Demo
                 Toggle = SSAmbientOcclustionFx.ModuleEnableBlur
             });
 
-            ssaoList.AddElement(new GuiSliderIntText(defaultStyle, 1, 32, 1, "SSAO Samples: ")
+            ssaoList.AddElement(new SliderIntText(defaultStyle, 1, 32, 1, "SSAO Samples: ")
             {
                 SliderProperty = SSAmbientOcclustionFx.ModuleSamples.GetValuePropertyInfo(),
                 SliderObject = SSAmbientOcclustionFx.ModuleSamples,
                 SliderValue = SSAmbientOcclustionFx.ModuleSamples
             });
 
-            ssaoList.AddElement(new GuiSliderFloatText(defaultStyle, 1, 100, 2, "Sample Radius: ")
+            ssaoList.AddElement(new SliderFloatText(defaultStyle, 1, 100, 2, "Sample Radius: ")
             {
                 SliderProperty = SSAmbientOcclustionFx.ModuleRadius.GetValuePropertyInfo(),
                 SliderObject = SSAmbientOcclustionFx.ModuleRadius,
                 SliderValue = SSAmbientOcclustionFx.ModuleRadius
             });
 
-            ssaoList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 4, 1, "SSAO Strength: ")
+            ssaoList.AddElement(new SliderFloatText(defaultStyle, 0, 4, 1, "SSAO Strength: ")
             {
                 SliderProperty = SSAmbientOcclustionFx.ModuleStrength.GetValuePropertyInfo(),
                 SliderObject = SSAmbientOcclustionFx.ModuleStrength,
@@ -392,7 +392,7 @@ namespace DeferredEngine.Demo
                 Toggle = BloomFx.ModuleEnabled
             });
 
-            bloomList.AddElement(new GuiSliderFloatText(defaultStyle, 0, 1, 3, "Threshold: ")
+            bloomList.AddElement(new SliderFloatText(defaultStyle, 0, 1, 3, "Threshold: ")
             {
                 SliderProperty = BloomFx.ModuleThreshold.GetValuePropertyInfo(),
                 SliderObject = BloomFx.ModuleThreshold,
