@@ -21,17 +21,17 @@ namespace MonoGame.GUI
             }
         }
 
-        public SliderInt(GUIStyle guiStyle, int min, int max, int stepSize) : this(
+        public SliderInt(GUIStyle style, int min, int max, int stepSize) : this(
             position: Vector2.Zero,
-            dimensions: new Vector2(guiStyle.DimensionsStyle.X, 35),
+            dimensions: new Vector2(style.Dimensions.X, 35),
             min: min,
             max: max,
             stepSize: stepSize,
-            blockColor: guiStyle.BlockColorStyle,
-            sliderColor: guiStyle.SliderColorStyle,
+            blockColor: style.Color,
+            sliderColor: style.SliderColor,
             layer: 0,
-            alignment: guiStyle.GuiAlignmentStyle,
-            ParentDimensions: guiStyle.ParentDimensionsStyle
+            alignment: style.GuiAlignment,
+            ParentDimensions: style.ParentDimensions
             )
         { }
 

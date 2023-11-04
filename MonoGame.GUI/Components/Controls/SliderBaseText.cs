@@ -36,28 +36,28 @@ namespace MonoGame.GUI
         protected Color _sliderColor;
         //TextBlock associated
         protected TextBlock _textBlock;
-        protected String baseText;
+        protected String _baseText;
 
         //Associated reference
         public PropertyInfo SliderProperty;
         public FieldInfo SliderField;
         public Object SliderObject;
 
-        public SliderBaseText(GUIStyle guiStyle, T min, T max, String text) : this(Vector2.Zero, new Vector2(guiStyle.DimensionsStyle.X, 35),
-            new Vector2(guiStyle.DimensionsStyle.X, 20), min, max, text,
-            font: guiStyle.TextFontStyle,
-            blockColor: guiStyle.BlockColorStyle,
+        public SliderBaseText(GUIStyle style, T min, T max, String text) : this(Vector2.Zero, new Vector2(style.Dimensions.X, 35),
+            new Vector2(style.Dimensions.X, 20), min, max, text,
+            font: style.TextFont,
+            blockColor: style.Color,
             layer: 0,
-            alignment: guiStyle.GuiAlignmentStyle,
-            textAlignment: GUIStyle.TextAlignment.Left,
-            sliderColor: guiStyle.SliderColorStyle,
-            textBorder: guiStyle.TextBorderStyle,
-            ParentDimensions: guiStyle.ParentDimensionsStyle
+            alignment: style.GuiAlignment,
+            textAlignment: TextAlignment.Left,
+            sliderColor: style.SliderColor,
+            textBorder: style.TextBorder,
+            ParentDimensions: style.ParentDimensions
             )
         { }
         public SliderBaseText(Vector2 position, Vector2 sliderDimensions, Vector2 textDimensions, T min, T max, String text, 
             SpriteFont font, Color blockColor, Color sliderColor, int layer = 0, 
-            Alignment alignment = Alignment.None, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Left, 
+            Alignment alignment = Alignment.None, TextAlignment textAlignment = TextAlignment.Left, 
             Vector2 textBorder = default, Vector2 ParentDimensions = new Vector2()) 
             : base(position, sliderDimensions, blockColor, layer, alignment, ParentDimensions)
         {
@@ -69,14 +69,14 @@ namespace MonoGame.GUI
             MinValue = min;
             MaxValue = max;
             _sliderValue = min;
-            baseText = text;
+            _baseText = text;
 
             UpdateText();
         }
 
         public void SetText(StringBuilder text)
         {
-            baseText = text.ToString();
+            _baseText = text.ToString();
             _textBlock.Text = text;
             UpdateText();
         }
@@ -99,7 +99,7 @@ namespace MonoGame.GUI
         protected virtual void UpdateText()
         {
             _textBlock.Text.Clear();
-            _textBlock.Text.Append(baseText);
+            _textBlock.Text.Append(_baseText);
         }
 
 

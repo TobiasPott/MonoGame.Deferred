@@ -66,16 +66,16 @@ namespace DeferredEngine.Demo
             GuiCanvas = new Canvas(Vector2.Zero, RenderingSettings.Screen.g_Resolution);
 
             defaultStyle = new GUIStyle(
-                dimensionsStyle: new Vector2(200, 35),
-                textFontStyle: _assets.MonospaceFont,
-                blockColorStyle: Color.Gray,
-                textColorStyle: Color.White,
-                sliderColorStyle: Color.White,
-                guiAlignmentStyle: Alignment.None,
-                textAlignmentStyle: GUIStyle.TextAlignment.Left,
-                textButtonAlignmentStyle: GUIStyle.TextAlignment.Center,
-                textBorderStyle: new Vector2(10, 1),
-                parentDimensionsStyle: GuiCanvas.Dimensions);
+                dimensions: new Vector2(200, 35),
+                textFont: _assets.MonospaceFont,
+                blockColor: Color.Gray,
+                textColor: Color.White,
+                sliderColor: Color.White,
+                alignment: Alignment.None,
+                textAlignment: TextAlignment.Left,
+                textButtonAlignment: TextAlignment.Center,
+                textBorder: new Vector2(10, 1),
+                parentDimensions: GuiCanvas.Dimensions);
 
             //Editor gizmo control!
             GuiCanvas.AddElement(_leftSideList = new GUIList(Vector2.Zero, defaultStyle));
@@ -110,7 +110,7 @@ namespace DeferredEngine.Demo
             //Editor options
             GuiCanvas.AddElement(_rightSideList = new GuiListToggleScroll(new Vector2(-20, 0), defaultStyle));
 
-            TextBlock helperText = new TextBlock(new Vector2(0, 100), new Vector2(300, 200), CreateHelperText(), defaultStyle.TextFontStyle, new Color(Color.DimGray, 0.2f), Color.White, GUIStyle.TextAlignment.Left, new Vector2(10, 1)) { IsHidden = true };
+            TextBlock helperText = new TextBlock(new Vector2(0, 100), new Vector2(300, 200), CreateHelperText(), defaultStyle.TextFont, new Color(Color.DimGray, 0.2f), Color.White, TextAlignment.Left, new Vector2(10, 1)) { IsHidden = true };
             GuiCanvas.AddElement(helperText);
 
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Selection")
@@ -179,7 +179,7 @@ namespace DeferredEngine.Demo
             //{
             //});
 
-            _rightSideList.AddElement(new TextBlock(defaultStyle, "Selection") { SwatchColor = Color.DimGray, Dimensions = new Vector2(200, 10), TextAlignment = GUIStyle.TextAlignment.Center });
+            _rightSideList.AddElement(new TextBlock(defaultStyle, "Selection") { SwatchColor = Color.DimGray, Dimensions = new Vector2(200, 10), TextAlignment = TextAlignment.Center });
 
             GuiListToggle _selectionList = new GuiListToggle(Vector2.Zero, defaultStyle);
             _objectDescriptionList = new GUIList(Vector2.Zero, defaultStyle);
@@ -203,7 +203,7 @@ namespace DeferredEngine.Demo
             //Options
             /////////////////////////////////////////////////////////////////
 
-            _rightSideList.AddElement(new TextBlock(defaultStyle, "Options") { SwatchColor = Color.DimGray, Dimensions = new Vector2(200, 10), TextAlignment = GUIStyle.TextAlignment.Center });
+            _rightSideList.AddElement(new TextBlock(defaultStyle, "Options") { SwatchColor = Color.DimGray, Dimensions = new Vector2(200, 10), TextAlignment = TextAlignment.Center });
 
             GuiListToggle optionList = new GuiListToggle(Vector2.Zero, defaultStyle);
             _rightSideList.AddElement(optionList);
@@ -213,7 +213,7 @@ namespace DeferredEngine.Demo
             /////////////////////////////////////////////////////////////////
             /// 
             optionList.AddElement(new TextBlock(Vector2.Zero, new Vector2(200, 10), "SDF",
-                defaultStyle.TextFontStyle, Color.DarkSlateGray, Color.White, GUIStyle.TextAlignment.Center,
+                defaultStyle.TextFont, Color.DarkSlateGray, Color.White, TextAlignment.Center,
                 Vector2.Zero));
 
             GuiListToggle sdfList = new GuiListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
@@ -235,7 +235,7 @@ namespace DeferredEngine.Demo
             //Post Processing
             /////////////////////////////////////////////////////////////////
 
-            optionList.AddElement(new TextBlock(defaultStyle, "PostProcessing") { SwatchColor = Color.DarkSlateGray, Dimensions = new Vector2(200, 10), TextAlignment = GUIStyle.TextAlignment.Center });
+            optionList.AddElement(new TextBlock(defaultStyle, "PostProcessing") { SwatchColor = Color.DarkSlateGray, Dimensions = new Vector2(200, 10), TextAlignment = TextAlignment.Center });
 
             GuiListToggle postprocessingList = new GuiListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
             optionList.AddElement(postprocessingList);
@@ -274,7 +274,7 @@ namespace DeferredEngine.Demo
             /////////////////////////////////////////////////////////////////
 
             optionList.AddElement(new TextBlock(Vector2.Zero, new Vector2(200, 10), "Screen Space Reflections",
-                defaultStyle.TextFontStyle, Color.DarkSlateGray, Color.White, GUIStyle.TextAlignment.Center,
+                defaultStyle.TextFont, Color.DarkSlateGray, Color.White, TextAlignment.Center,
                 Vector2.Zero));
 
             GuiListToggle ssrList = new GuiListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
@@ -333,7 +333,7 @@ namespace DeferredEngine.Demo
             /////////////////////////////////////////////////////////////////
             /// 
             optionList.AddElement(new TextBlock(Vector2.Zero, new Vector2(200, 10), "Ambient Occlusion",
-                defaultStyle.TextFontStyle, Color.DarkSlateGray, Color.White, GUIStyle.TextAlignment.Center,
+                defaultStyle.TextFont, Color.DarkSlateGray, Color.White, TextAlignment.Center,
                 Vector2.Zero));
 
             GuiListToggle ssaoList = new GuiListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
@@ -379,7 +379,7 @@ namespace DeferredEngine.Demo
             /////////////////////////////////////////////////////////////////
             /// 
             optionList.AddElement(new TextBlock(Vector2.Zero, new Vector2(200, 10), "Bloom",
-                defaultStyle.TextFontStyle, Color.DarkSlateGray, Color.White, GUIStyle.TextAlignment.Center,
+                defaultStyle.TextFont, Color.DarkSlateGray, Color.White, TextAlignment.Center,
                 Vector2.Zero));
 
             GuiListToggle bloomList = new GuiListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
@@ -417,7 +417,7 @@ namespace DeferredEngine.Demo
 
 
             optionList.AddElement(new TextBlock(Vector2.Zero, new Vector2(200, 10), "Environment",
-                defaultStyle.TextFontStyle, Color.DarkSlateGray, Color.White, GUIStyle.TextAlignment.Center,
+                defaultStyle.TextFont, Color.DarkSlateGray, Color.White, TextAlignment.Center,
                 Vector2.Zero));
 
             GuiListToggle environmentGroup = new GuiListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
@@ -510,11 +510,11 @@ namespace DeferredEngine.Demo
                     _objectDescriptionList.IsHidden = false;
                     _objectDescriptionName.Text.Clear();
                     _objectDescriptionName.Text.Append(selectedObject.Name);
-                    _objectDescriptionName.TextAlignment = GUIStyle.TextAlignment.Center;
+                    _objectDescriptionName.TextAlignment = TextAlignment.Center;
 
                     _objectDescriptionPos.Text.Clear();
                     _objectDescriptionPos.Text.AppendVector3(selectedObject.Position);
-                    _objectDescriptionPos.TextAlignment = GUIStyle.TextAlignment.Center;
+                    _objectDescriptionPos.TextAlignment = TextAlignment.Center;
 
                     activeObjectName = selectedObject.Name;
                     activeObjectPos = selectedObject.Position;

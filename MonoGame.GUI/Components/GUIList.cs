@@ -25,12 +25,12 @@ namespace MonoGame.GUI
             }
         }
 
-        public GUIList(Vector2 position, GUIStyle guiStyle) : this(
+        public GUIList(Vector2 position, GUIStyle style) : this(
             position: position,
-            defaultDimensions: guiStyle.DimensionsStyle,
+            defaultDimensions: style.Dimensions,
             layer: 0,
-            alignment: guiStyle.GuiAlignmentStyle,
-            parentDimensions: guiStyle.ParentDimensionsStyle)
+            alignment: style.GuiAlignment,
+            parentDimensions: style.ParentDimensions)
         {
 
         }

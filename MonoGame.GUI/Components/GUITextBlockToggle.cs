@@ -17,19 +17,19 @@ namespace MonoGame.GUI
         public FieldInfo ToggleField;
         public object ToggleObject;
 
-        public GUITextBlockToggle(GUIStyle guitStyle, String text) : this(
+        public GUITextBlockToggle(GUIStyle style, String text) : this(
             position: Vector2.Zero,
-            dimensions: guitStyle.DimensionsStyle,
+            dimensions: style.Dimensions,
             text: text,
-            font: guitStyle.TextFontStyle,
-            blockColor: guitStyle.BlockColorStyle,
-            textColor: guitStyle.TextColorStyle,
-            textAlignment: guitStyle.TextAlignmentStyle,
-            textBorder: guitStyle.TextBorderStyle,
+            font: style.TextFont,
+            blockColor: style.Color,
+            textColor: style.TextColor,
+            textAlignment: style.TextAlignment,
+            textBorder: style.TextBorder,
             layer: 0)
         { }
 
-        public GUITextBlockToggle(Vector2 position, Vector2 dimensions, String text, SpriteFont font, Color blockColor, Color textColor, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Left, Vector2 textBorder = default, int layer = 0) : base(position, dimensions, text, font, blockColor, textColor, textAlignment, textBorder, layer)
+        public GUITextBlockToggle(Vector2 position, Vector2 dimensions, String text, SpriteFont font, Color blockColor, Color textColor, TextAlignment textAlignment = TextAlignment.Left, Vector2 textBorder = default, int layer = 0) : base(position, dimensions, text, font, blockColor, textColor, textAlignment, textBorder, layer)
         {
 
         }
@@ -56,9 +56,9 @@ namespace MonoGame.GUI
 
             _fontPosition = TextAlignment switch
             {
-                GUIStyle.TextAlignment.Left     => (Dimensions - Vector2.UnitX * (ToggleIndicatorSize + ToggleIndicatorBorder * 2)) / 2 * Vector2.UnitY + _textBorder * Vector2.UnitX - textDimensions / 2 * Vector2.UnitY,
-                GUIStyle.TextAlignment.Center   => (Dimensions - Vector2.UnitX * (ToggleIndicatorSize + ToggleIndicatorBorder * 2)) / 2 - textDimensions / 2,
-                GUIStyle.TextAlignment.Right    => (Dimensions - Vector2.UnitX * (ToggleIndicatorSize + ToggleIndicatorBorder * 2)) * new Vector2(1, 0.5f) - _textBorder * Vector2.UnitX - textDimensions / 2,
+                TextAlignment.Left     => (Dimensions - Vector2.UnitX * (ToggleIndicatorSize + ToggleIndicatorBorder * 2)) / 2 * Vector2.UnitY + _textBorder * Vector2.UnitX - textDimensions / 2 * Vector2.UnitY,
+                TextAlignment.Center   => (Dimensions - Vector2.UnitX * (ToggleIndicatorSize + ToggleIndicatorBorder * 2)) / 2 - textDimensions / 2,
+                TextAlignment.Right    => (Dimensions - Vector2.UnitX * (ToggleIndicatorSize + ToggleIndicatorBorder * 2)) * new Vector2(1, 0.5f) - _textBorder * Vector2.UnitX - textDimensions / 2,
                 _ => throw new ArgumentOutOfRangeException(),
             };
         }

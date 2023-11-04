@@ -20,19 +20,19 @@ namespace MonoGame.GUI
         public object[] ButtonMethodArgs = null;
         public Object ButtonObject;
 
-        public GUITextBlockButton(GUIStyle guitStyle, String text) : this(
+        public GUITextBlockButton(GUIStyle style, String text) : this(
             position: Vector2.Zero,
-            dimensions: guitStyle.DimensionsStyle,
+            dimensions: style.Dimensions,
             text: text,
-            font: guitStyle.TextFontStyle,
-            blockColor: guitStyle.BlockColorStyle,
-            textColor: guitStyle.TextColorStyle,
-            textAlignment: guitStyle.TextButtonAlignmentStyle,
-            textBorder: guitStyle.TextBorderStyle,
+            font: style.TextFont,
+            blockColor: style.Color,
+            textColor: style.TextColor,
+            textAlignment: style.TextButtonAlignment,
+            textBorder: style.TextBorder,
             layer: 0)
         { }
 
-        public GUITextBlockButton(Vector2 position, Vector2 dimensions, String text, SpriteFont font, Color blockColor, Color textColor, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Center, Vector2 textBorder = default, int layer = 0) : base(position, dimensions, text, font, blockColor, textColor, textAlignment, textBorder, layer)
+        public GUITextBlockButton(Vector2 position, Vector2 dimensions, String text, SpriteFont font, Color blockColor, Color textColor, TextAlignment textAlignment = TextAlignment.Center, Vector2 textBorder = default, int layer = 0) : base(position, dimensions, text, font, blockColor, textColor, textAlignment, textBorder, layer)
         {
 
         }

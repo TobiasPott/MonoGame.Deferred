@@ -18,38 +18,38 @@ namespace MonoGame.GUI
         BottomRight,
     }
 
+    public enum TextAlignment
+    {
+        Left, Center, Right
+    }
+
+
     public class GUIStyle
     {
-        public Vector2 DimensionsStyle;
-        public Color BlockColorStyle;
-        public Color TextColorStyle;
-        public Color SliderColorStyle;
-        public SpriteFont TextFontStyle;
-        public Alignment GuiAlignmentStyle;
-        public TextAlignment TextAlignmentStyle;
-        public TextAlignment TextButtonAlignmentStyle;
-        public Vector2 ParentDimensionsStyle;
-        public Vector2 TextBorderStyle;
+        public Vector2 Dimensions;
+        public Color Color;
+        public Color TextColor;
+        public Color SliderColor;
+        public SpriteFont TextFont;
+        public Alignment GuiAlignment;
+        public TextAlignment TextAlignment;
+        public TextAlignment TextButtonAlignment;
+        public Vector2 ParentDimensions;
+        public Vector2 TextBorder;
 
-        public GUIStyle(Vector2 dimensionsStyle, SpriteFont textFontStyle, Color blockColorStyle, Color textColorStyle, Color sliderColorStyle, Alignment guiAlignmentStyle, TextAlignment textAlignmentStyle, TextAlignment textButtonAlignmentStyle, Vector2 textBorderStyle, Vector2 parentDimensionsStyle)
+        public GUIStyle(Vector2 dimensions, SpriteFont textFont, Color blockColor, Color textColor, Color sliderColor, Alignment alignment, TextAlignment textAlignment, TextAlignment textButtonAlignment, Vector2 textBorder, Vector2 parentDimensions)
         {
-            DimensionsStyle = dimensionsStyle;
-            TextFontStyle = textFontStyle;
-            BlockColorStyle = blockColorStyle;
-            TextColorStyle = textColorStyle;
-            GuiAlignmentStyle = guiAlignmentStyle;
-            TextAlignmentStyle = textAlignmentStyle;
-            ParentDimensionsStyle = parentDimensionsStyle;
-            TextButtonAlignmentStyle = textButtonAlignmentStyle;
-            TextBorderStyle = textBorderStyle;
-            SliderColorStyle = sliderColorStyle;
+            Dimensions = dimensions;
+            TextFont = textFont;
+            Color = blockColor;
+            TextColor = textColor;
+            GuiAlignment = alignment;
+            TextAlignment = textAlignment;
+            ParentDimensions = parentDimensions;
+            TextButtonAlignment = textButtonAlignment;
+            TextBorder = textBorder;
+            SliderColor = sliderColor;
         }
-
-        public enum TextAlignment
-        {
-            Left, Center, Right
-        }
-
 
     }
 }

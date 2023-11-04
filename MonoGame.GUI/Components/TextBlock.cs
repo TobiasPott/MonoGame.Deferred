@@ -33,7 +33,7 @@ namespace MonoGame.GUI
             }
         }
 
-        public GUIStyle.TextAlignment TextAlignment
+        public TextAlignment TextAlignment
         {
             get { return _textAlignment; }
             set
@@ -46,28 +46,28 @@ namespace MonoGame.GUI
         protected StringBuilder _text;
 
         protected Vector2 _fontPosition;
-        public GUIStyle.TextAlignment _textAlignment;
+        public TextAlignment _textAlignment;
         protected Vector2 _textBorder = new Vector2(10,1);
         private Vector2 _dimensions;
 
-        public TextBlock(GUIStyle guitStyle, String text) : this(
+        public TextBlock(GUIStyle style, String text) : this(
             position: Vector2.Zero,
-            dimensions: guitStyle.DimensionsStyle,
+            dimensions: style.Dimensions,
             text: text,
-            font: guitStyle.TextFontStyle,
-            blockColor: guitStyle.BlockColorStyle,
-            textColor: guitStyle.TextColorStyle,
-            textAlignment: guitStyle.TextButtonAlignmentStyle,
-            textBorder: guitStyle.TextBorderStyle,
+            font: style.TextFont,
+            blockColor: style.Color,
+            textColor: style.TextColor,
+            textAlignment: style.TextButtonAlignment,
+            textBorder: style.TextBorder,
             layer: 0,
-            alignment: guitStyle.GuiAlignmentStyle,
-            parentDimensions: guitStyle.ParentDimensionsStyle)
+            alignment: style.GuiAlignment,
+            parentDimensions: style.ParentDimensions)
         { }
 
         /// <summary>
         /// A default colored block with text on top
         /// </summary>
-        public TextBlock(Vector2 position, Vector2 dimensions, String text, SpriteFont font, Color blockColor, Color textColor, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Left, Vector2 textBorder = default, int layer = 0, Alignment alignment = Alignment.None, Vector2 parentDimensions = default) : base(position, dimensions, blockColor, layer, alignment, parentDimensions)
+        public TextBlock(Vector2 position, Vector2 dimensions, String text, SpriteFont font, Color blockColor, Color textColor, TextAlignment textAlignment = TextAlignment.Left, Vector2 textBorder = default, int layer = 0, Alignment alignment = Alignment.None, Vector2 parentDimensions = default) : base(position, dimensions, blockColor, layer, alignment, parentDimensions)
         {
             _text = new StringBuilder(text);
             TextColor = textColor;
@@ -113,9 +113,9 @@ namespace MonoGame.GUI
 
             _fontPosition = _textAlignment switch
             {
-                GUIStyle.TextAlignment.Left => Dimensions * 0.5f * Vector2.UnitY + _textBorder * Vector2.UnitX - textDimension * 0.5f * Vector2.UnitY,
-                GUIStyle.TextAlignment.Center => Dimensions * 0.5f - textDimension * 0.5f,
-                GUIStyle.TextAlignment.Right => Dimensions * new Vector2(1, 0.5f) - _textBorder * Vector2.UnitX - textDimension * 0.5f,
+                TextAlignment.Left => Dimensions * 0.5f * Vector2.UnitY + _textBorder * Vector2.UnitX - textDimension * 0.5f * Vector2.UnitY,
+                TextAlignment.Center => Dimensions * 0.5f - textDimension * 0.5f,
+                TextAlignment.Right => Dimensions * new Vector2(1, 0.5f) - _textBorder * Vector2.UnitX - textDimension * 0.5f,
                 _ => throw new ArgumentOutOfRangeException(),
             };
         }

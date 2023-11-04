@@ -1,7 +1,6 @@
-﻿using System;
-using System.Reflection;
+﻿using Microsoft.Xna.Framework;
 using MonoGame.GUIHelper;
-using Microsoft.Xna.Framework;
+using System.Reflection;
 
 namespace MonoGame.GUI
 {
@@ -25,11 +24,11 @@ namespace MonoGame.GUI
             set
             {
                 _sliderValue = value;
-                _sliderPercent = (_sliderValue - MinValue)/(MaxValue - MinValue);
+                _sliderPercent = (_sliderValue - MinValue) / (MaxValue - MinValue);
             }
         }
 
-        public float MaxValue = 1; 
+        public float MaxValue = 1;
         public float MinValue;
 
         protected Color _sliderColor;
@@ -38,16 +37,16 @@ namespace MonoGame.GUI
         public FieldInfo SliderField;
         public Object SliderObject;
 
-        public SliderFloat(GUIStyle guiStyle, float min, float max) : this(
-            position: Vector2.Zero, 
-            dimensions: new Vector2(guiStyle.DimensionsStyle.X, 35),
+        public SliderFloat(GUIStyle style, float min, float max) : this(
+            position: Vector2.Zero,
+            dimensions: new Vector2(style.Dimensions.X, 35),
             min: min,
             max: max,
-            blockColor: guiStyle.BlockColorStyle,
-            sliderColor: guiStyle.SliderColorStyle,
+            blockColor: style.Color,
+            sliderColor: style.SliderColor,
             layer: 0,
-            alignment: guiStyle.GuiAlignmentStyle,
-            ParentDimensions: guiStyle.ParentDimensionsStyle
+            alignment: style.GuiAlignment,
+            ParentDimensions: style.ParentDimensions
             )
         { }
 
@@ -63,7 +62,7 @@ namespace MonoGame.GUI
         {
             SliderObject = obj;
             SliderField = obj.GetType().GetField(field);
-            SliderValue = (float) SliderField.GetValue(obj);
+            SliderValue = (float)SliderField.GetValue(obj);
         }
 
         public void SetProperty(Object obj, string property)
@@ -103,9 +102,9 @@ namespace MonoGame.GUI
                 float lowerx = bound1.X + SliderIndicatorBorder;
                 float upperx = bound2.X - SliderIndicatorBorder;
 
-                _sliderPercent = MathHelper.Clamp((mousePosition.X - lowerx)/(upperx - lowerx), 0, 1);
+                _sliderPercent = MathHelper.Clamp((mousePosition.X - lowerx) / (upperx - lowerx), 0, 1);
 
-                _sliderValue = _sliderPercent*(MaxValue - MinValue) + MinValue;
+                _sliderValue = _sliderPercent * (MaxValue - MinValue) + MinValue;
 
                 if (SliderObject != null)
                 {
@@ -125,14 +124,14 @@ namespace MonoGame.GUI
         public override void Draw(GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
         {
             guiRenderer.DrawQuad(parentPosition + Position, Dimensions, SwatchColor);
-            
-            Vector2 slideDimensions = new Vector2(Dimensions.X - SliderIndicatorBorder*2, SliderBaseHeight);
-            guiRenderer.DrawQuad(parentPosition + Position + new Vector2(SliderIndicatorBorder, 
-                Dimensions.Y* 0.5f - SliderBaseHeight * 0.5f), slideDimensions, Color.DarkGray);
+
+            Vector2 slideDimensions = new Vector2(Dimensions.X - SliderIndicatorBorder * 2, SliderBaseHeight);
+            guiRenderer.DrawQuad(parentPosition + Position + new Vector2(SliderIndicatorBorder,
+                Dimensions.Y * 0.5f - SliderBaseHeight * 0.5f), slideDimensions, Color.DarkGray);
 
             //slideDimensions = new Vector2(slideDimensions.X + SliderIndicatorSize* 0.5f, slideDimensions.Y);
-            guiRenderer.DrawQuad(parentPosition + Position + new Vector2(SliderIndicatorBorder - SliderIndicatorSize* 0.5f,
-                 Dimensions.Y * 0.5f - SliderIndicatorSize * 0.5f) + _sliderPercent*slideDimensions * Vector2.UnitX, new Vector2(SliderIndicatorSize, SliderIndicatorSize), _sliderColor);
+            guiRenderer.DrawQuad(parentPosition + Position + new Vector2(SliderIndicatorBorder - SliderIndicatorSize * 0.5f,
+                 Dimensions.Y * 0.5f - SliderIndicatorSize * 0.5f) + _sliderPercent * slideDimensions * Vector2.UnitX, new Vector2(SliderIndicatorSize, SliderIndicatorSize), _sliderColor);
         }
     }
 }

@@ -31,12 +31,12 @@ namespace MonoGame.GUI
         protected float SliderPosition = 0.5f;
         protected float SliderHeight = 10;
 
-        public GuiListToggleScroll(Vector2 position, GUIStyle guiStyle) : this(
+        public GuiListToggleScroll(Vector2 position, GUIStyle style) : this(
             position: position,
-            defaultDimensions: guiStyle.DimensionsStyle,
+            defaultDimensions: style.Dimensions,
             layer: 0,
-            alignment: guiStyle.GuiAlignmentStyle,
-            ParentDimensions: guiStyle.ParentDimensionsStyle)
+            alignment: style.GuiAlignment,
+            ParentDimensions: style.ParentDimensions)
         { }
 
         public GuiListToggleScroll(Vector2 position, Vector2 defaultDimensions, int layer = 0, Alignment alignment = Alignment.None, Vector2 ParentDimensions = new Vector2()) : base(position, defaultDimensions, layer, alignment, ParentDimensions)

@@ -31,14 +31,14 @@ namespace MonoGame.GUI
         private readonly SpriteFont _font;
         private readonly StringBuilder _colorString;
 
-        public ColorPicker(GUIStyle guiStyle) : this(
+        public ColorPicker(GUIStyle style) : this(
             position: Vector2.Zero,
-            dimensions: new Vector2(guiStyle.DimensionsStyle.X, 200),
-            blockColor: guiStyle.BlockColorStyle,
-            font: guiStyle.TextFontStyle,
+            dimensions: new Vector2(style.Dimensions.X, 200),
+            blockColor: style.Color,
+            font: style.TextFont,
             layer: 0,
-            alignment: guiStyle.GuiAlignmentStyle,
-            ParentDimensions: guiStyle.ParentDimensionsStyle)
+            alignment: style.GuiAlignment,
+            ParentDimensions: style.ParentDimensions)
         { }
 
         public ColorPicker(Vector2 position, Vector2 dimensions, Color blockColor, SpriteFont font, int layer = 0, Alignment alignment = Alignment.None, Vector2 ParentDimensions = new Vector2()) : base(position, dimensions, blockColor, layer, alignment, ParentDimensions)

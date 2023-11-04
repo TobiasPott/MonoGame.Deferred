@@ -30,31 +30,31 @@ namespace MonoGame.GUI
         private void UpdateText()
         {
             _textBlock.Text.Clear();
-            _textBlock.Text.Append(baseText);
+            _textBlock.Text.Append(_baseText);
             _textBlock.Text.Concat(_sliderValue);
         }
 
 
-        public SliderIntText(GUIStyle guiStyle, int min, int max, int stepSize, String text) : this(
+        public SliderIntText(GUIStyle style, int min, int max, int stepSize, String text) : this(
             position: Vector2.Zero,
-            sliderDimensions: new Vector2(guiStyle.DimensionsStyle.X, 35),
-            textdimensions: new Vector2(guiStyle.DimensionsStyle.X, 20),
+            sliderDimensions: new Vector2(style.Dimensions.X, 35),
+            textdimensions: new Vector2(style.Dimensions.X, 20),
             min: min,
             max: max,
             stepSize: stepSize,
             text: text,
-            font: guiStyle.TextFontStyle,
-            textBorder: guiStyle.TextBorderStyle,
-            textAlignment: GUIStyle.TextAlignment.Left,
-            blockColor: guiStyle.BlockColorStyle,
-            sliderColor: guiStyle.SliderColorStyle,
+            font: style.TextFont,
+            textBorder: style.TextBorder,
+            textAlignment: TextAlignment.Left,
+            blockColor: style.Color,
+            sliderColor: style.SliderColor,
             layer: 0,
-            alignment: guiStyle.GuiAlignmentStyle,
-            ParentDimensions: guiStyle.ParentDimensionsStyle
+            alignment: style.GuiAlignment,
+            ParentDimensions: style.ParentDimensions
             )
         { }
 
-        public SliderIntText(Vector2 position, Vector2 sliderDimensions, Vector2 textdimensions, int min, int max, int stepSize, String text, SpriteFont font, Color blockColor, Color sliderColor, int layer = 0, Alignment alignment = Alignment.None, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Left, Vector2 textBorder = default, Vector2 ParentDimensions = new Vector2()) : base(position, sliderDimensions, textdimensions, min, max, 0, text, font, blockColor, sliderColor, layer, alignment, textAlignment, textBorder, ParentDimensions)
+        public SliderIntText(Vector2 position, Vector2 sliderDimensions, Vector2 textdimensions, int min, int max, int stepSize, String text, SpriteFont font, Color blockColor, Color sliderColor, int layer = 0, Alignment alignment = Alignment.None, TextAlignment textAlignment = TextAlignment.Left, Vector2 textBorder = default, Vector2 ParentDimensions = new Vector2()) : base(position, sliderDimensions, textdimensions, min, max, 0, text, font, blockColor, sliderColor, layer, alignment, textAlignment, textBorder, ParentDimensions)
         {
             MaxValueInt = max;
             MinValueInt = min;

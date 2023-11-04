@@ -12,28 +12,29 @@ namespace MonoGame.GUI
     {
         private uint roundDecimals = 1;
 
-        public SliderFloatText(GUIStyle guiStyle, float min, float max, uint decimals, String text) : this(
+        public SliderFloatText(GUIStyle style, float min, float max, uint decimals, String text) 
+            : this(
             position: Vector2.Zero,
-            sliderDimensions: new Vector2(guiStyle.DimensionsStyle.X, 35),
-            textDimensions: new Vector2(guiStyle.DimensionsStyle.X, 20),
+            sliderDimensions: new Vector2(style.Dimensions.X, 35),
+            textDimensions: new Vector2(style.Dimensions.X, 20),
             min: min,
             max: max,
             decimals: decimals,
             text: text,
-            font: guiStyle.TextFontStyle,
-            textBorder: guiStyle.TextBorderStyle,
-            textAlignment: GUIStyle.TextAlignment.Left,
-            blockColor: guiStyle.BlockColorStyle,
-            sliderColor: guiStyle.SliderColorStyle,
+            font: style.TextFont,
+            textBorder: style.TextBorder,
+            textAlignment: TextAlignment.Left,
+            blockColor: style.Color,
+            sliderColor: style.SliderColor,
             layer: 0,
-            alignment: guiStyle.GuiAlignmentStyle,
-            ParentDimensions: guiStyle.ParentDimensionsStyle
+            alignment: style.GuiAlignment,
+            ParentDimensions: style.ParentDimensions
             )
         { }
 
         public SliderFloatText(Vector2 position, Vector2 sliderDimensions, Vector2 textDimensions, float min, float max, uint decimals,
             String text, SpriteFont font, Color blockColor, Color sliderColor,
-            int layer = 0, Alignment alignment = Alignment.None, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Left, Vector2 textBorder = default, Vector2 ParentDimensions = new Vector2())
+            int layer = 0, Alignment alignment = Alignment.None, TextAlignment textAlignment = TextAlignment.Left, Vector2 textBorder = default, Vector2 ParentDimensions = new Vector2())
             : base(position, sliderDimensions, textDimensions, min, max, text, font, blockColor, sliderColor, layer, alignment, textAlignment, textBorder, ParentDimensions)
         {
             roundDecimals = decimals;

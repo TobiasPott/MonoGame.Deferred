@@ -11,11 +11,11 @@ namespace MonoGame.GUI
 
         public ColorSwatch(GUIStyle style) : this(
             position: Vector2.Zero,
-            dimensions: style.DimensionsStyle,
-            blockColor: style.BlockColorStyle,
+            dimensions: style.Dimensions,
+            blockColor: style.Color,
             layer: 0,
-            alignment: style.GuiAlignmentStyle,
-            ParentDimensions: style.ParentDimensionsStyle)
+            alignment: style.GuiAlignment,
+            ParentDimensions: style.ParentDimensions)
         {
             //Filled by GuiStyle
         }

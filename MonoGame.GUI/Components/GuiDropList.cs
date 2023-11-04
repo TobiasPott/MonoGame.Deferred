@@ -26,19 +26,19 @@ namespace MonoGame.GUI
 
         public GuiDropList(GUIStyle style, string text) : this(
             position: Vector2.Zero,
-            dimensions: style.DimensionsStyle,
+            dimensions: style.Dimensions,
             text: text,
-            font: style.TextFontStyle,
-            blockColor: style.BlockColorStyle,
-            textColor: style.TextColorStyle,
-            textAlignment: GUIStyle.TextAlignment.Left,
-            textBorder: style.TextBorderStyle,
+            font: style.TextFont,
+            blockColor: style.Color,
+            textColor: style.TextColor,
+            textAlignment: TextAlignment.Left,
+            textBorder: style.TextBorder,
             layer: 0
             )
         {
         }
 
-        public GuiDropList(Vector2 position, Vector2 dimensions, string text, SpriteFont font, Color blockColor, Color textColor, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Center, Vector2 textBorder = default, int layer = 0) : base(position, dimensions, text, font, blockColor, textColor, textAlignment, textBorder, layer)
+        public GuiDropList(Vector2 position, Vector2 dimensions, string text, SpriteFont font, Color blockColor, Color textColor, TextAlignment textAlignment = TextAlignment.Center, Vector2 textBorder = default, int layer = 0) : base(position, dimensions, text, font, blockColor, textColor, textAlignment, textBorder, layer)
         {
             _selectedOptionName.Append("...");
 

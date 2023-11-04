@@ -18,12 +18,12 @@ namespace MonoGame.GUI
 
         public bool IsToggled = true;
 
-        public GuiListToggle(Vector2 position, GUIStyle guiStyle) : this(
+        public GuiListToggle(Vector2 position, GUIStyle style) : this(
             position: position, 
-            defaultDimensions: guiStyle.DimensionsStyle,
+            defaultDimensions: style.Dimensions,
             layer: 0,
-            alignment: guiStyle.GuiAlignmentStyle,
-            ParentDimensions: guiStyle.ParentDimensionsStyle)
+            alignment: style.GuiAlignment,
+            ParentDimensions: style.ParentDimensions)
         { }
 
         public GuiListToggle(Vector2 position, Vector2 defaultDimensions, int layer = 0, Alignment alignment = Alignment.None, Vector2 ParentDimensions = new Vector2()) : base(position, defaultDimensions, layer, alignment, ParentDimensions)
