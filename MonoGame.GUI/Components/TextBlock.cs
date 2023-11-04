@@ -60,7 +60,7 @@ namespace MonoGame.GUI
             textAlignment: style.TextButtonAlignment,
             textBorder: style.TextBorder,
             layer: 0,
-            alignment: style.GuiAlignment,
+            alignment: style.Alignment,
             parentDimensions: style.ParentDimensions)
         { }
 

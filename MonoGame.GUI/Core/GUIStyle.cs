@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace MonoGame.GUI
 {
 
+    // ToDo: UI: Is this acutally more like an 'anchor'?
     public enum Alignment
     {
         None,
@@ -31,19 +32,21 @@ namespace MonoGame.GUI
         public Color TextColor;
         public Color SliderColor;
         public SpriteFont TextFont;
-        public Alignment GuiAlignment;
+        public Alignment Alignment;
         public TextAlignment TextAlignment;
         public TextAlignment TextButtonAlignment;
         public Vector2 ParentDimensions;
         public Vector2 TextBorder;
 
-        public GUIStyle(Vector2 dimensions, SpriteFont textFont, Color blockColor, Color textColor, Color sliderColor, Alignment alignment, TextAlignment textAlignment, TextAlignment textButtonAlignment, Vector2 textBorder, Vector2 parentDimensions)
+        public GUIStyle(Vector2 dimensions, SpriteFont textFont, Color blockColor, Color textColor, Color sliderColor, 
+            Alignment alignment, TextAlignment textAlignment, TextAlignment textButtonAlignment, 
+            Vector2 textBorder, Vector2 parentDimensions)
         {
             Dimensions = dimensions;
             TextFont = textFont;
             Color = blockColor;
             TextColor = textColor;
-            GuiAlignment = alignment;
+            Alignment = alignment;
             TextAlignment = textAlignment;
             ParentDimensions = parentDimensions;
             TextButtonAlignment = textButtonAlignment;

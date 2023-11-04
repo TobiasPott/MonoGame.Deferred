@@ -29,7 +29,7 @@ namespace MonoGame.GUI
             position: position,
             defaultDimensions: style.Dimensions,
             layer: 0,
-            alignment: style.GuiAlignment,
+            alignment: style.Alignment,
             parentDimensions: style.ParentDimensions)
         {
 

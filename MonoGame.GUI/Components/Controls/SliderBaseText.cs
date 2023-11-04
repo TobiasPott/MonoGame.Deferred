@@ -48,7 +48,7 @@ namespace MonoGame.GUI
             font: style.TextFont,
             blockColor: style.Color,
             layer: 0,
-            alignment: style.GuiAlignment,
+            alignment: style.Alignment,
             textAlignment: TextAlignment.Left,
             sliderColor: style.SliderColor,
             textBorder: style.TextBorder,

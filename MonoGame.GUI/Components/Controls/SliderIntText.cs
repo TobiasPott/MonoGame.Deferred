@@ -49,7 +49,7 @@ namespace MonoGame.GUI
             blockColor: style.Color,
             sliderColor: style.SliderColor,
             layer: 0,
-            alignment: style.GuiAlignment,
+            alignment: style.Alignment,
             ParentDimensions: style.ParentDimensions
             )
         { }

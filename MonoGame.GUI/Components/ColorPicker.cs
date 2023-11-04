@@ -37,7 +37,7 @@ namespace MonoGame.GUI
             blockColor: style.Color,
             font: style.TextFont,
             layer: 0,
-            alignment: style.GuiAlignment,
+            alignment: style.Alignment,
             ParentDimensions: style.ParentDimensions)
         { }
 

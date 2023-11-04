@@ -14,7 +14,7 @@ namespace MonoGame.GUI
             dimensions: style.Dimensions,
             blockColor: style.Color,
             layer: 0,
-            alignment: style.GuiAlignment,
+            alignment: style.Alignment,
             ParentDimensions: style.ParentDimensions)
         {
             //Filled by GuiStyle
