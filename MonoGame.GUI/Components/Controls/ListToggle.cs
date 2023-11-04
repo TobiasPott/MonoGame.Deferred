@@ -1,10 +1,9 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
 using MonoGame.GUIHelper;
-using Microsoft.Xna.Framework;
 
 namespace MonoGame.GUI
 {
-    public class GuiListToggle : GUIList
+    public class ListToggle : List
     {
         protected static float ToggleButtonHeight = 14;
         protected static float ArrowButtonHeight = 8;
@@ -18,15 +17,15 @@ namespace MonoGame.GUI
 
         public bool IsToggled = true;
 
-        public GuiListToggle(Vector2 position, GUIStyle style) : this(
-            position: position, 
+        public ListToggle(Vector2 position, GUIStyle style) : this(
+            position: position,
             defaultDimensions: style.Dimensions,
             layer: 0,
             alignment: style.Alignment,
             ParentDimensions: style.ParentDimensions)
         { }
 
-        public GuiListToggle(Vector2 position, Vector2 defaultDimensions, int layer = 0, Alignment alignment = Alignment.None, Vector2 ParentDimensions = new Vector2()) : base(position, defaultDimensions, layer, alignment, ParentDimensions)
+        public ListToggle(Vector2 position, Vector2 defaultDimensions, int layer = 0, Alignment alignment = Alignment.None, Vector2 ParentDimensions = new Vector2()) : base(position, defaultDimensions, layer, alignment, ParentDimensions)
         {
             _toggleDimensions = new Vector2(defaultDimensions.X, ToggleButtonHeight);
         }
@@ -61,7 +60,7 @@ namespace MonoGame.GUI
 
                     if (child.IsHidden) continue;
 
-                    child.Update(gameTime, mousePosition, parentPosition + Position + height*Vector2.UnitY);
+                    child.Update(gameTime, mousePosition, parentPosition + Position + height * Vector2.UnitY);
 
                     height += _children[index].Dimensions.Y;
                 }
@@ -105,11 +104,11 @@ namespace MonoGame.GUI
             if (IsToggled)
             {
                 guiRenderer.DrawQuad(
-                    parentPosition + Position + _toggleDimensions*0.5f - ArrowButtonHeight*Vector2.One*0.5f,
-                    new Vector2(ArrowButtonHeight, ArrowButtonHeight*0.25f), Color.White);
+                    parentPosition + Position + _toggleDimensions * 0.5f - ArrowButtonHeight * Vector2.One * 0.5f,
+                    new Vector2(ArrowButtonHeight, ArrowButtonHeight * 0.25f), Color.White);
                 guiRenderer.DrawQuad(
-                    parentPosition + Position + _toggleDimensions*0.5f - ArrowButtonHeight*Vector2.UnitX*0.25f,
-                    new Vector2(ArrowButtonHeight, ArrowButtonHeight*0.5f)*0.5f, Color.White);
+                    parentPosition + Position + _toggleDimensions * 0.5f - ArrowButtonHeight * Vector2.UnitX * 0.25f,
+                    new Vector2(ArrowButtonHeight, ArrowButtonHeight * 0.5f) * 0.5f, Color.White);
             }
             else
             {

@@ -1,17 +1,15 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using MonoGame.GUIHelper;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
-using MonoGame.GUIHelper;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace MonoGame.GUI
 {
-    public class GuiTextBlockLoadDialog : TextBlock
+    public class TextBlockLoadDialog : TextBlock
     {
         public bool Toggle;
-        
+
         private static readonly float ButtonBorder = 2;
 
         private static readonly Color HoverColor = Color.LightGray;
@@ -19,7 +17,7 @@ namespace MonoGame.GUI
         private static readonly int HoverImageWidth = 250;
 
         private Vector2 _declarationTextDimensions;
-        
+
         private bool _isHovered;
 
         private short _isLoaded; //0 -> 1 -> 2
@@ -30,7 +28,7 @@ namespace MonoGame.GUI
         private int _loadedObjectPointer = -1;
         private readonly StringBuilder _loadedObjectName = new StringBuilder(100);
         private readonly StringBuilder _loadingStringBuilder = new StringBuilder("loading...");
-        
+
         public MethodInfo LoaderMethod;
         public GUIContentLoader GUILoader;
 
@@ -39,7 +37,7 @@ namespace MonoGame.GUI
             Texture2D
         };
 
-        public GuiTextBlockLoadDialog(GUIStyle style, string text, GUIContentLoader contentLoader, ContentType contentType) : this(
+        public TextBlockLoadDialog(GUIStyle style, string text, GUIContentLoader contentLoader, ContentType contentType) : this(
             position: Vector2.Zero,
             dimensions: style.Dimensions,
             text: text,
@@ -53,7 +51,7 @@ namespace MonoGame.GUI
             layer: 0)
         {
         }
-        public GuiTextBlockLoadDialog(Vector2 position, Vector2 dimensions, string text, GUIContentLoader guiContentLoader, ContentType contentType, SpriteFont font, Color blockColor, Color textColor, TextAlignment textAlignment = TextAlignment.Center, Vector2 textBorder = default, int layer = 0) : base(position, dimensions, text, font, blockColor, textColor, textAlignment, textBorder, layer)
+        public TextBlockLoadDialog(Vector2 position, Vector2 dimensions, string text, GUIContentLoader guiContentLoader, ContentType contentType, SpriteFont font, Color blockColor, Color textColor, TextAlignment textAlignment = TextAlignment.Center, Vector2 textBorder = default, int layer = 0) : base(position, dimensions, text, font, blockColor, textColor, textAlignment, textBorder, layer)
         {
             _loadedObjectName.Append("...");
 
@@ -80,7 +78,7 @@ namespace MonoGame.GUI
             //Let's check wrap!
 
             //FontWrap(ref textDimension, Dimensions);
-            
+
             _fontPosition = Dimensions * 0.5f * Vector2.UnitY + _textBorder * Vector2.UnitX - _declarationTextDimensions * 0.5f * Vector2.UnitY;
         }
 
@@ -91,13 +89,13 @@ namespace MonoGame.GUI
                 //Max length
                 Vector2 textDimensions = TextFont.MeasureString(_loadedObjectName);
 
-                float characterLength = textDimensions.X/_loadedObjectName.Length;
+                float characterLength = textDimensions.X / _loadedObjectName.Length;
 
                 Vector2 buttonLeft = (_declarationTextDimensions + _fontPosition * 1.5f) * Vector2.UnitX;
-                Vector2 spaceAvailable = Dimensions - 2*Vector2.One*ButtonBorder - buttonLeft -
-                                         (2 + _textBorder.X)*Vector2.UnitX;
+                Vector2 spaceAvailable = Dimensions - 2 * Vector2.One * ButtonBorder - buttonLeft -
+                                         (2 + _textBorder.X) * Vector2.UnitX;
 
-                int characters = (int) (spaceAvailable.X/characterLength);
+                int characters = (int)(spaceAvailable.X / characterLength);
 
                 _loadedObjectName.Length = characters < _loadedObjectName.Length ? characters : _loadedObjectName.Length;
             }
@@ -106,13 +104,13 @@ namespace MonoGame.GUI
 
         public override void Draw(GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
         {
-            Vector2 buttonLeft = (_declarationTextDimensions + _fontPosition * 1.2f)*Vector2.UnitX;
+            Vector2 buttonLeft = (_declarationTextDimensions + _fontPosition * 1.2f) * Vector2.UnitX;
             guiRenderer.DrawQuad(parentPosition + Position, Dimensions, SwatchColor);
-            guiRenderer.DrawQuad(parentPosition + Position + buttonLeft + Vector2.One * ButtonBorder, Dimensions - 2*Vector2.One*ButtonBorder - buttonLeft - (2+_textBorder.X)*Vector2.UnitX, _isHovered ? HoverColor : Color.DimGray);
+            guiRenderer.DrawQuad(parentPosition + Position + buttonLeft + Vector2.One * ButtonBorder, Dimensions - 2 * Vector2.One * ButtonBorder - buttonLeft - (2 + _textBorder.X) * Vector2.UnitX, _isHovered ? HoverColor : Color.DimGray);
 
-            Vector2 indicatorButton = parentPosition + new Vector2(Dimensions.X - (2 + _textBorder.X), Dimensions.Y/2 - 4);
+            Vector2 indicatorButton = parentPosition + new Vector2(Dimensions.X - (2 + _textBorder.X), Dimensions.Y / 2 - 4);
 
-            guiRenderer.DrawQuad(indicatorButton, Vector2.One * 8, _isLoaded < 1 ? Color.Red : (_isLoaded < 2 ? Color.Yellow : Color.LimeGreen ));
+            guiRenderer.DrawQuad(indicatorButton, Vector2.One * 8, _isLoaded < 1 ? Color.Red : (_isLoaded < 2 ? Color.Yellow : Color.LimeGreen));
 
             guiRenderer.DrawText(parentPosition + Position + _fontPosition, Text, TextFont, TextColor);
 
@@ -123,7 +121,7 @@ namespace MonoGame.GUI
             if (_isLoaded == 2)
             {
                 LoadedObject = GUILoader.ContentArray[_loadedObjectPointer];
-                
+
                 if (_isHovered)
                 {
                     //compute position
@@ -138,8 +136,8 @@ namespace MonoGame.GUI
 
                     if (LoadedObject != null && LoadedObject.GetType() == typeof(Texture2D))
                     {
-                        Texture2D image = (Texture2D) LoadedObject;
-                        float height = (float) image.Height/image.Width*HoverImageWidth;
+                        Texture2D image = (Texture2D)LoadedObject;
+                        float height = (float)image.Height / image.Width * HoverImageWidth;
                         guiRenderer.DrawImage(position, new Vector2(HoverImageWidth, height),
                             image, Color.White, true);
                     }
@@ -152,7 +150,7 @@ namespace MonoGame.GUI
         {
             if (_loadTaskReference != null)
             {
-                _isLoaded = (short) (_loadTaskReference.IsCompleted ? 2 : 1);
+                _isLoaded = (short)(_loadTaskReference.IsCompleted ? 2 : 1);
 
                 if (_isLoaded == 2)
                 {
@@ -172,7 +170,7 @@ namespace MonoGame.GUI
             }
 
             _isHovered = false;
-            
+
             Vector2 bound1 = Position + parentPosition;
             Vector2 bound2 = bound1 + Dimensions;
 
@@ -188,11 +186,11 @@ namespace MonoGame.GUI
                 if (GUILoader != null)
                 {
                     string s = null;
-                    object[] args = {_loadTaskReference, _loadedObjectPointer, s};
+                    object[] args = { _loadTaskReference, _loadedObjectPointer, s };
                     LoaderMethod?.Invoke(GUILoader, args);
 
-                    _loadTaskReference = (Task) args[0];
-                    _loadedObjectPointer = (int) args[1];
+                    _loadTaskReference = (Task)args[0];
+                    _loadedObjectPointer = (int)args[1];
                     _loadedObjectName.Clear();
                     _loadedObjectName.Append((string)args[2]);
 
@@ -202,5 +200,5 @@ namespace MonoGame.GUI
         }
 
     }
-    
+
 }

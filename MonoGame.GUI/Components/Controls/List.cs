@@ -2,13 +2,15 @@
 
 namespace MonoGame.GUI
 {
-    public class GUIList : GUIElement
+    public class List : GUIElement
     {
-        public Vector2 DefaultDimensions;
+        protected Vector2 DefaultDimensions;
+
+        protected Alignment _alignment;
 
         protected List<GUIElement> _children = new List<GUIElement>();
 
-        private Alignment _alignment;
+
         public override Alignment Alignment
         {
             get
@@ -25,7 +27,7 @@ namespace MonoGame.GUI
             }
         }
 
-        public GUIList(Vector2 position, GUIStyle style) : this(
+        public List(Vector2 position, GUIStyle style) : this(
             position: position,
             defaultDimensions: style.Dimensions,
             layer: 0,
@@ -38,12 +40,7 @@ namespace MonoGame.GUI
         /// <summary>
         /// A list has a unified width/height of the elements. Each element is rendered below the other one
         /// </summary>
-        /// <param name="position"></param>
-        /// <param name="defaultDimensions"></param>
-        /// <param name="layer"></param>
-        /// <param name="alignment"></param>
-        /// <param name="parentDimensions"></param>
-        public GUIList(Vector2 position, Vector2 defaultDimensions, int layer = 0, Alignment alignment = Alignment.None, Vector2 parentDimensions = default)
+        public List(Vector2 position, Vector2 defaultDimensions, int layer = 0, Alignment alignment = Alignment.None, Vector2 parentDimensions = default)
         {
             DefaultDimensions = defaultDimensions;
             ParentDimensions = parentDimensions;
@@ -59,16 +56,10 @@ namespace MonoGame.GUI
             if (IsHidden) return;
 
             float height = 0;
-
-            for (int index = 0; index < _children.Count; index++)
+            foreach (GUIElement child in _children.Where(x => !x.IsHidden))
             {
-                GUIElement child = _children[index];
-
-                if (child.IsHidden) continue;
-
                 child.Draw(guiRenderer, parentPosition + Position + height * Vector2.UnitY, mousePosition);
-
-                height += _children[index].Dimensions.Y;
+                height += child.Dimensions.Y;
             }
         }
 
@@ -111,27 +102,16 @@ namespace MonoGame.GUI
         /// <summary>
         /// Update our logic
         /// </summary>
-        /// <param name="gameTime"></param>
-        /// <param name="mousePosition"></param>
-        /// <param name="parentPosition"></param>
         public override void Update(GameTime gameTime, Vector2 mousePosition, Vector2 parentPosition)
         {
             if (IsHidden)
-            {
                 return;
-            }
 
             float height = 0;
-            for (int index = 0; index < _children.Count; index++)
+            foreach (GUIElement child in _children.Where(x => !x.IsHidden))
             {
-                GUIElement child = _children[index];
-
-                if (child.IsHidden) continue;
-
                 child.Update(gameTime, mousePosition, parentPosition + Position + height * Vector2.UnitY);
-
-                height += _children[index].Dimensions.Y;
-
+                height += child.Dimensions.Y;
             }
             if (Math.Abs(Dimensions.Y - height) > 0.01f)
                 Dimensions = new Vector2(Dimensions.X, height);

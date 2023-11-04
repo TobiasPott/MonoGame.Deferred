@@ -19,17 +19,17 @@ namespace DeferredEngine.Demo
         private DemoAssets _assets;
         public Canvas GuiCanvas;
 
-        private GuiListToggleScroll _rightSideList;
-        private GUIList _leftSideList;
+        private ListToggleScroll _rightSideList;
+        private List _leftSideList;
 
-        private GUIList _objectDescriptionList;
+        private List _objectDescriptionList;
         private TextBlock _objectDescriptionName;
         private TextBlock _objectDescriptionPos;
-        private GUITextBlockButton _objectButton1;
-        private GUITextBlockToggle _objectToggle0;
-        private GUITextBlockToggle _objectToggle1;
-        private GUITextBlockToggle _objectToggle2;
-        private GUITextBlockToggle _objectToggle3;
+        private TextBlockButton _objectButton1;
+        private TextBlockToggle _objectToggle0;
+        private TextBlockToggle _objectToggle1;
+        private TextBlockToggle _objectToggle2;
+        private TextBlockToggle _objectToggle3;
         private SliderFloatText _objectSlider0;
         private SliderFloatText _objectSlider1;
         private SliderIntText _objectSlider2;
@@ -37,9 +37,9 @@ namespace DeferredEngine.Demo
 
         private GUIStyle defaultStyle;
 
-        private GUITextBlockButton _gizmoTranslation;
-        private GUITextBlockButton _gizmoRotation;
-        private GUITextBlockButton _gizmoScale;
+        private TextBlockButton _gizmoTranslation;
+        private TextBlockButton _gizmoRotation;
+        private TextBlockButton _gizmoScale;
         private GizmoModes _gizmoMode;
         private GizmoModes _gizmoModePrevious;
 
@@ -78,27 +78,27 @@ namespace DeferredEngine.Demo
                 parentDimensions: GuiCanvas.Dimensions);
 
             //Editor gizmo control!
-            GuiCanvas.AddElement(_leftSideList = new GUIList(Vector2.Zero, defaultStyle));
+            GuiCanvas.AddElement(_leftSideList = new List(Vector2.Zero, defaultStyle));
 
-            _leftSideList.AddElement(_gizmoTranslation = new GUITextBlockButton(defaultStyle, "Translate (T)")
+            _leftSideList.AddElement(_gizmoTranslation = new TextBlockButton(defaultStyle, "Translate (T)")
             {
                 ButtonObject = this,
                 ButtonMethod = GetType().GetMethod("ChangeGizmoMode"),
                 ButtonMethodArgs = new object[] { GizmoModes.Translation },
             });
-            _leftSideList.AddElement(_gizmoRotation = new GUITextBlockButton(defaultStyle, "Rotate (R)")
+            _leftSideList.AddElement(_gizmoRotation = new TextBlockButton(defaultStyle, "Rotate (R)")
             {
                 ButtonObject = this,
                 ButtonMethod = GetType().GetMethod("ChangeGizmoMode"),
                 ButtonMethodArgs = new object[] { GizmoModes.Rotation },
             });
-            _leftSideList.AddElement(_gizmoScale = new GUITextBlockButton(defaultStyle, "Scale (Z)")
+            _leftSideList.AddElement(_gizmoScale = new TextBlockButton(defaultStyle, "Scale (Z)")
             {
                 ButtonObject = this,
                 ButtonMethod = GetType().GetMethod("ChangeGizmoMode"),
                 ButtonMethodArgs = new object[] { GizmoModes.Scale },
             });
-            _leftSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Local: ")
+            _leftSideList.AddElement(new TextBlockToggle(defaultStyle, "Local: ")
             {
                 ToggleField = typeof(RenderingSettings).GetField(nameof(RenderingSettings.e_LocalTransformation)),
                 Toggle = RenderingSettings.e_LocalTransformation
@@ -108,41 +108,41 @@ namespace DeferredEngine.Demo
             ChangeGizmoMode(GizmoModes.Translation);
 
             //Editor options
-            GuiCanvas.AddElement(_rightSideList = new GuiListToggleScroll(new Vector2(-20, 0), defaultStyle));
+            GuiCanvas.AddElement(_rightSideList = new ListToggleScroll(new Vector2(-20, 0), defaultStyle));
 
             TextBlock helperText = new TextBlock(new Vector2(0, 100), new Vector2(300, 200), CreateHelperText(), defaultStyle.TextFont, new Color(Color.DimGray, 0.2f), Color.White, TextAlignment.Left, new Vector2(10, 1)) { IsHidden = true };
             GuiCanvas.AddElement(helperText);
 
-            _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Selection")
+            _rightSideList.AddElement(new TextBlockToggle(defaultStyle, "Enable Selection")
             {
                 ToggleProperty = typeof(RenderingSettings).GetProperty(nameof(RenderingSettings.EnableSelection)),
                 Toggle = RenderingSettings.EnableSelection
             });
 
-            _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Draw Mesh Outl.")
+            _rightSideList.AddElement(new TextBlockToggle(defaultStyle, "Draw Mesh Outl.")
             {
                 ToggleField = typeof(IdAndOutlineRenderModule).GetField("e_DrawOutlines"),
                 Toggle = IdAndOutlineRenderModule.e_DrawOutlines
             });
 
-            _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Profiler")
+            _rightSideList.AddElement(new TextBlockToggle(defaultStyle, "Enable Profiler")
             {
                 ToggleProperty = PipelineProfiler.ModuleEnabled.GetValuePropertyInfo(),
                 ToggleObject = PipelineProfiler.ModuleEnabled,
                 Toggle = PipelineProfiler.ModuleEnabled
             });
-            _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Decals")
+            _rightSideList.AddElement(new TextBlockToggle(defaultStyle, "Enable Decals")
             {
                 ToggleField = typeof(DecalRenderModule).GetField("g_EnableDecals"),
                 Toggle = DecalRenderModule.g_EnableDecals
             });
-            _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Forward")
+            _rightSideList.AddElement(new TextBlockToggle(defaultStyle, "Enable Forward")
             {
                 ToggleProperty = ForwardPipelineModule.ModuleEnabled.GetValuePropertyInfo(),
                 ToggleObject = ForwardPipelineModule.ModuleEnabled,
                 Toggle = ForwardPipelineModule.ModuleEnabled
             });
-            _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable CPU Cull")
+            _rightSideList.AddElement(new TextBlockToggle(defaultStyle, "Enable CPU Cull")
             {
                 ToggleProperty = DynamicMeshBatcher.CPUCullingEnabled.GetValuePropertyInfo(),
                 ToggleObject = DynamicMeshBatcher.CPUCullingEnabled,
@@ -163,13 +163,13 @@ namespace DeferredEngine.Demo
             });
 
 
-            _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Show Controls")
+            _rightSideList.AddElement(new TextBlockToggle(defaultStyle, "Show Controls")
             {
                 ToggleProperty = typeof(TextBlock).GetProperty("IsVisible"),
                 ToggleObject = helperText,
                 Toggle = helperText.IsVisible
             });
-            _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Default Material")
+            _rightSideList.AddElement(new TextBlockToggle(defaultStyle, "Default Material")
             {
                 ToggleField = typeof(RenderingSettings).GetField("d_DefaultMaterial"),
                 Toggle = RenderingSettings.d_DefaultMaterial
@@ -181,16 +181,16 @@ namespace DeferredEngine.Demo
 
             _rightSideList.AddElement(new TextBlock(defaultStyle, "Selection") { SwatchColor = Color.DimGray, Dimensions = new Vector2(200, 10), TextAlignment = TextAlignment.Center });
 
-            GuiListToggle _selectionList = new GuiListToggle(Vector2.Zero, defaultStyle);
-            _objectDescriptionList = new GUIList(Vector2.Zero, defaultStyle);
+            ListToggle _selectionList = new ListToggle(Vector2.Zero, defaultStyle);
+            _objectDescriptionList = new List(Vector2.Zero, defaultStyle);
 
             _objectDescriptionList.AddElement(_objectDescriptionName = new TextBlock(defaultStyle, "objDescName"));
             _objectDescriptionList.AddElement(_objectDescriptionPos = new TextBlock(defaultStyle, "objDescName"));
-            _objectDescriptionList.AddElement(_objectButton1 = new GUITextBlockButton(defaultStyle, "objButton1") { IsHidden = true });
-            _objectDescriptionList.AddElement(_objectToggle0 = new GUITextBlockToggle(defaultStyle, "objToggle0") { IsHidden = true });
-            _objectDescriptionList.AddElement(_objectToggle1 = new GUITextBlockToggle(defaultStyle, "objToggle1") { IsHidden = true });
-            _objectDescriptionList.AddElement(_objectToggle2 = new GUITextBlockToggle(defaultStyle, "objToggle2") { IsHidden = true });
-            _objectDescriptionList.AddElement(_objectToggle3 = new GUITextBlockToggle(defaultStyle, "objToggle3") { IsHidden = true });
+            _objectDescriptionList.AddElement(_objectButton1 = new TextBlockButton(defaultStyle, "objButton1") { IsHidden = true });
+            _objectDescriptionList.AddElement(_objectToggle0 = new TextBlockToggle(defaultStyle, "objToggle0") { IsHidden = true });
+            _objectDescriptionList.AddElement(_objectToggle1 = new TextBlockToggle(defaultStyle, "objToggle1") { IsHidden = true });
+            _objectDescriptionList.AddElement(_objectToggle2 = new TextBlockToggle(defaultStyle, "objToggle2") { IsHidden = true });
+            _objectDescriptionList.AddElement(_objectToggle3 = new TextBlockToggle(defaultStyle, "objToggle3") { IsHidden = true });
             _objectDescriptionList.AddElement(_objectSlider0 = new SliderFloatText(defaultStyle, 0, 1, 2, "objToggle1") { IsHidden = true });
             _objectDescriptionList.AddElement(_objectSlider1 = new SliderFloatText(defaultStyle, 0, 1, 2, "objToggle2") { IsHidden = true });
             _objectDescriptionList.AddElement(_objectSlider2 = new SliderIntText(defaultStyle, 0, 10, 1, "objToggle3") { IsHidden = true });
@@ -205,7 +205,7 @@ namespace DeferredEngine.Demo
 
             _rightSideList.AddElement(new TextBlock(defaultStyle, "Options") { SwatchColor = Color.DimGray, Dimensions = new Vector2(200, 10), TextAlignment = TextAlignment.Center });
 
-            GuiListToggle optionList = new GuiListToggle(Vector2.Zero, defaultStyle);
+            ListToggle optionList = new ListToggle(Vector2.Zero, defaultStyle);
             _rightSideList.AddElement(optionList);
 
             /////////////////////////////////////////////////////////////////
@@ -216,16 +216,16 @@ namespace DeferredEngine.Demo
                 defaultStyle.TextFont, Color.DarkSlateGray, Color.White, TextAlignment.Center,
                 Vector2.Zero));
 
-            GuiListToggle sdfList = new GuiListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
+            ListToggle sdfList = new ListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
             optionList.AddElement(sdfList);
 
-            sdfList.AddElement(new GUITextBlockToggle(defaultStyle, "Draw SDF")
+            sdfList.AddElement(new TextBlockToggle(defaultStyle, "Draw SDF")
             {
                 ToggleField = typeof(RenderingSettings.SDF).GetField(nameof(RenderingSettings.SDF.DrawDistance)),
                 Toggle = RenderingSettings.SDF.DrawDistance
             });
 
-            sdfList.AddElement(new GUITextBlockToggle(defaultStyle, "Draw SDF volume")
+            sdfList.AddElement(new TextBlockToggle(defaultStyle, "Draw SDF volume")
             {
                 ToggleField = typeof(RenderingSettings.SDF).GetField(nameof(RenderingSettings.SDF.DrawVolume)),
                 Toggle = RenderingSettings.SDF.DrawVolume
@@ -237,31 +237,31 @@ namespace DeferredEngine.Demo
 
             optionList.AddElement(new TextBlock(defaultStyle, "PostProcessing") { SwatchColor = Color.DarkSlateGray, Dimensions = new Vector2(200, 10), TextAlignment = TextAlignment.Center });
 
-            GuiListToggle postprocessingList = new GuiListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
+            ListToggle postprocessingList = new ListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
             optionList.AddElement(postprocessingList);
 
-            postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Post Processing")
+            postprocessingList.AddElement(new TextBlockToggle(defaultStyle, "Post Processing")
             {
                 ToggleProperty = PostProcessingFx.ModuleEnabled.GetValuePropertyInfo(),
                 ToggleObject = PostProcessingFx.ModuleEnabled,
                 Toggle = PostProcessingFx.ModuleEnabled
             });
 
-            postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "Color Grading")
+            postprocessingList.AddElement(new TextBlockToggle(defaultStyle, "Color Grading")
             {
                 ToggleProperty = ColorGradingFx.ModuleEnabled.GetValuePropertyInfo(),
                 ToggleObject = ColorGradingFx.ModuleEnabled,
                 Toggle = ColorGradingFx.ModuleEnabled
             });
 
-            postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "TAA ")
+            postprocessingList.AddElement(new TextBlockToggle(defaultStyle, "TAA ")
             {
                 ToggleProperty = TemporalAAFx.ModuleEnabled.GetValuePropertyInfo(),
                 ToggleObject = TemporalAAFx.ModuleEnabled,
                 Toggle = TemporalAAFx.ModuleEnabled
             });
 
-            postprocessingList.AddElement(new GUITextBlockToggle(defaultStyle, "TAA Tonemap")
+            postprocessingList.AddElement(new TextBlockToggle(defaultStyle, "TAA Tonemap")
             {
                 ToggleProperty = TemporalAAFx.ModuleTonemapEnabled.GetValuePropertyInfo(),
                 ToggleObject = TemporalAAFx.ModuleTonemapEnabled,
@@ -277,24 +277,24 @@ namespace DeferredEngine.Demo
                 defaultStyle.TextFont, Color.DarkSlateGray, Color.White, TextAlignment.Center,
                 Vector2.Zero));
 
-            GuiListToggle ssrList = new GuiListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
+            ListToggle ssrList = new ListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
             optionList.AddElement(ssrList);
 
-            ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable SSR")
+            ssrList.AddElement(new TextBlockToggle(defaultStyle, "Enable SSR")
             {
                 ToggleProperty = SSReflectionFx.ModuleEnabled.GetValuePropertyInfo(),
                 ToggleObject = SSReflectionFx.ModuleEnabled,
                 Toggle = SSReflectionFx.ModuleEnabled
             });
 
-            ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Stochastic distr.")
+            ssrList.AddElement(new TextBlockToggle(defaultStyle, "Stochastic distr.")
             {
                 ToggleProperty = SSReflectionFx.g_UseTaa.GetValuePropertyInfo(),
                 ToggleObject = SSReflectionFx.g_UseTaa,
                 Toggle = SSReflectionFx.g_UseTaa
             });
 
-            ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Temporal Noise")
+            ssrList.AddElement(new TextBlockToggle(defaultStyle, "Temporal Noise")
             {
                 ToggleProperty = SSReflectionFx.g_Noise.GetValuePropertyInfo(),
                 ToggleObject = SSReflectionFx.g_Noise,
@@ -302,7 +302,7 @@ namespace DeferredEngine.Demo
             });
 
 
-            ssrList.AddElement(new GUITextBlockToggle(defaultStyle, "Firefly Reduction")
+            ssrList.AddElement(new TextBlockToggle(defaultStyle, "Firefly Reduction")
             {
                 ToggleProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_FireflyReduction)),
                 Toggle = SSReflectionFx.g_FireflyReduction
@@ -336,17 +336,17 @@ namespace DeferredEngine.Demo
                 defaultStyle.TextFont, Color.DarkSlateGray, Color.White, TextAlignment.Center,
                 Vector2.Zero));
 
-            GuiListToggle ssaoList = new GuiListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
+            ListToggle ssaoList = new ListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
             optionList.AddElement(ssaoList);
 
-            ssaoList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable SSAO")
+            ssaoList.AddElement(new TextBlockToggle(defaultStyle, "Enable SSAO")
             {
                 ToggleProperty = SSAmbientOcclustionFx.ModuleEnabled.GetValuePropertyInfo(),
                 ToggleObject = SSAmbientOcclustionFx.ModuleEnabled,
                 Toggle = SSAmbientOcclustionFx.ModuleEnabled
             });
 
-            ssaoList.AddElement(new GUITextBlockToggle(defaultStyle, "SSAO Blur: ")
+            ssaoList.AddElement(new TextBlockToggle(defaultStyle, "SSAO Blur: ")
             {
                 ToggleProperty = SSAmbientOcclustionFx.ModuleEnableBlur.GetValuePropertyInfo(),
                 ToggleObject = SSAmbientOcclustionFx.ModuleEnableBlur,
@@ -382,10 +382,10 @@ namespace DeferredEngine.Demo
                 defaultStyle.TextFont, Color.DarkSlateGray, Color.White, TextAlignment.Center,
                 Vector2.Zero));
 
-            GuiListToggle bloomList = new GuiListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
+            ListToggle bloomList = new ListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
             optionList.AddElement(bloomList);
 
-            bloomList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Bloom")
+            bloomList.AddElement(new TextBlockToggle(defaultStyle, "Enable Bloom")
             {
                 ToggleProperty = BloomFx.ModuleEnabled.GetValuePropertyInfo(),
                 ToggleObject = BloomFx.ModuleEnabled,
@@ -420,10 +420,10 @@ namespace DeferredEngine.Demo
                 defaultStyle.TextFont, Color.DarkSlateGray, Color.White, TextAlignment.Center,
                 Vector2.Zero));
 
-            GuiListToggle environmentGroup = new GuiListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
+            ListToggle environmentGroup = new ListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
             optionList.AddElement(environmentGroup);
 
-            environmentGroup.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Environment")
+            environmentGroup.AddElement(new TextBlockToggle(defaultStyle, "Enable Environment")
             {
                 ToggleProperty = EnvironmentPipelineModule.ModuleEnabled.GetValuePropertyInfo(),
                 ToggleObject = EnvironmentPipelineModule.ModuleEnabled,

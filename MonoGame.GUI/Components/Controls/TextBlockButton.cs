@@ -1,26 +1,25 @@
-﻿using System;
-using System.Reflection;
-using MonoGame.GUIHelper;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.GUIHelper;
+using System.Reflection;
 
 namespace MonoGame.GUI
 {
-    public class GUITextBlockButton : TextBlock
+    public class TextBlockButton : TextBlock
     {
         public bool Toggle;
-        
+
         private static readonly float ButtonBorder = 2;
 
         private static readonly Color HoverColor = Color.Tomato;
-        
+
         private bool _isHovered;
-        
+
         public MethodInfo ButtonMethod;
         public object[] ButtonMethodArgs = null;
         public Object ButtonObject;
 
-        public GUITextBlockButton(GUIStyle style, String text) : this(
+        public TextBlockButton(GUIStyle style, String text) : this(
             position: Vector2.Zero,
             dimensions: style.Dimensions,
             text: text,
@@ -32,7 +31,7 @@ namespace MonoGame.GUI
             layer: 0)
         { }
 
-        public GUITextBlockButton(Vector2 position, Vector2 dimensions, String text, SpriteFont font, Color blockColor, Color textColor, TextAlignment textAlignment = TextAlignment.Center, Vector2 textBorder = default, int layer = 0) : base(position, dimensions, text, font, blockColor, textColor, textAlignment, textBorder, layer)
+        public TextBlockButton(Vector2 position, Vector2 dimensions, String text, SpriteFont font, Color blockColor, Color textColor, TextAlignment textAlignment = TextAlignment.Center, Vector2 textBorder = default, int layer = 0) : base(position, dimensions, text, font, blockColor, textColor, textAlignment, textBorder, layer)
         {
 
         }
@@ -46,7 +45,7 @@ namespace MonoGame.GUI
         public override void Draw(GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
         {
             guiRenderer.DrawQuad(parentPosition + Position, Dimensions, Color.DimGray);
-            guiRenderer.DrawQuad(parentPosition + Position + Vector2.One * ButtonBorder, Dimensions - 2*Vector2.One*ButtonBorder, _isHovered ? HoverColor : SwatchColor);
+            guiRenderer.DrawQuad(parentPosition + Position + Vector2.One * ButtonBorder, Dimensions - 2 * Vector2.One * ButtonBorder, _isHovered ? HoverColor : SwatchColor);
             guiRenderer.DrawText(parentPosition + Position + _fontPosition, Text, TextFont, TextColor);
         }
 
@@ -74,5 +73,5 @@ namespace MonoGame.GUI
         }
 
     }
-    
+
 }

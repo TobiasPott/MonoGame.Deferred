@@ -5,10 +5,8 @@ using System.Text;
 
 namespace MonoGame.GUI
 {
-    public class GuiDropList : TextBlock
+    public class Dropdown : TextBlock
     {
-        public bool Toggle;
-
         private static readonly float ButtonBorder = 2;
 
         private static readonly Color HoverColor = Color.LightGray;
@@ -24,7 +22,7 @@ namespace MonoGame.GUI
         //Load
         private readonly StringBuilder _selectedOptionName = new StringBuilder(100);
 
-        public GuiDropList(GUIStyle style, string text) : this(
+        public Dropdown(GUIStyle style, string text) : this(
             position: Vector2.Zero,
             dimensions: style.Dimensions,
             text: text,
@@ -38,7 +36,7 @@ namespace MonoGame.GUI
         {
         }
 
-        public GuiDropList(Vector2 position, Vector2 dimensions, string text, SpriteFont font, Color blockColor, Color textColor, TextAlignment textAlignment = TextAlignment.Center, Vector2 textBorder = default, int layer = 0) : base(position, dimensions, text, font, blockColor, textColor, textAlignment, textBorder, layer)
+        public Dropdown(Vector2 position, Vector2 dimensions, string text, SpriteFont font, Color blockColor, Color textColor, TextAlignment textAlignment = TextAlignment.Center, Vector2 textBorder = default, int layer = 0) : base(position, dimensions, text, font, blockColor, textColor, textAlignment, textBorder, layer)
         {
             _selectedOptionName.Append("...");
 

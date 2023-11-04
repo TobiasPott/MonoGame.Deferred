@@ -1,23 +1,22 @@
-﻿using System;
-using System.Reflection;
-using MonoGame.GUIHelper;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.GUIHelper;
+using System.Reflection;
 
 namespace MonoGame.GUI
 {
-    public class GUITextBlockToggle : TextBlock
+    public class TextBlockToggle : TextBlock
     {
         public bool Toggle;
 
         private const float ToggleIndicatorSize = 20;
         private const float ToggleIndicatorBorder = 10;
-        
+
         public PropertyInfo ToggleProperty;
         public FieldInfo ToggleField;
         public object ToggleObject;
 
-        public GUITextBlockToggle(GUIStyle style, String text) : this(
+        public TextBlockToggle(GUIStyle style, String text) : this(
             position: Vector2.Zero,
             dimensions: style.Dimensions,
             text: text,
@@ -29,7 +28,7 @@ namespace MonoGame.GUI
             layer: 0)
         { }
 
-        public GUITextBlockToggle(Vector2 position, Vector2 dimensions, String text, SpriteFont font, Color blockColor, Color textColor, TextAlignment textAlignment = TextAlignment.Left, Vector2 textBorder = default, int layer = 0) : base(position, dimensions, text, font, blockColor, textColor, textAlignment, textBorder, layer)
+        public TextBlockToggle(Vector2 position, Vector2 dimensions, String text, SpriteFont font, Color blockColor, Color textColor, TextAlignment textAlignment = TextAlignment.Left, Vector2 textBorder = default, int layer = 0) : base(position, dimensions, text, font, blockColor, textColor, textAlignment, textBorder, layer)
         {
 
         }
@@ -56,9 +55,9 @@ namespace MonoGame.GUI
 
             _fontPosition = TextAlignment switch
             {
-                TextAlignment.Left     => (Dimensions - Vector2.UnitX * (ToggleIndicatorSize + ToggleIndicatorBorder * 2)) / 2 * Vector2.UnitY + _textBorder * Vector2.UnitX - textDimensions / 2 * Vector2.UnitY,
-                TextAlignment.Center   => (Dimensions - Vector2.UnitX * (ToggleIndicatorSize + ToggleIndicatorBorder * 2)) / 2 - textDimensions / 2,
-                TextAlignment.Right    => (Dimensions - Vector2.UnitX * (ToggleIndicatorSize + ToggleIndicatorBorder * 2)) * new Vector2(1, 0.5f) - _textBorder * Vector2.UnitX - textDimensions / 2,
+                TextAlignment.Left => (Dimensions - Vector2.UnitX * (ToggleIndicatorSize + ToggleIndicatorBorder * 2)) / 2 * Vector2.UnitY + _textBorder * Vector2.UnitX - textDimensions / 2 * Vector2.UnitY,
+                TextAlignment.Center => (Dimensions - Vector2.UnitX * (ToggleIndicatorSize + ToggleIndicatorBorder * 2)) / 2 - textDimensions / 2,
+                TextAlignment.Right => (Dimensions - Vector2.UnitX * (ToggleIndicatorSize + ToggleIndicatorBorder * 2)) * new Vector2(1, 0.5f) - _textBorder * Vector2.UnitX - textDimensions / 2,
                 _ => throw new ArgumentOutOfRangeException(),
             };
         }
@@ -66,7 +65,7 @@ namespace MonoGame.GUI
         public override void Draw(GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
         {
             guiRenderer.DrawQuad(parentPosition + Position, Dimensions, SwatchColor);
-            guiRenderer.DrawQuad(parentPosition + Position + Dimensions * new Vector2(1, 0.5f) - ToggleIndicatorBorder * Vector2.UnitX - ToggleIndicatorSize * new Vector2(1,0.5f) , Vector2.One * ToggleIndicatorSize, Toggle ? Color.LimeGreen : Color.Red);
+            guiRenderer.DrawQuad(parentPosition + Position + Dimensions * new Vector2(1, 0.5f) - ToggleIndicatorBorder * Vector2.UnitX - ToggleIndicatorSize * new Vector2(1, 0.5f), Vector2.One * ToggleIndicatorSize, Toggle ? Color.LimeGreen : Color.Red);
             guiRenderer.DrawText(parentPosition + Position + _fontPosition, Text, TextFont, TextColor);
         }
 
@@ -98,5 +97,5 @@ namespace MonoGame.GUI
         }
 
     }
-    
+
 }

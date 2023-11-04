@@ -1,9 +1,9 @@
-﻿using MonoGame.GUIHelper;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using MonoGame.GUIHelper;
 
 namespace MonoGame.GUI
 {
-    public class GuiListToggleScroll : GuiListToggle
+    public class ListToggleScroll : ListToggle
     {
         protected bool IsEngaged = false;
 
@@ -31,7 +31,7 @@ namespace MonoGame.GUI
         protected float SliderPosition = 0.5f;
         protected float SliderHeight = 10;
 
-        public GuiListToggleScroll(Vector2 position, GUIStyle style) : this(
+        public ListToggleScroll(Vector2 position, GUIStyle style) : this(
             position: position,
             defaultDimensions: style.Dimensions,
             layer: 0,
@@ -39,7 +39,7 @@ namespace MonoGame.GUI
             ParentDimensions: style.ParentDimensions)
         { }
 
-        public GuiListToggleScroll(Vector2 position, Vector2 defaultDimensions, int layer = 0, Alignment alignment = Alignment.None, Vector2 ParentDimensions = new Vector2()) : base(position, defaultDimensions, layer, alignment, ParentDimensions)
+        public ListToggleScroll(Vector2 position, Vector2 defaultDimensions, int layer = 0, Alignment alignment = Alignment.None, Vector2 ParentDimensions = new Vector2()) : base(position, defaultDimensions, layer, alignment, ParentDimensions)
         {
             this.ParentDimensions = ParentDimensions;
         }
