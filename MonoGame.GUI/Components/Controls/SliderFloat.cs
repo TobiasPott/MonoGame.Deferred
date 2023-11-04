@@ -4,21 +4,13 @@ using System.Reflection;
 
 namespace MonoGame.GUI
 {
+
     /// <summary>
     /// A slider that can reference float values
     /// </summary>
-    public class SliderFloat : ColorSwatch
+    public class SliderFloat : SliderBase<float>
     {
-        protected bool IsEngaged = false;
-
-        protected const float SliderIndicatorSize = 15;
-        protected const float SliderIndicatorBorder = 10;
-        protected const float SliderBaseHeight = 5;
-
-        protected float _sliderPercent;
-
-        private float _sliderValue;
-        public float SliderValue
+        public override float SliderValue
         {
             get { return _sliderValue; }
             set
@@ -28,14 +20,6 @@ namespace MonoGame.GUI
             }
         }
 
-        public float MaxValue = 1;
-        public float MinValue;
-
-        protected Color _sliderColor;
-
-        public PropertyInfo SliderProperty;
-        public FieldInfo SliderField;
-        public Object SliderObject;
 
         public SliderFloat(GUIStyle style, float min, float max) : this(
             position: Vector2.Zero,
@@ -50,26 +34,15 @@ namespace MonoGame.GUI
             )
         { }
 
-        public SliderFloat(Vector2 position, Vector2 dimensions, float min, float max, Color blockColor, Color sliderColor, int layer = 0, Alignment alignment = Alignment.None, Vector2 ParentDimensions = new Vector2()) : base(position, dimensions, blockColor, layer, alignment, ParentDimensions)
+        public SliderFloat(Vector2 position, Vector2 dimensions, float min, float max, 
+            Color blockColor, Color sliderColor, int layer = 0, 
+            Alignment alignment = Alignment.None, Vector2 ParentDimensions = new Vector2()) 
+            : base(position, dimensions,  min, max, blockColor, sliderColor, layer, alignment, ParentDimensions)
         {
             _sliderColor = sliderColor;
             MinValue = min;
             MaxValue = max;
             _sliderValue = min;
-        }
-
-        public void SetField(Object obj, string field)
-        {
-            SliderObject = obj;
-            SliderField = obj.GetType().GetField(field);
-            SliderValue = (float)SliderField.GetValue(obj);
-        }
-
-        public void SetProperty(Object obj, string property)
-        {
-            SliderObject = obj;
-            SliderProperty = obj.GetType().GetProperty(property);
-            SliderValue = (float)SliderProperty.GetValue(obj);
         }
 
         public override void Update(GameTime gameTime, Vector2 mousePosition, Vector2 parentPosition)

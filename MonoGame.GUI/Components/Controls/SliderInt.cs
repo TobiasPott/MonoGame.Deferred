@@ -4,14 +4,13 @@ using System.Reflection;
 
 namespace MonoGame.GUI
 {
-    public class SliderInt : SliderFloat
+    public class SliderInt : SliderBase<int>
     {
         public int MaxValueInt = 1;
         public int MinValueInt = 0;
         public int StepSize = 1;
 
-        public int _sliderValue;
-        public new int SliderValue
+        public override int SliderValue
         {
             get { return _sliderValue; }
             set
@@ -40,20 +39,6 @@ namespace MonoGame.GUI
             MaxValueInt = max;
             MinValueInt = min;
             StepSize = stepSize;
-        }
-
-        public void SetField(Object obj, string field)
-        {
-            SliderObject = obj;
-            SliderField = obj.GetType().GetField(field);
-            SliderValue = (int)SliderField.GetValue(obj);
-        }
-
-        public void SetProperty(Object obj, string property)
-        {
-            SliderObject = obj;
-            SliderProperty = obj.GetType().GetProperty(property);
-            SliderValue = (int)SliderProperty.GetValue(obj);
         }
 
         public override void Update(GameTime gameTime, Vector2 mousePosition, Vector2 parentPosition)
