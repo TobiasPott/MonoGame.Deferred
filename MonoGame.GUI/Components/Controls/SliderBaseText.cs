@@ -19,7 +19,7 @@ namespace MonoGame.GUI
 
         protected Vector2 SliderDimensions;
 
-        protected T _sliderPercent;
+        protected float _sliderPercent;
         protected T _sliderValue;
         public T SliderValue
         {
