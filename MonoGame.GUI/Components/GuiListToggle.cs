@@ -26,7 +26,7 @@ namespace MonoGame.GUI
             ParentDimensions: guiStyle.ParentDimensionsStyle)
         { }
 
-        public GuiListToggle(Vector2 position, Vector2 defaultDimensions, int layer = 0, GUIStyle.Alignment alignment = GUIStyle.Alignment.None, Vector2 ParentDimensions = new Vector2()) : base(position, defaultDimensions, layer, alignment, ParentDimensions)
+        public GuiListToggle(Vector2 position, Vector2 defaultDimensions, int layer = 0, Alignment alignment = Alignment.None, Vector2 ParentDimensions = new Vector2()) : base(position, defaultDimensions, layer, alignment, ParentDimensions)
         {
             _toggleDimensions = new Vector2(defaultDimensions.X, ToggleButtonHeight);
         }

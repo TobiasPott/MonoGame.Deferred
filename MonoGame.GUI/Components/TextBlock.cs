@@ -67,7 +67,7 @@ namespace MonoGame.GUI
         /// <summary>
         /// A default colored block with text on top
         /// </summary>
-        public TextBlock(Vector2 position, Vector2 dimensions, String text, SpriteFont font, Color blockColor, Color textColor, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Left, Vector2 textBorder = default, int layer = 0, GUIStyle.Alignment alignment = GUIStyle.Alignment.None, Vector2 parentDimensions = default) : base(position, dimensions, blockColor, layer, alignment, parentDimensions)
+        public TextBlock(Vector2 position, Vector2 dimensions, String text, SpriteFont font, Color blockColor, Color textColor, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Left, Vector2 textBorder = default, int layer = 0, Alignment alignment = Alignment.None, Vector2 parentDimensions = default) : base(position, dimensions, blockColor, layer, alignment, parentDimensions)
         {
             _text = new StringBuilder(text);
             TextColor = textColor;

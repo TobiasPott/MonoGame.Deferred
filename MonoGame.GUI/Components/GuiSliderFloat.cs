@@ -51,7 +51,7 @@ namespace MonoGame.GUI
             )
         { }
 
-        public GuiSliderFloat(Vector2 position, Vector2 dimensions, float min, float max, Color blockColor, Color sliderColor, int layer = 0, GUIStyle.Alignment alignment = GUIStyle.Alignment.None, Vector2 ParentDimensions = new Vector2()) : base(position, dimensions, blockColor, layer, alignment, ParentDimensions)
+        public GuiSliderFloat(Vector2 position, Vector2 dimensions, float min, float max, Color blockColor, Color sliderColor, int layer = 0, Alignment alignment = Alignment.None, Vector2 ParentDimensions = new Vector2()) : base(position, dimensions, blockColor, layer, alignment, ParentDimensions)
         {
             _sliderColor = sliderColor;
             MinValue = min;

@@ -20,14 +20,14 @@ namespace MonoGame.GUI
             //Filled by GuiStyle
         }
 
-        public ColorSwatch(Vector2 position, Vector2 dimensions, Color blockColor, int layer = 0, GUIStyle.Alignment alignment = GUIStyle.Alignment.None, Vector2 ParentDimensions = default)
+        public ColorSwatch(Vector2 position, Vector2 dimensions, Color blockColor, int layer = 0, Alignment alignment = Alignment.None, Vector2 ParentDimensions = default)
         {
             Position = position;
             Dimensions = dimensions;
             SwatchColor = blockColor;
             Layer = layer;
             Alignment = alignment;
-            if (Alignment != GUIStyle.Alignment.None)
+            if (Alignment != Alignment.None)
             {
                 ParentResized(ParentDimensions);
             }
@@ -55,7 +55,7 @@ namespace MonoGame.GUI
         }
         
 
-        public override GUIStyle.Alignment Alignment { get; set; }
+        public override Alignment Alignment { get; set; }
 
         public bool IsVisible
         {

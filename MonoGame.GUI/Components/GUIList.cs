@@ -8,8 +8,8 @@ namespace MonoGame.GUI
 
         protected List<GUIElement> _children = new List<GUIElement>();
 
-        private GUIStyle.Alignment _alignment;
-        public override GUIStyle.Alignment Alignment
+        private Alignment _alignment;
+        public override Alignment Alignment
         {
             get
             {
@@ -18,7 +18,7 @@ namespace MonoGame.GUI
             set
             {
                 _alignment = value;
-                if (value != GUIStyle.Alignment.None)
+                if (value != Alignment.None)
                 {
                     ParentResized(ParentDimensions);
                 }
@@ -43,7 +43,7 @@ namespace MonoGame.GUI
         /// <param name="layer"></param>
         /// <param name="alignment"></param>
         /// <param name="parentDimensions"></param>
-        public GUIList(Vector2 position, Vector2 defaultDimensions, int layer = 0, GUIStyle.Alignment alignment = GUIStyle.Alignment.None, Vector2 parentDimensions = default)
+        public GUIList(Vector2 position, Vector2 defaultDimensions, int layer = 0, Alignment alignment = Alignment.None, Vector2 parentDimensions = default)
         {
             DefaultDimensions = defaultDimensions;
             ParentDimensions = parentDimensions;

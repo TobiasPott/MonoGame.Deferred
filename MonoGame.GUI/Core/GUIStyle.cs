@@ -3,6 +3,21 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MonoGame.GUI
 {
+
+    public enum Alignment
+    {
+        None,
+        TopLeft,
+        TopMiddle,
+        TopRight,
+        CenterLeft,
+        Center,
+        CenterRight,
+        BottomLeft,
+        BottomMiddle,
+        BottomRight,
+    }
+
     public class GUIStyle
     {
         public Vector2 DimensionsStyle;
@@ -28,20 +43,6 @@ namespace MonoGame.GUI
             TextButtonAlignmentStyle = textButtonAlignmentStyle;
             TextBorderStyle = textBorderStyle;
             SliderColorStyle = sliderColorStyle;
-        }
-
-        public enum Alignment
-        {
-            None,
-            TopLeft,
-            TopMiddle,
-            TopRight,
-            CenterLeft,
-            Center,
-            CenterRight,
-            BottomLeft,
-            BottomMiddle,
-            BottomRight,
         }
 
         public enum TextAlignment

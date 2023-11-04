@@ -41,7 +41,7 @@ namespace MonoGame.GUI
             ParentDimensions: guiStyle.ParentDimensionsStyle)
         { }
 
-        public ColorPicker(Vector2 position, Vector2 dimensions, Color blockColor, SpriteFont font, int layer = 0, GUIStyle.Alignment alignment = GUIStyle.Alignment.None, Vector2 ParentDimensions = new Vector2()) : base(position, dimensions, blockColor, layer, alignment, ParentDimensions)
+        public ColorPicker(Vector2 position, Vector2 dimensions, Color blockColor, SpriteFont font, int layer = 0, Alignment alignment = Alignment.None, Vector2 ParentDimensions = new Vector2()) : base(position, dimensions, blockColor, layer, alignment, ParentDimensions)
         {
             _font = font;
             _colorString = new StringBuilder(20);

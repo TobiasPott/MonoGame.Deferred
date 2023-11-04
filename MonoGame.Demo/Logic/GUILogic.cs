@@ -71,7 +71,7 @@ namespace DeferredEngine.Demo
                 blockColorStyle: Color.Gray,
                 textColorStyle: Color.White,
                 sliderColorStyle: Color.White,
-                guiAlignmentStyle: GUIStyle.Alignment.None,
+                guiAlignmentStyle: Alignment.None,
                 textAlignmentStyle: GUIStyle.TextAlignment.Left,
                 textButtonAlignmentStyle: GUIStyle.TextAlignment.Center,
                 textBorderStyle: new Vector2(10, 1),
@@ -103,7 +103,7 @@ namespace DeferredEngine.Demo
                 ToggleField = typeof(RenderingSettings).GetField(nameof(RenderingSettings.e_LocalTransformation)),
                 Toggle = RenderingSettings.e_LocalTransformation
             });
-            _leftSideList.Alignment = GUIStyle.Alignment.BottomLeft;
+            _leftSideList.Alignment = Alignment.BottomLeft;
 
             ChangeGizmoMode(GizmoModes.Translation);
 
@@ -430,7 +430,7 @@ namespace DeferredEngine.Demo
                 Toggle = EnvironmentPipelineModule.ModuleEnabled
             });
 
-            _rightSideList.Alignment = GUIStyle.Alignment.TopRight;
+            _rightSideList.Alignment = Alignment.TopRight;
         }
 
         public void ChangeGizmoMode(GizmoModes mode)
