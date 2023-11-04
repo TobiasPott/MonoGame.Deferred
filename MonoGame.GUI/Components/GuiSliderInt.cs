@@ -1,8 +1,8 @@
-﻿using HelperSuite.GUIHelper;
+﻿using MonoGame.GUIHelper;
 using Microsoft.Xna.Framework;
 using System.Reflection;
 
-namespace HelperSuite.GUI
+namespace MonoGame.GUI
 {
     public class GuiSliderInt : GuiSliderFloat
     {

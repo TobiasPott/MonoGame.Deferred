@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Text;
-using HelperSuite.GUI;
-using HelperSuite.GUIHelper;
+using MonoGame.GUI;
+using MonoGame.GUIHelper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
 
-namespace HelperSuite.GUI
+namespace MonoGame.GUI
 {
     // ToDo: UI: Assumption: This is like the GUI pipeline module handling rendering of the UI stack/hierarchy?
     public class GUIRenderer : IDisposable
@@ -56,7 +56,7 @@ namespace HelperSuite.GUI
 
         }
 
-        public void Draw(GUICanvas canvas)
+        public void Draw(Canvas canvas)
         {
             //if (!GameSettings.ui_DrawUI) return;
 

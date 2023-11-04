@@ -7,8 +7,8 @@ using DeferredEngine.Recources;
 using DeferredEngine.Rendering;
 using DeferredEngine.Rendering.PostProcessing;
 using DeferredEngine.Utilities;
-using HelperSuite.GUI;
-using HelperSuite.GUIHelper;
+using MonoGame.GUI;
+using MonoGame.GUIHelper;
 using Microsoft.Xna.Framework;
 using System.Text;
 
@@ -17,14 +17,14 @@ namespace DeferredEngine.Demo
     public class GUILogic
     {
         private DemoAssets _assets;
-        public GUICanvas GuiCanvas;
+        public Canvas GuiCanvas;
 
         private GuiListToggleScroll _rightSideList;
         private GUIList _leftSideList;
 
         private GUIList _objectDescriptionList;
-        private GUITextBlock _objectDescriptionName;
-        private GUITextBlock _objectDescriptionPos;
+        private TextBlock _objectDescriptionName;
+        private TextBlock _objectDescriptionPos;
         private GUITextBlockButton _objectButton1;
         private GUITextBlockToggle _objectToggle0;
         private GUITextBlockToggle _objectToggle1;
@@ -33,7 +33,7 @@ namespace DeferredEngine.Demo
         private GuiSliderFloatText _objectSlider0;
         private GuiSliderFloatText _objectSlider1;
         private GuiSliderIntText _objectSlider2;
-        private GUIColorPicker _objectColorPicker1;
+        private ColorPicker _objectColorPicker1;
 
         private GUIStyle defaultStyle;
 
@@ -63,7 +63,7 @@ namespace DeferredEngine.Demo
         /// <param name="sceneLogicCamera"></param>
         private void CreateGUI(Camera sceneLogicCamera)
         {
-            GuiCanvas = new GUICanvas(Vector2.Zero, RenderingSettings.Screen.g_Resolution);
+            GuiCanvas = new Canvas(Vector2.Zero, RenderingSettings.Screen.g_Resolution);
 
             defaultStyle = new GUIStyle(
                 dimensionsStyle: new Vector2(200, 35),
@@ -110,7 +110,7 @@ namespace DeferredEngine.Demo
             //Editor options
             GuiCanvas.AddElement(_rightSideList = new GuiListToggleScroll(new Vector2(-20, 0), defaultStyle));
 
-            GUITextBlock helperText = new GUITextBlock(new Vector2(0, 100), new Vector2(300, 200), CreateHelperText(), defaultStyle.TextFontStyle, new Color(Color.DimGray, 0.2f), Color.White, GUIStyle.TextAlignment.Left, new Vector2(10, 1)) { IsHidden = true };
+            TextBlock helperText = new TextBlock(new Vector2(0, 100), new Vector2(300, 200), CreateHelperText(), defaultStyle.TextFontStyle, new Color(Color.DimGray, 0.2f), Color.White, GUIStyle.TextAlignment.Left, new Vector2(10, 1)) { IsHidden = true };
             GuiCanvas.AddElement(helperText);
 
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Enable Selection")
@@ -165,7 +165,7 @@ namespace DeferredEngine.Demo
 
             _rightSideList.AddElement(new GUITextBlockToggle(defaultStyle, "Show Controls")
             {
-                ToggleProperty = typeof(GUITextBlock).GetProperty("IsVisible"),
+                ToggleProperty = typeof(TextBlock).GetProperty("IsVisible"),
                 ToggleObject = helperText,
                 Toggle = helperText.IsVisible
             });
@@ -179,13 +179,13 @@ namespace DeferredEngine.Demo
             //{
             //});
 
-            _rightSideList.AddElement(new GUITextBlock(defaultStyle, "Selection") { BlockColor = Color.DimGray, Dimensions = new Vector2(200, 10), TextAlignment = GUIStyle.TextAlignment.Center });
+            _rightSideList.AddElement(new TextBlock(defaultStyle, "Selection") { SwatchColor = Color.DimGray, Dimensions = new Vector2(200, 10), TextAlignment = GUIStyle.TextAlignment.Center });
 
             GuiListToggle _selectionList = new GuiListToggle(Vector2.Zero, defaultStyle);
             _objectDescriptionList = new GUIList(Vector2.Zero, defaultStyle);
 
-            _objectDescriptionList.AddElement(_objectDescriptionName = new GUITextBlock(defaultStyle, "objDescName"));
-            _objectDescriptionList.AddElement(_objectDescriptionPos = new GUITextBlock(defaultStyle, "objDescName"));
+            _objectDescriptionList.AddElement(_objectDescriptionName = new TextBlock(defaultStyle, "objDescName"));
+            _objectDescriptionList.AddElement(_objectDescriptionPos = new TextBlock(defaultStyle, "objDescName"));
             _objectDescriptionList.AddElement(_objectButton1 = new GUITextBlockButton(defaultStyle, "objButton1") { IsHidden = true });
             _objectDescriptionList.AddElement(_objectToggle0 = new GUITextBlockToggle(defaultStyle, "objToggle0") { IsHidden = true });
             _objectDescriptionList.AddElement(_objectToggle1 = new GUITextBlockToggle(defaultStyle, "objToggle1") { IsHidden = true });
@@ -194,7 +194,7 @@ namespace DeferredEngine.Demo
             _objectDescriptionList.AddElement(_objectSlider0 = new GuiSliderFloatText(defaultStyle, 0, 1, 2, "objToggle1") { IsHidden = true });
             _objectDescriptionList.AddElement(_objectSlider1 = new GuiSliderFloatText(defaultStyle, 0, 1, 2, "objToggle2") { IsHidden = true });
             _objectDescriptionList.AddElement(_objectSlider2 = new GuiSliderIntText(defaultStyle, 0, 10, 1, "objToggle3") { IsHidden = true });
-            _objectDescriptionList.AddElement(_objectColorPicker1 = new GUIColorPicker(defaultStyle) { IsHidden = true });
+            _objectDescriptionList.AddElement(_objectColorPicker1 = new ColorPicker(defaultStyle) { IsHidden = true });
 
             _selectionList.AddElement(_objectDescriptionList);
             _rightSideList.AddElement(_selectionList);
@@ -203,7 +203,7 @@ namespace DeferredEngine.Demo
             //Options
             /////////////////////////////////////////////////////////////////
 
-            _rightSideList.AddElement(new GUITextBlock(defaultStyle, "Options") { BlockColor = Color.DimGray, Dimensions = new Vector2(200, 10), TextAlignment = GUIStyle.TextAlignment.Center });
+            _rightSideList.AddElement(new TextBlock(defaultStyle, "Options") { SwatchColor = Color.DimGray, Dimensions = new Vector2(200, 10), TextAlignment = GUIStyle.TextAlignment.Center });
 
             GuiListToggle optionList = new GuiListToggle(Vector2.Zero, defaultStyle);
             _rightSideList.AddElement(optionList);
@@ -212,7 +212,7 @@ namespace DeferredEngine.Demo
             //SDF
             /////////////////////////////////////////////////////////////////
             /// 
-            optionList.AddElement(new GUITextBlock(Vector2.Zero, new Vector2(200, 10), "SDF",
+            optionList.AddElement(new TextBlock(Vector2.Zero, new Vector2(200, 10), "SDF",
                 defaultStyle.TextFontStyle, Color.DarkSlateGray, Color.White, GUIStyle.TextAlignment.Center,
                 Vector2.Zero));
 
@@ -235,7 +235,7 @@ namespace DeferredEngine.Demo
             //Post Processing
             /////////////////////////////////////////////////////////////////
 
-            optionList.AddElement(new GUITextBlock(defaultStyle, "PostProcessing") { BlockColor = Color.DarkSlateGray, Dimensions = new Vector2(200, 10), TextAlignment = GUIStyle.TextAlignment.Center });
+            optionList.AddElement(new TextBlock(defaultStyle, "PostProcessing") { SwatchColor = Color.DarkSlateGray, Dimensions = new Vector2(200, 10), TextAlignment = GUIStyle.TextAlignment.Center });
 
             GuiListToggle postprocessingList = new GuiListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
             optionList.AddElement(postprocessingList);
@@ -273,7 +273,7 @@ namespace DeferredEngine.Demo
             //SSR
             /////////////////////////////////////////////////////////////////
 
-            optionList.AddElement(new GUITextBlock(Vector2.Zero, new Vector2(200, 10), "Screen Space Reflections",
+            optionList.AddElement(new TextBlock(Vector2.Zero, new Vector2(200, 10), "Screen Space Reflections",
                 defaultStyle.TextFontStyle, Color.DarkSlateGray, Color.White, GUIStyle.TextAlignment.Center,
                 Vector2.Zero));
 
@@ -332,7 +332,7 @@ namespace DeferredEngine.Demo
             //SSAO
             /////////////////////////////////////////////////////////////////
             /// 
-            optionList.AddElement(new GUITextBlock(Vector2.Zero, new Vector2(200, 10), "Ambient Occlusion",
+            optionList.AddElement(new TextBlock(Vector2.Zero, new Vector2(200, 10), "Ambient Occlusion",
                 defaultStyle.TextFontStyle, Color.DarkSlateGray, Color.White, GUIStyle.TextAlignment.Center,
                 Vector2.Zero));
 
@@ -378,7 +378,7 @@ namespace DeferredEngine.Demo
             //Bloom
             /////////////////////////////////////////////////////////////////
             /// 
-            optionList.AddElement(new GUITextBlock(Vector2.Zero, new Vector2(200, 10), "Bloom",
+            optionList.AddElement(new TextBlock(Vector2.Zero, new Vector2(200, 10), "Bloom",
                 defaultStyle.TextFontStyle, Color.DarkSlateGray, Color.White, GUIStyle.TextAlignment.Center,
                 Vector2.Zero));
 
@@ -416,7 +416,7 @@ namespace DeferredEngine.Demo
             //}
 
 
-            optionList.AddElement(new GUITextBlock(Vector2.Zero, new Vector2(200, 10), "Environment",
+            optionList.AddElement(new TextBlock(Vector2.Zero, new Vector2(200, 10), "Environment",
                 defaultStyle.TextFontStyle, Color.DarkSlateGray, Color.White, GUIStyle.TextAlignment.Center,
                 Vector2.Zero));
 
@@ -445,19 +445,19 @@ namespace DeferredEngine.Demo
             switch (mode)
             {
                 case GizmoModes.Translation:
-                    _gizmoTranslation.BlockColor = Color.MonoGameOrange;
-                    _gizmoRotation.BlockColor = Color.Gray;
-                    _gizmoScale.BlockColor = Color.Gray;
+                    _gizmoTranslation.SwatchColor = Color.MonoGameOrange;
+                    _gizmoRotation.SwatchColor = Color.Gray;
+                    _gizmoScale.SwatchColor = Color.Gray;
                     break;
                 case GizmoModes.Rotation:
-                    _gizmoTranslation.BlockColor = Color.Gray;
-                    _gizmoRotation.BlockColor = Color.MonoGameOrange;
-                    _gizmoScale.BlockColor = Color.Gray;
+                    _gizmoTranslation.SwatchColor = Color.Gray;
+                    _gizmoRotation.SwatchColor = Color.MonoGameOrange;
+                    _gizmoScale.SwatchColor = Color.Gray;
                     break;
                 case GizmoModes.Scale:
-                    _gizmoTranslation.BlockColor = Color.Gray;
-                    _gizmoRotation.BlockColor = Color.Gray;
-                    _gizmoScale.BlockColor = Color.MonoGameOrange;
+                    _gizmoTranslation.SwatchColor = Color.Gray;
+                    _gizmoRotation.SwatchColor = Color.Gray;
+                    _gizmoScale.SwatchColor = Color.MonoGameOrange;
                     break;
             }
         }

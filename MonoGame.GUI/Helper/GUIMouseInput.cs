@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace HelperSuite.GUIHelper
+namespace MonoGame.GUIHelper
 {
     public static class GUIMouseInput
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace HelperSuite.GUI
+namespace MonoGame.GUI
 {
     public class GUIList : GUIElement
     {
@@ -81,7 +81,7 @@ namespace HelperSuite.GUI
             //    child.ParentResized(ElementDimensions);
             //}
 
-            Position = GUICanvas.UpdateAlignment(Alignment, parentDimensions, Dimensions, Position, OffsetPosition);
+            Position = Canvas.UpdateAlignment(Alignment, parentDimensions, Dimensions, Position, OffsetPosition);
         }
 
 

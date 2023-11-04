@@ -1,17 +1,17 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace HelperSuite.GUI
+namespace MonoGame.GUI
 {
     //todo:
     //Sort by layer to see which UIClick is the active one (only on top!)
 
-    public class GUICanvas : GUIElement
+    public class Canvas : GUIElement
     {
         public bool IsEnabled = true;
 
         private readonly List<GUIElement> _children = new List<GUIElement>();
 
-        public GUICanvas(Vector2 position, Vector2 dimensions, int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, Vector2 ParentDimensions = default)
+        public Canvas(Vector2 position, Vector2 dimensions, int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, Vector2 ParentDimensions = default)
         {
             Dimensions = dimensions;
             Alignment = alignment;

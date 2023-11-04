@@ -3,12 +3,12 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace HelperSuite.GUI
+namespace MonoGame.GUI
 {
     /// <summary>
     /// Just a colored block with a text inside
     /// </summary>
-    public class GUITextBlock : GUIBlock
+    public class TextBlock : ColorSwatch
     {
         public Color TextColor;
         public SpriteFont TextFont;
@@ -50,7 +50,7 @@ namespace HelperSuite.GUI
         protected Vector2 _textBorder = new Vector2(10,1);
         private Vector2 _dimensions;
 
-        public GUITextBlock(GUIStyle guitStyle, String text) : this(
+        public TextBlock(GUIStyle guitStyle, String text) : this(
             position: Vector2.Zero,
             dimensions: guitStyle.DimensionsStyle,
             text: text,
@@ -67,7 +67,7 @@ namespace HelperSuite.GUI
         /// <summary>
         /// A default colored block with text on top
         /// </summary>
-        public GUITextBlock(Vector2 position, Vector2 dimensions, String text, SpriteFont font, Color blockColor, Color textColor, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Left, Vector2 textBorder = default, int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, Vector2 parentDimensions = default) : base(position, dimensions, blockColor, layer, alignment, parentDimensions)
+        public TextBlock(Vector2 position, Vector2 dimensions, String text, SpriteFont font, Color blockColor, Color textColor, GUIStyle.TextAlignment textAlignment = GUIStyle.TextAlignment.Left, Vector2 textBorder = default, int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, Vector2 parentDimensions = default) : base(position, dimensions, blockColor, layer, alignment, parentDimensions)
         {
             _text = new StringBuilder(text);
             TextColor = textColor;
@@ -122,7 +122,7 @@ namespace HelperSuite.GUI
 
         public override void Draw(GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
         {
-            guiRenderer.DrawQuad(parentPosition + Position, Dimensions, BlockColor);
+            guiRenderer.DrawQuad(parentPosition + Position, Dimensions, SwatchColor);
             guiRenderer.DrawText(parentPosition + Position + _fontPosition, _text, TextFont, TextColor);
         }
         

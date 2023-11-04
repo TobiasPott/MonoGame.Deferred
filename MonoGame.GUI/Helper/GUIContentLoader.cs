@@ -1,4 +1,4 @@
-﻿using HelperSuite.ContentLoader;
+﻿using MonoGame.ContentLoader;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
 
-namespace HelperSuite.GUIHelper
+namespace MonoGame.GUIHelper
 {
     public class GUIContentLoader : IDisposable
     {

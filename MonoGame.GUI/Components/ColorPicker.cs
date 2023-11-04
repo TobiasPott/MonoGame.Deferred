@@ -1,13 +1,13 @@
 ﻿using DeferredEngine.Utilities;
-using HelperSuite.GUIHelper;
+using MonoGame.GUIHelper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Reflection;
 using System.Text;
 
-namespace HelperSuite.GUI
+namespace MonoGame.GUI
 {
-    public class GUIColorPicker : GUIBlock
+    public class ColorPicker : ColorSwatch
     {
         protected bool IsEngaged = false;
 
@@ -31,7 +31,7 @@ namespace HelperSuite.GUI
         private readonly SpriteFont _font;
         private readonly StringBuilder _colorString;
 
-        public GUIColorPicker(GUIStyle guiStyle) : this(
+        public ColorPicker(GUIStyle guiStyle) : this(
             position: Vector2.Zero,
             dimensions: new Vector2(guiStyle.DimensionsStyle.X, 200),
             blockColor: guiStyle.BlockColorStyle,
@@ -41,7 +41,7 @@ namespace HelperSuite.GUI
             ParentDimensions: guiStyle.ParentDimensionsStyle)
         { }
 
-        public GUIColorPicker(Vector2 position, Vector2 dimensions, Color blockColor, SpriteFont font, int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, Vector2 ParentDimensions = new Vector2()) : base(position, dimensions, blockColor, layer, alignment, ParentDimensions)
+        public ColorPicker(Vector2 position, Vector2 dimensions, Color blockColor, SpriteFont font, int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, Vector2 ParentDimensions = new Vector2()) : base(position, dimensions, blockColor, layer, alignment, ParentDimensions)
         {
             _font = font;
             _colorString = new StringBuilder(20);
@@ -75,7 +75,7 @@ namespace HelperSuite.GUI
 
         public override void Draw(GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
         {
-            guiRenderer.DrawQuad(parentPosition + Position, Dimensions, BlockColor);
+            guiRenderer.DrawQuad(parentPosition + Position, Dimensions, SwatchColor);
 
             Vector2 fullcolorPickerDimensions = new Vector2(Dimensions.X * 0.2f, Dimensions.Y);
             guiRenderer.DrawColorQuad(parentPosition + Position +

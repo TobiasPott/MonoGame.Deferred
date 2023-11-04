@@ -1,11 +1,11 @@
 ﻿using DeferredEngine.Utilities;
-using HelperSuite.GUIHelper;
+using MonoGame.GUIHelper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Reflection;
 using System.Text;
 
-namespace HelperSuite.GUI
+namespace MonoGame.GUI
 {
 
     public class GuiSliderFloatText : GuiSliderBaseText<float>
@@ -112,7 +112,7 @@ namespace HelperSuite.GUI
             _textBlock.Draw(guiRenderer, parentPosition, mousePosition);
 
             _tempPosition = parentPosition + Position + _textBlock.Dimensions * Vector2.UnitY;
-            guiRenderer.DrawQuad(_tempPosition, SliderDimensions, BlockColor);
+            guiRenderer.DrawQuad(_tempPosition, SliderDimensions, SwatchColor);
 
             Vector2 slideDimensions = new Vector2(SliderDimensions.X - SliderIndicatorBorder * 2, SliderBaseHeight);
             guiRenderer.DrawQuad(_tempPosition + new Vector2(SliderIndicatorBorder,

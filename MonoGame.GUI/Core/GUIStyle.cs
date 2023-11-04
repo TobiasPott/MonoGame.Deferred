@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace HelperSuite.GUI
+namespace MonoGame.GUI
 {
     public class GUIStyle
     {

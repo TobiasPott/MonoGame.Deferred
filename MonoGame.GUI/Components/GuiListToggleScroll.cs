@@ -1,7 +1,7 @@
-﻿using HelperSuite.GUIHelper;
+﻿using MonoGame.GUIHelper;
 using Microsoft.Xna.Framework;
 
-namespace HelperSuite.GUI
+namespace MonoGame.GUI
 {
     public class GuiListToggleScroll : GuiListToggle
     {

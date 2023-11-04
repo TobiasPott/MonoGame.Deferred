@@ -3,9 +3,9 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Reflection;
 using System.Text;
 
-namespace HelperSuite.GUI
+namespace MonoGame.GUI
 {
-    public abstract class GuiSliderBaseText<T> : GUIBlock
+    public abstract class GuiSliderBaseText<T> : ColorSwatch
     {
         protected bool IsEngaged = false;
 
@@ -35,7 +35,7 @@ namespace HelperSuite.GUI
 
         protected Color _sliderColor;
         //TextBlock associated
-        protected GUITextBlock _textBlock;
+        protected TextBlock _textBlock;
         protected String baseText;
 
         //Associated reference
@@ -61,7 +61,7 @@ namespace HelperSuite.GUI
             Vector2 textBorder = default, Vector2 ParentDimensions = new Vector2()) 
             : base(position, sliderDimensions, blockColor, layer, alignment, ParentDimensions)
         {
-            _textBlock = new GUITextBlock(position, textDimensions, text, font, blockColor, sliderColor, textAlignment, textBorder, layer, alignment, ParentDimensions);
+            _textBlock = new TextBlock(position, textDimensions, text, font, blockColor, sliderColor, textAlignment, textBorder, layer, alignment, ParentDimensions);
 
             Dimensions = sliderDimensions + _textBlock.Dimensions * Vector2.UnitY;
             SliderDimensions = sliderDimensions;

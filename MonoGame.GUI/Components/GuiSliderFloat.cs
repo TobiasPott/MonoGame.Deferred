@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Reflection;
-using HelperSuite.GUIHelper;
+using MonoGame.GUIHelper;
 using Microsoft.Xna.Framework;
 
-namespace HelperSuite.GUI
+namespace MonoGame.GUI
 {
     /// <summary>
     /// A slider that can reference float values
     /// </summary>
-    public class GuiSliderFloat : GUIBlock
+    public class GuiSliderFloat : ColorSwatch
     {
         protected bool IsEngaged = false;
 
@@ -124,7 +124,7 @@ namespace HelperSuite.GUI
 
         public override void Draw(GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
         {
-            guiRenderer.DrawQuad(parentPosition + Position, Dimensions, BlockColor);
+            guiRenderer.DrawQuad(parentPosition + Position, Dimensions, SwatchColor);
             
             Vector2 slideDimensions = new Vector2(Dimensions.X - SliderIndicatorBorder*2, SliderBaseHeight);
             guiRenderer.DrawQuad(parentPosition + Position + new Vector2(SliderIndicatorBorder, 

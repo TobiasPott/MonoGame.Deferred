@@ -1,15 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace HelperSuite.GUI
+namespace MonoGame.GUI
 {
     /// <summary>
     /// Just a colored block
     /// </summary>
-    public class GUIBlock : GUIElement
+    public class ColorSwatch : GUIElement
     {
-        public Color BlockColor;
+        public Color SwatchColor;
 
-        public GUIBlock(GUIStyle style) : this(
+        public ColorSwatch(GUIStyle style) : this(
             position: Vector2.Zero,
             dimensions: style.DimensionsStyle,
             blockColor: style.BlockColorStyle,
@@ -20,11 +20,11 @@ namespace HelperSuite.GUI
             //Filled by GuiStyle
         }
 
-        public GUIBlock(Vector2 position, Vector2 dimensions, Color blockColor, int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, Vector2 ParentDimensions = default)
+        public ColorSwatch(Vector2 position, Vector2 dimensions, Color blockColor, int layer = 0, GUIStyle.GUIAlignment alignment = GUIStyle.GUIAlignment.None, Vector2 ParentDimensions = default)
         {
             Position = position;
             Dimensions = dimensions;
-            BlockColor = blockColor;
+            SwatchColor = blockColor;
             Layer = layer;
             Alignment = alignment;
             if (Alignment != GUIStyle.GUIAlignment.None)
@@ -34,18 +34,18 @@ namespace HelperSuite.GUI
             
         }
 
-        private GUIBlock()
+        private ColorSwatch()
         {
         }
 
         public override void Draw(GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
         {
-            guiRenderer.DrawQuad(parentPosition+Position, Dimensions, BlockColor);
+            guiRenderer.DrawQuad(parentPosition+Position, Dimensions, SwatchColor);
         }
 
         public override void ParentResized(Vector2 dimensions)
         {
-            Position = GUICanvas.UpdateAlignment(Alignment, dimensions, Dimensions, Position, OffsetPosition);
+            Position = Canvas.UpdateAlignment(Alignment, dimensions, Dimensions, Position, OffsetPosition);
         }
 
         public override int Layer { get; set; }

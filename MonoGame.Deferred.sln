@@ -13,25 +13,18 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGame.RenderingPipeline"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug OpenGL|Any CPU = Debug OpenGL|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C6295792-D1EF-4650-942F-C648D1FAD640}.Debug OpenGL|Any CPU.ActiveCfg = Debug OpenGL|Any CPU
-		{C6295792-D1EF-4650-942F-C648D1FAD640}.Debug OpenGL|Any CPU.Build.0 = Debug OpenGL|Any CPU
 		{C6295792-D1EF-4650-942F-C648D1FAD640}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C6295792-D1EF-4650-942F-C648D1FAD640}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6295792-D1EF-4650-942F-C648D1FAD640}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6295792-D1EF-4650-942F-C648D1FAD640}.Release|Any CPU.Build.0 = Release|Any CPU
-		{062C6625-A99A-4367-9CEE-C13F06A51480}.Debug OpenGL|Any CPU.ActiveCfg = Debug OpenGL|Any CPU
-		{062C6625-A99A-4367-9CEE-C13F06A51480}.Debug OpenGL|Any CPU.Build.0 = Debug OpenGL|Any CPU
 		{062C6625-A99A-4367-9CEE-C13F06A51480}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{062C6625-A99A-4367-9CEE-C13F06A51480}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{062C6625-A99A-4367-9CEE-C13F06A51480}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{062C6625-A99A-4367-9CEE-C13F06A51480}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3F30B70E-E14D-4943-818A-905D5295041C}.Debug OpenGL|Any CPU.ActiveCfg = Debug OpenGL|Any CPU
-		{3F30B70E-E14D-4943-818A-905D5295041C}.Debug OpenGL|Any CPU.Build.0 = Debug OpenGL|Any CPU
 		{3F30B70E-E14D-4943-818A-905D5295041C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3F30B70E-E14D-4943-818A-905D5295041C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F30B70E-E14D-4943-818A-905D5295041C}.Release|Any CPU.ActiveCfg = Release|Any CPU

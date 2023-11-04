@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Reflection;
-using HelperSuite.GUIHelper;
+using MonoGame.GUIHelper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace HelperSuite.GUI
+namespace MonoGame.GUI
 {
-    public class GUITextBlockButton : GUITextBlock
+    public class GUITextBlockButton : TextBlock
     {
         public bool Toggle;
         
@@ -46,7 +46,7 @@ namespace HelperSuite.GUI
         public override void Draw(GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
         {
             guiRenderer.DrawQuad(parentPosition + Position, Dimensions, Color.DimGray);
-            guiRenderer.DrawQuad(parentPosition + Position + Vector2.One * ButtonBorder, Dimensions - 2*Vector2.One*ButtonBorder, _isHovered ? HoverColor : BlockColor);
+            guiRenderer.DrawQuad(parentPosition + Position + Vector2.One * ButtonBorder, Dimensions - 2*Vector2.One*ButtonBorder, _isHovered ? HoverColor : SwatchColor);
             guiRenderer.DrawText(parentPosition + Position + _fontPosition, Text, TextFont, TextColor);
         }
 

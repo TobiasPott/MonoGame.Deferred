@@ -1,11 +1,11 @@
 ﻿using DeferredEngine.Utilities;
-using HelperSuite.GUIHelper;
+using MonoGame.GUIHelper;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Reflection;
 using System.Text;
 
-namespace HelperSuite.GUI
+namespace MonoGame.GUI
 {
     public class GuiSliderIntText : GuiSliderFloatText
     {

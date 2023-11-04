@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Content;
 
-namespace HelperSuite.ContentLoader
+namespace MonoGame.ContentLoader
 {
     public class ThreadSafeContentManager : ContentManager
     {
