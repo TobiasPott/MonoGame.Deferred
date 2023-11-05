@@ -1,7 +1,7 @@
 #ifndef __HLSL_VERTEXSTAGE__
 #define __HLSL_VERTEXSTAGE__
 
-#include "../../Includes/Frustum.incl.fx"
+#include "Frustum.incl.fx"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  STRUCT DEFINITIONS

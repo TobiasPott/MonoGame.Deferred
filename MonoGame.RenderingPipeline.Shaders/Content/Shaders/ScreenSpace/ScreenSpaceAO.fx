@@ -89,7 +89,7 @@ float3 randomNormal(float2 tex)
 float3 getPosition(float2 texCoord)
 {
 	float linearDepth = DepthMap.SampleLevel(texSampler, texCoord, 0).r;
-	return GetFrustumRay2(texCoord) * linearDepth;
+	return GetFrustumRay(texCoord) * linearDepth;
 }
 
 float weightFunction(float3 vec3, float radius)

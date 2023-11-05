@@ -81,14 +81,6 @@ float3 randomNormal(float2 tex)
 //	return normalize(float3(noiseX, noiseY, noiseZ));
 //}
 
-float3 GetFrustumRay2(float2 texCoord)
-{
-	float3 x1 = lerp(FrustumCorners[0], FrustumCorners[1], texCoord.x);
-	float3 x2 = lerp(FrustumCorners[2], FrustumCorners[3], texCoord.x);
-	float3 outV = lerp(x1, x2, texCoord.y);
-	return outV;
-}
-
 float TransformDepth(float depth, matrix trafoMatrix)
 {
 	return (depth*trafoMatrix._33 + trafoMatrix._43) / (depth * trafoMatrix._34 + trafoMatrix._44);
@@ -113,7 +105,7 @@ float4 PixelShaderFunction(VSOut_PosTexViewDir input) : COLOR0
 
 	//Get our current Position in viewspace
 	float linearDepth = DepthMap.Sample(texSampler, texCoord).r;
-	float3 positionVS = input.ViewDir * linearDepth; //GetFrustumRay2(texCoord) * linearDepth;
+	float3 positionVS = input.ViewDir * linearDepth;
 
 	//Sample the normal map
 	float4 normalData = NormalMap.Sample(texSampler, texCoord);
@@ -339,7 +331,7 @@ float4 PixelShaderFunctionTAA(VSOut_PosTexViewDir input) : COLOR0
 
 	//Get our current Position in viewspace
 	float linearDepth = DepthMap.Sample(texSampler, texCoord).r;
-    float3 positionVS = input.ViewDir * linearDepth; //GetFrustumRay2(texCoord) * linearDepth;
+    float3 positionVS = input.ViewDir * linearDepth;
 
 													 //Sample the normal map
 	float4 normalData = NormalMap.Sample(texSampler, texCoord);

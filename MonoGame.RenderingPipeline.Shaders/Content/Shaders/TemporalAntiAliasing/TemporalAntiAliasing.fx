@@ -70,13 +70,6 @@ float overlapFunction(float3 x, float3 y)
 	return 1 - dot(abs(x-y), float3(1, 1, 1)) / 3;
 }
 
-float3 GetFrustumRay2(float2 texCoord)
-{
-	float3 x1 = lerp(FrustumCorners[0], FrustumCorners[1], texCoord.x);
-	float3 x2 = lerp(FrustumCorners[2], FrustumCorners[3], texCoord.x);
-	float3 outV = lerp(x1, x2, texCoord.y);
-	return outV;
-}
 
 float GetLuma(float3 rgb)
 {
