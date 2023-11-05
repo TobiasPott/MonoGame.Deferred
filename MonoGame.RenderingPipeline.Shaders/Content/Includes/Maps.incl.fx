@@ -1,15 +1,18 @@
 #ifndef __HLSL_MAPS__
 #define __HLSL_MAPS__
 
-// albedo
-Texture2D AlbedoMap;
-// normal
-Texture2D NormalMap;
-// depth
-Texture2D DepthMap;
-// shadow
-Texture2D ShadowMap;
+#define Tex2D(Name) Texture2D Name ## Map
 
+#ifdef _DEPTH_MAP
+Tex2D(Depth);
+#endif
 
+#ifdef _ALBEDO_MAP
+Tex2D(Albedo);
+#endif
 
-#endif // __HLSL_DEPTHMAP__
+#ifdef _NORMAL_MAP
+Tex2D(Normal);
+#endif
+
+#endif // __HLSL_MAPS__

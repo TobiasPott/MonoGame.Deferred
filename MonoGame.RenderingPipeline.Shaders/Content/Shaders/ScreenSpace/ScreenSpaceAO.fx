@@ -7,7 +7,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "../../Includes/Macros.incl.fx"
-#include "../../Includes/DepthMap.incl.fx"
+#define _DEPTH_MAP
+#include "../../Includes/Maps.incl.fx"
 #include "../../Includes/VertexStage.incl.fx"
 #include "../Common/helper.fx"
 

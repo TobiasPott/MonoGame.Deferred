@@ -10,7 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <MonoGameContentReference Include="$(MSBuildThisFileDirectory)Content\Shaders.mgcb" />
-    <None Include="$(MSBuildThisFileDirectory)Content\Includes\DepthMap.incl.fx" />
+    <None Include="$(MSBuildThisFileDirectory)Content\Includes\Maps.incl.fx" />
     <None Include="$(MSBuildThisFileDirectory)Content\Includes\PixelStage.incl.fx" />
     <None Include="$(MSBuildThisFileDirectory)Content\Shaders.mgcb" />
     <None Include="$(MSBuildThisFileDirectory)Content\Shaders\BloomFilter\Bloom.fx" />
