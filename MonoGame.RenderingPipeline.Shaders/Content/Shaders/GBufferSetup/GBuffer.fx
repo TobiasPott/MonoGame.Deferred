@@ -94,7 +94,7 @@ struct Render_IN
     float4 Position : SV_POSITION;
     float4 Color : COLOR0;
     float3 Normal : TEXCOORD0;
-    float2 Depth : DEPTH;
+    float2 Depth : SV_DEPTH;
     float Metallic : TEXCOORD1;
     float roughness : TEXCOORD2;
 };
