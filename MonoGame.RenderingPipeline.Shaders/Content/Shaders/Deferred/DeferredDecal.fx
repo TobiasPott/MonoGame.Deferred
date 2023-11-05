@@ -6,12 +6,12 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "../../Includes/Macros.incl.fx"
+#include "../../Includes/VertexStage.incl.fx"
 #include "../Common/helper.fx"
 
 float4x4 WorldView;
 float4x4 WorldViewProj;
 float4x4 InverseWorldView;
-float FarClip;
 
 Texture2D DepthMap;
 Texture2D DecalMap;
@@ -29,29 +29,6 @@ SamplerState AnisotropicSampler
 //  STRUCTS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct VertexShaderInput
-{
-    float4 Position : POSITION0;
-};
-struct VertexShaderOutput_VS
-{
-    float4 Position : SV_POSITION;
-	float4 PositionVS : TEXCOORD1;
-};
-
-struct LineVertexShaderInput
-{
-	float4 Position : POSITION0;
-	float4 Color : COLOR;
-};
-struct LineVertexShaderOutput_VS
-{
-	float4 Position : SV_POSITION;
-	float4 PositionVS : TEXCOORD1;
-	float4 Color : COLOR0;
-};
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,18 +37,18 @@ struct LineVertexShaderOutput_VS
 	//  VERTEX SHADER
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-VertexShaderOutput_VS VertexShaderFunction(VertexShaderInput input)
+V2F_ViewPos VSMain(VSIn_Pos input)
 {
-    VertexShaderOutput_VS output;
+    V2F_ViewPos output;
 	//processing geometry coordinates
 	output.PositionVS = mul(input.Position, WorldView);
 	output.Position = mul(input.Position, WorldViewProj);
 	return output;
 }
 
-LineVertexShaderOutput_VS LineVertexShaderFunction(LineVertexShaderInput input)
+V2F_ViewPosColor VSMain_Colored(VSIn_PosColor input)
 {
-    LineVertexShaderOutput_VS output;
+    V2F_ViewPosColor output;
 
 	output.Position = mul(input.Position, WorldViewProj);
 	output.PositionVS = mul(input.Position, WorldView);
@@ -89,7 +66,7 @@ LineVertexShaderOutput_VS LineVertexShaderFunction(LineVertexShaderInput input)
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Used for both shadow casting and unshadowed, shared function
-float4 DecalPixelShader(VertexShaderOutput_VS input) : SV_TARGET
+float4 DecalPixelShader(V2F_ViewPos input) : SV_TARGET
 {
     /////////////////////////////////////////
 	//Mostly based on this http://martindevans.me/game-development/2015/02/27/Drawing-Stuff-On-Other-Stuff-With-Deferred-Screenspace-Decals/
@@ -113,7 +90,7 @@ float4 DecalPixelShader(VertexShaderOutput_VS input) : SV_TARGET
 	return DecalMap.Sample(AnisotropicSampler, textureCoordinate);
 }
 
-float4 LinePixelShaderFunction(LineVertexShaderOutput_VS input) : SV_TARGET0
+float4 LinePixelShaderFunction(V2F_ViewPosColor input) : SV_TARGET0
 {
 	//Depth testing!
 	float depth = DepthMap.Load(int3(input.Position.xy, 0)).r * FarClip;
@@ -140,7 +117,7 @@ technique Decal
 {
     pass Pass1
     {
-        COMPILE_VS(VertexShaderFunction);
+        COMPILE_VS(VSMain);
         COMPILE_PS(DecalPixelShader);
     }
 }
@@ -149,7 +126,7 @@ technique Outline
 {
 	pass Pass1
 	{
-        COMPILE_VS(LineVertexShaderFunction);
+        COMPILE_VS(VSMain_Colored);
 		COMPILE_PS(LinePixelShaderFunction);
 	}
 }

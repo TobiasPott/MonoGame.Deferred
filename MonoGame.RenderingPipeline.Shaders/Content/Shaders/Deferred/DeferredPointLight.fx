@@ -6,6 +6,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "../../Includes/Macros.incl.fx"
+#include "../../Includes/VertexStage.incl.fx"
 #include "../Common/helper.fx"
 #include "../Common/sdf.fx"
 
@@ -69,17 +70,6 @@ Texture2D ShadowMap;
 //  STRUCTS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct VertexShaderInput
-{
-    float4 Position : POSITION0;
-};
-struct VertexShaderOutput
-{
-    float4 Position : POSITION0;
-    float4 ScreenPosition : TEXCOORD0;
-	float4 PositionVS : TEXCOORD1;
-};
-
 struct PixelShaderOutput
 {
     float4 Diffuse : SV_Target0;
@@ -89,7 +79,7 @@ struct PixelShaderOutput
 
 struct PixelShaderInput
 {
-    float3 PositionVS : POSITION0;
+    float3 PositionVS : SV_POSITION;
     float2 TexCoord : TEXCOORD0;
 	float Depth : TEXCOORD1;
 };
@@ -103,9 +93,9 @@ struct PixelShaderInput
 	//  VERTEX SHADER
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
+V2F_ViewPosScreenPos VertexShaderFunction(VSIn_Pos input)
 {
-	VertexShaderOutput output;
+    V2F_ViewPosScreenPos output;
 	//processing geometry coordinates
 	output.PositionVS = mul(input.Position, WorldView);
 	output.Position = mul(input.Position, WorldViewProj);
@@ -114,7 +104,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 }
 
 //For stencil mask only
-float4 VertexShaderBasic(VertexShaderInput input) : POSITION0
+float4 VertexShaderBasic(VSIn_Pos input) : SV_POSITION
 {
 	return mul(input.Position, WorldViewProj);
 }
@@ -459,7 +449,7 @@ float integrateVolume(float d2, float d1, float radius)
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Used for both shadow casting and unshadowed, shared function
-PixelShaderInput BaseCalculations(VertexShaderOutput input)
+PixelShaderInput BaseCalculations(V2F_ViewPosScreenPos input)
 {
 	PixelShaderInput output;
      //obtain screen position
@@ -553,7 +543,7 @@ float4 PixelShaderBasic(float4 position : POSITION) : COLOR
 }
 
 //Base function
-PixelShaderOutput PixelShaderFunction(VertexShaderOutput input)
+PixelShaderOutput PixelShaderFunction(V2F_ViewPosScreenPos input)
 {
 	PixelShaderInput p_input = BaseCalculations(input);
 
@@ -575,7 +565,7 @@ PixelShaderOutput PixelShaderFunction(VertexShaderOutput input)
 
 
 //Base function
-PixelShaderOutput PixelShaderFunctionSDF(VertexShaderOutput input)
+PixelShaderOutput PixelShaderFunctionSDF(V2F_ViewPosScreenPos input)
 {
     PixelShaderInput p_input = BaseCalculations(input);
 
@@ -596,7 +586,7 @@ PixelShaderOutput PixelShaderFunctionSDF(VertexShaderOutput input)
 }
 
 //Unshadowed light with fog around it
-PixelShaderOutput VolumetricPixelShaderFunction(VertexShaderOutput input)
+PixelShaderOutput VolumetricPixelShaderFunction(V2F_ViewPosScreenPos input)
 {
 	PixelShaderOutput output;
 	input.ScreenPosition.xyz /= input.ScreenPosition.w;
@@ -744,7 +734,7 @@ PixelShaderOutput BasePixelShaderFunctionShadow(PixelShaderInput input)
 }
 
 
-PixelShaderOutput PixelShaderFunctionShadowed(VertexShaderOutput input)
+PixelShaderOutput PixelShaderFunctionShadowed(V2F_ViewPosScreenPos input)
 {
 	PixelShaderInput p_input = BaseCalculations(input);
 
@@ -768,7 +758,7 @@ PixelShaderOutput PixelShaderFunctionShadowed(VertexShaderOutput input)
 //
 
 //ShadowMapped light with Fog
-PixelShaderOutput VolumetricPixelShaderFunctionShadowed(VertexShaderOutput input)
+PixelShaderOutput VolumetricPixelShaderFunctionShadowed(V2F_ViewPosScreenPos input)
 {
 	PixelShaderOutput output;
 

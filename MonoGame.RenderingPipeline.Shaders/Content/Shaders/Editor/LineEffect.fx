@@ -1,5 +1,6 @@
 ﻿
 #include "../../Includes/Macros.incl.fx"
+#include "../../Includes/VertexStage.incl.fx"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  Draw colored lines
@@ -11,24 +12,12 @@ float4 StaticGlobalColor;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  STRUCT DEFINITIONS
 
-struct VertexShaderInput
-{
-    float4 Position : POSITION0;
-    float4 Color : COLOR0;
-};
-
-struct VertexShaderOutput
-{
-    float4 Position : SV_POSITION;
-    float4 Color : COLOR0;
-};
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  FUNCTION DEFINITIONS
 
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
+V2F_Color VertexShaderFunction(VSIn_PosColor input)
 {
-    VertexShaderOutput output;
+    V2F_Color output;
                  
     output.Position = mul(input.Position, WorldViewProj);
 
@@ -47,7 +36,7 @@ float4 VertexShaderFunctionColor(float4 Position : SV_Position) : SV_Position
 	//  PIXEL SHADER
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-float4 PSPassthrough_VC(VertexShaderOutput input) : SV_TARGET0
+float4 PSPassthrough_VC(VSIn_PosColor input) : SV_TARGET0
 {
     return input.Color; //+ AmbientColor * AmbientIntensity;
 }

@@ -10,6 +10,7 @@
 #define MAXLIGHTSPERTILE 40
 
 #include "../../Includes/Macros.incl.fx"
+#include "../../Includes/VertexStage.incl.fx"
 #include "../Common/helper.fx"
 
 float2 Resolution = { 1280.0, 720.0 };
@@ -48,19 +49,6 @@ SamplerState texSampler
 //  STRUCTS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct VertexShaderInput
-{
-    float4 Position : POSITION0;
-    float3 Normal : NORMAL0;
-};
-
-struct VertexShaderOutput
-{
-    float4 Position : POSITION0;
-    float3 PositionWS : TEXCOORD0;
-    float3 Normal : NORMAL;
-};
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,9 +58,9 @@ struct VertexShaderOutput
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
+V2F_NmlWorldPos VertexShaderFunction(VSIn_PosNml input)
 {
-    VertexShaderOutput output;
+    V2F_NmlWorldPos output;
     output.Position = mul(input.Position, WorldViewProj);
     output.PositionWS = mul(input.Position, World).xyz;
     output.Normal = mul(input.Normal, WorldViewIT); //mul(float4(input.Normal,0), World).xyz;
@@ -101,7 +89,7 @@ float GetTileIndex(float2 texCoord)
         //  Main function
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-float4 PixelShaderFunction(VertexShaderOutput input) : COLOR
+float4 PixelShaderFunction(V2F_NmlWorldPos input) : COLOR
 {
     float3 normal = normalize(input.Normal);
 

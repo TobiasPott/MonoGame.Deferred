@@ -5,13 +5,47 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  STRUCT DEFINITIONS
+//  INPUT
+struct VSIn_Pos
+{
+    float4 Position : SV_POSITION;
+};
+struct VSIn_PosNml
+{
+    float4 Position : SV_POSITION;
+    float3 Normal : NORMAL0;
+};
+struct VSIn_PosTex
+{
+    float4 Position : SV_POSITION;
+    float2 TexCoord : TEXCOORD0;
+};
+struct VSIn_PosColor
+{
+    float4 Position : SV_POSITION;
+    float4 Color : COLOR0;
+};
+struct VSIn_PosTexColor
+{
+    float4 Position : SV_POSITION;
+    float2 TexCoord : TEXCOORD0;
+    float4 Color : COLOR0;
+};
 
+
+
+struct VSIn_PosTex_ClipSpace
+{
+    float2 Position : SV_POSITION;
+    float2 TexCoord : TEXCOORD0;
+};
+
+//  OUTPUT
 struct VSOut_PosTex
 {
     float4 Position : SV_POSITION;
     float2 TexCoord : TEXCOORD0;
 };
-
 struct VSOut_PosTexViewDir
 {
     float4 Position : SV_POSITION;
@@ -19,10 +53,41 @@ struct VSOut_PosTexViewDir
     float3 ViewDir : TEXCOORD1;
 };
 
-struct VSIn_PosTex_ClipSpace
+
+
+struct V2F_Color
 {
-    float2 Position : SV_POSITION;
-    float2 TexCoord : TEXCOORD0;
+    float4 Position : SV_POSITION;
+    float4 Color : COLOR0;
+};
+struct V2F_TexCoordColor
+{
+    float4 Position : SV_POSITION;
+    float2 TextureCoordinate : TEXCOORD0;
+    float4 Color : COLOR0;
+};
+struct V2F_ViewPos
+{
+    float4 Position : SV_POSITION;
+    float4 PositionVS : TEXCOORD0;
+};
+struct V2F_ViewPosColor
+{
+    float4 Position : SV_POSITION;
+    float4 PositionVS : TEXCOORD0;
+    float4 Color : COLOR0;
+};
+struct V2F_ViewPosScreenPos
+{
+    float4 Position : SV_POSITION;
+    float4 PositionVS : TEXCOORD0;
+    float4 ScreenPosition : TEXCOORD1;
+};
+struct V2F_NmlWorldPos
+{
+    float4 Position : POSITION0;
+    float3 Normal : NORMAL;
+    float3 PositionWS : TEXCOORD0;
 };
 
 

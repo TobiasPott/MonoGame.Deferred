@@ -1,5 +1,6 @@
 ﻿
 #include "../../Includes/Macros.incl.fx"
+#include "../../Includes/VertexStage.incl.fx"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  Billboard Shader
@@ -11,7 +12,6 @@ float4x4 WorldView;
 
 //Will be overwritten
 float AspectRatio = 1.777;
-float FarClip;
 
 float2 ResolutionRcp = float2(1.0f / 1280, 1.0f / 800);
 
@@ -43,27 +43,12 @@ SamplerState DepthSampler = sampler_state
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  STRUCTS
 
-struct VertexShaderInput
-{
-    float4 Position : POSITION0;
-    float2 TexCoord : TEXCOORD0;
-    float4 Color : COLOR0;
-};
-
-
-struct VertexShaderOutput
-{
-    float4 Position : SV_POSITION;
-    float2 TextureCoordinate : TEXCOORD0;
-    float4 Color : COLOR0;
-};
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  FUNCTION DEFINITIONS
 
-VertexShaderOutput BillboardVertexShader(VertexShaderInput input)
+V2F_TexCoordColor VSMain(VSIn_PosTexColor input)
 {
-    VertexShaderOutput output;
+    V2F_TexCoordColor output;
 
     output.Position = mul(input.Position, WorldViewProj);
     output.Position /= output.Position.w;
@@ -98,17 +83,17 @@ VertexShaderOutput BillboardVertexShader(VertexShaderInput input)
 
 //------------------------ PIXEL SHADER ----------------------------------------
 
-float4 BillboardPixelShader(VertexShaderOutput input) : SV_TARGET
+float4 PSMain_Sprite(V2F_TexCoordColor input) : SV_TARGET
 {
     float4 color = Texture.Sample(Sampler, input.TextureCoordinate);
 
     if (color.a < 0.95f)
         clip(-1);
 
-    return float4(color.rgb * input.Color.rgb * IdColor,1);
+    return float4(color.rgb * input.Color.rgb * IdColor, 1);
 }
 
-float4 IdPixelShader(VertexShaderOutput input) : SV_TARGET
+float4 PSMain_Id(V2F_TexCoordColor input) : SV_TARGET
 {
     float4 color = Texture.Sample(Sampler, input.TextureCoordinate);
 
@@ -123,18 +108,18 @@ float4 IdPixelShader(VertexShaderOutput input) : SV_TARGET
 
 technique Billboard
 {
-    pass P0
+    pass Pass1
     {
-        COMPILE_VS(BillboardVertexShader);
-        COMPILE_PS(BillboardPixelShader);
+        COMPILE_VS(VSMain);
+        COMPILE_PS(PSMain_Sprite);
     }
 }
 
 technique Id
 {
-    pass P0
+    pass Pass1
     {
-        COMPILE_VS(BillboardVertexShader);
-        COMPILE_PS(IdPixelShader);
+        COMPILE_VS(VSMain);
+        COMPILE_PS(PSMain_Id);
     }
 }
