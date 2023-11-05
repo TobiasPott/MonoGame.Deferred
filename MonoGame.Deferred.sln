@@ -11,6 +11,12 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "MonoGame.RenderingPipeline.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGame.RenderingPipeline", "MonoGame.RenderingPipeline\MonoGame.RenderingPipeline.csproj", "{3F30B70E-E14D-4943-818A-905D5295041C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGame.RenderingPipeline.GL", "MonoGame.RenderingPipeline\MonoGame.RenderingPipeline.GL.csproj", "{DFD872E2-16D9-472C-86D5-A8BE397F2EC6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGame.GUI.GL", "MonoGame.GUI\MonoGame.GUI.GL.csproj", "{44D0C374-2F3E-4DD8-8B7A-4F78652C9A6B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGame.Demo.GL", "MonoGame.Demo\MonoGame.Demo.GL.csproj", "{3ECCBDF8-0DFE-4D0F-A513-7F0C8F7ACFC7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +35,16 @@ Global
 		{3F30B70E-E14D-4943-818A-905D5295041C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F30B70E-E14D-4943-818A-905D5295041C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F30B70E-E14D-4943-818A-905D5295041C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFD872E2-16D9-472C-86D5-A8BE397F2EC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFD872E2-16D9-472C-86D5-A8BE397F2EC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFD872E2-16D9-472C-86D5-A8BE397F2EC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFD872E2-16D9-472C-86D5-A8BE397F2EC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44D0C374-2F3E-4DD8-8B7A-4F78652C9A6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44D0C374-2F3E-4DD8-8B7A-4F78652C9A6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44D0C374-2F3E-4DD8-8B7A-4F78652C9A6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44D0C374-2F3E-4DD8-8B7A-4F78652C9A6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3ECCBDF8-0DFE-4D0F-A513-7F0C8F7ACFC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3ECCBDF8-0DFE-4D0F-A513-7F0C8F7ACFC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -37,6 +53,7 @@ Global
 		SolutionGuid = {9543BC8D-D66B-4E0E-B251-1D4EDE9B6A6F}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		MonoGame.RenderingPipeline.Shaders\MonoGame.RenderingPipeline.Shaders.projitems*{3eccbdf8-0dfe-4d0f-a513-7f0c8f7acfc7}*SharedItemsImports = 5
 		MonoGame.RenderingPipeline.Shaders\MonoGame.RenderingPipeline.Shaders.projitems*{a0cdbd0e-3a41-42b7-9425-a838bc2c7383}*SharedItemsImports = 13
 		MonoGame.RenderingPipeline.Shaders\MonoGame.RenderingPipeline.Shaders.projitems*{c6295792-d1ef-4650-942f-c648d1fad640}*SharedItemsImports = 5
 	EndGlobalSection
