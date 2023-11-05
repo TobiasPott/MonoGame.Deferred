@@ -3,6 +3,24 @@
 
 #define TEXTURE(Name) Texture2D Name ## Map
 
+#ifdef _DEPTH_MAP
+TEXTURE(Depth);
+#endif
+
+#ifdef _ALBEDO_MAP
+TEXTURE(Albedo);
+#endif
+
+#ifdef _NORMAL_MAP
+TEXTURE(Normal);
+#endif
+
+#ifdef _SHADOW_MAP
+TEXTURE(Shadow);
+#endif
+
+
+
 #define SamplerTex(SamplerName, TexName, WrapMode, Filter) SamplerState SamplerName ## Sampler \
 { \
     Texture = (TexName); \
@@ -21,22 +39,6 @@
     MinFilter = Filter; \
     Mipfilter = Filter; \
 }
-
-#ifdef _DEPTH_MAP
-TEXTURE(Depth);
-#endif
-
-#ifdef _ALBEDO_MAP
-TEXTURE(Albedo);
-#endif
-
-#ifdef _NORMAL_MAP
-TEXTURE(Normal);
-#endif
-
-#ifdef _SHADOW_MAP
-TEXTURE(Shadow);
-#endif
 
   
 #endif // __HLSL_MAPS__
