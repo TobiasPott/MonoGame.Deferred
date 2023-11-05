@@ -62,6 +62,6 @@ technique DrawBasic
     pass Pass1
     {
         COMPILE_VS(DrawBasic_VertexShader);
-        PixelShader = compile COMPILETARGET_PS DrawBasic_PixelShader();
+        COMPILE_PS(DrawBasic_PixelShader);
     }
 }

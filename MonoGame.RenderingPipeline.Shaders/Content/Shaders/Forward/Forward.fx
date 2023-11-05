@@ -188,7 +188,7 @@ technique Default
     pass Pass1
     {
         COMPILE_VS(VertexShaderFunction);
-        PixelShader = compile COMPILETARGET_PS PixelShaderFunction();
+        COMPILE_PS(PixelShaderFunction);
     }
 }
 

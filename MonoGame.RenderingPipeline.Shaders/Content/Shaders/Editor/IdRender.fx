@@ -97,7 +97,7 @@ technique DrawId
     pass Pass1
     {
         COMPILE_VS(DrawBasic_VertexShader);
-        PixelShader = compile COMPILETARGET_PS Id_PixelShader();
+        COMPILE_PS(Id_PixelShader);
     }
 }
 
@@ -106,6 +106,6 @@ technique DrawOutline
     pass Pass1
     {
         COMPILE_VS(DrawOutline_VertexShader);
-        PixelShader = compile COMPILETARGET_PS Outline_PixelShader();
+        COMPILE_PS(Outline_PixelShader);
     }
 }

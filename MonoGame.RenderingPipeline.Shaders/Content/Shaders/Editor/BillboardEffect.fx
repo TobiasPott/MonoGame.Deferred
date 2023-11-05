@@ -126,7 +126,7 @@ technique Billboard
     pass P0
     {
         COMPILE_VS(BillboardVertexShader);
-        PixelShader = compile COMPILETARGET_PS BillboardPixelShader();
+        COMPILE_PS(BillboardPixelShader);
     }
 }
 
@@ -135,6 +135,6 @@ technique Id
     pass P0
     {
         COMPILE_VS(BillboardVertexShader);
-        PixelShader = compile COMPILETARGET_PS IdPixelShader();
+        COMPILE_PS(IdPixelShader);
     }
 }

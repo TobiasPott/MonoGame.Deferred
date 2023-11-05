@@ -113,7 +113,7 @@ technique Extract
 	pass Pass1
     {
         COMPILE_VS(VSMain_Encoded);
-        PixelShader = compile COMPILETARGET_PS PSExtract();
+        COMPILE_PS(PSExtract);
     }
 }
 
@@ -122,7 +122,7 @@ technique ExtractLuminance
 	pass Pass1
     {
         COMPILE_VS(VSMain_Encoded);
-        PixelShader = compile COMPILETARGET_PS PSExtract_Luminance();
+        COMPILE_PS(PSExtract_Luminance);
     }
 }
 
@@ -131,7 +131,7 @@ technique Downsample
     pass Pass1
     {
         COMPILE_VS(VSMain_Encoded);
-        PixelShader = compile COMPILETARGET_PS PSDownsample();
+        COMPILE_PS(PSDownsample);
     }
 }
 
@@ -140,6 +140,6 @@ technique Upsample
     pass Pass1
     {
         COMPILE_VS(VSMain_Encoded);
-        PixelShader = compile COMPILETARGET_PS PSUpsample();
+        COMPILE_PS(PSUpsample);
     }
 }

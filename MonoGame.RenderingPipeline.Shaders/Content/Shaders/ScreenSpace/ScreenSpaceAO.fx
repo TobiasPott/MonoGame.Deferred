@@ -334,7 +334,7 @@ technique SSAO
     pass Pass1
     {
         COMPILE_VS(VSMain_EncodedViewDir);
-        PixelShader = compile COMPILETARGET_PS PixelShaderFunction();
+        COMPILE_PS(PixelShaderFunction);
     }
 }
 
@@ -343,7 +343,7 @@ technique BilateralVertical
     pass Pass1
     {
         COMPILE_VS(VSMain_Encoded);
-        PixelShader = compile COMPILETARGET_PS BilateralBlurVertical();
+        COMPILE_PS(BilateralBlurVertical);
     }
 }
 
@@ -352,6 +352,6 @@ technique BilateralHorizontal
     pass Pass1
     {
         COMPILE_VS(VSMain_Encoded);
-        PixelShader = compile COMPILETARGET_PS BilateralBlurHorizontal();
+        COMPILE_PS(BilateralBlurHorizontal);
     }
 }

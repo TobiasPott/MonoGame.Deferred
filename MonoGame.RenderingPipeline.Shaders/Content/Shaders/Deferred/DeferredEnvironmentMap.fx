@@ -286,7 +286,7 @@ technique Basic
     pass Pass1
     {
         COMPILE_VS(VSMain_EncodedViewDir);
-        PixelShader = compile COMPILETARGET_PS PixelShaderFunctionBasic();
+        COMPILE_PS(PixelShaderFunctionBasic);
     }
 }
 
@@ -295,7 +295,7 @@ technique Sky
 	pass Pass1
 	{
         COMPILE_VS(VSMain_EncodedViewDir);
-		PixelShader = compile COMPILETARGET_PS PixelShaderFunctionSky();
+		COMPILE_PS(PixelShaderFunctionSky);
 	}
 }
 

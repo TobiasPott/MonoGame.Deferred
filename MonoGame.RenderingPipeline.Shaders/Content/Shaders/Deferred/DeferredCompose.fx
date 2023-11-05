@@ -135,6 +135,6 @@ technique TechniqueLinear
     pass Pass1
     {
         COMPILE_VS(VSMain_Encoded);
-        PixelShader = compile COMPILETARGET_PS PixelShaderFunction();
+        COMPILE_PS(PixelShaderFunction);
     }
 }

@@ -291,7 +291,7 @@ technique TemporalAntialiasing
     pass Pass1
     {
         COMPILE_VS(VSMain_EncodedViewDir);
-        PixelShader = compile COMPILETARGET_PS PixelShaderFunction();
+        COMPILE_PS(PixelShaderFunction);
     }
 }
 
@@ -300,6 +300,6 @@ technique InverseTonemap
 	pass Pass1
 	{
         COMPILE_VS(VSMain_EncodedViewDir);
-        PixelShader = compile COMPILETARGET_PS InverseToneMapPixelShader();
+        COMPILE_PS(InverseToneMapPixelShader);
     }
 }

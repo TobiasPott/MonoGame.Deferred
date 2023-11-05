@@ -99,12 +99,12 @@ technique GaussianBlur
     pass Horizontal
     {
         COMPILE_VS(VS);
-        PixelShader = compile COMPILETARGET_PS HorizontalPS();
+        COMPILE_PS(HorizontalPS);
     }
 
     pass Vertical
     {
         COMPILE_VS(VS);
-        PixelShader = compile COMPILETARGET_PS VerticalPS();
+        COMPILE_PS(VerticalPS);
     }
 }

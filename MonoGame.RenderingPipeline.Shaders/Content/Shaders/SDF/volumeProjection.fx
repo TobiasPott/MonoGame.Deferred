@@ -315,7 +315,7 @@ technique Volume
     pass Pass1
     {
         COMPILE_VS(VSMain_EncodedViewDir);
-        PixelShader = compile COMPILETARGET_PS PixelShaderFunctionVisualizeVolume();
+        COMPILE_PS(PixelShaderFunctionVisualizeVolume);
     }
 }
 
@@ -324,7 +324,7 @@ technique Distance
 	pass Pass1
     {
         COMPILE_VS(VSMain_EncodedViewDir);
-		PixelShader = compile COMPILETARGET_PS PixelShaderFunctionDrawShadow();
+		COMPILE_PS(PixelShaderFunctionDrawShadow);
 	}
 }
 
@@ -333,7 +333,7 @@ technique GenerateSDF
 	pass Pass1
     {
         COMPILE_VS(VSMain_EncodedViewDir);
-		PixelShader = compile COMPILETARGET_PS PixelShaderFunctionGenerateSDF();
+		COMPILE_PS(PixelShaderFunctionGenerateSDF);
 	}
 }
 

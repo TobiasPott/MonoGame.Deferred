@@ -534,7 +534,7 @@ technique ShadowOnly
     pass Pass1
     {
         COMPILE_VS(VSMain_EncodedViewDir);
-        PixelShader = compile COMPILETARGET_PS PixelShaderScreenSpaceShadowFunction();
+        COMPILE_PS(PixelShaderScreenSpaceShadowFunction);
     }
 }
 
@@ -543,7 +543,7 @@ technique Unshadowed
     pass Pass1
     {
         COMPILE_VS(VSMain_EncodedViewDir);
-        PixelShader = compile COMPILETARGET_PS PixelShaderUnshadowedFunction();
+        COMPILE_PS(PixelShaderUnshadowedFunction);
     }
 }
 
@@ -552,7 +552,7 @@ technique Shadowed
     pass Pass1
     {
         COMPILE_VS(VSMain_EncodedViewDir);
-        PixelShader = compile COMPILETARGET_PS PixelShaderShadowedFunction();
+        COMPILE_PS(PixelShaderShadowedFunction);
     }
 }
 
@@ -561,6 +561,6 @@ technique SSShadowed
     pass Pass1
     {
         COMPILE_VS(VSMain_EncodedViewDir);
-        PixelShader = compile COMPILETARGET_PS PixelShaderSSShadowedFunction();
+        COMPILE_PS(PixelShaderSSShadowedFunction);
     }
 }

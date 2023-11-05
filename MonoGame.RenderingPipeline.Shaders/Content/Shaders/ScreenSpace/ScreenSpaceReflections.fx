@@ -554,7 +554,7 @@ technique TAA
     pass Pass1
     {
         COMPILE_VS(VSMain_EncodedViewDir);
-        PixelShader = compile COMPILETARGET_PS PixelShaderFunctionTAA();
+        COMPILE_PS(PixelShaderFunctionTAA);
     }
 }
 
@@ -563,6 +563,6 @@ technique Default
     pass Pass1
     {
         COMPILE_VS(VSMain_EncodedViewDir);
-        PixelShader = compile COMPILETARGET_PS PixelShaderFunction();
+        COMPILE_PS(PixelShaderFunction);
     }
 }

@@ -26,6 +26,6 @@ technique Base
 	{
 
         COMPILE_VS(VSPassthrough_F2ToF4);
-        PixelShader = compile COMPILETARGET_PS PSClear();
+        COMPILE_PS(PSClear);
     }
 }

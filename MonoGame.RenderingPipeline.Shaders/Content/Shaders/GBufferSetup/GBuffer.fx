@@ -512,7 +512,7 @@ technique DrawBasic
     pass Pass1
     {
         COMPILE_VS(DrawBasic_VertexShader);
-        PixelShader = compile COMPILETARGET_PS DrawBasic_PixelShader();
+        COMPILE_PS(DrawBasic_PixelShader);
     }
 }
 
@@ -521,7 +521,7 @@ technique DrawTexture
     pass Pass1
     {
         COMPILE_VS(DrawBasic_VertexShader);
-        PixelShader = compile COMPILETARGET_PS DrawTexture_PixelShader();
+        COMPILE_PS(DrawTexture_PixelShader);
     }
 }
 
@@ -530,7 +530,7 @@ technique DrawTextureSpecular
     pass Pass1
     {
         COMPILE_VS(DrawBasic_VertexShader);
-        PixelShader = compile COMPILETARGET_PS DrawTextureSpecular_PixelShader();
+        COMPILE_PS(DrawTextureSpecular_PixelShader);
     }
 }
 
@@ -539,7 +539,7 @@ technique DrawTextureSpecularMetallic
     pass Pass1
     {
         COMPILE_VS(DrawBasic_VertexShader);
-        PixelShader = compile COMPILETARGET_PS DrawTextureSpecularMetallic_PixelShader();
+        COMPILE_PS(DrawTextureSpecularMetallic_PixelShader);
     }
 }
 
@@ -548,7 +548,7 @@ technique DrawTextureSpecularNormal
     pass Pass1
     {
         COMPILE_VS(DrawNormals_VertexShader);
-        PixelShader = compile COMPILETARGET_PS DrawTextureSpecularNormal_PixelShader();
+        COMPILE_PS(DrawTextureSpecularNormal_PixelShader);
     }
 }
 
@@ -557,7 +557,7 @@ technique DrawTextureSpecularNormalMetallic
     pass Pass1
     {
         COMPILE_VS(DrawNormals_VertexShader);
-        PixelShader = compile COMPILETARGET_PS DrawTextureSpecularNormalMetallic_PixelShader();
+        COMPILE_PS(DrawTextureSpecularNormalMetallic_PixelShader);
     }
 }
 
@@ -567,7 +567,7 @@ technique DrawTextureNormal
     pass Pass1
     {
         COMPILE_VS(DrawNormals_VertexShader);
-        PixelShader = compile COMPILETARGET_PS DrawTextureNormal_PixelShader();
+        COMPILE_PS(DrawTextureNormal_PixelShader);
     }
 }
 
@@ -576,8 +576,8 @@ technique DrawNormal
 	pass Pass1
 	{
 		COMPILE_VS(DrawNormals_VertexShader);
-		PixelShader = compile COMPILETARGET_PS DrawNormal_PixelShader();
-	}
+		COMPILE_PS(DrawNormal_PixelShader);
+    }
 }
 
 technique DrawTextureMask
@@ -585,7 +585,7 @@ technique DrawTextureMask
     pass Pass1
     {
         COMPILE_VS(DrawBasic_VertexShader);
-        PixelShader = compile COMPILETARGET_PS DrawTextureMask_PixelShader();
+        COMPILE_PS(DrawTextureMask_PixelShader);
     }
 }
 
@@ -594,7 +594,7 @@ technique DrawTextureSpecularMask
     pass Pass1
     {
         COMPILE_VS(DrawBasic_VertexShader);
-        PixelShader = compile COMPILETARGET_PS DrawTextureSpecularMask_PixelShader();
+        COMPILE_PS(DrawTextureSpecularMask_PixelShader);
     }
 }
 
@@ -603,7 +603,7 @@ technique DrawTextureSpecularNormalMask
     pass Pass1
     {
         COMPILE_VS(DrawNormals_VertexShader);
-        PixelShader = compile COMPILETARGET_PS DrawTextureSpecularNormalMask_PixelShader();
+        COMPILE_PS(DrawTextureSpecularNormalMask_PixelShader);
     }
 }
 
@@ -612,7 +612,7 @@ technique DrawTextureNormalMask
     pass Pass1
     {
         COMPILE_VS(DrawNormals_VertexShader);
-        PixelShader = compile COMPILETARGET_PS DrawTextureNormalMask_PixelShader();
+        COMPILE_PS(DrawTextureNormalMask_PixelShader);
     }
 }
 
@@ -621,6 +621,6 @@ technique DrawTextureDisplacement
     pass Pass1
     {
         COMPILE_VS(DrawNormals_VertexShader);
-        PixelShader = compile COMPILETARGET_PS DrawTextureDisplacement_PixelShader();
+        COMPILE_PS(DrawTextureDisplacement_PixelShader);
     }
 }
