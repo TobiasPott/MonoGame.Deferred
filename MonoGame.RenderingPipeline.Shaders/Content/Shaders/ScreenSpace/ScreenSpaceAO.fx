@@ -1,5 +1,4 @@
 ﻿
-#include "../Common/Macros.fx"
 
 //Screen Space Ambient Occlusion shader TheKosmonaut 2016
 
@@ -7,6 +6,8 @@
 //  VARIABLES
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include "../Common/Macros.fx"
+#include "../Common/Functions.fx"
 #include "../Common/helper.fx"
 
 float3 CameraPosition;

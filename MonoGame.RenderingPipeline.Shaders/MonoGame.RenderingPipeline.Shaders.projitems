@@ -36,7 +36,7 @@
     <None Include="$(MSBuildThisFileDirectory)Content\Shaders\ScreenSpace\ReconstructDepth.fx" />
     <None Include="$(MSBuildThisFileDirectory)Content\Shaders\ScreenSpace\ScreenSpaceAO.fx" />
     <None Include="$(MSBuildThisFileDirectory)Content\Shaders\ScreenSpace\ScreenSpaceReflections.fx" />
-    <None Include="$(MSBuildThisFileDirectory)Content\Shaders\SDF\volumeProjection.fx" />
+    <None Include="$(MSBuildThisFileDirectory)Content\Shaders\SDF\VolumeProjection.fx" />
     <None Include="$(MSBuildThisFileDirectory)Content\Shaders\Shadow\ShadowMap.fx" />
     <None Include="$(MSBuildThisFileDirectory)content\shaders\Shared.fx" />
     <None Include="$(MSBuildThisFileDirectory)Content\Shaders\TemporalAntiAliasing\TemporalAntiAliasing.fx" />

@@ -1,5 +1,4 @@
 ﻿
-#include "../Common/Macros.fx"
 
 //Environment cube maps, TheKosmonaut 2016
 
@@ -7,6 +6,8 @@
 //  VARIABLES
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include "../Common/Macros.fx"
+#include "../Common/Functions.fx"
 #include "../Common/helper.fx"
 #include "../Common/sdf.fx"
 

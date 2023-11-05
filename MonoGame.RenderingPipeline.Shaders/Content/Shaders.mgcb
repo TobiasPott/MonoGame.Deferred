@@ -181,11 +181,11 @@
 /processorParam:TextureFormat=Color
 /build:Shaders/SDF/sampleTexture.png
 
-#begin Shaders/SDF/volumeProjection.fx
+#begin Shaders/SDF/VolumeProjection.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
-/build:Shaders/SDF/volumeProjection.fx
+/build:Shaders/SDF/VolumeProjection.fx
 
 #begin Shaders/Shadow/ShadowMap.fx
 /importer:EffectImporter
