@@ -15,7 +15,7 @@ float4x4 ViewProjection;
 //color of the light 
 float3 lightColor;
 //position of the camera, for specular light
-float3 cameraPosition = float3(0,0,0);
+float3 cameraPosition = float3(0, 0, 0);
 //this is used to compute the world-position
 float4x4 InvertViewProjection;
 float4x4 LightViewProjection;
@@ -39,35 +39,11 @@ int ShadowFiltering = 0; //PCF, PCF(3), PCF(7), Poisson, VSM
 float ShadowMapSize = 2048;
 float DepthBias = 0.02;
 
-       
+     
+Sampler(point, CLAMP, POINT);
+Sampler(linear, CLAMP, LINEAR);
 
-SamplerState pointSampler
-{
-    AddressU = CLAMP;
-    AddressV = CLAMP; 
-    MagFilter = POINT;
-    MinFilter = POINT;
-    Mipfilter = POINT;
-};
-  
-SamplerState linearSampler
-{
-    AddressU = CLAMP;
-    AddressV = CLAMP;
-    MagFilter = LINEAR;
-    MinFilter = LINEAR;
-    Mipfilter = LINEAR;
-};
-
-SamplerState ShadowSampler
-{
-	Texture = (ShadowMap);
-    AddressU = CLAMP;
-    AddressV = CLAMP;
-    MagFilter = POINT;
-    MinFilter = POINT;
-    Mipfilter = POINT;
-};
+SamplerTex(Shadow, ShadowMap, CLAMP, POINT);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  STRUCT DEFINITIONS
@@ -99,109 +75,109 @@ struct PixelShaderOutput
 float GetVariableBias(float nDotL)
 {
 	//return /*(1 - abs(nDotL)) * DepthBias;*/clamp(0.001 * tan(acos(nDotL)), 0, DepthBias);
-	return clamp(0.001 * sqrt(1 - nDotL * nDotL) / nDotL, 0, DepthBias);
+    return clamp(0.001 * sqrt(1 - nDotL * nDotL) / nDotL, 0, DepthBias);
 }
 
 // Calculates the shadow term using PCF with edge tap smoothing
 float CalcShadowTermSoftPCF(float fLightDepth, float ndotl, float2 vTexCoord, int iSqrtSamples)
 {
-	float fShadowTerm = 0.0f;
+    float fShadowTerm = 0.0f;
 
 	//float variableBias = GetVariableBias(ndotl);
 /*
 	float variableBias = (-cos(ndotl) + 1)*0.02;*/
 	//variableBias = DepthBias;
 
-	float shadowMapSize = ShadowMapSize;
+    float shadowMapSize = ShadowMapSize;
 
-	float2 fractionals = frac(ShadowMapSize * vTexCoord);
-	float2 complFractionals = float2(1, 1) - fractionals;
+    float2 fractionals = frac(ShadowMapSize * vTexCoord);
+    float2 complFractionals = float2(1, 1) - fractionals;
 
-	float fRadius = iSqrtSamples - 1;
+    float fRadius = iSqrtSamples - 1;
 
 	[unroll]
-	for (float y = -fRadius; y <= fRadius; y++)
-	{
+    for (float y = -fRadius; y <= fRadius; y++)
+    {
 		[unroll]
-		for (float x = -fRadius; x <= fRadius; x++)
-		{
-			float2 vOffset = 0;
-			vOffset = float2(x, y);
+        for (float x = -fRadius; x <= fRadius; x++)
+        {
+            float2 vOffset = 0;
+            vOffset = float2(x, y);
 
-			int3 vSamplePoint = int3(vTexCoord * ShadowMapSize + vOffset, 0);
-			float fDepth = ShadowMap.Load(vSamplePoint).x;
-			float fSample = (fLightDepth <= fDepth /*+ variableBias*(x+y)*/);
+            int3 vSamplePoint = int3(vTexCoord * ShadowMapSize + vOffset, 0);
+            float fDepth = ShadowMap.Load(vSamplePoint).x;
+            float fSample = (fLightDepth <= fDepth /*+ variableBias*(x+y)*/);
 
 			// Edge tap smoothing
-			float xWeight = 1;
-			float yWeight = 1;
+            float xWeight = 1;
+            float yWeight = 1;
 
-			if (x == -fRadius)
-				xWeight = complFractionals.x;
-			else if (x == fRadius)
-				xWeight = fractionals.x;
+            if (x == -fRadius)
+                xWeight = complFractionals.x;
+            else if (x == fRadius)
+                xWeight = fractionals.x;
 
-			if (y == -fRadius)
-				yWeight = complFractionals.y;
-			else if (y == fRadius)
-				yWeight = fractionals.y;
+            if (y == -fRadius)
+                yWeight = complFractionals.y;
+            else if (y == fRadius)
+                yWeight = fractionals.y;
 
-			fShadowTerm += fSample * xWeight * yWeight;
-		}
-	}
+            fShadowTerm += fSample * xWeight * yWeight;
+        }
+    }
 
-	fShadowTerm /= (fRadius * fRadius * 4);
+    fShadowTerm /= (fRadius * fRadius * 4);
 
-	return fShadowTerm;
+    return fShadowTerm;
 }
 
 float CalcShadowTermPCF(float linearDepthLV, float ndotl, float2 shadowTexCoord)
 {
-	float lightTerm = 0;
+    float lightTerm = 0;
 
-	float2 fractionals = frac(ShadowMapSize * shadowTexCoord);
+    float2 fractionals = frac(ShadowMapSize * shadowTexCoord);
 
 	//safe to assume it's a square
-	float size = 1.0f / ShadowMapSize;
+    float size = 1.0f / ShadowMapSize;
 
-	float variableBias = GetVariableBias(ndotl);
+    float variableBias = GetVariableBias(ndotl);
 
-	float testDepth = linearDepthLV - variableBias;
+    float testDepth = linearDepthLV - variableBias;
 	//Center
-	lightTerm = (linearDepthLV < ShadowMap.SampleLevel(ShadowSampler, shadowTexCoord, 0).r);
+    lightTerm = (linearDepthLV < ShadowMap.SampleLevel(ShadowSampler, shadowTexCoord, 0).r);
 
 	//Right
-	lightTerm += (testDepth < ShadowMap.SampleLevel(ShadowSampler, shadowTexCoord + float2(size, 0), 0).r) * fractionals.x;
+    lightTerm += (testDepth < ShadowMap.SampleLevel(ShadowSampler, shadowTexCoord + float2(size, 0), 0).r) * fractionals.x;
 
 	//Left
-	lightTerm += (testDepth < ShadowMap.SampleLevel(ShadowSampler, shadowTexCoord + float2(-size, 0), 0).r) * (1- fractionals.x);
+    lightTerm += (testDepth < ShadowMap.SampleLevel(ShadowSampler, shadowTexCoord + float2(-size, 0), 0).r) * (1 - fractionals.x);
 
 	//Top
-	lightTerm += (testDepth < ShadowMap.SampleLevel(ShadowSampler, shadowTexCoord + float2(0, size), 0).r) * fractionals.y;
+    lightTerm += (testDepth < ShadowMap.SampleLevel(ShadowSampler, shadowTexCoord + float2(0, size), 0).r) * fractionals.y;
 
 	//Bot
-	lightTerm += (testDepth < ShadowMap.SampleLevel(ShadowSampler, shadowTexCoord + float2(0, -size), 0).r) * (1 - fractionals.y);
+    lightTerm += (testDepth < ShadowMap.SampleLevel(ShadowSampler, shadowTexCoord + float2(0, -size), 0).r) * (1 - fractionals.y);
 
 	//samples[1] = (light_space_depth - variableBias < ShadowMap.SampleLevel(pointSampler, shadow_coord + float2(size, 0), 0).r) * fractionals;
 	
-	lightTerm /= 3;
+    lightTerm /= 3;
 
-	return lightTerm;
+    return lightTerm;
 }
 
 float random(float4 seed4)
 {
-	float dot_product = dot(seed4, float4(12.9898, 78.233, 45.164, 94.673));
-	return frac(sin(dot_product) * 43758.5453);
+    float dot_product = dot(seed4, float4(12.9898, 78.233, 45.164, 94.673));
+    return frac(sin(dot_product) * 43758.5453);
 }
 
 float CalcShadowPoisson(float light_space_depth, float ndotl, float2 shadow_coord, float2 texCoord)
 {
-	float shadow_term = 0;
+    float shadow_term = 0;
 
-	const float2 poissonDisk[] =
-	{
-		float2(0.1908291f, 0.1823764f),
+    const float2 poissonDisk[] =
+    {
+        float2(0.1908291f, 0.1823764f),
 		float2(0.4236465f, 0.76107f),
 		float2(-0.3056469f, 0.5557697f),
 		float2(-0.4979181f, 0.1770361f),
@@ -216,36 +192,37 @@ float CalcShadowPoisson(float light_space_depth, float ndotl, float2 shadow_coor
 		float2(-0.2747172f, -0.7914276f),
 		float2(-0.7316247f, 0.6114004f),
 		float2(-0.220655f, 0.9378002f),
-		float2(0.1389218f, -0.8920172f) };
+		float2(0.1389218f, -0.8920172f)
+    };
 
 	//float2 v_lerps = frac(ShadowMapSize * shadow_coord);
 
-	float variableBias = GetVariableBias(ndotl);
+    float variableBias = GetVariableBias(ndotl);
 
 	//safe to assume it's a square
-	float size = 1 / ShadowMapSize;
+    float size = 1 / ShadowMapSize;
 
-	const uint j = 16;
+    const uint j = 16;
 	[unroll]
-	for (uint i = 0; i < 4; i++)
-	{
-		int index = int(16.0 * random(float4(texCoord.xyy, i))) % j;
+    for (uint i = 0; i < 4; i++)
+    {
+        int index = int(16.0 * random(float4(texCoord.xyy, i))) % j;
 
-		float2 texCoords = shadow_coord + poissonDisk[index] * size;
+        float2 texCoords = shadow_coord + poissonDisk[index] * size;
 
-		shadow_term += (light_space_depth - variableBias < ShadowMap.SampleLevel(pointSampler, texCoords, 0).r);
-	}
+        shadow_term += (light_space_depth - variableBias < ShadowMap.SampleLevel(pointSampler, texCoords, 0).r);
+    }
 
-	shadow_term /= 4.0f;
+    shadow_term /= 4.0f;
 
-	return shadow_term;
+    return shadow_term;
 }
 
 //ChebyshevUpperBound
 float CalcShadowVSM(float distance, float2 texCoord)
 {
 	// We retrive the two moments previously stored (depth and depth*depth)
-	float2 moments = 1 - ShadowMap.SampleLevel(linearSampler, texCoord, 0).rg;
+    float2 moments = 1 - ShadowMap.SampleLevel(linearSampler, texCoord, 0).rg;
 
 	// Surface is fully lit. as the current fragment is before the light occluder
 	//if (distance <= moments.x)
@@ -253,13 +230,13 @@ float CalcShadowVSM(float distance, float2 texCoord)
 
 	// The fragment is either in shadow or penumbra. We now use chebyshev's upperBound to check
 	// How likely this pixel is to be lit (p_max)
-	float variance = moments.y - (moments.x * moments.x);
-	variance = max(variance, 0.0002);
+    float variance = moments.y - (moments.x * moments.x);
+    variance = max(variance, 0.0002);
 
-	float d = distance - moments.x;
-	float p_max = variance / (variance + d * d);
+    float d = distance - moments.x;
+    float p_max = variance / (variance + d * d);
 
-	return p_max;
+    return p_max;
 }
 
 
@@ -328,51 +305,51 @@ float4 PixelShaderScreenSpaceShadowFunction(VSOut_PosTexViewDir input) : SV_Targ
     }
     else
     {
-		float NdL = saturate(dot(normal, -LightVector));
+        float NdL = saturate(dot(normal, -LightVector));
 
 		//Get our current Position in viewspace
-		float linearDepth = DepthMap.Sample(pointSampler, texCoord).r;
-		float3 positionVS = input.ViewDir * linearDepth;
+        float linearDepth = DepthMap.Sample(pointSampler, texCoord).r;
+        float3 positionVS = input.ViewDir * linearDepth;
 
-		float4 positionInLS = mul(float4(positionVS, 1), LightViewProjection);
-		float depthInLS = (positionInLS.z / positionInLS.w);
+        float4 positionInLS = mul(float4(positionVS, 1), LightViewProjection);
+        float depthInLS = (positionInLS.z / positionInLS.w);
 
-		float2 ShadowTexCoord = mad(positionInLS.xy / positionInLS.w, 0.5f, float2(0.5f, 0.5f));
-		ShadowTexCoord.y = 1 - ShadowTexCoord.y;
+        float2 ShadowTexCoord = mad(positionInLS.xy / positionInLS.w, 0.5f, float2(0.5f, 0.5f));
+        ShadowTexCoord.y = 1 - ShadowTexCoord.y;
 		//float depthInSM = 1-ShadowMap.Sample(pointSampler, ShadowTexCoord);
-		float shadowContribution = 1;
+        float shadowContribution = 1;
 
 		[branch]
-		if (NdL > 0)
-		{
+        if (NdL > 0)
+        {
 			[branch]
-			if (ShadowFiltering == 0)
-			{
-				shadowContribution = CalcShadowTermPCF(depthInLS, NdL, ShadowTexCoord);
-			}
-			else if (ShadowFiltering == 1)
-			{
-				shadowContribution = CalcShadowTermSoftPCF(depthInLS, NdL, ShadowTexCoord, 3);
-			}
-			else if (ShadowFiltering == 2)
-			{
-				shadowContribution = CalcShadowTermSoftPCF(depthInLS, NdL, ShadowTexCoord, 5);
-			}
-			else if (ShadowFiltering == 3)
-			{
-				shadowContribution = CalcShadowPoisson(depthInLS, NdL, ShadowTexCoord, texCoord);
-			}
-			else
-			{
-				float3 lightVector = LightVector;
-				lightVector.z = -LightVector.z;
-				shadowContribution = CalcShadowVSM(depthInLS, ShadowTexCoord);
-			}
-		}
-		else
-		{
-			shadowContribution = 0;
-		}
+            if (ShadowFiltering == 0)
+            {
+                shadowContribution = CalcShadowTermPCF(depthInLS, NdL, ShadowTexCoord);
+            }
+            else if (ShadowFiltering == 1)
+            {
+                shadowContribution = CalcShadowTermSoftPCF(depthInLS, NdL, ShadowTexCoord, 3);
+            }
+            else if (ShadowFiltering == 2)
+            {
+                shadowContribution = CalcShadowTermSoftPCF(depthInLS, NdL, ShadowTexCoord, 5);
+            }
+            else if (ShadowFiltering == 3)
+            {
+                shadowContribution = CalcShadowPoisson(depthInLS, NdL, ShadowTexCoord, texCoord);
+            }
+            else
+            {
+                float3 lightVector = LightVector;
+                lightVector.z = -LightVector.z;
+                shadowContribution = CalcShadowVSM(depthInLS, ShadowTexCoord);
+            }
+        }
+        else
+        {
+            shadowContribution = 0;
+        }
 
         return float4(0, shadowContribution, 0, 0);
     }
@@ -400,17 +377,17 @@ PixelShaderOutput PixelShaderShadowedFunction(VSOut_PosTexViewDir input)
         float NdL = saturate(dot(normal, -LightVector));
 
 		//Get our current Position in viewspace
-		float linearDepth = DepthMap.Sample(pointSampler, texCoord).r;
-		float3 positionVS = input.ViewDir * linearDepth; 
+        float linearDepth = DepthMap.Sample(pointSampler, texCoord).r;
+        float3 positionVS = input.ViewDir * linearDepth;
 
-        float4 positionInLVP = mul(float4(positionVS,1), LightViewProjection);
-		float4 positionInLV = mul(float4(positionVS, 1), LightView);
-		float4 depthInLV = positionInLV.z / positionInLV.w / -LightFarClip;
+        float4 positionInLVP = mul(float4(positionVS, 1), LightViewProjection);
+        float4 positionInLV = mul(float4(positionVS, 1), LightView);
+        float4 depthInLV = positionInLV.z / positionInLV.w / -LightFarClip;
 
         float2 ShadowTexCoord = mad(positionInLVP.xy / positionInLVP.w, 0.5f, float2(0.5f, 0.5f));
         ShadowTexCoord.y = 1 - ShadowTexCoord.y;
 
-		float shadowContribution = 1;
+        float shadowContribution = 1;
 
 
         [branch]
@@ -450,17 +427,17 @@ PixelShaderOutput PixelShaderShadowedFunction(VSOut_PosTexViewDir input)
     //get specular intensity from the AlbedoMap
         float4 color = AlbedoMap.Sample(pointSampler, texCoord);
 
-		float metalness = decodeMetalness(normalData.b);
+        float metalness = decodeMetalness(normalData.b);
     
         float f0 = lerp(0.04f, color.g * 0.25 + 0.75, metalness);
 
         float3 cameraDirection = -normalize(input.ViewDir);
 
-        float3 diffuse = float3(0,0,0);
+        float3 diffuse = float3(0, 0, 0);
         float3 specular = float3(0, 0, 0);
 
         [branch]
-        if(shadowContribution > 0)
+        if (shadowContribution > 0)
         {
             diffuse = DiffuseOrenNayar(NdL, normal, -LightVector, cameraDirection, lightIntensity, lightColor, roughness); //NdL * lightColor.rgb;
     
@@ -492,7 +469,7 @@ PixelShaderOutput PixelShaderSSShadowedFunction(VSOut_PosTexViewDir input)
         return output;
     }
     else
-    {     
+    {
         float NdL = saturate(dot(normal, -LightVector));
 
         float shadowContribution = SSShadowMap.Sample(ShadowSampler, texCoord).g;
@@ -502,7 +479,7 @@ PixelShaderOutput PixelShaderSSShadowedFunction(VSOut_PosTexViewDir input)
         //get specular intensity from the AlbedoMap
         float4 color = AlbedoMap.Sample(pointSampler, texCoord);
 
-		float metalness = decodeMetalness(normalData.b);
+        float metalness = decodeMetalness(normalData.b);
     
         float f0 = lerp(0.04f, color.g * 0.25 + 0.75, metalness);
 
