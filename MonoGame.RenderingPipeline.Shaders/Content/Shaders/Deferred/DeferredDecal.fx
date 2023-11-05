@@ -11,9 +11,12 @@
 #include "../../Includes/VertexStage.incl.fx"
 #include "../Common/helper.fx"
 
+
 float4x4 WorldView;
 float4x4 WorldViewProj;
 float4x4 InverseWorldView;
+float2 Resolution = float2(1280, 720);
+
 
 DECLARE_MAP(DecalMap, CLAMP, ANISOTROPIC, 8);
 
@@ -52,7 +55,7 @@ float4 PSMain_Decal(V2F_ViewPos input) : SV_TARGET
 	//Mostly based on this http://martindevans.me/game-development/2015/02/27/Drawing-Stuff-On-Other-Stuff-With-Deferred-Screenspace-Decals/
 
     //read depth, use point sample or load
-    float depth = DepthMap.Load(int3(input.Position.xy, 0)).r;
+    float depth = DepthMap.Sample(DepthMapSampler, input.Position.xy / Resolution).r;
 
 	//Basically extend the depth of this ray to the end of the far plane, this gives us the position
     float3 cameraDirVS = input.PositionVS.xyz * (FarClip / -input.PositionVS.z);
@@ -73,7 +76,8 @@ float4 PSMain_Decal(V2F_ViewPos input) : SV_TARGET
 float4 PSMain_Line(V2F_ViewPosColor input) : SV_TARGET0
 {
 	//Depth testing!
-    float depth = DepthMap.Load(int3(input.Position.xy, 0)).r * FarClip;
+    // ToDo: GL Compat: input.Position needs normalized UVs/texCoords and resolution is only hardcoded atm
+    float depth = DepthMap.Sample(DepthMapSampler, input.Position.xy / Resolution).r * FarClip;
 
 	//Basically extend the depth of this ray to the end of the far plane, this gives us the position of the sphere only
     float localDepth = -input.PositionVS.z;

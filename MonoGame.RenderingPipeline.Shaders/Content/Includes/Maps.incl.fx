@@ -1,27 +1,11 @@
 #ifndef __HLSL_MAPS__
 #define __HLSL_MAPS__
 
-#define DX9_OR_OLDER
-#define DX10_OR_NEWER
-
 
 #define TEXTURE(Name) Texture2D Name ## Map
 
-#ifdef _DEPTH_MAP
-TEXTURE(Depth);
-#endif
-
-#ifdef _ALBEDO_MAP
-TEXTURE(Albedo);
-#endif
-
-#ifdef _NORMAL_MAP
-TEXTURE(Normal);
-#endif
-
-#ifdef _SHADOW_MAP
-TEXTURE(Shadow);
-#endif
+#define DX9_OR_OLDER
+#define DX10_OR_NEWER
 
 #ifdef DX10_OR_NEWER
 #define DECLARE_MAP(Name, InWrapMode, InFilter, InMaxAnisotropy) Texture2D Name; \
@@ -37,9 +21,9 @@ SamplerState Name ## Sampler \
 #else
 #define DECLARE_MAP(Name, InWrapMode, InFilter, InMaxAnisotropy) Texture2D Name; \
  \
-SamplerState Name ## Sampler \
+SamplerState Name##Sampler \
 { \
-    Texture = (TexName); \
+    Texture = <TexName>; \
     AddressU = InWrapMode; \
     AddressV = InWrapMode; \
     MagFilter = InFilter; \
@@ -70,4 +54,25 @@ SamplerState Name ## Sampler \
 }
 
   
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  DEFAULT MAPS
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#ifdef _DEPTH_MAP
+DECLARE_MAP(DepthMap, CLAMP, POINT, 0);
+#endif
+
+#ifdef _ALBEDO_MAP
+TEXTURE(Albedo);
+#endif
+
+#ifdef _NORMAL_MAP
+TEXTURE(Normal);
+#endif
+
+#ifdef _SHADOW_MAP
+TEXTURE(Shadow);
+#endif
+
+
 #endif // __HLSL_MAPS__

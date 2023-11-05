@@ -5,8 +5,8 @@
 #define PREFIX_VS VertexStage_
 #define PREFIX_PS PixelStage_
 
-#define VS_Target vs_3_0
-#define PS_Target ps_3_0
+#define VS_Target vs_4_0
+#define PS_Target ps_4_0
 
 // Use vs/ps shader model 4 or higher for DX graphics backend
 #define COMPILE_VS(FunctionName) VertexShader = compile VS_Target FunctionName()
