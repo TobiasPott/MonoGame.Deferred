@@ -20,18 +20,6 @@ float3 MeshOffset;
 //  STRUCTS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct VertexShaderInput
-{
-    float2 Position : POSITION0;
-};
-
-struct VertexShaderOutput
-{
-    float4 Position : POSITION0;
-    float2 TexCoord : TEXCOORD0;
-    float3 ViewDir : TEXCOORD1;
-};
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -39,17 +27,6 @@ struct VertexShaderOutput
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//  VERTEX SHADER
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input, uint id:SV_VERTEXID)
-{
-    VertexShaderOutput output;
-    output.Position = float4(input.Position, 0, 1);
-	output.TexCoord.x = (float)(id / 2) * 2.0;
-	output.TexCoord.y = 1.0 - (float)(id % 2) * 2.0;
-
-    output.ViewDir = GetFrustumRay(id);
-    return output;
-}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//  PIXEL SHADER
@@ -77,7 +54,7 @@ float4 CreateSeededColor(float input)
 		//  BASE FUNCTIONS
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-float4 PixelShaderFunctionVisualizeVolume(VertexShaderOutput input) : COLOR0
+float4 PixelShaderFunctionVisualizeVolume(VSOutputPosTexViewDir input) : COLOR0
 {
 	float3 startPoint = CameraPosition;
 	float3 endPoint = CameraPosition + input.ViewDir;
@@ -115,7 +92,7 @@ float4 PixelShaderFunctionVisualizeVolume(VertexShaderOutput input) : COLOR0
 	return float4(0,0,0, 1);
 }
 
-float4 PixelShaderFunctionVisualizeVolume2(VertexShaderOutput input) : COLOR0
+float4 PixelShaderFunctionVisualizeVolume2(VSOutputPosTexViewDir input) : COLOR0
 {
 	float3 startPoint = CameraPosition;
 	float3 endPoint = CameraPosition + input.ViewDir;
@@ -148,7 +125,7 @@ float4 PixelShaderFunctionVisualizeVolume2(VertexShaderOutput input) : COLOR0
 	return float4(0,0,0, 1);
 }
 
-float4 PixelShaderFunctionDrawShadow(VertexShaderOutput input) : COLOR0
+float4 PixelShaderFunctionDrawShadow(VSOutputPosTexViewDir input) : COLOR0
 {
 	int3 texCoordInt = int3(input.Position.xy, 0);
 
@@ -230,7 +207,7 @@ float RayCast(float3 a, float3 b, float3 c, float3 origin, float3 dir)
 	return 0.0f;
 }
 
-float4 PixelShaderFunctionGenerateSDF(VertexShaderOutput input) : COLOR0
+float4 PixelShaderFunctionGenerateSDF(VSOutputPosTexViewDir input) : COLOR0
 {
 	//Generate SDFs
 	float2 pixel = input.Position.xy;
@@ -333,7 +310,7 @@ technique Volume
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VertexShaderFunction();
+        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
         PixelShader = compile ps_4_0 PixelShaderFunctionVisualizeVolume();
     }
 }
@@ -342,7 +319,7 @@ technique Distance
 {
 	pass Pass1
 	{
-		VertexShader = compile vs_4_0 VertexShaderFunction();
+        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
 		PixelShader = compile ps_4_0 PixelShaderFunctionDrawShadow();
 	}
 }
@@ -351,7 +328,7 @@ technique GenerateSDF
 {
 	pass Pass1
 	{
-		VertexShader = compile vs_4_0 VertexShaderFunction();
+        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
 		PixelShader = compile ps_4_0 PixelShaderFunctionGenerateSDF();
 	}
 }

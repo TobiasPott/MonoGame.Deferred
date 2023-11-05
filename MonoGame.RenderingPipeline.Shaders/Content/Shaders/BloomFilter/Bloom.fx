@@ -28,7 +28,12 @@ float4 Box4(float4 p0, float4 p1, float4 p2, float4 p3)
 	return (p0 + p1 + p2 + p3) * 0.25f;
 }
 
-float4 ExtractPS(float4 pos : SV_POSITION,  float2 texCoord : TEXCOORD0) : SV_TARGET0
+float GetLuma(float3 rgb)
+{
+    return (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b);
+}
+
+float4 PSExtract(float4 pos : SV_POSITION,  float2 texCoord : TEXCOORD0) : SV_TARGET0
 {
 	float4 color = ScreenTexture.Sample(u_texture, texCoord);
 
@@ -41,13 +46,7 @@ float4 ExtractPS(float4 pos : SV_POSITION,  float2 texCoord : TEXCOORD0) : SV_TA
 
 	return float4(0, 0, 0, 0);
 }
-
-float GetLuma(float3 rgb)
-{
-	return (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b);
-}
-
-float4 ExtractLuminancePS(float4 pos : SV_POSITION,  float2 texCoord : TEXCOORD0) : SV_TARGET0
+float4 PSExtract_Luminance(float4 pos : SV_POSITION,  float2 texCoord : TEXCOORD0) : SV_TARGET0
 {
     float4 color = ScreenTexture.Sample(u_texture, texCoord);
 
@@ -62,7 +61,7 @@ float4 ExtractLuminancePS(float4 pos : SV_POSITION,  float2 texCoord : TEXCOORD0
     return float4(0, 0, 0, 0);
 }
 
-float4 DownsamplePS(float4 pos : SV_POSITION,  float2 texCoord : TEXCOORD0) : SV_TARGET0
+float4 PSDownsample(float4 pos : SV_POSITION,  float2 texCoord : TEXCOORD0) : SV_TARGET0
 {
     float2 offset = float2(StreakLength * InverseResolution.x, 1 * InverseResolution.y);
         
@@ -87,7 +86,7 @@ float4 DownsamplePS(float4 pos : SV_POSITION,  float2 texCoord : TEXCOORD0) : SV
     Box4(c3, c4, c8, c9) * 0.5f;
 }
 
-float4 UpsamplePS(float4 pos : SV_POSITION,  float2 texCoord : TEXCOORD0) : SV_TARGET0
+float4 PSUpsample(float4 pos : SV_POSITION,  float2 texCoord : TEXCOORD0) : SV_TARGET0
 {
     float2 offset = float2(StreakLength * InverseResolution.x, 1 * InverseResolution.y) * Radius;
 
@@ -113,8 +112,8 @@ technique Extract
 	pass Pass1
 	{
         VertexShader = compile vs_4_0 VSMain_Encoded();
-		PixelShader = compile ps_4_0 ExtractPS();
-	}
+        PixelShader = compile ps_4_0 PSExtract();
+    }
 }
 
 technique ExtractLuminance
@@ -122,8 +121,8 @@ technique ExtractLuminance
 	pass Pass1
 	{
         VertexShader = compile vs_4_0 VSMain_Encoded();
-		PixelShader = compile ps_4_0 ExtractLuminancePS();
-	}
+        PixelShader = compile ps_4_0 PSExtract_Luminance();
+    }
 }
 
 technique Downsample
@@ -131,7 +130,7 @@ technique Downsample
     pass Pass1
     {
         VertexShader = compile vs_4_0 VSMain_Encoded();
-        PixelShader = compile ps_4_0 DownsamplePS();
+        PixelShader = compile ps_4_0 PSDownsample();
     }
 }
 
@@ -140,6 +139,6 @@ technique Upsample
     pass Pass1
     {
         VertexShader = compile vs_4_0 VSMain_Encoded();
-        PixelShader = compile ps_4_0 UpsamplePS();
+        PixelShader = compile ps_4_0 PSUpsample();
     }
 }
