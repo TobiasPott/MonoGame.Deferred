@@ -98,7 +98,7 @@ float3 InverseReinhardTonemap(float3 ldr)
 	return ldr * ((x + 1) / 1);
 }
 
-float4 InverseToneMapPixelShader(VSOutputPosTexViewDir input) : SV_Target
+float4 InverseToneMapPixelShader(VSOut_PosTexViewDir input) : SV_Target
 {
 	int3 TexCoordInt = int3(input.TexCoord * Resolution, 0);
 
@@ -108,7 +108,7 @@ float4 InverseToneMapPixelShader(VSOutputPosTexViewDir input) : SV_Target
 }
 
 
-PixelShaderOutput PixelShaderFunction(VSOutputPosTexViewDir input) : SV_Target
+PixelShaderOutput PixelShaderFunction(VSOut_PosTexViewDir input)
 {
 	PixelShaderOutput output;
     float2 texCoord = float2(input.TexCoord);

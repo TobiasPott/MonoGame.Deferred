@@ -98,7 +98,7 @@ float weightFunction(float3 vec3, float radius)
 	return 1.0 - /*length(vec3) / radius;*/pow(length(vec3) / radius, 2.0);
 }
 
-float4 PixelShaderFunction(VSOutputPosTexViewDir input) : SV_Target
+float4 PixelShaderFunction(VSOut_PosTexViewDir input) : SV_Target
 {
 	const float3 kernel[] =
 	{
@@ -209,7 +209,7 @@ float4 PixelShaderFunction(VSOutputPosTexViewDir input) : SV_Target
 
 
 
-float4 BilateralBlurVertical(VSOutputPosTex input) : SV_TARGET
+float4 BilateralBlurVertical(VSOut_PosTex input) : SV_TARGET
 {
     const uint numSamples = 9;
     const float texelsize = InverseResolution.x; 
@@ -268,7 +268,7 @@ float4 BilateralBlurVertical(VSOutputPosTex input) : SV_TARGET
     return result;
 }
 
-float4 BilateralBlurHorizontal(VSOutputPosTex input) : SV_TARGET
+float4 BilateralBlurHorizontal(VSOut_PosTex input) : SV_TARGET
 {
     const uint numSamples = 9;
     const float texelsize = InverseResolution.y;

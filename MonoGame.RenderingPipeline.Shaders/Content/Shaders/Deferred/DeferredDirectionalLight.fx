@@ -268,7 +268,7 @@ float CalcShadowVSM(float distance, float2 texCoord)
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-PixelShaderOutput PixelShaderUnshadowedFunction(VSOutputPosTexViewDir input)
+PixelShaderOutput PixelShaderUnshadowedFunction(VSOut_PosTexViewDir input)
 {
     PixelShaderOutput output;
     float2 texCoord = float2(input.TexCoord);
@@ -313,7 +313,7 @@ PixelShaderOutput PixelShaderUnshadowedFunction(VSOutputPosTexViewDir input)
 
 
 
-float4 PixelShaderScreenSpaceShadowFunction(VSOutputPosTexViewDir input) : SV_Target
+float4 PixelShaderScreenSpaceShadowFunction(VSOut_PosTexViewDir input) : SV_Target
 {
     float2 texCoord = float2(input.TexCoord);
     
@@ -379,7 +379,7 @@ float4 PixelShaderScreenSpaceShadowFunction(VSOutputPosTexViewDir input) : SV_Ta
 }
 
 //No screen space shadows - we need to calculate them together with the lighting
-PixelShaderOutput PixelShaderShadowedFunction(VSOutputPosTexViewDir input)
+PixelShaderOutput PixelShaderShadowedFunction(VSOut_PosTexViewDir input)
 {
     PixelShaderOutput output;
     float2 texCoord = float2(input.TexCoord);
@@ -475,7 +475,7 @@ PixelShaderOutput PixelShaderShadowedFunction(VSOutputPosTexViewDir input)
 }
             
 //This one is used when we have screen space shadows already
-PixelShaderOutput PixelShaderSSShadowedFunction(VSOutputPosTexViewDir input)
+PixelShaderOutput PixelShaderSSShadowedFunction(VSOut_PosTexViewDir input)
 {
     PixelShaderOutput output;
     float2 texCoord = float2(input.TexCoord);

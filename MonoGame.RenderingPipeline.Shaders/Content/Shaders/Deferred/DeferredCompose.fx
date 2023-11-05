@@ -55,7 +55,7 @@ sampler pointSampler = sampler_state
 
 
 
-float4 PixelShaderFunction(VSOutputPosTex input) : COLOR0
+float4 PixelShaderFunction(VSOut_PosTex input) : COLOR0
 {
 	int3 texCoordInt = int3(input.Position.xy, 0);
 

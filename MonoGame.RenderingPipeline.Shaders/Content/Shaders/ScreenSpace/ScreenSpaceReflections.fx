@@ -101,7 +101,7 @@ float TransformDepth(float depth, matrix trafoMatrix)
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Basic
-float4 PixelShaderFunction(VSOutputPosTexViewDir input) : COLOR0
+float4 PixelShaderFunction(VSOut_PosTexViewDir input) : COLOR0
 {
 	const float border2 = 1 - border;
 	const float bordermulti = 1 / border;
@@ -327,7 +327,7 @@ float4 PixelShaderFunction(VSOutputPosTexViewDir input) : COLOR0
 
 //Temporal Jitter based on roughness
 
-float4 PixelShaderFunctionTAA(VSOutputPosTexViewDir input) : COLOR0
+float4 PixelShaderFunctionTAA(VSOut_PosTexViewDir input) : COLOR0
 {
 	const float border2 = 1 - border;
 	const float bordermulti = 1 / border;

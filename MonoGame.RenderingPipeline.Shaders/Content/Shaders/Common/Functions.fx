@@ -6,51 +6,49 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  STRUCT DEFINITIONS
 
-struct VSInput_Encoded
-{
-    float2 Position : SV_POSITION;
-};
-
-struct VSOutputPosTex
+struct VSOut_PosTex
 {
     float4 Position : SV_POSITION;
     float2 TexCoord : TEXCOORD0;
 };
 
-struct VSOutputPosTexViewDir
+struct VSOut_PosTexViewDir
 {
     float4 Position : SV_POSITION;
     float2 TexCoord : TEXCOORD0;
     float3 ViewDir : TEXCOORD1;
 };
 
+struct VSIn_PosTex_ClipSpace
+{
+    float2 Position : SV_POSITION;
+    float2 TexCoord : TEXCOORD0;
+};
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  FUNCTION DEFINITIONS
-float4 VSPassthrough_F2ToF4(float2 Position : POSITION0) : SV_POSITION
+float4 VSPassthrough_F2ToF4(float2 Position : SV_POSITION) : SV_POSITION
 {
     return float4(Position, 1, 1);
 }
 
 
-VSOutputPosTex VSMain_Encoded(VSInput_Encoded input, uint id : SV_VERTEXID)
+VSOut_PosTex VSMain_Encoded(VSIn_PosTex_ClipSpace input)
 {
-    VSOutputPosTex output;
-    output.Position = float4(input.Position, 0, 1);
-    output.TexCoord.x = (float) (id / 2) * 2.0;
-    output.TexCoord.y = 1.0 - (float) (id % 2) * 2.0;
-
+    VSOut_PosTex output;
+    output.Position = float4(input.Position, 1, 1);
+    output.TexCoord = input.TexCoord;
     return output;
 }
 
-VSOutputPosTexViewDir VSMain_EncodedViewDir(VSInput_Encoded input, uint id : SV_VERTEXID)
+VSOut_PosTexViewDir VSMain_EncodedViewDir(VSIn_PosTex_ClipSpace input)
 {
-    VSOutputPosTexViewDir output;
-    output.Position = float4(input.Position, 0, 1);
-    output.TexCoord.x = (float) (id / 2) * 2.0;
-    output.TexCoord.y = 1.0 - (float) (id % 2) * 2.0;
-
-    output.ViewDir = GetFrustumRay(id);
+    VSOut_PosTexViewDir output;
+    output.Position = float4(input.Position, 1, 1);
+    output.TexCoord = input.TexCoord;
+    output.ViewDir = GetFrustumRay(input.TexCoord);
     return output;
 }
 

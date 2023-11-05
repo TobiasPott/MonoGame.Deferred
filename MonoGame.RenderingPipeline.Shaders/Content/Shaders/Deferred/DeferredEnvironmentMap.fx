@@ -162,7 +162,7 @@ float4 GetSSR(float2 TexCoord)
 		//  BASE FUNCTIONS
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-PixelShaderOutput PixelShaderFunctionBasic(VSOutputPosTexViewDir input)
+PixelShaderOutput PixelShaderFunctionBasic(VSOut_PosTexViewDir input)
 {
     PixelShaderOutput output;
 	int3 texCoordInt = int3(input.Position.xy, 0);
@@ -252,7 +252,7 @@ PixelShaderOutput PixelShaderFunctionBasic(VSOutputPosTexViewDir input)
     return output;
 }
 
-PixelShaderOutput PixelShaderFunctionSky(VSOutputPosTexViewDir input)
+PixelShaderOutput PixelShaderFunctionSky(VSOut_PosTexViewDir input)
 {
 	PixelShaderOutput output;
 	int3 texCoordInt = int3(input.Position.xy, 0);

@@ -58,7 +58,7 @@ float4 CreateSeededColor(float input)
 		//  BASE FUNCTIONS
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-float4 PixelShaderFunctionVisualizeVolume(VSOutputPosTexViewDir input) : COLOR0
+float4 PixelShaderFunctionVisualizeVolume(VSOut_PosTexViewDir input) : COLOR0
 {
 	float3 startPoint = CameraPosition;
 	float3 endPoint = CameraPosition + input.ViewDir;
@@ -96,7 +96,7 @@ float4 PixelShaderFunctionVisualizeVolume(VSOutputPosTexViewDir input) : COLOR0
 	return float4(0,0,0, 1);
 }
 
-float4 PixelShaderFunctionVisualizeVolume2(VSOutputPosTexViewDir input) : COLOR0
+float4 PixelShaderFunctionVisualizeVolume2(VSOut_PosTexViewDir input) : COLOR0
 {
 	float3 startPoint = CameraPosition;
 	float3 endPoint = CameraPosition + input.ViewDir;
@@ -129,7 +129,7 @@ float4 PixelShaderFunctionVisualizeVolume2(VSOutputPosTexViewDir input) : COLOR0
 	return float4(0,0,0, 1);
 }
 
-float4 PixelShaderFunctionDrawShadow(VSOutputPosTexViewDir input) : COLOR0
+float4 PixelShaderFunctionDrawShadow(VSOut_PosTexViewDir input) : COLOR0
 {
 	int3 texCoordInt = int3(input.Position.xy, 0);
 
@@ -211,7 +211,7 @@ float RayCast(float3 a, float3 b, float3 c, float3 origin, float3 dir)
 	return 0.0f;
 }
 
-float4 PixelShaderFunctionGenerateSDF(VSOutputPosTexViewDir input) : COLOR0
+float4 PixelShaderFunctionGenerateSDF(VSOut_PosTexViewDir input) : COLOR0
 {
 	//Generate SDFs
 	float2 pixel = input.Position.xy;
