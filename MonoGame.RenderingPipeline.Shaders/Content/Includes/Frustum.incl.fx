@@ -1,5 +1,5 @@
-#ifndef __HLSL_FRUSTUMCORNERS__
-#define __HLSL_FRUSTUMCORNERS__
+#ifndef __HLSL_FRUSTUM__
+#define __HLSL_FRUSTUM__
 
 
 
@@ -35,4 +35,4 @@ float3 GetFrustumRay(float2 texCoord)
     return outV;
 }
 
-#endif // __HLSL_FRUSTUMCORNERS__
+#endif // __HLSL_FRUSTUM__

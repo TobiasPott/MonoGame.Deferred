@@ -3,8 +3,8 @@
 //  Composes the light buffers and the GBuffer to our final HDR Output.
 //  Converts albedo from Gamma 2.2 to 1.0 and outputs an HDR file.
 
-#include "../Common/Macros.fx"
-#include "../Common/Functions.fx"
+#include "../../Includes/Macros.incl.fx"
+#include "../../Includes/VertexStage.incl.fx"
 #include "../Common/helper.fx"
 
 Texture2D colorMap;

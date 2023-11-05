@@ -1,10 +1,8 @@
-﻿
-#include "../Common/Macros.fx"
-
-// Basic Postprocessing shader
+﻿// Basic Postprocessing shader
 // Combines chroma shift and vignette effect, plus Tonemapping from HDR to LDR and gamma conversion from 1.0 to 2.2
 
-#include "../Common/Functions.fx"
+#include "../../Includes/Macros.incl.fx"
+#include "../../Includes/VertexStage.incl.fx"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  VARIABLES

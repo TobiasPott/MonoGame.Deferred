@@ -4,8 +4,8 @@
 //  VARIABLES
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "../Common/Macros.fx"
-#include "../Common/Functions.fx"
+#include "../../Includes/Macros.incl.fx"
+#include "../../Includes/VertexStage.incl.fx"
 #include "../Common/helper.fx"
 
 float4x4 ViewProjection;

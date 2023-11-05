@@ -1,6 +1,6 @@
 ﻿
-#include "../Common/Macros.fx"
-#include "../Common/Functions.fx"
+#include "../../Includes/Macros.incl.fx"
+#include "../../Includes/VertexStage.incl.fx"
 
 
 float4x4 CurrentToPrevious;
@@ -14,7 +14,6 @@ float2 Resolution = { 1280, 800 };
 
 bool UseTonemap = true;
 
-//float Threshold = 1;
 
 SamplerState texSampler
 {

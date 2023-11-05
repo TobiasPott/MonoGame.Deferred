@@ -1,7 +1,7 @@
-#ifndef __HLSL_FUNCTIONS__
-#define __HLSL_FUNCTIONS__
+#ifndef __HLSL_VERTEXSTAGE__
+#define __HLSL_VERTEXSTAGE__
 
-#include "FrustumCorners.fx"
+#include "../../Includes/Frustum.incl.fx"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  STRUCT DEFINITIONS
@@ -52,4 +52,4 @@ VSOut_PosTexViewDir VSMain_EncodedViewDir(VSIn_PosTex_ClipSpace input)
     return output;
 }
 
-#endif // __HLSL_FUNCTIONS__
+#endif // __HLSL_VERTEXSTAGE__

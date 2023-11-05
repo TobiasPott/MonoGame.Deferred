@@ -1,8 +1,8 @@
 ﻿//Bloomfilter 2016, Thekosmonaut
 
 
-#include "../Common/Macros.fx"
-#include "../Common/Functions.fx"
+#include "../../Includes/Macros.incl.fx"
+#include "../../Includes/VertexStage.incl.fx"
 
 Texture2D ScreenTexture;
 SamplerState u_texture

@@ -1,7 +1,7 @@
 ﻿//Depth Reconstruction from linear depth buffer, TheKosmonaut 2016
 
-#include "../Common/Macros.fx"
-#include "../Common/Functions.fx"
+#include "../../Includes/Macros.incl.fx"
+#include "../../Includes/VertexStage.incl.fx"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  VARIABLES

@@ -10,11 +10,12 @@
   </PropertyGroup>
   <ItemGroup>
     <MonoGameContentReference Include="$(MSBuildThisFileDirectory)Content\Shaders.mgcb" />
+    <None Include="$(MSBuildThisFileDirectory)Content\Includes\PixelStage.incl.fx" />
     <None Include="$(MSBuildThisFileDirectory)Content\Shaders.mgcb" />
     <None Include="$(MSBuildThisFileDirectory)Content\Shaders\BloomFilter\Bloom.fx" />
-    <None Include="$(MSBuildThisFileDirectory)Content\Shaders\Common\Macros.fx" />
-    <None Include="$(MSBuildThisFileDirectory)content\shaders\common\FrustumCorners.fx" />
-    <None Include="$(MSBuildThisFileDirectory)content\shaders\common\Functions.fx" />
+    <None Include="$(MSBuildThisFileDirectory)Content\Includes\Macros.incl.fx" />
+    <None Include="$(MSBuildThisFileDirectory)Content\Includes\Frustum.incl.fx" />
+    <None Include="$(MSBuildThisFileDirectory)Content\Includes\VertexStage.incl.fx" />
     <None Include="$(MSBuildThisFileDirectory)Content\Shaders\Common\helper.fx" />
     <None Include="$(MSBuildThisFileDirectory)Content\Shaders\Common\sdf.fx" />
     <None Include="$(MSBuildThisFileDirectory)Content\Shaders\Deferred\DeferredClear.fx" />
