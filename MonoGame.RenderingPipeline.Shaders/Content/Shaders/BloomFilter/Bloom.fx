@@ -1,5 +1,8 @@
 ﻿//Bloomfilter 2016, Thekosmonaut
 
+
+#include "../Common/Functions.fx"
+
 Texture2D ScreenTexture;
 SamplerState u_texture
 {
@@ -19,26 +22,6 @@ float Radius = 1.0f;
 float Strength = 1.0f;
 float StreakLength = 1;
 
-struct VertexShaderInput
-{
-	float2 Position : POSITION0;
-};
-
-struct VertexShaderOutput
-{
-	float4 Position : POSITION0;
-	float2 TexCoord : TEXCOORD0;
-}; 
-
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input, uint id:SV_VERTEXID)
-{
-	VertexShaderOutput output;
-	output.Position = float4(input.Position, 0, 1);
-	output.TexCoord.x = (float)(id / 2) * 2.0;
-	output.TexCoord.y = 1.0 - (float)(id % 2) * 2.0;
-
-	return output;
-}
 
 float4 Box4(float4 p0, float4 p1, float4 p2, float4 p3)
 {
@@ -129,7 +112,7 @@ technique Extract
 {
 	pass Pass1
 	{
-		VertexShader = compile vs_4_0 VertexShaderFunction();
+        VertexShader = compile vs_4_0 VSMain_Encoded();
 		PixelShader = compile ps_4_0 ExtractPS();
 	}
 }
@@ -138,7 +121,7 @@ technique ExtractLuminance
 {
 	pass Pass1
 	{
-		VertexShader = compile vs_4_0 VertexShaderFunction();
+        VertexShader = compile vs_4_0 VSMain_Encoded();
 		PixelShader = compile ps_4_0 ExtractLuminancePS();
 	}
 }
@@ -147,7 +130,7 @@ technique Downsample
 {
     pass Pass1
     {
-		VertexShader = compile vs_4_0 VertexShaderFunction();
+        VertexShader = compile vs_4_0 VSMain_Encoded();
         PixelShader = compile ps_4_0 DownsamplePS();
     }
 }
@@ -156,7 +139,7 @@ technique Upsample
 {
     pass Pass1
     {
-		VertexShader = compile vs_4_0 VertexShaderFunction();
+        VertexShader = compile vs_4_0 VSMain_Encoded();
         PixelShader = compile ps_4_0 UpsamplePS();
     }
 }

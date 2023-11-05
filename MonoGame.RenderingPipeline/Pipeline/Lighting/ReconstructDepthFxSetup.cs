@@ -11,7 +11,6 @@ namespace DeferredEngine.Pipeline.Lighting
         public EffectParameter Param_DepthMap { get; protected set; }
         public EffectParameter Param_Projection { get; protected set; }
         public EffectParameter Param_FarClip { get; protected set; }
-        public EffectParameter Param_FrustumCorners { get; protected set; }
 
         public ReconstructDepthFxSetup(string shaderPath = "Shaders/ScreenSpace/ReconstructDepth") : base()
         {
@@ -20,7 +19,6 @@ namespace DeferredEngine.Pipeline.Lighting
             Param_DepthMap = Effect.Parameters["DepthMap"];
             Param_Projection = Effect.Parameters["Projection"];
             Param_FarClip = Effect.Parameters["FarClip"];
-            Param_FrustumCorners = Effect.Parameters["FrustumCorners"];
 
         }
 

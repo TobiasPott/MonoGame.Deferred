@@ -28,7 +28,6 @@ namespace DeferredEngine.Pipeline.Lighting
 
             _fxSetup.Param_Projection.SetValue(Matrices.Projection);
             _fxSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
-            _fxSetup.Param_FrustumCorners.SetValue(this.Frustum.ViewSpaceFrustum);
             _fxSetup.Effect.CurrentTechnique.Passes[0].Apply();
             _fullscreenTarget.Draw(_graphicsDevice);
         }

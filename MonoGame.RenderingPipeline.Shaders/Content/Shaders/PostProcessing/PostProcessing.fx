@@ -1,6 +1,8 @@
 ﻿// Basic Postprocessing shader
 // Combines chroma shift and vignette effect, plus Tonemapping from HDR to LDR and gamma conversion from 1.0 to 2.2
 
+#include "../Common/Functions.fx"
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  VARIABLES
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -31,16 +33,6 @@ float PowExposure = 2;
 //  STRUCTS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct VertexShaderInput
-{
-	float2 Position : POSITION0;
-};
-
-struct VertexShaderOutput
-{
-	float4 Position : POSITION0;
-	float2 TexCoord : TEXCOORD0;
-};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  FUNCTIONS
@@ -49,15 +41,6 @@ struct VertexShaderOutput
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//  VERTEX SHADER
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input, uint id:SV_VERTEXID)
-{
-	VertexShaderOutput output;
-	output.Position = float4(input.Position, 0, 1);
-	output.TexCoord.x = (float)(id / 2) * 2.0;
-	output.TexCoord.y = 1.0 - (float)(id % 2) * 2.0;
-	return output;
-}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//  PIXEL SHADER
@@ -230,7 +213,7 @@ technique Base
 	pass Pass1
 	{
 
-		VertexShader = compile vs_4_0 VertexShaderFunction();
+        VertexShader = compile vs_4_0 VSMain_Encoded();
 		PixelShader = compile ps_5_0 BasePixelShaderFunction();
 	}
 }
@@ -240,7 +223,7 @@ technique VignetteChroma
     pass Pass1
     {
 
-		VertexShader = compile vs_4_0 VertexShaderFunction();
+        VertexShader = compile vs_4_0 VSMain_Encoded();
         PixelShader = compile ps_5_0 VignetteChromaShiftPixelShaderFunction();
     }
 }

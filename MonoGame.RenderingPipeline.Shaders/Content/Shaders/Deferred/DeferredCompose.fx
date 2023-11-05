@@ -4,6 +4,7 @@
 //  Converts albedo from Gamma 2.2 to 1.0 and outputs an HDR file.
 
 #include "../Common/helper.fx"
+#include "../Common/Functions.fx"
 
 Texture2D colorMap;
 Texture2D normalMap;
@@ -34,29 +35,10 @@ sampler pointSampler = sampler_state
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  STRUCT DEFINITIONS
 
-struct VertexShaderInput
-{
-    float2 Position : POSITION0;
-};
 
-struct VertexShaderOutput
-{
-    float4 Position : SV_POSITION;
-    float2 TexCoord : TEXCOORD0;
-};
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////  FUNCTION DEFINITIONS
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//  FUNCTION DEFINITIONS
-
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input, uint id:SV_VERTEXID)
-{
-	VertexShaderOutput output;
-	output.Position = float4(input.Position, 0, 1);
-	output.TexCoord.x = (float)(id / 2) * 2.0;
-	output.TexCoord.y = 1.0 - (float)(id % 2) * 2.0;
-
-	return output;
-}
 
 // For smooth holograms
 //float4 GaussianSampler(float2 TexCoord, float offset)
@@ -72,7 +54,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input, uint id:SV_VERT
 
 
 
-float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
+float4 PixelShaderFunction(VSOutputPosTex input) : COLOR0
 {
 	int3 texCoordInt = int3(input.Position.xy, 0);
 
@@ -167,7 +149,7 @@ technique TechniqueLinear
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VertexShaderFunction();
+        VertexShader = compile vs_4_0 VSMain_Encoded();
         PixelShader = compile ps_4_0 PixelShaderFunction();
     }
 }
