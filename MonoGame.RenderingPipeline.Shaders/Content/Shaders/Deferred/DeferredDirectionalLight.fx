@@ -531,8 +531,8 @@ technique ShadowOnly
 {
     pass Pass1
     {
-        VertexShader = compile vs_5_0 VSMain_EncodedViewDir();
-        PixelShader = compile ps_5_0 PixelShaderScreenSpaceShadowFunction();
+        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
+        PixelShader = compile ps_4_0 PixelShaderScreenSpaceShadowFunction();
     }
 }
 
@@ -540,8 +540,8 @@ technique Unshadowed
 {
     pass Pass1
     {
-        VertexShader = compile vs_5_0 VSMain_EncodedViewDir();
-        PixelShader = compile ps_5_0 PixelShaderUnshadowedFunction();
+        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
+        PixelShader = compile ps_4_0 PixelShaderUnshadowedFunction();
     }
 }
 
@@ -549,8 +549,8 @@ technique Shadowed
 {
     pass Pass1
     {
-        VertexShader = compile vs_5_0 VSMain_EncodedViewDir();
-        PixelShader = compile ps_5_0 PixelShaderShadowedFunction();
+        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
+        PixelShader = compile ps_4_0 PixelShaderShadowedFunction();
     }
 }
 
@@ -558,7 +558,7 @@ technique SSShadowed
 {
     pass Pass1
     {
-        VertexShader = compile vs_5_0 VSMain_EncodedViewDir();
-        PixelShader = compile ps_5_0 PixelShaderSSShadowedFunction();
+        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
+        PixelShader = compile ps_4_0 PixelShaderSSShadowedFunction();
     }
 }

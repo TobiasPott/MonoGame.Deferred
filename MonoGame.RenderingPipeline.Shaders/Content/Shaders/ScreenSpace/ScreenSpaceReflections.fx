@@ -552,8 +552,8 @@ technique TAA
 {
     pass Pass1
     {
-        VertexShader = compile vs_5_0 VSMain_EncodedViewDir();
-        PixelShader = compile ps_5_0 PixelShaderFunctionTAA();
+        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
+        PixelShader = compile ps_4_0 PixelShaderFunctionTAA();
     }
 }
 
@@ -561,7 +561,7 @@ technique Default
 {
     pass Pass1
     {
-        VertexShader = compile vs_5_0 VSMain_EncodedViewDir();
+        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
         PixelShader = compile ps_4_0 PixelShaderFunction();
     }
 }

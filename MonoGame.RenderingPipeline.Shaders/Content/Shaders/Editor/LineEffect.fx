@@ -3,20 +3,20 @@
 //  Either defined by vertex color or by GlobalColor
 
 matrix WorldViewProj;
-float4 GlobalColor;
+float4 StaticGlobalColor;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  STRUCT DEFINITIONS
 
 struct VertexShaderInput
 {
-	float4 Position : POSITION0;
+    float4 Position : POSITION0;
     float4 Color : COLOR0;
 };
 
 struct VertexShaderOutput
 {
-	float4 Position : SV_POSITION;
+    float4 Position : SV_POSITION;
     float4 Color : COLOR0;
 };
 
@@ -25,12 +25,12 @@ struct VertexShaderOutput
 
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 {
-	VertexShaderOutput output;
+    VertexShaderOutput output;
                  
     output.Position = mul(input.Position, WorldViewProj);
 
     output.Color = input.Color;
-	return output;
+    return output;
 }
 
 float4 VertexShaderFunctionColor(float4 Position : SV_Position) : SV_Position
@@ -44,15 +44,15 @@ float4 VertexShaderFunctionColor(float4 Position : SV_Position) : SV_Position
 	//  PIXEL SHADER
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-float4 PixelShaderFunction(VertexShaderOutput input) : SV_TARGET0
+float4 PSPassthrough_VC(VertexShaderOutput input) : SV_TARGET0
 {
-	return input.Color; //+ AmbientColor * AmbientIntensity;
+    return input.Color; //+ AmbientColor * AmbientIntensity;
 }
 
 
-float4 PixelShaderFunctionColor(float4 SV_POSITION: SV_Position) : SV_TARGET0
+float4 PSConst_GlobalColor(float4 SV_POSITION : SV_Position) : SV_TARGET0
 {
-    return GlobalColor;
+    return StaticGlobalColor;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,18 +61,18 @@ float4 PixelShaderFunctionColor(float4 SV_POSITION: SV_Position) : SV_TARGET0
 
 technique VertexColor
 {
-	pass Pass1
-	{
-		VertexShader = compile vs_5_0 VertexShaderFunction();
-		PixelShader = compile ps_5_0  PixelShaderFunction();
-	}
+    pass Pass1
+    {
+        VertexShader = compile vs_4_0 VertexShaderFunction();
+        PixelShader = compile ps_4_0 PSPassthrough_VC();
+    }
 }
 
 technique GlobalColor
 {
     pass Pass1
     {
-        VertexShader = compile vs_5_0 VertexShaderFunctionColor();
-        PixelShader = compile ps_5_0 PixelShaderFunctionColor();
+        VertexShader = compile vs_4_0 VertexShaderFunctionColor();
+        PixelShader = compile ps_4_0 PSConst_GlobalColor();
     }
 }

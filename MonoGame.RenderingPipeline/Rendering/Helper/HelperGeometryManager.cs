@@ -29,7 +29,7 @@ namespace DeferredEngine.Rendering.Helper.HelperGeometry
         public void Draw(GraphicsDevice graphics, Matrix viewProjection, HelperGeometryEffectSetup effectSetup)
         {
             _lineHelperManager.Draw(graphics, viewProjection, effectSetup.Param_WorldViewProj, effectSetup.Pass_VertexColor);
-            _octahedronHelperManager.Draw(graphics, viewProjection, effectSetup.Param_WorldViewProj, effectSetup.Param_GlobalColor, effectSetup.Pass_GlobalColor);
+            _octahedronHelperManager.Draw(graphics, viewProjection, effectSetup.Param_WorldViewProj, effectSetup.Param_StaticGlobalColor, effectSetup.Pass_GlobalColor);
         }
 
         public void AddLineStartDir(Vector3 start, Vector3 dir, short timer, Color startColor, Color endColor)

@@ -333,8 +333,8 @@ technique Volume
 {
     pass Pass1
     {
-        VertexShader = compile vs_5_0 VertexShaderFunction();
-        PixelShader = compile ps_5_0 PixelShaderFunctionVisualizeVolume();
+        VertexShader = compile vs_4_0 VertexShaderFunction();
+        PixelShader = compile ps_4_0 PixelShaderFunctionVisualizeVolume();
     }
 }
 
@@ -342,8 +342,8 @@ technique Distance
 {
 	pass Pass1
 	{
-		VertexShader = compile vs_5_0 VertexShaderFunction();
-		PixelShader = compile ps_5_0 PixelShaderFunctionDrawShadow();
+		VertexShader = compile vs_4_0 VertexShaderFunction();
+		PixelShader = compile ps_4_0 PixelShaderFunctionDrawShadow();
 	}
 }
 
@@ -351,8 +351,8 @@ technique GenerateSDF
 {
 	pass Pass1
 	{
-		VertexShader = compile vs_5_0 VertexShaderFunction();
-		PixelShader = compile ps_5_0 PixelShaderFunctionGenerateSDF();
+		VertexShader = compile vs_4_0 VertexShaderFunction();
+		PixelShader = compile ps_4_0 PixelShaderFunctionGenerateSDF();
 	}
 }
 

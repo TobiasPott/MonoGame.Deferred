@@ -12,9 +12,9 @@
 
 float2 Resolution = { 1280.0, 720.0 };
 
-float4x4  World;
-float4x4  WorldViewProj;
-float3x3  WorldViewIT;
+float4x4 World;
+float4x4 WorldViewProj;
+float3x3 WorldViewIT;
 
 //Light
 
@@ -49,7 +49,7 @@ SamplerState texSampler
 struct VertexShaderInput
 {
     float4 Position : POSITION0;
-    float3 Normal   : NORMAL0;
+    float3 Normal : NORMAL0;
 };
 
 struct VertexShaderOutput
@@ -127,7 +127,8 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR
         float lightDistance = length(lightVector);
         float lightRadius = LightRadius[i];
 
-        if (lightDistance >= lightRadius) continue;
+        if (lightDistance >= lightRadius)
+            continue;
 
         float lightIntensity = LightIntensity[i];
         float3 lightColor = LightColor[i];
@@ -136,7 +137,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR
         //float attenuation = saturate(1.0f - distanceLtoR / lightRadius);
         float x = lightDistance / lightRadius; //normalized
         float bottom = (4 * x + 1);
-        float attenuation = saturate(1 / (bottom*bottom) - 0.04*x);
+        float attenuation = saturate(1 / (bottom * bottom) - 0.04 * x);
 
         //Normalize
         lightVector /= lightDistance;
@@ -147,7 +148,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR
 
         if (metalness < 0.99)
         {
-            diffuseLight += DiffuseOrenNayar(NdL, normal, lightVector, cameraDirection, lightIntensity, lightColor, roughness) * (1-f0) * attenuation * OUTPUTCONST;
+            diffuseLight += DiffuseOrenNayar(NdL, normal, lightVector, cameraDirection, lightIntensity, lightColor, roughness) * (1 - f0) * attenuation * OUTPUTCONST;
         }
         specularLight += SpecularCookTorrance(NdL, normal, lightVector, cameraDirection, lightIntensity, lightColor, f0, roughness) * attenuation * OUTPUTCONST;
     }
@@ -156,7 +157,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR
 
     specularLight = clamp(specularLight, 0, 1000);
 
-    float3 plasticFinal = diffuseColor.rgb * (diffuseLight)+specularLight;
+    float3 plasticFinal = diffuseColor.rgb * (diffuseLight) + specularLight;
 
     float3 metalFinal = specularLight * diffuseColor.rgb;
 
@@ -166,7 +167,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR
 
     float NdC = 1 - saturate(dot(normal, cameraDirection));
 
-    finalValue = lerp( finalValue, finalValue + float3(0.2f, 0.1f, 0.1f), NdC * NdC * NdC);
+    finalValue = lerp(finalValue, finalValue + float3(0.2f, 0.1f, 0.1f), NdC * NdC * NdC);
 
     //Show normals
     //finalValue = (normal + float3(1,1,1))*0.5f;
@@ -184,8 +185,8 @@ technique Default
 {
     pass Pass1
     {
-        VertexShader = compile vs_5_0 VertexShaderFunction();
-        PixelShader = compile ps_5_0 PixelShaderFunction();
+        VertexShader = compile vs_4_0 VertexShaderFunction();
+        PixelShader = compile ps_4_0 PixelShaderFunction();
     }
 }
 

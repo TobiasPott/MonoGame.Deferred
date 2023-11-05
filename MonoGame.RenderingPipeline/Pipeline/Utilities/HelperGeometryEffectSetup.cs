@@ -15,7 +15,7 @@ namespace DeferredEngine.Pipeline.Utilities
         public EffectPass Pass_GlobalColor { get; protected set; }
 
         public EffectParameter Param_WorldViewProj { get; protected set; }
-        public EffectParameter Param_GlobalColor { get; protected set; }
+        public EffectParameter Param_StaticGlobalColor { get; protected set; }
 
 
         public HelperGeometryEffectSetup(string shaderPath = "Shaders/Editor/LineEffect")
@@ -27,7 +27,7 @@ namespace DeferredEngine.Pipeline.Utilities
             Pass_GlobalColor = Effect.Techniques["GlobalColor"].Passes[0];
 
             Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
-            Param_GlobalColor = Effect.Parameters["GlobalColor"];
+            Param_StaticGlobalColor = Effect.Parameters["StaticGlobalColor"];
         }
 
         public override void Dispose()

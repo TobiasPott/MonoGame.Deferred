@@ -122,8 +122,8 @@ technique Billboard
 {
     pass P0
     {
-        VertexShader = compile vs_5_0 BillboardVertexShader();
-        PixelShader = compile ps_5_0 BillboardPixelShader();
+        VertexShader = compile vs_4_0 BillboardVertexShader();
+        PixelShader = compile ps_4_0 BillboardPixelShader();
     }
 }
 
@@ -131,7 +131,7 @@ technique Id
 {
     pass P0
     {
-        VertexShader = compile vs_5_0 BillboardVertexShader();
-        PixelShader = compile ps_5_0 IdPixelShader();
+        VertexShader = compile vs_4_0 BillboardVertexShader();
+        PixelShader = compile ps_4_0 IdPixelShader();
     }
 }

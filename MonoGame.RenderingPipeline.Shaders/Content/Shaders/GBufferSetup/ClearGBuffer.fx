@@ -13,12 +13,12 @@ struct PixelShaderOutput
 //  FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-float4 VertexShaderFunction(float2 Position : POSITION0) : SV_POSITION
+float4 VSPassthrough_F2ToF4(float2 Position : POSITION0) : SV_POSITION
 {
-    return float4(Position,1, 1);
+    return float4(Position, 1, 1);
 }
 
-PixelShaderOutput PixelShaderFunction() : COLOR
+PixelShaderOutput PSClear() : COLOR
 {
     PixelShaderOutput output;
     //black color
@@ -38,7 +38,7 @@ technique Clear
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VertexShaderFunction();
-        PixelShader = compile ps_4_0 PixelShaderFunction();
+        VertexShader = compile vs_4_0 VSPassthrough_F2ToF4();
+        PixelShader = compile ps_4_0 PSClear();
     }
 }
