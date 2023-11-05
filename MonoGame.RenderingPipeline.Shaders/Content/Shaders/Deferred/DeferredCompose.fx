@@ -4,7 +4,6 @@
 //  Converts albedo from Gamma 2.2 to 1.0 and outputs an HDR file.
 
 #include "../Common/helper.fx"
-#include "../Common/Functions.fx"
 
 Texture2D colorMap;
 Texture2D normalMap;

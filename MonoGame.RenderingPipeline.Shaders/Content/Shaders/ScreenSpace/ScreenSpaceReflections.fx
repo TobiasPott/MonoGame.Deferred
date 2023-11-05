@@ -39,18 +39,6 @@ SamplerState texSampler
 //  STRUCTS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct VertexShaderInput
-{
-    float2 Position : POSITION0;
-};
-
-struct VertexShaderOutput
-{
-    float4 Position : POSITION0;
-    float2 TexCoord : TEXCOORD0;
-    float3 ViewRay : TEXCOORD1;
-};
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -58,17 +46,6 @@ struct VertexShaderOutput
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//  VERTEX SHADER
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input, uint id:SV_VERTEXID)
-{
-	VertexShaderOutput output;
-	output.Position = float4(input.Position, 0, 1);
-	output.TexCoord.x = (float)(id / 2) * 2.0;
-	output.TexCoord.y = 1.0 - (float)(id % 2) * 2.0;
-
-	output.ViewRay = GetFrustumRay(id);
-	return output;
-}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//  PIXEL SHADER
@@ -122,7 +99,7 @@ float TransformDepth(float depth, matrix trafoMatrix)
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Basic
-float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
+float4 PixelShaderFunction(VSOutputPosTexViewDir input) : COLOR0
 {
 	const float border2 = 1 - border;
 	const float bordermulti = 1 / border;
@@ -135,7 +112,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 
 	//Get our current Position in viewspace
 	float linearDepth = DepthMap.Sample(texSampler, texCoord).r;
-	float3 positionVS = input.ViewRay * linearDepth; //GetFrustumRay2(texCoord) * linearDepth;
+	float3 positionVS = input.ViewDir * linearDepth; //GetFrustumRay2(texCoord) * linearDepth;
 
 	//Sample the normal map
 	float4 normalData = NormalMap.Sample(texSampler, texCoord);
@@ -348,7 +325,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 
 //Temporal Jitter based on roughness
 
-float4 PixelShaderFunctionTAA(VertexShaderOutput input) : COLOR0
+float4 PixelShaderFunctionTAA(VSOutputPosTexViewDir input) : COLOR0
 {
 	const float border2 = 1 - border;
 	const float bordermulti = 1 / border;
@@ -361,7 +338,7 @@ float4 PixelShaderFunctionTAA(VertexShaderOutput input) : COLOR0
 
 	//Get our current Position in viewspace
 	float linearDepth = DepthMap.Sample(texSampler, texCoord).r;
-	float3 positionVS = input.ViewRay * linearDepth; //GetFrustumRay2(texCoord) * linearDepth;
+    float3 positionVS = input.ViewDir * linearDepth; //GetFrustumRay2(texCoord) * linearDepth;
 
 													 //Sample the normal map
 	float4 normalData = NormalMap.Sample(texSampler, texCoord);
@@ -575,7 +552,7 @@ technique TAA
 {
     pass Pass1
     {
-        VertexShader = compile vs_5_0 VertexShaderFunction();
+        VertexShader = compile vs_5_0 VSMain_EncodedViewDir();
         PixelShader = compile ps_5_0 PixelShaderFunctionTAA();
     }
 }
@@ -584,7 +561,7 @@ technique Default
 {
     pass Pass1
     {
-        VertexShader = compile vs_5_0 VertexShaderFunction();
+        VertexShader = compile vs_5_0 VSMain_EncodedViewDir();
         PixelShader = compile ps_4_0 PixelShaderFunction();
     }
 }

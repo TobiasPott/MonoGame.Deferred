@@ -1,4 +1,7 @@
 ﻿
+#include "../Common/Functions.fx"
+
+
 float4x4 CurrentToPrevious;
 
 
@@ -7,8 +10,6 @@ Texture2D AccumulationMap;
 Texture2D UpdateMap;
 
 float2 Resolution = { 1280, 800 };
-
-float3 FrustumCorners[4]; //In Viewspace!
 
 bool UseTonemap = true;
 
@@ -35,17 +36,6 @@ SamplerState linearSampler
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  STRUCT DEFINITIONS
 
-struct VertexShaderInput
-{
-    float2 Position : POSITION0;
-};
-
-struct VertexShaderOutput
-{
-    float4 Position : POSITION0;
-    float2 TexCoord : TEXCOORD0;
-	float3 ViewRay : TEXCOORD1;
-};
 
 struct PixelShaderOutput
 {
@@ -60,34 +50,6 @@ struct PixelShaderOutput
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//  VERTEX SHADER
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-float3 GetFrustumRay(uint id)
-{
-	//Bottom left
-	if (id < 1)
-	{
-		return FrustumCorners[2];
-	}
-	else if (id < 2) //Top left
-	{
-		return FrustumCorners[2] + (FrustumCorners[0] - FrustumCorners[2]) * 2;
-	}
-	else
-	{
-		return FrustumCorners[2] + (FrustumCorners[3] - FrustumCorners[2]) * 2;
-	}
-
-}
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input, uint id:SV_VERTEXID)
-{
-	VertexShaderOutput output;
-	output.Position = float4(input.Position, 0, 1);
-	output.TexCoord.x = (float)(id / 2) * 2.0;
-	output.TexCoord.y = 1.0 - (float)(id % 2) * 2.0;
-
-	output.ViewRay = GetFrustumRay(id);
-	return output;
-}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -135,7 +97,7 @@ float3 InverseReinhardTonemap(float3 ldr)
 	return ldr * ((x + 1) / 1);
 }
 
-float4 InverseToneMapPixelShader(VertexShaderOutput input) : SV_Target
+float4 InverseToneMapPixelShader(VSOutputPosTexViewDir input) : SV_Target
 {
 	int3 TexCoordInt = int3(input.TexCoord * Resolution, 0);
 
@@ -145,7 +107,7 @@ float4 InverseToneMapPixelShader(VertexShaderOutput input) : SV_Target
 }
 
 
-PixelShaderOutput PixelShaderFunction(VertexShaderOutput input) : SV_Target
+PixelShaderOutput PixelShaderFunction(VSOutputPosTexViewDir input) : SV_Target
 {
 	PixelShaderOutput output;
     float2 texCoord = float2(input.TexCoord);
@@ -153,7 +115,7 @@ PixelShaderOutput PixelShaderFunction(VertexShaderOutput input) : SV_Target
     
     float linearDepth = DepthMap.Load(texCoordInt).r;
 
-	float3 positionVS = input.ViewRay * linearDepth;
+    float3 positionVS = input.ViewDir * linearDepth;
 
     float4 previousPositionVS = mul(float4(positionVS,1), CurrentToPrevious);
     previousPositionVS /= previousPositionVS.w;
@@ -328,7 +290,7 @@ technique TemporalAntialiasing
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VertexShaderFunction();
+        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
         PixelShader = compile ps_5_0 PixelShaderFunction();
     }
 }
@@ -337,7 +299,7 @@ technique InverseTonemap
 {
 	pass Pass1
 	{
-		VertexShader = compile vs_4_0 VertexShaderFunction();
+        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
 		PixelShader = compile ps_5_0 InverseToneMapPixelShader();
 	}
 }

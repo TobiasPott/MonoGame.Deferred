@@ -60,24 +60,6 @@ float SampleRadius = 0.05f;
 ////////////////////////////////////////////////////////////////////////////
 //  STRUCT DEFINITIONS
 
-struct VertexShaderInput
-{
-    float2 Position : POSITION0;
-};
-
-struct VertexShaderOutput
-{
-    float4 Position : POSITION0;
-    float2 TexCoord : TEXCOORD0;
-	float3 ViewRay : TEXCOORD1;
-};
-
-struct VertexShaderOutputBlur
-{
-    float4 Position : POSITION0;
-    float2 TexCoord : TEXCOORD0;
-};
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  FUNCTION DEFINITIONS
 
@@ -91,27 +73,6 @@ float3 GetFrustumRay2(float2 texCoord)
 }
 
  //  DEFAULT LIGHT SHADER FOR MODELS
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input, uint id:SV_VERTEXID)
-{
-	VertexShaderOutput output;
-	output.Position = float4(input.Position, 0, 1);
-	output.TexCoord.x = (float)(id / 2) * 2.0;
-	output.TexCoord.y = 1.0 - (float)(id % 2) * 2.0;
-
-	output.ViewRay = GetFrustumRay(id);
-	return output;
-}
-
-VertexShaderOutputBlur VertexShaderBlurFunction(VertexShaderInput input, uint id:SV_VERTEXID)
-{
-    VertexShaderOutputBlur output;
-	output.Position = float4(input.Position, 0, 1);
-	output.TexCoord.x = (float)(id / 2) * 2.0;
-	output.TexCoord.y = 1.0 - (float)(id % 2) * 2.0;
-
-    return output;
-}
-
 
 float3 randomNormal(float2 tex)
 {
@@ -133,7 +94,7 @@ float weightFunction(float3 vec3, float radius)
 	return 1.0 - /*length(vec3) / radius;*/pow(length(vec3) / radius, 2.0);
 }
 
-float4 PixelShaderFunction(VertexShaderOutput input) : SV_Target
+float4 PixelShaderFunction(VSOutputPosTexViewDir input) : SV_Target
 {
 	const float3 kernel[] =
 	{
@@ -168,12 +129,12 @@ float4 PixelShaderFunction(VertexShaderOutput input) : SV_Target
 	{
 		return float4(1, 1, 1, 1);
 	}
-	float3 currentPos = input.ViewRay * linearDepth;
+	float3 currentPos = input.ViewDir * linearDepth;
 
 	//alternative 
 	//currentPos = getPosition(texCoord);
 
-	float currentDistance = -input.ViewRay.z;
+    float currentDistance = -input.ViewDir.z;
 
 	float amount = 1.0;
 
@@ -244,7 +205,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : SV_Target
 
 
 
-float4 BilateralBlurVertical(VertexShaderOutputBlur input) : SV_TARGET
+float4 BilateralBlurVertical(VSOutputPosTex input) : SV_TARGET
 {
     const uint numSamples = 9;
     const float texelsize = InverseResolution.x; 
@@ -303,7 +264,7 @@ float4 BilateralBlurVertical(VertexShaderOutputBlur input) : SV_TARGET
     return result;
 }
 
-float4 BilateralBlurHorizontal(VertexShaderOutputBlur input) : SV_TARGET
+float4 BilateralBlurHorizontal(VSOutputPosTex input) : SV_TARGET
 {
     const uint numSamples = 9;
     const float texelsize = InverseResolution.y;
@@ -368,7 +329,7 @@ technique SSAO
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VertexShaderFunction();
+        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
         PixelShader = compile ps_4_0 PixelShaderFunction();
     }
 }
@@ -377,7 +338,7 @@ technique BilateralVertical
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VertexShaderBlurFunction();
+        VertexShader = compile vs_4_0 VSMain_Encoded();
         PixelShader = compile ps_4_0 BilateralBlurVertical();
     }
 }
@@ -386,7 +347,7 @@ technique BilateralHorizontal
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VertexShaderBlurFunction();
+        VertexShader = compile vs_4_0 VSMain_Encoded();
         PixelShader = compile ps_4_0 BilateralBlurHorizontal();
     }
 }

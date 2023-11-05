@@ -32,7 +32,7 @@ struct VertexShaderInput
 {
     float4 Position : POSITION0;
 };
-struct VertexShaderOutput
+struct VertexShaderOutput_VS
 {
     float4 Position : SV_POSITION;
 	float4 PositionVS : TEXCOORD1;
@@ -43,7 +43,7 @@ struct LineVertexShaderInput
 	float4 Position : POSITION0;
 	float4 Color : COLOR;
 };
-struct LineVertexShaderOutput
+struct LineVertexShaderOutput_VS
 {
 	float4 Position : SV_POSITION;
 	float4 PositionVS : TEXCOORD1;
@@ -59,18 +59,18 @@ struct LineVertexShaderOutput
 	//  VERTEX SHADER
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
+VertexShaderOutput_VS VertexShaderFunction(VertexShaderInput input)
 {
-	VertexShaderOutput output;
+    VertexShaderOutput_VS output;
 	//processing geometry coordinates
 	output.PositionVS = mul(input.Position, WorldView);
 	output.Position = mul(input.Position, WorldViewProj);
 	return output;
 }
 
-LineVertexShaderOutput LineVertexShaderFunction(LineVertexShaderInput input)
+LineVertexShaderOutput_VS LineVertexShaderFunction(LineVertexShaderInput input)
 {
-	LineVertexShaderOutput output;
+    LineVertexShaderOutput_VS output;
 
 	output.Position = mul(input.Position, WorldViewProj);
 	output.PositionVS = mul(input.Position, WorldView);
@@ -88,7 +88,7 @@ LineVertexShaderOutput LineVertexShaderFunction(LineVertexShaderInput input)
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Used for both shadow casting and unshadowed, shared function
-float4 DecalPixelShader(VertexShaderOutput input) : SV_TARGET
+float4 DecalPixelShader(VertexShaderOutput_VS input) : SV_TARGET
 {
     /////////////////////////////////////////
 	//Mostly based on this http://martindevans.me/game-development/2015/02/27/Drawing-Stuff-On-Other-Stuff-With-Deferred-Screenspace-Decals/
@@ -112,7 +112,7 @@ float4 DecalPixelShader(VertexShaderOutput input) : SV_TARGET
 	return DecalMap.Sample(AnisotropicSampler, textureCoordinate);
 }
 
-float4 LinePixelShaderFunction(LineVertexShaderOutput input) : SV_TARGET0
+float4 LinePixelShaderFunction(LineVertexShaderOutput_VS input) : SV_TARGET0
 {
 	//Depth testing!
 	float depth = DepthMap.Load(int3(input.Position.xy, 0)).r * FarClip;
@@ -139,8 +139,8 @@ technique Decal
 {
     pass Pass1
     {
-        VertexShader = compile vs_5_0 VertexShaderFunction();
-        PixelShader = compile ps_5_0 DecalPixelShader();
+        VertexShader = compile vs_4_0 VertexShaderFunction();
+        PixelShader = compile ps_4_0 DecalPixelShader();
     }
 }
 
@@ -148,7 +148,7 @@ technique Outline
 {
 	pass Pass1
 	{
-		VertexShader = compile vs_5_0 LineVertexShaderFunction();
-		PixelShader = compile ps_5_0 LinePixelShaderFunction();
+		VertexShader = compile vs_4_0 LineVertexShaderFunction();
+		PixelShader = compile ps_4_0 LinePixelShaderFunction();
 	}
 }

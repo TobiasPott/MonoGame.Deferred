@@ -70,17 +70,6 @@ SamplerState ShadowSampler
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  STRUCT DEFINITIONS
 
-struct VertexShaderInput
-{
-    float2 Position : POSITION0;
-};
-struct VertexShaderOutput
-{
-    float4 Position : POSITION0;
-    float2 TexCoord : TEXCOORD0;
-    float3 ViewDir : TEXCOORD1;
-};
-
 struct PixelShaderOutput
 {
     float4 Diffuse : SV_Target0;
@@ -96,16 +85,6 @@ struct PixelShaderOutput
 	//  VERTEX SHADER
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input, uint id:SV_VERTEXID)
-{
-	VertexShaderOutput output;
-	output.Position = float4(input.Position, 0, 1);
-	output.TexCoord.x = (float)(id / 2) * 2.0;
-	output.TexCoord.y = 1.0 - (float)(id % 2) * 2.0;
-
-	output.ViewDir = GetFrustumRay(id);
-	return output;
-}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//  PIXEL SHADER
@@ -287,7 +266,7 @@ float CalcShadowVSM(float distance, float2 texCoord)
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-PixelShaderOutput PixelShaderUnshadowedFunction(VertexShaderOutput input)
+PixelShaderOutput PixelShaderUnshadowedFunction(VSOutputPosTexViewDir input)
 {
     PixelShaderOutput output;
     float2 texCoord = float2(input.TexCoord);
@@ -332,7 +311,7 @@ PixelShaderOutput PixelShaderUnshadowedFunction(VertexShaderOutput input)
 
 
 
-float4 PixelShaderScreenSpaceShadowFunction(VertexShaderOutput input) : SV_Target
+float4 PixelShaderScreenSpaceShadowFunction(VSOutputPosTexViewDir input) : SV_Target
 {
     float2 texCoord = float2(input.TexCoord);
     
@@ -398,7 +377,7 @@ float4 PixelShaderScreenSpaceShadowFunction(VertexShaderOutput input) : SV_Targe
 }
 
 //No screen space shadows - we need to calculate them together with the lighting
-PixelShaderOutput PixelShaderShadowedFunction(VertexShaderOutput input)
+PixelShaderOutput PixelShaderShadowedFunction(VSOutputPosTexViewDir input)
 {
     PixelShaderOutput output;
     float2 texCoord = float2(input.TexCoord);
@@ -494,7 +473,7 @@ PixelShaderOutput PixelShaderShadowedFunction(VertexShaderOutput input)
 }
             
 //This one is used when we have screen space shadows already
-PixelShaderOutput PixelShaderSSShadowedFunction(VertexShaderOutput input)
+PixelShaderOutput PixelShaderSSShadowedFunction(VSOutputPosTexViewDir input)
 {
     PixelShaderOutput output;
     float2 texCoord = float2(input.TexCoord);
@@ -552,7 +531,7 @@ technique ShadowOnly
 {
     pass Pass1
     {
-        VertexShader = compile vs_5_0 VertexShaderFunction();
+        VertexShader = compile vs_5_0 VSMain_EncodedViewDir();
         PixelShader = compile ps_5_0 PixelShaderScreenSpaceShadowFunction();
     }
 }
@@ -561,7 +540,7 @@ technique Unshadowed
 {
     pass Pass1
     {
-        VertexShader = compile vs_5_0 VertexShaderFunction();
+        VertexShader = compile vs_5_0 VSMain_EncodedViewDir();
         PixelShader = compile ps_5_0 PixelShaderUnshadowedFunction();
     }
 }
@@ -570,7 +549,7 @@ technique Shadowed
 {
     pass Pass1
     {
-        VertexShader = compile vs_5_0 VertexShaderFunction();
+        VertexShader = compile vs_5_0 VSMain_EncodedViewDir();
         PixelShader = compile ps_5_0 PixelShaderShadowedFunction();
     }
 }
@@ -579,7 +558,7 @@ technique SSShadowed
 {
     pass Pass1
     {
-        VertexShader = compile vs_5_0 VertexShaderFunction();
+        VertexShader = compile vs_5_0 VSMain_EncodedViewDir();
         PixelShader = compile ps_5_0 PixelShaderSSShadowedFunction();
     }
 }

@@ -46,17 +46,6 @@ SamplerState ReflectionCubeMapSampler
 //  STRUCTS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct VertexShaderInput
-{
-    float2 Position : POSITION0;
-};
-struct VertexShaderOutput
-{
-    float4 Position : POSITION0;
-    float2 TexCoord : TEXCOORD0;
-    float3 ViewDir : TEXCOORD1;
-};
-
 struct PixelShaderOutput
 {
     float4 Diffuse : SV_Target0;
@@ -71,18 +60,6 @@ struct PixelShaderOutput
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//  VERTEX SHADER
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input, uint id:SV_VERTEXID)
-{
-	VertexShaderOutput output;
-	output.Position = float4(input.Position, 0, 1);
-	output.TexCoord.x = (float)(id / 2) * 2.0;
-	output.TexCoord.y = 1.0 - (float)(id % 2) * 2.0;
-
-	output.ViewDir = GetFrustumRay(id);
-	return output;
-}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//  PIXEL SHADER
@@ -183,7 +160,7 @@ float4 GetSSR(float2 TexCoord)
 		//  BASE FUNCTIONS
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-PixelShaderOutput PixelShaderFunctionBasic(VertexShaderOutput input)
+PixelShaderOutput PixelShaderFunctionBasic(VSOutputPosTexViewDir input)
 {
     PixelShaderOutput output;
 	int3 texCoordInt = int3(input.Position.xy, 0);
@@ -273,7 +250,7 @@ PixelShaderOutput PixelShaderFunctionBasic(VertexShaderOutput input)
     return output;
 }
 
-PixelShaderOutput PixelShaderFunctionSky(VertexShaderOutput input)
+PixelShaderOutput PixelShaderFunctionSky(VSOutputPosTexViewDir input)
 {
 	PixelShaderOutput output;
 	int3 texCoordInt = int3(input.Position.xy, 0);
@@ -306,8 +283,8 @@ technique Basic
 {
     pass Pass1
     {
-        VertexShader = compile vs_5_0 VertexShaderFunction();
-        PixelShader = compile ps_5_0 PixelShaderFunctionBasic();
+        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
+        PixelShader = compile ps_4_0 PixelShaderFunctionBasic();
     }
 }
 
@@ -315,8 +292,8 @@ technique Sky
 {
 	pass Pass1
 	{
-		VertexShader = compile vs_5_0 VertexShaderFunction();
-		PixelShader = compile ps_5_0 PixelShaderFunctionSky();
+        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
+		PixelShader = compile ps_4_0 PixelShaderFunctionSky();
 	}
 }
 
