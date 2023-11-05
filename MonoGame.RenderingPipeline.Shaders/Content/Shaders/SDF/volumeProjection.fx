@@ -314,7 +314,7 @@ technique Volume
 {
     pass Pass1
     {
-        VertexShader = compile COMPILETARGET_VS VSMain_EncodedViewDir();
+        COMPILE_VS(VSMain_EncodedViewDir);
         PixelShader = compile COMPILETARGET_PS PixelShaderFunctionVisualizeVolume();
     }
 }
@@ -322,8 +322,8 @@ technique Volume
 technique Distance
 {
 	pass Pass1
-	{
-        VertexShader = compile COMPILETARGET_VS VSMain_EncodedViewDir();
+    {
+        COMPILE_VS(VSMain_EncodedViewDir);
 		PixelShader = compile COMPILETARGET_PS PixelShaderFunctionDrawShadow();
 	}
 }
@@ -331,8 +331,8 @@ technique Distance
 technique GenerateSDF
 {
 	pass Pass1
-	{
-        VertexShader = compile COMPILETARGET_VS VSMain_EncodedViewDir();
+    {
+        COMPILE_VS(VSMain_EncodedViewDir);
 		PixelShader = compile COMPILETARGET_PS PixelShaderFunctionGenerateSDF();
 	}
 }

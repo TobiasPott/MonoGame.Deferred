@@ -285,7 +285,7 @@ technique Basic
 {
     pass Pass1
     {
-        VertexShader = compile COMPILETARGET_VS VSMain_EncodedViewDir();
+        COMPILE_VS(VSMain_EncodedViewDir);
         PixelShader = compile COMPILETARGET_PS PixelShaderFunctionBasic();
     }
 }
@@ -294,7 +294,7 @@ technique Sky
 {
 	pass Pass1
 	{
-        VertexShader = compile COMPILETARGET_VS VSMain_EncodedViewDir();
+        COMPILE_VS(VSMain_EncodedViewDir);
 		PixelShader = compile COMPILETARGET_PS PixelShaderFunctionSky();
 	}
 }

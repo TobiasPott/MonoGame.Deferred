@@ -66,7 +66,7 @@ technique VertexColor
 {
     pass Pass1
     {
-        VertexShader = compile COMPILETARGET_VS VertexShaderFunction();
+        COMPILE_VS(VertexShaderFunction);
         PixelShader = compile COMPILETARGET_PS PSPassthrough_VC();
     }
 }
@@ -75,7 +75,7 @@ technique GlobalColor
 {
     pass Pass1
     {
-        VertexShader = compile COMPILETARGET_VS VertexShaderFunctionColor();
+        COMPILE_VS(VertexShaderFunctionColor);
         PixelShader = compile COMPILETARGET_PS PSConst_GlobalColor();
     }
 }

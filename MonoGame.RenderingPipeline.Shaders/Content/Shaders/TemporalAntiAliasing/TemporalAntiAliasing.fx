@@ -290,7 +290,7 @@ technique TemporalAntialiasing
 {
     pass Pass1
     {
-        VertexShader = compile COMPILETARGET_VS VSMain_EncodedViewDir();
+        COMPILE_VS(VSMain_EncodedViewDir);
         PixelShader = compile COMPILETARGET_PS PixelShaderFunction();
     }
 }
@@ -299,7 +299,7 @@ technique InverseTonemap
 {
 	pass Pass1
 	{
-        VertexShader = compile COMPILETARGET_VS VSMain_EncodedViewDir();
+        COMPILE_VS(VSMain_EncodedViewDir);
         PixelShader = compile COMPILETARGET_PS InverseToneMapPixelShader();
     }
 }

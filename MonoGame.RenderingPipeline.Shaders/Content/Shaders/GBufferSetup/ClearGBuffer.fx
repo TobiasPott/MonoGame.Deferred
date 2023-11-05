@@ -31,7 +31,7 @@ technique Clear
 {
     pass Pass1
     {
-        VertexShader = compile COMPILETARGET_VS VSPassthrough_F2ToF4();
+        COMPILE_VS(VSPassthrough_F2ToF4);
         PixelShader = compile COMPILETARGET_PS PSClear();
     }
 }

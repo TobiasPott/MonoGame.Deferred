@@ -160,7 +160,7 @@ technique DrawLinearDepth
 {
     pass Pass1
     {
-        VertexShader = compile COMPILETARGET_VS DrawLinear_VertexShader();
+        COMPILE_VS(DrawLinear_VertexShader);
         PixelShader = compile COMPILETARGET_PS DrawLinear_PixelShader();
     }
 }
@@ -169,7 +169,7 @@ technique DrawDistanceDepth
 {
 	pass Pass1
 	{
-		VertexShader = compile COMPILETARGET_VS DrawDistance_VertexShader();
+		COMPILE_VS(DrawDistance_VertexShader);
 		PixelShader = compile COMPILETARGET_PS DrawDistance_PixelShader();
 	}
 }
@@ -178,7 +178,7 @@ technique DrawDistanceDepthAlpha
 {
 	pass Pass1
 	{
-		VertexShader = compile COMPILETARGET_VS DrawDistance_VertexShaderAlpha();
+		COMPILE_VS(DrawDistance_VertexShaderAlpha);
 		PixelShader = compile COMPILETARGET_PS DrawDistance_PixelShaderAlpha();
 	}
 }

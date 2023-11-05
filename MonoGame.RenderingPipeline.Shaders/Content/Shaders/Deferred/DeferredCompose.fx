@@ -134,7 +134,7 @@ technique TechniqueLinear
 {
     pass Pass1
     {
-        VertexShader = compile COMPILETARGET_VS VSMain_Encoded();
+        COMPILE_VS(VSMain_Encoded);
         PixelShader = compile COMPILETARGET_PS PixelShaderFunction();
     }
 }

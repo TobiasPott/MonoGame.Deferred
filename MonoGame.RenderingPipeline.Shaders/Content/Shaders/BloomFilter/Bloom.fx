@@ -111,8 +111,8 @@ float4 PSUpsample(float4 pos : SV_POSITION,  float2 texCoord : TEXCOORD0) : SV_T
 technique Extract
 {
 	pass Pass1
-	{
-        VertexShader = compile COMPILETARGET_VS VSMain_Encoded();
+    {
+        COMPILE_VS(VSMain_Encoded);
         PixelShader = compile COMPILETARGET_PS PSExtract();
     }
 }
@@ -120,8 +120,8 @@ technique Extract
 technique ExtractLuminance
 {
 	pass Pass1
-	{
-        VertexShader = compile COMPILETARGET_VS VSMain_Encoded();
+    {
+        COMPILE_VS(VSMain_Encoded);
         PixelShader = compile COMPILETARGET_PS PSExtract_Luminance();
     }
 }
@@ -130,7 +130,7 @@ technique Downsample
 {
     pass Pass1
     {
-        VertexShader = compile COMPILETARGET_VS VSMain_Encoded();
+        COMPILE_VS(VSMain_Encoded);
         PixelShader = compile COMPILETARGET_PS PSDownsample();
     }
 }
@@ -139,7 +139,7 @@ technique Upsample
 {
     pass Pass1
     {
-        VertexShader = compile COMPILETARGET_VS VSMain_Encoded();
+        COMPILE_VS(VSMain_Encoded);
         PixelShader = compile COMPILETARGET_PS PSUpsample();
     }
 }

@@ -140,7 +140,7 @@ technique Decal
 {
     pass Pass1
     {
-        VertexShader = compile COMPILETARGET_VS VertexShaderFunction();
+        COMPILE_VS(VertexShaderFunction);
         PixelShader = compile COMPILETARGET_PS DecalPixelShader();
     }
 }
@@ -149,7 +149,7 @@ technique Outline
 {
 	pass Pass1
 	{
-        VertexShader = compile COMPILETARGET_VS LineVertexShaderFunction();
+        COMPILE_VS(LineVertexShaderFunction);
 		PixelShader = compile COMPILETARGET_PS LinePixelShaderFunction();
 	}
 }

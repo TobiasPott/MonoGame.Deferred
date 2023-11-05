@@ -214,7 +214,7 @@ technique Base
 	pass Pass1
 	{
 
-        VertexShader = compile COMPILETARGET_VS VSMain_Encoded();
+        COMPILE_VS(VSMain_Encoded);
         PixelShader = compile COMPILETARGET_PS BasePixelShaderFunction();
     }
 }
@@ -223,8 +223,7 @@ technique VignetteChroma
 {
     pass Pass1
     {
-
-        VertexShader = compile COMPILETARGET_VS VSMain_Encoded();
+        COMPILE_VS(VSMain_Encoded);
         PixelShader = compile COMPILETARGET_PS VignetteChromaShiftPixelShaderFunction();
     }
 }

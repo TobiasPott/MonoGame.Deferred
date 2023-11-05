@@ -881,7 +881,7 @@ technique WriteStencilMask
 {
 	pass Pass1
 	{
-		VertexShader = compile COMPILETARGET_VS VertexShaderBasic();
+		COMPILE_VS(VertexShaderBasic);
 		PixelShader = compile COMPILETARGET_PS PixelShaderBasic();
 	}
 }
@@ -890,7 +890,7 @@ technique Unshadowed
 {
     pass Pass1
     {
-        VertexShader = compile COMPILETARGET_VS VertexShaderFunction();
+        COMPILE_VS(VertexShaderFunction);
 		PixelShader = compile COMPILETARGET_PS PixelShaderFunction();
     }
 }
@@ -899,7 +899,7 @@ technique ShadowedSDF
 {
     pass Pass1
     {
-        VertexShader = compile COMPILETARGET_VS VertexShaderFunction();
+        COMPILE_VS(VertexShaderFunction);
         PixelShader = compile COMPILETARGET_PS PixelShaderFunctionSDF();
     }
 }
@@ -908,7 +908,7 @@ technique UnshadowedVolume
 {
 	pass Pass1
 	{
-		VertexShader = compile COMPILETARGET_VS VertexShaderFunction();
+		COMPILE_VS(VertexShaderFunction);
 		PixelShader = compile COMPILETARGET_PS VolumetricPixelShaderFunction();
 	}
 }
@@ -917,7 +917,7 @@ technique Shadowed
 {
 	pass Pass1
 	{
-		VertexShader = compile COMPILETARGET_VS VertexShaderFunction();
+		COMPILE_VS(VertexShaderFunction);
 		PixelShader = compile COMPILETARGET_PS PixelShaderFunctionShadowed();
 	}
 }
@@ -926,7 +926,7 @@ technique ShadowedVolume
 {
     pass Pass1
     {
-        VertexShader = compile COMPILETARGET_VS VertexShaderFunction();
+        COMPILE_VS(VertexShaderFunction);
         PixelShader = compile COMPILETARGET_PS VolumetricPixelShaderFunctionShadowed();
     }
 }

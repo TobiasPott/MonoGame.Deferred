@@ -1,5 +1,4 @@
 ﻿
-#include "../../Includes/Macros.incl.fx"
 
 //Depth Reconstruction from linear depth buffer, TheKosmonaut 2016
 
@@ -10,6 +9,7 @@
 #define MAXLIGHTS 40
 #define MAXLIGHTSPERTILE 40
 
+#include "../../Includes/Macros.incl.fx"
 #include "../Common/helper.fx"
 
 float2 Resolution = { 1280.0, 720.0 };
@@ -187,7 +187,7 @@ technique Default
 {
     pass Pass1
     {
-        VertexShader = compile COMPILETARGET_VS VertexShaderFunction();
+        COMPILE_VS(VertexShaderFunction);
         PixelShader = compile COMPILETARGET_PS PixelShaderFunction();
     }
 }

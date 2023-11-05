@@ -222,7 +222,7 @@ technique ApplyLUT
 {
 	pass Pass1
 	{
-		VertexShader = compile COMPILETARGET_VS VertexShaderFSQFunction();
+		COMPILE_VS(VertexShaderFSQFunction);
 		PixelShader = compile COMPILETARGET_PS PixelShaderApplyLUT();
 	}
 }
@@ -231,7 +231,7 @@ technique CreateLUT
 {
     pass Pass1
     {
-		VertexShader = compile COMPILETARGET_VS VertexShaderFSQFunction();
+		COMPILE_VS(VertexShaderFSQFunction);
         PixelShader = compile COMPILETARGET_PS PixelShaderCreateLUT();
     }
 }
