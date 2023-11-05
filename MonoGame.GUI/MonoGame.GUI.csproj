@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MonoGame.RenderingPipeline\MonoGame.RenderingPipeline.GL.csproj" />
+    <ProjectReference Include="..\MonoGame.RenderingPipeline\MonoGame.RenderingPipeline.csproj" />
   </ItemGroup>
 
 </Project>
