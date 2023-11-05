@@ -15,16 +15,7 @@ float4x4 WorldView;
 float4x4 WorldViewProj;
 float4x4 InverseWorldView;
 
-Texture2D DecalMap;
-
-SamplerState AnisotropicSampler
-{
-    Texture = (DecalMap);
-    Filter = Anisotropic;
-    MaxAnisotropy = 8;
-    AddressU = Clamp;
-    AddressV = Clamp;
-};
+DECLARE_MAP(DecalMap, CLAMP, ANISOTROPIC, 8);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  VERTEX SHADER
@@ -74,9 +65,9 @@ float4 PSMain_Decal(V2F_ViewPos input) : SV_TARGET
 
     clip(1 - abs(positionOS.xyz));
 
-    float2 textureCoordinate = (positionOS.xy + 1) / 2;
+    float2 texCoord = (positionOS.xy + 1) / 2;
 
-    return DecalMap.Sample(AnisotropicSampler, textureCoordinate);
+    return DecalMap.Sample(DecalMapSampler, texCoord);
 }
 
 float4 PSMain_Line(V2F_ViewPosColor input) : SV_TARGET0
