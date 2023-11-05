@@ -5,6 +5,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "../../Includes/Macros.incl.fx"
+#include "../../Includes/DepthMap.incl.fx"
 #include "../../Includes/VertexStage.incl.fx"
 #include "../Common/helper.fx"
 #include "../Common/sdf.fx"
@@ -19,7 +20,6 @@ Texture2D ReflectionMap;
 
 //SDF
 bool UseSDFAO;
-Texture2D DepthMap;
 
 float2 Resolution = { 1280, 800 };
 

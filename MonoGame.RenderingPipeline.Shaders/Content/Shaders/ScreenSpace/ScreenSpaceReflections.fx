@@ -6,6 +6,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "../../Includes/Macros.incl.fx"
+#include "../../Includes/DepthMap.incl.fx"
 #include "../../Includes/VertexStage.incl.fx"
 #include "../Common/helper.fx"
 
@@ -21,7 +22,7 @@ const float MinimumThickness = 70;
 const float border = 0.1f;
 float2 Resolution = float2(1280, 720);
 
-Texture2D DepthMap;
+
 Texture2D NormalMap;
 Texture2D SourceMap;
 Texture2D NoiseMap;

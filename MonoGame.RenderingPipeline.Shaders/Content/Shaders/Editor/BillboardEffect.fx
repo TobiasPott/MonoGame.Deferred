@@ -1,5 +1,6 @@
 ﻿
 #include "../../Includes/Macros.incl.fx"
+#include "../../Includes/DepthMap.incl.fx"
 #include "../../Includes/VertexStage.incl.fx"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -30,7 +31,6 @@ SamplerState Sampler = sampler_state
     AddressV = Clamp;
 };
 
-Texture2D DepthMap;
 SamplerState DepthSampler = sampler_state
 {
     MinFilter = Point;

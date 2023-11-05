@@ -1,6 +1,7 @@
 ﻿//Depth Reconstruction from linear depth buffer, TheKosmonaut 2016
 
 #include "../../Includes/Macros.incl.fx"
+#include "../../Includes/DepthMap.incl.fx"
 #include "../../Includes/VertexStage.incl.fx"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -9,7 +10,6 @@
 
 float4x4 Projection;
 
-Texture2D DepthMap;
 
 SamplerState texSampler
 {

@@ -5,6 +5,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "../../Includes/Macros.incl.fx"
+#include "../../Includes/DepthMap.incl.fx"
 #include "../../Includes/VertexStage.incl.fx"
 #include "../Common/helper.fx"
 
@@ -28,8 +29,6 @@ float lightIntensity = 1.0f;
 Texture2D AlbedoMap;
 // normals, and specularPower in the alpha channel
 Texture2D NormalMap;
-//depth
-Texture2D DepthMap;
 
 Texture2D ShadowMap;
 Texture2D SSShadowMap;

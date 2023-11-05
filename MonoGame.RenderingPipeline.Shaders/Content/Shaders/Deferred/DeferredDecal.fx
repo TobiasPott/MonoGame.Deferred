@@ -6,6 +6,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "../../Includes/Macros.incl.fx"
+#include "../../Includes/DepthMap.incl.fx"
 #include "../../Includes/VertexStage.incl.fx"
 #include "../Common/helper.fx"
 
@@ -13,7 +14,6 @@ float4x4 WorldView;
 float4x4 WorldViewProj;
 float4x4 InverseWorldView;
 
-Texture2D DepthMap;
 Texture2D DecalMap;
 
 SamplerState AnisotropicSampler

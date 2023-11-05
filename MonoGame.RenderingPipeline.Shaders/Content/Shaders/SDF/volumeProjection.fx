@@ -7,13 +7,13 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "../../Includes/Macros.incl.fx"
+#include "../../Includes/DepthMap.incl.fx"
 #include "../../Includes/VertexStage.incl.fx"
 #include "../Common/helper.fx"
 #include "../Common/sdf.fx"
 
 float3 CameraPosition;
 
-Texture2D DepthMap;
 
 //Generation
 float2 TriangleTexResolution;

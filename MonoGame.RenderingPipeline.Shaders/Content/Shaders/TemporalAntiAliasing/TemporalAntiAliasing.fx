@@ -1,12 +1,12 @@
 ﻿
 #include "../../Includes/Macros.incl.fx"
+#include "../../Includes/DepthMap.incl.fx"
 #include "../../Includes/VertexStage.incl.fx"
 
 
 float4x4 CurrentToPrevious;
 
 
-Texture2D DepthMap;
 Texture2D AccumulationMap;
 Texture2D UpdateMap;
 

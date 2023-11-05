@@ -6,6 +6,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "../../Includes/Macros.incl.fx"
+#include "../../Includes/DepthMap.incl.fx"
 #include "../../Includes/VertexStage.incl.fx"
 #include "../Common/helper.fx"
 #include "../Common/sdf.fx"
@@ -51,8 +52,6 @@ const float OUTPUTCONST = 0.1f;
 Texture2D AlbedoMap;
 // normals, and specularPower in the alpha channel
 Texture2D NormalMap;
-//depth
-Texture2D DepthMap;
 
 SamplerState PointSampler
 {

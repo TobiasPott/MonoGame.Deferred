@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "../../Includes/Macros.incl.fx"
+#include "../../Includes/DepthMap.incl.fx"
 #include "../../Includes/VertexStage.incl.fx"
 #include "../Common/helper.fx"
 
@@ -19,7 +20,6 @@ float4x4 ViewProjection;
 float2 AspectRatio;
 
 Texture2D NormalMap;
-Texture2D DepthMap;
 
 Texture2D SSAOMap;
 
