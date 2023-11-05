@@ -1,10 +1,8 @@
-﻿////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//  STRUCT DEFINITIONS
+﻿
+#include "../Common/Functions.fx"
 
-struct VertexShaderInput
-{
-	float2 Position : POSITION0;
-};
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  STRUCT DEFINITIONS
 
 struct VertexShaderOutput
 {
@@ -14,13 +12,6 @@ struct VertexShaderOutput
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  FUNCTION DEFINITIONS
-
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
-{
-	VertexShaderOutput output;
-	output.Position = float4(input.Position.xy,1, 1);
-	return output;
-}
 
 //------------------------ PIXEL SHADER ----------------------------------------
 
@@ -38,7 +29,7 @@ technique Base
 	pass Pass1
 	{
 
-		VertexShader = compile vs_4_0 VertexShaderFunction();
-		PixelShader = compile ps_5_0 BasePixelShaderFunction();
+		VertexShader = compile vs_4_0 VSPassthrough_F2ToF4();
+		PixelShader = compile ps_4_0 BasePixelShaderFunction();
 	}
 }

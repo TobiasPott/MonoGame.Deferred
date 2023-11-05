@@ -27,6 +27,11 @@ struct VSOutputPosTexViewDir
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  FUNCTION DEFINITIONS
+float4 VSPassthrough_F2ToF4(float2 Position : POSITION0) : SV_POSITION
+{
+    return float4(Position, 1, 1);
+}
+
 
 VSOutputPosTex VSMain_Encoded(VSInput_Encoded input, uint id : SV_VERTEXID)
 {

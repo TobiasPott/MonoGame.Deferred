@@ -514,7 +514,7 @@ technique DrawBasic
     pass Pass1
     {
         VertexShader = compile vs_4_0 DrawBasic_VertexShader();
-        PixelShader = compile ps_5_0 DrawBasic_PixelShader();
+        PixelShader = compile ps_4_0 DrawBasic_PixelShader();
     }
 }
 
@@ -523,7 +523,7 @@ technique DrawTexture
     pass Pass1
     {
         VertexShader = compile vs_4_0 DrawBasic_VertexShader();
-        PixelShader = compile ps_5_0 DrawTexture_PixelShader();
+        PixelShader = compile ps_4_0 DrawTexture_PixelShader();
     }
 }
 
@@ -532,7 +532,7 @@ technique DrawTextureSpecular
     pass Pass1
     {
         VertexShader = compile vs_4_0 DrawBasic_VertexShader();
-        PixelShader = compile ps_5_0 DrawTextureSpecular_PixelShader();
+        PixelShader = compile ps_4_0 DrawTextureSpecular_PixelShader();
     }
 }
 
@@ -541,7 +541,7 @@ technique DrawTextureSpecularMetallic
     pass Pass1
     {
         VertexShader = compile vs_4_0 DrawBasic_VertexShader();
-        PixelShader = compile ps_5_0 DrawTextureSpecularMetallic_PixelShader();
+        PixelShader = compile ps_4_0 DrawTextureSpecularMetallic_PixelShader();
     }
 }
 
@@ -550,7 +550,7 @@ technique DrawTextureSpecularNormal
     pass Pass1
     {
         VertexShader = compile vs_4_0 DrawNormals_VertexShader();
-        PixelShader = compile ps_5_0 DrawTextureSpecularNormal_PixelShader();
+        PixelShader = compile ps_4_0 DrawTextureSpecularNormal_PixelShader();
     }
 }
 
@@ -559,7 +559,7 @@ technique DrawTextureSpecularNormalMetallic
     pass Pass1
     {
         VertexShader = compile vs_4_0 DrawNormals_VertexShader();
-        PixelShader = compile ps_5_0 DrawTextureSpecularNormalMetallic_PixelShader();
+        PixelShader = compile ps_4_0 DrawTextureSpecularNormalMetallic_PixelShader();
     }
 }
 
@@ -569,7 +569,7 @@ technique DrawTextureNormal
     pass Pass1
     {
         VertexShader = compile vs_4_0 DrawNormals_VertexShader();
-        PixelShader = compile ps_5_0 DrawTextureNormal_PixelShader();
+        PixelShader = compile ps_4_0 DrawTextureNormal_PixelShader();
     }
 }
 
@@ -578,7 +578,7 @@ technique DrawNormal
 	pass Pass1
 	{
 		VertexShader = compile vs_4_0 DrawNormals_VertexShader();
-		PixelShader = compile ps_5_0 DrawNormal_PixelShader();
+		PixelShader = compile ps_4_0 DrawNormal_PixelShader();
 	}
 }
 

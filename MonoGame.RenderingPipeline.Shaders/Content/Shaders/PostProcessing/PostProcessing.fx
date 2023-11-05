@@ -214,8 +214,8 @@ technique Base
 	{
 
         VertexShader = compile vs_4_0 VSMain_Encoded();
-		PixelShader = compile ps_5_0 BasePixelShaderFunction();
-	}
+        PixelShader = compile ps_4_0 BasePixelShaderFunction();
+    }
 }
 
 technique VignetteChroma
@@ -224,6 +224,6 @@ technique VignetteChroma
     {
 
         VertexShader = compile vs_4_0 VSMain_Encoded();
-        PixelShader = compile ps_5_0 VignetteChromaShiftPixelShaderFunction();
+        PixelShader = compile ps_4_0 VignetteChromaShiftPixelShaderFunction();
     }
 }
