@@ -25,11 +25,11 @@ namespace DeferredEngine.Demo
         private List _objectDescriptionList;
         private TextBlock _objectDescriptionName;
         private TextBlock _objectDescriptionPos;
-        private TextBlockButton _objectButton1;
-        private TextBlockToggle _objectToggle0;
-        private TextBlockToggle _objectToggle1;
-        private TextBlockToggle _objectToggle2;
-        private TextBlockToggle _objectToggle3;
+        private Button _objectButton1;
+        private Toggle _objectToggle0;
+        private Toggle _objectToggle1;
+        private Toggle _objectToggle2;
+        private Toggle _objectToggle3;
         private SliderFloatText _objectSlider0;
         private SliderFloatText _objectSlider1;
         private SliderIntText _objectSlider2;
@@ -37,9 +37,9 @@ namespace DeferredEngine.Demo
 
         private GUIStyle defaultStyle;
 
-        private TextBlockButton _gizmoTranslation;
-        private TextBlockButton _gizmoRotation;
-        private TextBlockButton _gizmoScale;
+        private Button _gizmoTranslation;
+        private Button _gizmoRotation;
+        private Button _gizmoScale;
         private GizmoModes _gizmoMode;
         private GizmoModes _gizmoModePrevious;
 
@@ -80,28 +80,28 @@ namespace DeferredEngine.Demo
             //Editor gizmo control!
             GuiCanvas.AddElement(_leftSideList = new List(Vector2.Zero, defaultStyle));
 
-            _leftSideList.AddElement(_gizmoTranslation = new TextBlockButton(defaultStyle, "Translate (T)")
+            _leftSideList.AddElement(_gizmoTranslation = new Button(defaultStyle, "Translate (T)")
             {
                 ButtonObject = this,
                 ButtonMethod = GetType().GetMethod("ChangeGizmoMode"),
                 ButtonMethodArgs = new object[] { GizmoModes.Translation },
             });
-            _leftSideList.AddElement(_gizmoRotation = new TextBlockButton(defaultStyle, "Rotate (R)")
+            _leftSideList.AddElement(_gizmoRotation = new Button(defaultStyle, "Rotate (R)")
             {
                 ButtonObject = this,
                 ButtonMethod = GetType().GetMethod("ChangeGizmoMode"),
                 ButtonMethodArgs = new object[] { GizmoModes.Rotation },
             });
-            _leftSideList.AddElement(_gizmoScale = new TextBlockButton(defaultStyle, "Scale (Z)")
+            _leftSideList.AddElement(_gizmoScale = new Button(defaultStyle, "Scale (Z)")
             {
                 ButtonObject = this,
                 ButtonMethod = GetType().GetMethod("ChangeGizmoMode"),
                 ButtonMethodArgs = new object[] { GizmoModes.Scale },
             });
-            _leftSideList.AddElement(new TextBlockToggle(defaultStyle, "Local: ")
+            _leftSideList.AddElement(new Toggle(defaultStyle, "Local: ")
             {
                 ToggleField = typeof(RenderingSettings).GetField(nameof(RenderingSettings.e_LocalTransformation)),
-                Toggle = RenderingSettings.e_LocalTransformation
+                State = RenderingSettings.e_LocalTransformation
             });
             _leftSideList.Alignment = Alignment.BottomLeft;
 
@@ -113,40 +113,40 @@ namespace DeferredEngine.Demo
             TextBlock helperText = new TextBlock(new Vector2(0, 100), new Vector2(300, 200), CreateHelperText(), defaultStyle.TextFont, new Color(Color.DimGray, 0.2f), Color.White, TextAlignment.Left, new Vector2(10, 1)) { IsHidden = true };
             GuiCanvas.AddElement(helperText);
 
-            _rightSideList.AddElement(new TextBlockToggle(defaultStyle, "Enable Selection")
+            _rightSideList.AddElement(new Toggle(defaultStyle, "Enable Selection")
             {
                 ToggleProperty = typeof(RenderingSettings).GetProperty(nameof(RenderingSettings.EnableSelection)),
-                Toggle = RenderingSettings.EnableSelection
+                State = RenderingSettings.EnableSelection
             });
 
-            _rightSideList.AddElement(new TextBlockToggle(defaultStyle, "Draw Mesh Outl.")
+            _rightSideList.AddElement(new Toggle(defaultStyle, "Draw Mesh Outl.")
             {
                 ToggleField = typeof(IdAndOutlineRenderModule).GetField("e_DrawOutlines"),
-                Toggle = IdAndOutlineRenderModule.e_DrawOutlines
+                State = IdAndOutlineRenderModule.e_DrawOutlines
             });
 
-            _rightSideList.AddElement(new TextBlockToggle(defaultStyle, "Enable Profiler")
+            _rightSideList.AddElement(new Toggle(defaultStyle, "Enable Profiler")
             {
                 ToggleProperty = PipelineProfiler.ModuleEnabled.GetValuePropertyInfo(),
                 ToggleObject = PipelineProfiler.ModuleEnabled,
-                Toggle = PipelineProfiler.ModuleEnabled
+                State = PipelineProfiler.ModuleEnabled
             });
-            _rightSideList.AddElement(new TextBlockToggle(defaultStyle, "Enable Decals")
+            _rightSideList.AddElement(new Toggle(defaultStyle, "Enable Decals")
             {
                 ToggleField = typeof(DecalRenderModule).GetField("g_EnableDecals"),
-                Toggle = DecalRenderModule.g_EnableDecals
+                State = DecalRenderModule.g_EnableDecals
             });
-            _rightSideList.AddElement(new TextBlockToggle(defaultStyle, "Enable Forward")
+            _rightSideList.AddElement(new Toggle(defaultStyle, "Enable Forward")
             {
                 ToggleProperty = ForwardPipelineModule.ModuleEnabled.GetValuePropertyInfo(),
                 ToggleObject = ForwardPipelineModule.ModuleEnabled,
-                Toggle = ForwardPipelineModule.ModuleEnabled
+                State = ForwardPipelineModule.ModuleEnabled
             });
-            _rightSideList.AddElement(new TextBlockToggle(defaultStyle, "Enable CPU Cull")
+            _rightSideList.AddElement(new Toggle(defaultStyle, "Enable CPU Cull")
             {
                 ToggleProperty = DynamicMeshBatcher.CPUCullingEnabled.GetValuePropertyInfo(),
                 ToggleObject = DynamicMeshBatcher.CPUCullingEnabled,
-                Toggle = DynamicMeshBatcher.CPUCullingEnabled
+                State = DynamicMeshBatcher.CPUCullingEnabled
             });
             _rightSideList.AddElement(new SliderFloatText(defaultStyle, 16.0f, 1024.0f, 2, "Far Clip: ")
             {
@@ -163,16 +163,16 @@ namespace DeferredEngine.Demo
             });
 
 
-            _rightSideList.AddElement(new TextBlockToggle(defaultStyle, "Show Controls")
+            _rightSideList.AddElement(new Toggle(defaultStyle, "Show Controls")
             {
                 ToggleProperty = typeof(TextBlock).GetProperty("IsVisible"),
                 ToggleObject = helperText,
-                Toggle = helperText.IsVisible
+                State = helperText.IsVisible
             });
-            _rightSideList.AddElement(new TextBlockToggle(defaultStyle, "Default Material")
+            _rightSideList.AddElement(new Toggle(defaultStyle, "Default Material")
             {
                 ToggleField = typeof(RenderingSettings).GetField("d_DefaultMaterial"),
-                Toggle = RenderingSettings.d_DefaultMaterial
+                State = RenderingSettings.d_DefaultMaterial
             });
 
             //_rightSideList.AddElement(new GuiDropList(defaultStyle, "Show: ")
@@ -186,11 +186,11 @@ namespace DeferredEngine.Demo
 
             _objectDescriptionList.AddElement(_objectDescriptionName = new TextBlock(defaultStyle, "objDescName"));
             _objectDescriptionList.AddElement(_objectDescriptionPos = new TextBlock(defaultStyle, "objDescName"));
-            _objectDescriptionList.AddElement(_objectButton1 = new TextBlockButton(defaultStyle, "objButton1") { IsHidden = true });
-            _objectDescriptionList.AddElement(_objectToggle0 = new TextBlockToggle(defaultStyle, "objToggle0") { IsHidden = true });
-            _objectDescriptionList.AddElement(_objectToggle1 = new TextBlockToggle(defaultStyle, "objToggle1") { IsHidden = true });
-            _objectDescriptionList.AddElement(_objectToggle2 = new TextBlockToggle(defaultStyle, "objToggle2") { IsHidden = true });
-            _objectDescriptionList.AddElement(_objectToggle3 = new TextBlockToggle(defaultStyle, "objToggle3") { IsHidden = true });
+            _objectDescriptionList.AddElement(_objectButton1 = new Button(defaultStyle, "objButton1") { IsHidden = true });
+            _objectDescriptionList.AddElement(_objectToggle0 = new Toggle(defaultStyle, "objToggle0") { IsHidden = true });
+            _objectDescriptionList.AddElement(_objectToggle1 = new Toggle(defaultStyle, "objToggle1") { IsHidden = true });
+            _objectDescriptionList.AddElement(_objectToggle2 = new Toggle(defaultStyle, "objToggle2") { IsHidden = true });
+            _objectDescriptionList.AddElement(_objectToggle3 = new Toggle(defaultStyle, "objToggle3") { IsHidden = true });
             _objectDescriptionList.AddElement(_objectSlider0 = new SliderFloatText(defaultStyle, 0, 1, 2, "objToggle1") { IsHidden = true });
             _objectDescriptionList.AddElement(_objectSlider1 = new SliderFloatText(defaultStyle, 0, 1, 2, "objToggle2") { IsHidden = true });
             _objectDescriptionList.AddElement(_objectSlider2 = new SliderIntText(defaultStyle, 0, 10, 1, "objToggle3") { IsHidden = true });
@@ -219,16 +219,16 @@ namespace DeferredEngine.Demo
             ListToggle sdfList = new ListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
             optionList.AddElement(sdfList);
 
-            sdfList.AddElement(new TextBlockToggle(defaultStyle, "Draw SDF")
+            sdfList.AddElement(new Toggle(defaultStyle, "Draw SDF")
             {
                 ToggleField = typeof(RenderingSettings.SDF).GetField(nameof(RenderingSettings.SDF.DrawDistance)),
-                Toggle = RenderingSettings.SDF.DrawDistance
+                State = RenderingSettings.SDF.DrawDistance
             });
 
-            sdfList.AddElement(new TextBlockToggle(defaultStyle, "Draw SDF volume")
+            sdfList.AddElement(new Toggle(defaultStyle, "Draw SDF volume")
             {
                 ToggleField = typeof(RenderingSettings.SDF).GetField(nameof(RenderingSettings.SDF.DrawVolume)),
-                Toggle = RenderingSettings.SDF.DrawVolume
+                State = RenderingSettings.SDF.DrawVolume
             });
 
             /////////////////////////////////////////////////////////////////
@@ -240,32 +240,32 @@ namespace DeferredEngine.Demo
             ListToggle postprocessingList = new ListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
             optionList.AddElement(postprocessingList);
 
-            postprocessingList.AddElement(new TextBlockToggle(defaultStyle, "Post Processing")
+            postprocessingList.AddElement(new Toggle(defaultStyle, "Post Processing")
             {
                 ToggleProperty = PostProcessingFx.ModuleEnabled.GetValuePropertyInfo(),
                 ToggleObject = PostProcessingFx.ModuleEnabled,
-                Toggle = PostProcessingFx.ModuleEnabled
+                State = PostProcessingFx.ModuleEnabled
             });
 
-            postprocessingList.AddElement(new TextBlockToggle(defaultStyle, "Color Grading")
+            postprocessingList.AddElement(new Toggle(defaultStyle, "Color Grading")
             {
                 ToggleProperty = ColorGradingFx.ModuleEnabled.GetValuePropertyInfo(),
                 ToggleObject = ColorGradingFx.ModuleEnabled,
-                Toggle = ColorGradingFx.ModuleEnabled
+                State = ColorGradingFx.ModuleEnabled
             });
 
-            postprocessingList.AddElement(new TextBlockToggle(defaultStyle, "TAA ")
+            postprocessingList.AddElement(new Toggle(defaultStyle, "TAA ")
             {
                 ToggleProperty = TemporalAAFx.ModuleEnabled.GetValuePropertyInfo(),
                 ToggleObject = TemporalAAFx.ModuleEnabled,
-                Toggle = TemporalAAFx.ModuleEnabled
+                State = TemporalAAFx.ModuleEnabled
             });
 
-            postprocessingList.AddElement(new TextBlockToggle(defaultStyle, "TAA Tonemap")
+            postprocessingList.AddElement(new Toggle(defaultStyle, "TAA Tonemap")
             {
                 ToggleProperty = TemporalAAFx.ModuleTonemapEnabled.GetValuePropertyInfo(),
                 ToggleObject = TemporalAAFx.ModuleTonemapEnabled,
-                Toggle = TemporalAAFx.ModuleTonemapEnabled
+                State = TemporalAAFx.ModuleTonemapEnabled
             });
 
 
@@ -280,32 +280,32 @@ namespace DeferredEngine.Demo
             ListToggle ssrList = new ListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
             optionList.AddElement(ssrList);
 
-            ssrList.AddElement(new TextBlockToggle(defaultStyle, "Enable SSR")
+            ssrList.AddElement(new Toggle(defaultStyle, "Enable SSR")
             {
                 ToggleProperty = SSReflectionFx.ModuleEnabled.GetValuePropertyInfo(),
                 ToggleObject = SSReflectionFx.ModuleEnabled,
-                Toggle = SSReflectionFx.ModuleEnabled
+                State = SSReflectionFx.ModuleEnabled
             });
 
-            ssrList.AddElement(new TextBlockToggle(defaultStyle, "Stochastic distr.")
+            ssrList.AddElement(new Toggle(defaultStyle, "Stochastic distr.")
             {
                 ToggleProperty = SSReflectionFx.g_UseTaa.GetValuePropertyInfo(),
                 ToggleObject = SSReflectionFx.g_UseTaa,
-                Toggle = SSReflectionFx.g_UseTaa
+                State = SSReflectionFx.g_UseTaa
             });
 
-            ssrList.AddElement(new TextBlockToggle(defaultStyle, "Temporal Noise")
+            ssrList.AddElement(new Toggle(defaultStyle, "Temporal Noise")
             {
                 ToggleProperty = SSReflectionFx.g_Noise.GetValuePropertyInfo(),
                 ToggleObject = SSReflectionFx.g_Noise,
-                Toggle = SSReflectionFx.g_Noise
+                State = SSReflectionFx.g_Noise
             });
 
 
-            ssrList.AddElement(new TextBlockToggle(defaultStyle, "Firefly Reduction")
+            ssrList.AddElement(new Toggle(defaultStyle, "Firefly Reduction")
             {
                 ToggleProperty = typeof(SSReflectionFx).GetProperty(nameof(SSReflectionFx.g_FireflyReduction)),
-                Toggle = SSReflectionFx.g_FireflyReduction
+                State = SSReflectionFx.g_FireflyReduction
             });
 
             ssrList.AddElement(new SliderFloatText(defaultStyle, 0, 5, 2, "Firefly Threshold ")
@@ -339,18 +339,18 @@ namespace DeferredEngine.Demo
             ListToggle ssaoList = new ListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
             optionList.AddElement(ssaoList);
 
-            ssaoList.AddElement(new TextBlockToggle(defaultStyle, "Enable SSAO")
+            ssaoList.AddElement(new Toggle(defaultStyle, "Enable SSAO")
             {
                 ToggleProperty = SSAmbientOcclustionFx.ModuleEnabled.GetValuePropertyInfo(),
                 ToggleObject = SSAmbientOcclustionFx.ModuleEnabled,
-                Toggle = SSAmbientOcclustionFx.ModuleEnabled
+                State = SSAmbientOcclustionFx.ModuleEnabled
             });
 
-            ssaoList.AddElement(new TextBlockToggle(defaultStyle, "SSAO Blur: ")
+            ssaoList.AddElement(new Toggle(defaultStyle, "SSAO Blur: ")
             {
                 ToggleProperty = SSAmbientOcclustionFx.ModuleEnableBlur.GetValuePropertyInfo(),
                 ToggleObject = SSAmbientOcclustionFx.ModuleEnableBlur,
-                Toggle = SSAmbientOcclustionFx.ModuleEnableBlur
+                State = SSAmbientOcclustionFx.ModuleEnableBlur
             });
 
             ssaoList.AddElement(new SliderIntText(defaultStyle, 1, 32, 1, "SSAO Samples: ")
@@ -385,11 +385,11 @@ namespace DeferredEngine.Demo
             ListToggle bloomList = new ListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
             optionList.AddElement(bloomList);
 
-            bloomList.AddElement(new TextBlockToggle(defaultStyle, "Enable Bloom")
+            bloomList.AddElement(new Toggle(defaultStyle, "Enable Bloom")
             {
                 ToggleProperty = BloomFx.ModuleEnabled.GetValuePropertyInfo(),
                 ToggleObject = BloomFx.ModuleEnabled,
-                Toggle = BloomFx.ModuleEnabled
+                State = BloomFx.ModuleEnabled
             });
 
             bloomList.AddElement(new SliderFloatText(defaultStyle, 0, 1, 3, "Threshold: ")
@@ -423,11 +423,11 @@ namespace DeferredEngine.Demo
             ListToggle environmentGroup = new ListToggle(Vector2.Zero, defaultStyle) { ToggleBlockColor = Color.DarkSlateGray, IsToggled = false };
             optionList.AddElement(environmentGroup);
 
-            environmentGroup.AddElement(new TextBlockToggle(defaultStyle, "Enable Environment")
+            environmentGroup.AddElement(new Toggle(defaultStyle, "Enable Environment")
             {
                 ToggleProperty = EnvironmentPipelineModule.ModuleEnabled.GetValuePropertyInfo(),
                 ToggleObject = EnvironmentPipelineModule.ModuleEnabled,
-                Toggle = EnvironmentPipelineModule.ModuleEnabled
+                State = EnvironmentPipelineModule.ModuleEnabled
             });
 
             _rightSideList.Alignment = Alignment.TopRight;
@@ -619,7 +619,7 @@ namespace DeferredEngine.Demo
                         _objectToggle1.ToggleObject = selectedObject;
                         _objectToggle1.ToggleField = selectedObject.GetType().GetField("AutoUpdate");
 
-                        _objectToggle1.Toggle = (selectedObject as EnvironmentProbe).AutoUpdate;
+                        _objectToggle1.State = (selectedObject as EnvironmentProbe).AutoUpdate;
 
                         _objectToggle1.Text = new StringBuilder("Update on move");
 

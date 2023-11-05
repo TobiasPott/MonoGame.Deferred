@@ -5,9 +5,9 @@ using System.Reflection;
 
 namespace MonoGame.GUI
 {
-    public class TextBlockToggle : TextBlock
+    public class Toggle : TextBlock
     {
-        public bool Toggle;
+        public bool State;
 
         private const float ToggleIndicatorSize = 20;
         private const float ToggleIndicatorBorder = 10;
@@ -16,7 +16,7 @@ namespace MonoGame.GUI
         public FieldInfo ToggleField;
         public object ToggleObject;
 
-        public TextBlockToggle(GUIStyle style, String text) : this(
+        public Toggle(GUIStyle style, String text) : this(
             position: Vector2.Zero,
             dimensions: style.Dimensions,
             text: text,
@@ -28,7 +28,7 @@ namespace MonoGame.GUI
             layer: 0)
         { }
 
-        public TextBlockToggle(Vector2 position, Vector2 dimensions, String text, SpriteFont font, Color blockColor, Color textColor, TextAlignment textAlignment = TextAlignment.Left, Vector2 textBorder = default, int layer = 0) : base(position, dimensions, text, font, blockColor, textColor, textAlignment, textBorder, layer)
+        public Toggle(Vector2 position, Vector2 dimensions, String text, SpriteFont font, Color blockColor, Color textColor, TextAlignment textAlignment = TextAlignment.Left, Vector2 textBorder = default, int layer = 0) : base(position, dimensions, text, font, blockColor, textColor, textAlignment, textBorder, layer)
         {
 
         }
@@ -36,14 +36,14 @@ namespace MonoGame.GUI
         {
             ToggleObject = obj;
             ToggleField = obj.GetType().GetField(field);
-            Toggle = (bool)ToggleField.GetValue(obj);
+            State = (bool)ToggleField.GetValue(obj);
         }
 
         public void SetProperty(Object obj, string property)
         {
             ToggleObject = obj;
             ToggleProperty = obj.GetType().GetProperty(property);
-            Toggle = (bool)ToggleProperty.GetValue(obj);
+            State = (bool)ToggleProperty.GetValue(obj);
         }
 
         protected override void ComputeFontPosition()
@@ -65,7 +65,7 @@ namespace MonoGame.GUI
         public override void Draw(GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
         {
             guiRenderer.DrawQuad(parentPosition + Position, Dimensions, SwatchColor);
-            guiRenderer.DrawQuad(parentPosition + Position + Dimensions * new Vector2(1, 0.5f) - ToggleIndicatorBorder * Vector2.UnitX - ToggleIndicatorSize * new Vector2(1, 0.5f), Vector2.One * ToggleIndicatorSize, Toggle ? Color.LimeGreen : Color.Red);
+            guiRenderer.DrawQuad(parentPosition + Position + Dimensions * new Vector2(1, 0.5f) - ToggleIndicatorBorder * Vector2.UnitX - ToggleIndicatorSize * new Vector2(1, 0.5f), Vector2.One * ToggleIndicatorSize, State ? Color.LimeGreen : Color.Red);
             guiRenderer.DrawText(parentPosition + Position + _fontPosition, Text, TextFont, TextColor);
         }
 
@@ -79,18 +79,18 @@ namespace MonoGame.GUI
             if (mousePosition.X >= bound1.X && mousePosition.Y >= bound1.Y && mousePosition.X < bound2.X &&
                 mousePosition.Y < bound2.Y)
             {
-                Toggle = !Toggle;
+                State = !State;
                 GUIMouseInput.UIWasUsed = true;
 
                 if (ToggleObject != null)
                 {
-                    ToggleField?.SetValue(ToggleObject, Toggle, BindingFlags.Public, null, null);
-                    ToggleProperty?.SetValue(ToggleObject, Toggle);
+                    ToggleField?.SetValue(ToggleObject, State, BindingFlags.Public, null, null);
+                    ToggleProperty?.SetValue(ToggleObject, State);
                 }
                 else
                 {
-                    ToggleField?.SetValue(null, Toggle, BindingFlags.Static | BindingFlags.Public, null, null);
-                    ToggleProperty?.SetValue(null, Toggle);
+                    ToggleField?.SetValue(null, State, BindingFlags.Static | BindingFlags.Public, null, null);
+                    ToggleProperty?.SetValue(null, State);
                 }
 
             }

@@ -5,10 +5,8 @@ using System.Reflection;
 
 namespace MonoGame.GUI
 {
-    public class TextBlockButton : TextBlock
+    public class Button : TextBlock
     {
-        public bool Toggle;
-
         private static readonly float ButtonBorder = 2;
 
         private static readonly Color HoverColor = Color.Tomato;
@@ -19,7 +17,7 @@ namespace MonoGame.GUI
         public object[] ButtonMethodArgs = null;
         public Object ButtonObject;
 
-        public TextBlockButton(GUIStyle style, String text) : this(
+        public Button(GUIStyle style, String text) : this(
             position: Vector2.Zero,
             dimensions: style.Dimensions,
             text: text,
@@ -31,7 +29,7 @@ namespace MonoGame.GUI
             layer: 0)
         { }
 
-        public TextBlockButton(Vector2 position, Vector2 dimensions, String text, SpriteFont font, Color blockColor, Color textColor, TextAlignment textAlignment = TextAlignment.Center, Vector2 textBorder = default, int layer = 0) : base(position, dimensions, text, font, blockColor, textColor, textAlignment, textBorder, layer)
+        public Button(Vector2 position, Vector2 dimensions, String text, SpriteFont font, Color blockColor, Color textColor, TextAlignment textAlignment = TextAlignment.Center, Vector2 textBorder = default, int layer = 0) : base(position, dimensions, text, font, blockColor, textColor, textAlignment, textBorder, layer)
         {
 
         }

@@ -7,8 +7,6 @@ namespace MonoGame.GUI
 
     public class Canvas : GUIElement
     {
-        public bool IsEnabled = true;
-
         private readonly List<GUIElement> _children = new List<GUIElement>();
 
         public Canvas(Vector2 position, Vector2 dimensions, int layer = 0, Alignment alignment = Alignment.None, Vector2 ParentDimensions = default)
@@ -28,12 +26,8 @@ namespace MonoGame.GUI
         public override void Draw(GUIRenderer guiRenderer, Vector2 parentPosition, Vector2 mousePosition)
         {
             if (!IsEnabled) return;
-            for (int index = 0; index < _children.Count; index++)
-            {
-                GUIElement child = _children[index];
-                if (child.IsHidden) continue;
+            foreach (GUIElement child in _children.Where(x => !x.IsHidden))
                 child.Draw(guiRenderer, parentPosition + Position, mousePosition);
-            }
         }
 
         public void Resize(Vector2 dimensions)
@@ -47,13 +41,8 @@ namespace MonoGame.GUI
         {
             Position = UpdateAlignment(Alignment, parentDimensions, Dimensions, Position, OffsetPosition);
 
-            for (int index = 0; index < _children.Count; index++)
-            {
-                GUIElement child = _children[index];
-                if (child.IsHidden) continue;
+            foreach (GUIElement child in _children.Where(x => !x.IsHidden))
                 child.ParentResized(Dimensions);
-            }
-
         }
 
         //If the parent resized then our alignemnt may have changed and we need new position coordinates
