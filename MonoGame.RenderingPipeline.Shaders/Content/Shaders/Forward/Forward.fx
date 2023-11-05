@@ -1,5 +1,5 @@
 ﻿
-#include "../Common/Macros.fx"
+#include "../../Includes/Macros.incl.fx"
 
 //Depth Reconstruction from linear depth buffer, TheKosmonaut 2016
 

@@ -1,5 +1,5 @@
 
-#include "../Common/Macros.fx"
+#include "../../Includes/Macros.incl.fx"
 
 static const int BlurKernelSize = 13;
 static const float2 BlurKernel[BlurKernelSize] =

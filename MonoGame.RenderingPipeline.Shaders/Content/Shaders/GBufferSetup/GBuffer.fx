@@ -10,7 +10,8 @@
 
 //#define TESTNORMALENCODING
 
-#include "../Common/Macros.fx"
+#include "../../Includes/Macros.incl.fx"
+#include "../../Includes/PixelStage.incl.fx"
 #include "../Common/helper.fx"
 #include "../Shared.fx"
 
@@ -99,13 +100,6 @@ struct Render_IN
     float roughness : TEXCOORD2;
 };
 
-struct PixelShaderOutput
-{
-    float4 Color : SV_Target0;
-    float4 Normal : SV_Target1;
-    float4 Depth : SV_Target2;
-};
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  FUNCTION DEFINITIONS
@@ -143,13 +137,13 @@ float3 GetNormalMap(float2 TexCoord)
 }
 
 //See BufferSetup.dgml for overview
-PixelShaderOutput WriteBuffers(Render_IN input)
+PSOut_AlbedoNormalDepth WriteBuffers(Render_IN input)
 {       
     float4 finalValue = input.Color;
 
     //Deferred MRT
 
-    PixelShaderOutput Out;
+    PSOut_AlbedoNormalDepth Out;
 
     Out.Color = finalValue;
 
@@ -185,7 +179,7 @@ PixelShaderOutput WriteBuffers(Render_IN input)
 }
 
 [earlydepthstencil]      //experimental
-PixelShaderOutput DrawTexture_PixelShader(DrawBasic_VSOut input)
+PSOut_AlbedoNormalDepth DrawTexture_PixelShader(DrawBasic_VSOut input)
 {
     Render_IN renderParams;
 
@@ -203,7 +197,7 @@ PixelShaderOutput DrawTexture_PixelShader(DrawBasic_VSOut input)
 }
 
 [earlydepthstencil]      //experimental
-PixelShaderOutput DrawTextureSpecular_PixelShader(DrawBasic_VSOut input) 
+PSOut_AlbedoNormalDepth DrawTextureSpecular_PixelShader(DrawBasic_VSOut input)
 {
     Render_IN renderParams;
 
@@ -223,7 +217,7 @@ PixelShaderOutput DrawTextureSpecular_PixelShader(DrawBasic_VSOut input)
 }
 
 [earlydepthstencil]      //experimental
-PixelShaderOutput DrawTextureSpecularMetallic_PixelShader(DrawBasic_VSOut input) 
+PSOut_AlbedoNormalDepth DrawTextureSpecularMetallic_PixelShader(DrawBasic_VSOut input)
 {
     Render_IN renderParams;
 
@@ -244,7 +238,7 @@ PixelShaderOutput DrawTextureSpecularMetallic_PixelShader(DrawBasic_VSOut input)
 }
 
 [earlydepthstencil]      //experimental
-PixelShaderOutput DrawTextureSpecularNormal_PixelShader(DrawNormals_VSOut input) 
+PSOut_AlbedoNormalDepth DrawTextureSpecularNormal_PixelShader(DrawNormals_VSOut input)
 {
     Render_IN renderParams;
 
@@ -270,7 +264,7 @@ PixelShaderOutput DrawTextureSpecularNormal_PixelShader(DrawNormals_VSOut input)
 }
 
 [earlydepthstencil]      //experimental
-PixelShaderOutput DrawTextureSpecularNormalMetallic_PixelShader(DrawNormals_VSOut input) 
+PSOut_AlbedoNormalDepth DrawTextureSpecularNormalMetallic_PixelShader(DrawNormals_VSOut input)
 {
     Render_IN renderParams;
 
@@ -298,7 +292,7 @@ PixelShaderOutput DrawTextureSpecularNormalMetallic_PixelShader(DrawNormals_VSOu
 
 
 [earlydepthstencil]      //experimental
-PixelShaderOutput DrawTextureNormal_PixelShader(DrawNormals_VSOut input) 
+PSOut_AlbedoNormalDepth DrawTextureNormal_PixelShader(DrawNormals_VSOut input)
 {
     Render_IN renderParams;
 
@@ -322,7 +316,7 @@ PixelShaderOutput DrawTextureNormal_PixelShader(DrawNormals_VSOut input)
 }
 
 [earlydepthstencil]      //experimental
-PixelShaderOutput DrawNormal_PixelShader(DrawNormals_VSOut input)
+PSOut_AlbedoNormalDepth DrawNormal_PixelShader(DrawNormals_VSOut input)
 {
 	Render_IN renderParams;
 	float4 outputColor = DiffuseColor; //* input.Color;
@@ -344,7 +338,7 @@ PixelShaderOutput DrawNormal_PixelShader(DrawNormals_VSOut input)
 }
 
       //experimental
-PixelShaderOutput DrawTextureMask_PixelShader(DrawBasic_VSOut input) 
+PSOut_AlbedoNormalDepth DrawTextureMask_PixelShader(DrawBasic_VSOut input)
 {
     Render_IN renderParams;
 
@@ -366,7 +360,7 @@ PixelShaderOutput DrawTextureMask_PixelShader(DrawBasic_VSOut input)
 }
 
 
-PixelShaderOutput DrawTextureSpecularMask_PixelShader(DrawBasic_VSOut input) 
+PSOut_AlbedoNormalDepth DrawTextureSpecularMask_PixelShader(DrawBasic_VSOut input)
 {
     Render_IN renderParams;
 
@@ -390,7 +384,7 @@ PixelShaderOutput DrawTextureSpecularMask_PixelShader(DrawBasic_VSOut input)
 }
 
       //experimental
-PixelShaderOutput DrawTextureSpecularNormalMask_PixelShader(DrawNormals_VSOut input) 
+PSOut_AlbedoNormalDepth DrawTextureSpecularNormalMask_PixelShader(DrawNormals_VSOut input)
 {
     Render_IN renderParams;
 
@@ -421,7 +415,7 @@ PixelShaderOutput DrawTextureSpecularNormalMask_PixelShader(DrawNormals_VSOut in
 }
 
     //experimental
-PixelShaderOutput DrawTextureNormalMask_PixelShader(DrawNormals_VSOut input) 
+PSOut_AlbedoNormalDepth DrawTextureNormalMask_PixelShader(DrawNormals_VSOut input)
 {
     Render_IN renderParams;
 
@@ -453,7 +447,7 @@ PixelShaderOutput DrawTextureNormalMask_PixelShader(DrawNormals_VSOut input)
 	return WriteBuffers(renderParams);
 }
 
-PixelShaderOutput DrawBasic_PixelShader(DrawBasic_VSOut input)
+PSOut_AlbedoNormalDepth DrawBasic_PixelShader(DrawBasic_VSOut input)
 {
     Render_IN renderParams;
 
@@ -472,7 +466,7 @@ PixelShaderOutput DrawBasic_PixelShader(DrawBasic_VSOut input)
 
 
 //DISPLACEMENT / POM
-PixelShaderOutput DrawTextureDisplacement_PixelShader(DrawNormals_VSOut input) 
+PSOut_AlbedoNormalDepth DrawTextureDisplacement_PixelShader(DrawNormals_VSOut input)
 {
     Render_IN renderParams;
 

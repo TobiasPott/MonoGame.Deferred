@@ -1,5 +1,5 @@
 ﻿
-#include "../Common/Macros.fx"
+#include "../../Includes/Macros.incl.fx"
 
 //Color Grading Shader with LUTs, TheKosmonaut 2017 ( kosmonaut3d@googlemail.com )
 

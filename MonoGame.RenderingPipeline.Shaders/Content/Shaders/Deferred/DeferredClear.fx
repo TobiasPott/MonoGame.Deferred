@@ -5,18 +5,13 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  STRUCT DEFINITIONS
 
-struct VertexShaderOutput
-{
-	float4 Position : SV_POSITION;
-};
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  FUNCTION DEFINITIONS
 
 //------------------------ PIXEL SHADER ----------------------------------------
 
-float4 BasePixelShaderFunction(VertexShaderOutput input) : SV_TARGET0
+float4 PSClear() : SV_TARGET0
 {
 	return float4(0,0,0,0);
 }
@@ -31,6 +26,6 @@ technique Base
 	{
 
         VertexShader = compile COMPILETARGET_VS VSPassthrough_F2ToF4();
-		PixelShader = compile COMPILETARGET_PS BasePixelShaderFunction();
-	}
+        PixelShader = compile COMPILETARGET_PS PSClear();
+    }
 }
