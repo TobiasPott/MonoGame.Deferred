@@ -1,6 +1,6 @@
-﻿
-//Depth Reconstruction from linear depth buffer, TheKosmonaut 2016
+﻿//Depth Reconstruction from linear depth buffer, TheKosmonaut 2016
 
+#include "../Common/Macros.fx"
 #include "../Common/Functions.fx"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -69,8 +69,8 @@ technique RestoreDepth
 {
 	pass Pass1
 	{
-		VertexShader = compile vs_4_0 VSMain_Encoded();
-		PixelShader = compile ps_4_0 PixelShaderFunction();
+		VertexShader = compile COMPILETARGET_VS VSMain_Encoded();
+		PixelShader = compile COMPILETARGET_PS PixelShaderFunction();
 	}
 }
 

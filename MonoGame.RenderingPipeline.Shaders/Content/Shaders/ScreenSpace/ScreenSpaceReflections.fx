@@ -1,4 +1,6 @@
 ﻿
+#include "../Common/Macros.fx"
+
 //Screen Space Reflection shader TheKosmonaut 2016
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -552,8 +554,8 @@ technique TAA
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
-        PixelShader = compile ps_4_0 PixelShaderFunctionTAA();
+        VertexShader = compile COMPILETARGET_VS VSMain_EncodedViewDir();
+        PixelShader = compile COMPILETARGET_PS PixelShaderFunctionTAA();
     }
 }
 
@@ -561,7 +563,7 @@ technique Default
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
-        PixelShader = compile ps_4_0 PixelShaderFunction();
+        VertexShader = compile COMPILETARGET_VS VSMain_EncodedViewDir();
+        PixelShader = compile COMPILETARGET_PS PixelShaderFunction();
     }
 }

@@ -1,4 +1,7 @@
-﻿//Environment cube maps, TheKosmonaut 2016
+﻿
+#include "../Common/Macros.fx"
+
+//Environment cube maps, TheKosmonaut 2016
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  VARIABLES
@@ -310,8 +313,8 @@ technique Volume
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
-        PixelShader = compile ps_4_0 PixelShaderFunctionVisualizeVolume();
+        VertexShader = compile COMPILETARGET_VS VSMain_EncodedViewDir();
+        PixelShader = compile COMPILETARGET_PS PixelShaderFunctionVisualizeVolume();
     }
 }
 
@@ -319,8 +322,8 @@ technique Distance
 {
 	pass Pass1
 	{
-        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
-		PixelShader = compile ps_4_0 PixelShaderFunctionDrawShadow();
+        VertexShader = compile COMPILETARGET_VS VSMain_EncodedViewDir();
+		PixelShader = compile COMPILETARGET_PS PixelShaderFunctionDrawShadow();
 	}
 }
 
@@ -328,8 +331,8 @@ technique GenerateSDF
 {
 	pass Pass1
 	{
-        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
-		PixelShader = compile ps_4_0 PixelShaderFunctionGenerateSDF();
+        VertexShader = compile COMPILETARGET_VS VSMain_EncodedViewDir();
+		PixelShader = compile COMPILETARGET_PS PixelShaderFunctionGenerateSDF();
 	}
 }
 

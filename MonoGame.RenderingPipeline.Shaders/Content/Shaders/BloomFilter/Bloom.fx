@@ -1,6 +1,7 @@
 ﻿//Bloomfilter 2016, Thekosmonaut
 
 
+#include "../Common/Macros.fx"
 #include "../Common/Functions.fx"
 
 Texture2D ScreenTexture;
@@ -111,8 +112,8 @@ technique Extract
 {
 	pass Pass1
 	{
-        VertexShader = compile vs_4_0 VSMain_Encoded();
-        PixelShader = compile ps_4_0 PSExtract();
+        VertexShader = compile COMPILETARGET_VS VSMain_Encoded();
+        PixelShader = compile COMPILETARGET_PS PSExtract();
     }
 }
 
@@ -120,8 +121,8 @@ technique ExtractLuminance
 {
 	pass Pass1
 	{
-        VertexShader = compile vs_4_0 VSMain_Encoded();
-        PixelShader = compile ps_4_0 PSExtract_Luminance();
+        VertexShader = compile COMPILETARGET_VS VSMain_Encoded();
+        PixelShader = compile COMPILETARGET_PS PSExtract_Luminance();
     }
 }
 
@@ -129,8 +130,8 @@ technique Downsample
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VSMain_Encoded();
-        PixelShader = compile ps_4_0 PSDownsample();
+        VertexShader = compile COMPILETARGET_VS VSMain_Encoded();
+        PixelShader = compile COMPILETARGET_PS PSDownsample();
     }
 }
 
@@ -138,7 +139,7 @@ technique Upsample
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VSMain_Encoded();
-        PixelShader = compile ps_4_0 PSUpsample();
+        VertexShader = compile COMPILETARGET_VS VSMain_Encoded();
+        PixelShader = compile COMPILETARGET_PS PSUpsample();
     }
 }

@@ -4,6 +4,7 @@
 //  VARIABLES
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include "../Common/Macros.fx"
 #include "../Common/helper.fx"
 #include "../Common/sdf.fx"
 
@@ -283,8 +284,8 @@ technique Basic
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
-        PixelShader = compile ps_4_0 PixelShaderFunctionBasic();
+        VertexShader = compile COMPILETARGET_VS VSMain_EncodedViewDir();
+        PixelShader = compile COMPILETARGET_PS PixelShaderFunctionBasic();
     }
 }
 
@@ -292,8 +293,8 @@ technique Sky
 {
 	pass Pass1
 	{
-        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
-		PixelShader = compile ps_4_0 PixelShaderFunctionSky();
+        VertexShader = compile COMPILETARGET_VS VSMain_EncodedViewDir();
+		PixelShader = compile COMPILETARGET_PS PixelShaderFunctionSky();
 	}
 }
 

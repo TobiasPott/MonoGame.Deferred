@@ -3,6 +3,7 @@
 //  Composes the light buffers and the GBuffer to our final HDR Output.
 //  Converts albedo from Gamma 2.2 to 1.0 and outputs an HDR file.
 
+#include "../Common/Macros.fx"
 #include "../Common/helper.fx"
 
 Texture2D colorMap;
@@ -148,7 +149,7 @@ technique TechniqueLinear
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VSMain_Encoded();
-        PixelShader = compile ps_4_0 PixelShaderFunction();
+        VertexShader = compile COMPILETARGET_VS VSMain_Encoded();
+        PixelShader = compile COMPILETARGET_PS PixelShaderFunction();
     }
 }

@@ -1,4 +1,7 @@
-﻿// Basic Postprocessing shader
+﻿
+#include "../Common/Macros.fx"
+
+// Basic Postprocessing shader
 // Combines chroma shift and vignette effect, plus Tonemapping from HDR to LDR and gamma conversion from 1.0 to 2.2
 
 #include "../Common/Functions.fx"
@@ -213,8 +216,8 @@ technique Base
 	pass Pass1
 	{
 
-        VertexShader = compile vs_4_0 VSMain_Encoded();
-        PixelShader = compile ps_4_0 BasePixelShaderFunction();
+        VertexShader = compile COMPILETARGET_VS VSMain_Encoded();
+        PixelShader = compile COMPILETARGET_PS BasePixelShaderFunction();
     }
 }
 
@@ -223,7 +226,7 @@ technique VignetteChroma
     pass Pass1
     {
 
-        VertexShader = compile vs_4_0 VSMain_Encoded();
-        PixelShader = compile ps_4_0 VignetteChromaShiftPixelShaderFunction();
+        VertexShader = compile COMPILETARGET_VS VSMain_Encoded();
+        PixelShader = compile COMPILETARGET_PS VignetteChromaShiftPixelShaderFunction();
     }
 }

@@ -1,3 +1,6 @@
+
+#include "../Common/Macros.fx"
+
 static const int BlurKernelSize = 13;
 static const float2 BlurKernel[BlurKernelSize] =
 {
@@ -95,13 +98,13 @@ technique GaussianBlur
 {
     pass Horizontal
     {
-        VertexShader = compile vs_4_0 VS();
-        PixelShader = compile ps_4_0 HorizontalPS();
+        VertexShader = compile COMPILETARGET_VS VS();
+        PixelShader = compile COMPILETARGET_PS HorizontalPS();
     }
 
     pass Vertical
     {
-        VertexShader = compile vs_4_0 VS();
-        PixelShader = compile ps_4_0 VerticalPS();
+        VertexShader = compile COMPILETARGET_VS VS();
+        PixelShader = compile COMPILETARGET_PS VerticalPS();
     }
 }

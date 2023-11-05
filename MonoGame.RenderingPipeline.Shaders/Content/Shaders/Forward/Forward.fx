@@ -1,4 +1,6 @@
 ﻿
+#include "../Common/Macros.fx"
+
 //Depth Reconstruction from linear depth buffer, TheKosmonaut 2016
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -185,8 +187,8 @@ technique Default
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VertexShaderFunction();
-        PixelShader = compile ps_4_0 PixelShaderFunction();
+        VertexShader = compile COMPILETARGET_VS VertexShaderFunction();
+        PixelShader = compile COMPILETARGET_PS PixelShaderFunction();
     }
 }
 

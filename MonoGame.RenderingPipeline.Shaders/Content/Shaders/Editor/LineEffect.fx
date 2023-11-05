@@ -1,4 +1,7 @@
-﻿////////////////////////////////////////////////////////////////////////////////////////////////////////////
+﻿
+#include "../Common/Macros.fx"
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  Draw colored lines
 //  Either defined by vertex color or by GlobalColor
 
@@ -63,8 +66,8 @@ technique VertexColor
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VertexShaderFunction();
-        PixelShader = compile ps_4_0 PSPassthrough_VC();
+        VertexShader = compile COMPILETARGET_VS VertexShaderFunction();
+        PixelShader = compile COMPILETARGET_PS PSPassthrough_VC();
     }
 }
 
@@ -72,7 +75,7 @@ technique GlobalColor
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VertexShaderFunctionColor();
-        PixelShader = compile ps_4_0 PSConst_GlobalColor();
+        VertexShader = compile COMPILETARGET_VS VertexShaderFunctionColor();
+        PixelShader = compile COMPILETARGET_PS PSConst_GlobalColor();
     }
 }

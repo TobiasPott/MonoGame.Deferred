@@ -1,4 +1,7 @@
-﻿//Draw Hologram effect (UNUSED RIGHT NOW)
+﻿
+#include "../Common/Macros.fx"
+
+//Draw Hologram effect (UNUSED RIGHT NOW)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  VARIABLES
@@ -58,7 +61,7 @@ technique DrawBasic
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 DrawBasic_VertexShader();
-        PixelShader = compile ps_4_0 DrawBasic_PixelShader();
+        VertexShader = compile COMPILETARGET_VS DrawBasic_VertexShader();
+        PixelShader = compile COMPILETARGET_PS DrawBasic_PixelShader();
     }
 }

@@ -1,4 +1,7 @@
-﻿////////////////////////////////////////////////////////////////////////////////////////////////////////////
+﻿
+#include "../Common/Macros.fx"
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  Draw meshes with color == id
 //  Or
 //  Draw selected meshes with a a color overlay and outlines
@@ -93,8 +96,8 @@ technique DrawId
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 DrawBasic_VertexShader();
-        PixelShader = compile ps_4_0 Id_PixelShader();
+        VertexShader = compile COMPILETARGET_VS DrawBasic_VertexShader();
+        PixelShader = compile COMPILETARGET_PS Id_PixelShader();
     }
 }
 
@@ -102,7 +105,7 @@ technique DrawOutline
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 DrawOutline_VertexShader();
-        PixelShader = compile ps_4_0 Outline_PixelShader();
+        VertexShader = compile COMPILETARGET_VS DrawOutline_VertexShader();
+        PixelShader = compile COMPILETARGET_PS Outline_PixelShader();
     }
 }

@@ -4,6 +4,7 @@
 //  VARIABLES
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include "../Common/Macros.fx"
 #include "../Common/helper.fx"
 
 float4x4 ViewProjection;
@@ -531,8 +532,8 @@ technique ShadowOnly
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
-        PixelShader = compile ps_4_0 PixelShaderScreenSpaceShadowFunction();
+        VertexShader = compile COMPILETARGET_VS VSMain_EncodedViewDir();
+        PixelShader = compile COMPILETARGET_PS PixelShaderScreenSpaceShadowFunction();
     }
 }
 
@@ -540,8 +541,8 @@ technique Unshadowed
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
-        PixelShader = compile ps_4_0 PixelShaderUnshadowedFunction();
+        VertexShader = compile COMPILETARGET_VS VSMain_EncodedViewDir();
+        PixelShader = compile COMPILETARGET_PS PixelShaderUnshadowedFunction();
     }
 }
 
@@ -549,8 +550,8 @@ technique Shadowed
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
-        PixelShader = compile ps_4_0 PixelShaderShadowedFunction();
+        VertexShader = compile COMPILETARGET_VS VSMain_EncodedViewDir();
+        PixelShader = compile COMPILETARGET_PS PixelShaderShadowedFunction();
     }
 }
 
@@ -558,7 +559,7 @@ technique SSShadowed
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
-        PixelShader = compile ps_4_0 PixelShaderSSShadowedFunction();
+        VertexShader = compile COMPILETARGET_VS VSMain_EncodedViewDir();
+        PixelShader = compile COMPILETARGET_PS PixelShaderSSShadowedFunction();
     }
 }

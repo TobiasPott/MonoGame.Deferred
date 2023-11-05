@@ -5,6 +5,7 @@
 //  VARIABLES
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include "../Common/Macros.fx"
 #include "../Common/helper.fx"
 #include "../Common/sdf.fx"
 
@@ -880,8 +881,8 @@ technique WriteStencilMask
 {
 	pass Pass1
 	{
-		VertexShader = compile vs_4_0 VertexShaderBasic();
-		PixelShader = compile ps_4_0 PixelShaderBasic();
+		VertexShader = compile COMPILETARGET_VS VertexShaderBasic();
+		PixelShader = compile COMPILETARGET_PS PixelShaderBasic();
 	}
 }
 
@@ -889,8 +890,8 @@ technique Unshadowed
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VertexShaderFunction();
-		PixelShader = compile ps_4_0 PixelShaderFunction();
+        VertexShader = compile COMPILETARGET_VS VertexShaderFunction();
+		PixelShader = compile COMPILETARGET_PS PixelShaderFunction();
     }
 }
 
@@ -898,8 +899,8 @@ technique ShadowedSDF
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VertexShaderFunction();
-        PixelShader = compile ps_4_0 PixelShaderFunctionSDF();
+        VertexShader = compile COMPILETARGET_VS VertexShaderFunction();
+        PixelShader = compile COMPILETARGET_PS PixelShaderFunctionSDF();
     }
 }
 
@@ -907,8 +908,8 @@ technique UnshadowedVolume
 {
 	pass Pass1
 	{
-		VertexShader = compile vs_4_0 VertexShaderFunction();
-		PixelShader = compile ps_4_0 VolumetricPixelShaderFunction();
+		VertexShader = compile COMPILETARGET_VS VertexShaderFunction();
+		PixelShader = compile COMPILETARGET_PS VolumetricPixelShaderFunction();
 	}
 }
 
@@ -916,8 +917,8 @@ technique Shadowed
 {
 	pass Pass1
 	{
-		VertexShader = compile vs_4_0 VertexShaderFunction();
-		PixelShader = compile ps_4_0 PixelShaderFunctionShadowed();
+		VertexShader = compile COMPILETARGET_VS VertexShaderFunction();
+		PixelShader = compile COMPILETARGET_PS PixelShaderFunctionShadowed();
 	}
 }
 
@@ -925,7 +926,7 @@ technique ShadowedVolume
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VertexShaderFunction();
-        PixelShader = compile ps_4_0 VolumetricPixelShaderFunctionShadowed();
+        VertexShader = compile COMPILETARGET_VS VertexShaderFunction();
+        PixelShader = compile COMPILETARGET_PS VolumetricPixelShaderFunctionShadowed();
     }
 }

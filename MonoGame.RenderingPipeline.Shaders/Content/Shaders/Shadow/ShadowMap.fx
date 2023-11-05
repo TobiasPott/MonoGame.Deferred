@@ -1,4 +1,7 @@
-﻿//Shadow Mapping for point & directional lights
+﻿
+#include "../Common/Macros.fx"
+
+//Shadow Mapping for point & directional lights
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  VARIABLES
@@ -157,8 +160,8 @@ technique DrawLinearDepth
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 DrawLinear_VertexShader();
-        PixelShader = compile ps_4_0 DrawLinear_PixelShader();
+        VertexShader = compile COMPILETARGET_VS DrawLinear_VertexShader();
+        PixelShader = compile COMPILETARGET_PS DrawLinear_PixelShader();
     }
 }
 
@@ -166,8 +169,8 @@ technique DrawDistanceDepth
 {
 	pass Pass1
 	{
-		VertexShader = compile vs_4_0 DrawDistance_VertexShader();
-		PixelShader = compile ps_4_0 DrawDistance_PixelShader();
+		VertexShader = compile COMPILETARGET_VS DrawDistance_VertexShader();
+		PixelShader = compile COMPILETARGET_PS DrawDistance_PixelShader();
 	}
 }
 
@@ -175,8 +178,8 @@ technique DrawDistanceDepthAlpha
 {
 	pass Pass1
 	{
-		VertexShader = compile vs_4_0 DrawDistance_VertexShaderAlpha();
-		PixelShader = compile ps_4_0 DrawDistance_PixelShaderAlpha();
+		VertexShader = compile COMPILETARGET_VS DrawDistance_VertexShaderAlpha();
+		PixelShader = compile COMPILETARGET_PS DrawDistance_PixelShaderAlpha();
 	}
 }
 

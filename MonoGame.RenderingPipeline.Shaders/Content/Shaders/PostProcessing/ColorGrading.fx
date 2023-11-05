@@ -1,4 +1,7 @@
-﻿//Color Grading Shader with LUTs, TheKosmonaut 2017 ( kosmonaut3d@googlemail.com )
+﻿
+#include "../Common/Macros.fx"
+
+//Color Grading Shader with LUTs, TheKosmonaut 2017 ( kosmonaut3d@googlemail.com )
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  VARIABLES
@@ -219,8 +222,8 @@ technique ApplyLUT
 {
 	pass Pass1
 	{
-		VertexShader = compile vs_4_0 VertexShaderFSQFunction();
-		PixelShader = compile ps_4_0 PixelShaderApplyLUT();
+		VertexShader = compile COMPILETARGET_VS VertexShaderFSQFunction();
+		PixelShader = compile COMPILETARGET_PS PixelShaderApplyLUT();
 	}
 }
 
@@ -228,7 +231,7 @@ technique CreateLUT
 {
     pass Pass1
     {
-		VertexShader = compile vs_4_0 VertexShaderFSQFunction();
-        PixelShader = compile ps_4_0 PixelShaderCreateLUT();
+		VertexShader = compile COMPILETARGET_VS VertexShaderFSQFunction();
+        PixelShader = compile COMPILETARGET_PS PixelShaderCreateLUT();
     }
 }

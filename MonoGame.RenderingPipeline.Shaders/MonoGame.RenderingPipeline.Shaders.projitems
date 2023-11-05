@@ -12,6 +12,7 @@
     <MonoGameContentReference Include="$(MSBuildThisFileDirectory)Content\Shaders.mgcb" />
     <None Include="$(MSBuildThisFileDirectory)Content\Shaders.mgcb" />
     <None Include="$(MSBuildThisFileDirectory)Content\Shaders\BloomFilter\Bloom.fx" />
+    <None Include="$(MSBuildThisFileDirectory)Content\Shaders\Common\Macros.fx" />
     <None Include="$(MSBuildThisFileDirectory)content\shaders\common\FrustumCorners.fx" />
     <None Include="$(MSBuildThisFileDirectory)content\shaders\common\Functions.fx" />
     <None Include="$(MSBuildThisFileDirectory)Content\Shaders\Common\helper.fx" />

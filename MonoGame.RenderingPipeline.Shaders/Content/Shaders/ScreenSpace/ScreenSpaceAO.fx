@@ -1,4 +1,7 @@
-﻿//Screen Space Ambient Occlusion shader TheKosmonaut 2016
+﻿
+#include "../Common/Macros.fx"
+
+//Screen Space Ambient Occlusion shader TheKosmonaut 2016
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  VARIABLES
@@ -329,8 +332,8 @@ technique SSAO
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
-        PixelShader = compile ps_4_0 PixelShaderFunction();
+        VertexShader = compile COMPILETARGET_VS VSMain_EncodedViewDir();
+        PixelShader = compile COMPILETARGET_PS PixelShaderFunction();
     }
 }
 
@@ -338,8 +341,8 @@ technique BilateralVertical
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VSMain_Encoded();
-        PixelShader = compile ps_4_0 BilateralBlurVertical();
+        VertexShader = compile COMPILETARGET_VS VSMain_Encoded();
+        PixelShader = compile COMPILETARGET_PS BilateralBlurVertical();
     }
 }
 
@@ -347,7 +350,7 @@ technique BilateralHorizontal
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VSMain_Encoded();
-        PixelShader = compile ps_4_0 BilateralBlurHorizontal();
+        VertexShader = compile COMPILETARGET_VS VSMain_Encoded();
+        PixelShader = compile COMPILETARGET_PS BilateralBlurHorizontal();
     }
 }

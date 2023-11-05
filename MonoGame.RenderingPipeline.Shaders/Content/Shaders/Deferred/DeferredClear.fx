@@ -1,4 +1,5 @@
 ﻿
+#include "../Common/Macros.fx"
 #include "../Common/Functions.fx"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -29,7 +30,7 @@ technique Base
 	pass Pass1
 	{
 
-		VertexShader = compile vs_4_0 VSPassthrough_F2ToF4();
-		PixelShader = compile ps_4_0 BasePixelShaderFunction();
+        VertexShader = compile COMPILETARGET_VS VSPassthrough_F2ToF4();
+		PixelShader = compile COMPILETARGET_PS BasePixelShaderFunction();
 	}
 }

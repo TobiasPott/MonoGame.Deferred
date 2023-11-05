@@ -5,6 +5,7 @@
 //  VARIABLES
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include "../Common/Macros.fx"
 #include "../Common/helper.fx"
 
 float4x4 WorldView;
@@ -139,8 +140,8 @@ technique Decal
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VertexShaderFunction();
-        PixelShader = compile ps_4_0 DecalPixelShader();
+        VertexShader = compile COMPILETARGET_VS VertexShaderFunction();
+        PixelShader = compile COMPILETARGET_PS DecalPixelShader();
     }
 }
 
@@ -148,7 +149,7 @@ technique Outline
 {
 	pass Pass1
 	{
-		VertexShader = compile vs_4_0 LineVertexShaderFunction();
-		PixelShader = compile ps_4_0 LinePixelShaderFunction();
+        VertexShader = compile COMPILETARGET_VS LineVertexShaderFunction();
+		PixelShader = compile COMPILETARGET_PS LinePixelShaderFunction();
 	}
 }

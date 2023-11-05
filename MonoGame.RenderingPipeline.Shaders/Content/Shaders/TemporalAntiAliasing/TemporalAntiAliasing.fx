@@ -1,4 +1,5 @@
 ﻿
+#include "../Common/Macros.fx"
 #include "../Common/Functions.fx"
 
 
@@ -290,8 +291,8 @@ technique TemporalAntialiasing
 {
     pass Pass1
     {
-        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
-        PixelShader = compile ps_4_0 PixelShaderFunction();
+        VertexShader = compile COMPILETARGET_VS VSMain_EncodedViewDir();
+        PixelShader = compile COMPILETARGET_PS PixelShaderFunction();
     }
 }
 
@@ -299,7 +300,7 @@ technique InverseTonemap
 {
 	pass Pass1
 	{
-        VertexShader = compile vs_4_0 VSMain_EncodedViewDir();
-        PixelShader = compile ps_4_0 InverseToneMapPixelShader();
+        VertexShader = compile COMPILETARGET_VS VSMain_EncodedViewDir();
+        PixelShader = compile COMPILETARGET_PS InverseToneMapPixelShader();
     }
 }
