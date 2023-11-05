@@ -1,7 +1,7 @@
 #ifndef __HLSL_MAPS__
 #define __HLSL_MAPS__
 
-#define Tex2D(Name) Texture2D Name ## Map
+#define TEXTURE(Name) Texture2D Name ## Map
 
 #define SamplerTex(SamplerName, TexName, WrapMode, Filter) SamplerState SamplerName ## Sampler \
 { \
@@ -23,15 +23,19 @@
 }
 
 #ifdef _DEPTH_MAP
-Tex2D(Depth);
+TEXTURE(Depth);
 #endif
 
 #ifdef _ALBEDO_MAP
-Tex2D(Albedo);
+TEXTURE(Albedo);
 #endif
 
 #ifdef _NORMAL_MAP
-Tex2D(Normal);
+TEXTURE(Normal);
+#endif
+
+#ifdef _SHADOW_MAP
+TEXTURE(Shadow);
 #endif
 
   

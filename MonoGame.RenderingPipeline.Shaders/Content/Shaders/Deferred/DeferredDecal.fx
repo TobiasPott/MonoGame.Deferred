@@ -51,15 +51,11 @@ V2F_ViewPosColor VSMain_Colored(VSIn_PosColor input)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//  PIXEL SHADER
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-		////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		//  HELPER FUNCTIONS
-		////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  PIXEL SHADER
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Used for both shadow casting and unshadowed, shared function
-float4 DecalPixelShader(V2F_ViewPos input) : SV_TARGET
+float4 PSMain_Decal(V2F_ViewPos input) : SV_TARGET
 {
     /////////////////////////////////////////
 	//Mostly based on this http://martindevans.me/game-development/2015/02/27/Drawing-Stuff-On-Other-Stuff-With-Deferred-Screenspace-Decals/
@@ -83,7 +79,7 @@ float4 DecalPixelShader(V2F_ViewPos input) : SV_TARGET
     return DecalMap.Sample(AnisotropicSampler, textureCoordinate);
 }
 
-float4 LinePixelShaderFunction(V2F_ViewPosColor input) : SV_TARGET0
+float4 PSMain_Line(V2F_ViewPosColor input) : SV_TARGET0
 {
 	//Depth testing!
     float depth = DepthMap.Load(int3(input.Position.xy, 0)).r * FarClip;
@@ -112,7 +108,7 @@ technique Decal
     pass Pass1
     {
         COMPILE_VS(VSMain);
-        COMPILE_PS(DecalPixelShader);
+        COMPILE_PS(PSMain_Decal);
     }
 }
 
@@ -121,6 +117,6 @@ technique Outline
     pass Pass1
     {
         COMPILE_VS(VSMain_Colored);
-		COMPILE_PS(LinePixelShaderFunction);
+		COMPILE_PS(PSMain_Line);
     }
 }

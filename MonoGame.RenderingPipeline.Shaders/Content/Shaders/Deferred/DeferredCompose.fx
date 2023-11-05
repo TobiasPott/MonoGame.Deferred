@@ -17,10 +17,6 @@ Texture2D SSAOMap;
 
 bool useSSAO = true;
 
-//Texture2D HologramMap;
-//float average_hologram_depth = 10;
-//bool useGauss = true;
-
 sampler pointSampler = sampler_state
 {
     Texture = (colorMap);
@@ -31,15 +27,10 @@ sampler pointSampler = sampler_state
     Mipfilter = POINT;
 };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//  STRUCT DEFINITIONS
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////  FUNCTION DEFINITIONS
 
-
-float4 PixelShaderFunction(VSOut_PosTex input) : COLOR0
+float4 PSMain(VSOut_PosTex input) : SV_Target
 {
 	int3 texCoordInt = int3(input.Position.xy, 0);
 
@@ -69,41 +60,6 @@ float4 PixelShaderFunction(VSOut_PosTex input) : COLOR0
 	}
 
 	float3 diffuseContrib = float3(0, 0, 0);
-
-	// Hologram effect -> see https://kosmonautblog.wordpress.com/2016/07/25/deferred-engine-progress-part2/
-	/*[branch]
-	if (useGauss)
-	{
-		float pixelsize_intended = 3;
- 
-		[branch]
-		if (abs(materialType - 2) < 0.1f)
-		{
-			float4 hologramColor = GaussianSampler(input.TexCoord, 3);
-			//    float2 pixel = trunc(input.TexCoord * Resolution);
-
-			//    float pixelsize2 = 2 * pixelsize;
-			//    if (pixel.x % pixelsize2 <= pixelsize && pixel.y % pixelsize2 <= pixelsize)
-			diffuseContrib = float3(0, hologramColor.x * 0.49, hologramColor.x * 0.95f) * 0.06f;
-		}
-	}
-	else
-	{
-		float pixelsize = pixelsize_intended;
-
-		float2 hologramTexCoord = trunc(input.TexCoord * Resolution / pixelsize / 2) / Resolution * pixelsize * 2;
-
-		float hologramColor = HologramMap.Sample(linearSampler, hologramTexCoord).r;
-		if (abs(materialType - 2) < 0.1f)
-		{
-			float2 pixel = trunc(input.TexCoord * Resolution);
-
-			float pixelsize2 = 2 * pixelsize;
-			if (pixel.x % pixelsize2 <= pixelsize && pixel.y % pixelsize2 <= pixelsize)
-				diffuseContrib = float3(0, hologramColor * 0.49, hologramColor * 0.95f) * 0.06f;
-
-		}
-	} */
 
 	//SSAO
 	float ssaoContribution = 1;
@@ -135,6 +91,6 @@ technique TechniqueLinear
     pass Pass1
     {
         COMPILE_VS(VSMain_Encoded);
-        COMPILE_PS(PixelShaderFunction);
+        COMPILE_PS(PSMain);
     }
 }
