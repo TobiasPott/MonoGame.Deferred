@@ -9,8 +9,6 @@
 
 float4x4 Projection;
 
-float FarClip;
-
 Texture2D DepthMap;
 
 SamplerState texSampler

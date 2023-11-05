@@ -5,7 +5,7 @@
 //  VARIABLES
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "../Common/Macros.fx"
+#include "../../Includes/Macros.incl.fx"
 #include "../Common/helper.fx"
 #include "../Common/sdf.fx"
 

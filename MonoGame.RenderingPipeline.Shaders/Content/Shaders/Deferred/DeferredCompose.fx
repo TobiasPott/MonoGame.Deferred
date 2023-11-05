@@ -13,8 +13,6 @@ Texture2D diffuseLightMap;
 Texture2D specularLightMap;
 Texture2D volumeLightMap;
 
-static float2 Resolution = float2(1280, 720);
-
 Texture2D SSAOMap;
 
 bool useSSAO = true;
@@ -39,20 +37,6 @@ sampler pointSampler = sampler_state
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////  FUNCTION DEFINITIONS
-
-
-// For smooth holograms
-//float4 GaussianSampler(float2 TexCoord, float offset)
-//{
-//    float4 finalColor = float4(0, 0, 0, 0);
-//    for (int i = 0; i < SAMPLE_COUNT; i++)
-//    {
-//        finalColor += HologramMap.SampleLevel(linearSampler, TexCoord.xy +
-//                    offset * SampleOffsets[i] * InverseResolution, 0) * SampleWeights[i];
-//    }
-//    return finalColor;
-//}
-
 
 
 float4 PixelShaderFunction(VSOut_PosTex input) : COLOR0

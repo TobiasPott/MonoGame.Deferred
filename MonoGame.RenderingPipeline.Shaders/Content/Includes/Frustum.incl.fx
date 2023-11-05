@@ -3,6 +3,8 @@
 
 
 
+
+float FarClip = 512;
 float3 FrustumCorners[4]; //In Viewspace!
 
 //float3 GetFrustumRay(float2 texCoord)
