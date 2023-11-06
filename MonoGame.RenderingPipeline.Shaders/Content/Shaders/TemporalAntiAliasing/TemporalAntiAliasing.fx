@@ -8,35 +8,16 @@
 float4x4 CurrentToPrevious;
 
 
-Texture2D AccumulationMap;
-Texture2D UpdateMap;
+DECLARE_MAP(AccumulationMap, CLAMP, POINT, 0);
+DECLARE_MAP(UpdateMap, CLAMP, POINT, 0);
 
-float2 Resolution = { 1280, 800 };
+float2 Resolution = { 1280, 720 };
 
 bool UseTonemap = true;
 
-
-SamplerState texSampler
-{
-    AddressU = CLAMP;
-    AddressV = CLAMP;
-    MagFilter = POINT;
-    MinFilter = POINT;
-};
-
-SamplerState linearSampler
-{
-    AddressU = CLAMP;
-    AddressV = CLAMP;
-    MagFilter = LINEAR;
-    MinFilter = LINEAR;
-    Mipfilter = POINT;
-};
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  STRUCT DEFINITIONS
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 struct PixelShaderOutput
 {
@@ -44,18 +25,11 @@ struct PixelShaderOutput
 	//float4 Coherence : SV_Target1;
 };
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//  FUNCTION DEFINITIONS
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//  VERTEX SHADER
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//  PIXEL SHADER
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 float3 ToYUV(float3 rgb)
 {
@@ -93,13 +67,20 @@ float3 InverseReinhardTonemap(float3 ldr)
 
 float4 InverseToneMapPixelShader(VSOut_PosTexViewDir input) : SV_Target
 {
-	int3 TexCoordInt = int3(input.TexCoord * Resolution, 0);
-
-	float4 updatedColorSample = AccumulationMap.Load(TexCoordInt);
+    float4 updatedColorSample = AccumulationMap.Sample(AccumulationMapSampler, input.TexCoord);
 
 	return float4(InverseReinhardTonemap(updatedColorSample.rgb), updatedColorSample.a);
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  VERTEX SHADER
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  PIXEL SHADER
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 PixelShaderOutput PixelShaderFunction(VSOut_PosTexViewDir input)
 {
@@ -107,7 +88,9 @@ PixelShaderOutput PixelShaderFunction(VSOut_PosTexViewDir input)
     float2 texCoord = float2(input.TexCoord);
 	float3 texCoordInt = int3(input.Position.xy, 0);
     
-    float linearDepth = DepthMap.Load(texCoordInt).r;
+    //float linearDepth = DepthMap.Load(texCoordInt).r;
+    // ToDo: GL Compat: input.Position needs normalized UVs/texCoords and resolution is only hardcoded atm
+    float linearDepth = DepthMap.Sample(DepthMapSampler, input.Position.xy / Resolution).r;
 
     float3 positionVS = input.ViewDir * linearDepth;
 
@@ -117,7 +100,8 @@ PixelShaderOutput PixelShaderFunction(VSOut_PosTexViewDir input)
     float2 sampleTexCoord = 0.5f * (float2(previousPositionVS.x, -previousPositionVS.y) + 1);
 
     //Check how much they match
-	float4 updatedColorSample = UpdateMap.Load(texCoordInt);
+    // ToDo: GL Compat: input.Position needs normalized UVs/texCoords and resolution is only hardcoded atm
+    float4 updatedColorSample = UpdateMap.Sample(UpdateMapSampler, input.Position.xy / Resolution);
 
 	//HDR -> LDR!
 
@@ -125,9 +109,7 @@ PixelShaderOutput PixelShaderFunction(VSOut_PosTexViewDir input)
 	if (UseTonemap)
 		updatedColorSample.rgb = ReinhardTonemap(updatedColorSample.rgb);
 
-    int3 sampleTexCoordInt = int3(sampleTexCoord * Resolution, 0);
-
-    float4 accumulationColorSample = AccumulationMap.Load(sampleTexCoordInt);
+    float4 accumulationColorSample = AccumulationMap.Sample(AccumulationMapSampler, sampleTexCoord);
 
     float alpha = accumulationColorSample.a;
 
