@@ -70,11 +70,11 @@ DECLARE_MAP(DepthMap, CLAMP, POINT, 0);
 #endif
 
 #ifdef _ALBEDO_MAP
-TEXTURE(Albedo);
+DECLARE_MAP(AlbedoMap, CLAMP, POINT, 0);
 #endif
 
 #ifdef _NORMAL_MAP
-TEXTURE(Normal);
+DECLARE_MAP(NormalMap, CLAMP, POINT, 0);
 #endif
 
 #ifdef _SHADOW_MAP
