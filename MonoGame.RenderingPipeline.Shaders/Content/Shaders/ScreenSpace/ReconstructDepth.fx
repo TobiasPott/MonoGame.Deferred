@@ -40,8 +40,11 @@ float TransformDepth(float depth, matrix trafoMatrix)
 //  PIXEL SHADER
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//float PixelShaderFunction(VSOut_PosTex input) : SV_Depth
+#ifdef DX10_OR_NEWER
+float PixelShaderFunction(VSOut_PosTex input) : SV_Depth
+#else
 float4 PixelShaderFunction(VSOut_PosTex input) : SV_TARGET0
+#endif
 {
 	float2 texCoord = float2(input.TexCoord);
 
