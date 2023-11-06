@@ -90,6 +90,7 @@ PixelShaderOutput PixelShaderFunction(VSOut_PosTexViewDir input)
     
     //float linearDepth = DepthMap.Load(texCoordInt).r;
     // ToDo: GL Compat: input.Position needs normalized UVs/texCoords and resolution is only hardcoded atm
+	// ToDo: GL Compat: Consider using input.TexCoord instead the .Position.xy thingy
     float linearDepth = DepthMap.Sample(DepthMapSampler, input.Position.xy / Resolution).r;
 
     float3 positionVS = input.ViewDir * linearDepth;

@@ -56,7 +56,6 @@ const float OUTPUTCONST = 0.1f;
 // AlbedoMap: diffuse color, and specularIntensity in the alpha channel
 // NormalMap: normals, and specularPower in the alpha channel
 // ShadowMap:
-SamplerTex(Point, AlbedoMap, CLAMP, LINEAR);
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -450,7 +449,7 @@ PixelShaderInput BaseCalculations(V2F_ViewPosScreenPos input)
     /////////////////////////////////////////
 
     //read depth, use point sample or load
-    output.Depth = DepthMap.Load(int3(input.Position.xy, 0)); //DepthMap.SampleLevel(PointSampler, texCoord, 0).r;
+    output.Depth = DepthMap.Load(int3(input.Position.xy, 0)); //DepthMap.SampleLevel(LinearSampler, texCoord, 0).r;
 
 	//Basically extend the depth of this ray to the end of the far plane, this gives us the position of the sphere only
     float3 cameraDirVS = input.PositionVS.xyz * (FarClip / -input.PositionVS.z);
