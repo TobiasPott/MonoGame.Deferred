@@ -1,5 +1,7 @@
 
 #include "../../Includes/Macros.incl.fx"
+#include "../../Includes/Maps.incl.fx"
+#include "../../Includes/VertexStage.incl.fx"
 
 static const int BlurKernelSize = 13;
 static const float2 BlurKernel[BlurKernelSize] =
@@ -24,16 +26,8 @@ static const float BlurWeights[BlurKernelSize] =
     0.176033f, 0.120985f, 0.064759f, 0.026995f, 0.008764f, 0.002216f
 };
 
-Texture2D TargetMap;
+DECLARE_MAP(TargetMap, CLAMP, LINEAR, 0);
 
-SamplerState SceneSampler
-{
-    AddressU = CLAMP;
-    AddressV = CLAMP;
-    MagFilter = LINEAR;
-    MinFilter = LINEAR;
-    Mipfilter = LINEAR;
-};
 float2 InverseResolution;
 
 struct VI
@@ -41,24 +35,7 @@ struct VI
     float2 Position : POSITION0;
 };
 
-struct VO
-{
-    float4 Position : POSITION0;
-    float2 TexCoord : TexCoord;
-};
-
-VO VS(VI input, uint id:SV_VERTEXID)
-{
-    VO output;
-
-	output.Position = float4(input.Position, 0, 1);
-	output.TexCoord.x = (float)(id / 2) * 2.0;
-	output.TexCoord.y = 1.0 - (float)(id % 2) * 2.0;
-
-    return output;
-}
-
-float4 HorizontalPS(VO input) : COLOR0
+float4 PSMain_H(VSOut_PosTex input) : SV_Target0
 {
     float4 outputColor = float4(0, 0, 0, 0);
     
@@ -67,7 +44,7 @@ float4 HorizontalPS(VO input) : COLOR0
     {
         float2 offset = BlurKernel[i].xy * InverseResolution.xy;
     
-        float4 sample = TargetMap.Sample(SceneSampler, input.TexCoord + offset);
+        float4 sample = TargetMap.Sample(TargetMapSampler, input.TexCoord + offset);
         sample *= BlurWeights[i];
 		
         outputColor += sample;
@@ -76,7 +53,7 @@ float4 HorizontalPS(VO input) : COLOR0
     return outputColor;
 }
 
-float4 VerticalPS(VO input) : COLOR0
+float4 PSMain_V(VSOut_PosTex input) : SV_Target0
 {
     float4 outputColor = float4(0, 0, 0, 0);
     
@@ -85,7 +62,7 @@ float4 VerticalPS(VO input) : COLOR0
     {
         float2 offset = BlurKernel[i].yx * InverseResolution.xy;
     
-        float4 sample = TargetMap.Sample(SceneSampler, input.TexCoord + offset);
+        float4 sample = TargetMap.Sample(TargetMapSampler, input.TexCoord + offset);
         sample *= BlurWeights[i];
 
         outputColor += sample;
@@ -98,13 +75,13 @@ technique GaussianBlur
 {
     pass Horizontal
     {
-        COMPILE_VS(VS);
-        COMPILE_PS(HorizontalPS);
+        COMPILE_VS(VSMain_Encoded);
+        COMPILE_PS(PSMain_H);
     }
 
     pass Vertical
     {
-        COMPILE_VS(VS);
-        COMPILE_PS(VerticalPS);
+        COMPILE_VS(VSMain_Encoded);
+        COMPILE_PS(PSMain_V);
     }
 }
