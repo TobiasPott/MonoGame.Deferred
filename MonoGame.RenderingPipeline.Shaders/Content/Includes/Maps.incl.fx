@@ -7,18 +7,7 @@
 #define DX9_OR_OLDER
 #define DX10_OR_NEWER
 
-#ifdef DX10_OR_NEWER
-#define DECLARE_MAP(Name, InWrapMode, InFilter, InMaxAnisotropy) Texture2D Name; \
- \
-SamplerState Name ## Sampler \
-{ \
-    Texture = (TexName); \
-    AddressU = InWrapMode; \
-    AddressV = InWrapMode; \
-    Filter = InFilter; \
-    MaxAnisotropy = InMaxAnisotropy; \
-};
-#else
+
 #define DECLARE_MAP(Name, InWrapMode, InFilter, InMaxAnisotropy) Texture2D Name; \
  \
 SamplerState Name##Sampler \
@@ -31,7 +20,20 @@ SamplerState Name##Sampler \
     Mipfilter = InFilter; \
     MaxAnisotropy = InMaxAnisotropy; \
 };
-#endif
+
+#define DECLARE_MAP_EXPLICIT(Name, AddrU, AddrV, AddrW, Mag, Min, Mip, Aniso) Texture2D Name; \
+ \
+SamplerState Name##Sampler \
+{ \
+    Texture = <TexName>; \
+    AddressU = AddrU; \
+    AddressV = AddrV; \
+    AddressW = AddrW; \
+    MagFilter = Mag; \
+    MinFilter = Min; \
+    Mipfilter = Mip; \
+    MaxAnisotropy = Aniso; \
+};
 
 
 #define SamplerTex(SamplerName, TexName, WrapMode, Filter) SamplerState SamplerName ## Sampler \
