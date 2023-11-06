@@ -44,6 +44,16 @@ SamplerState Name##Sampler \
     Mipfilter = Filter; \
 }
 
+#define SamplerTexWrapFilter(SamplerName, TexName, WrapU, WrapV, FilterMag, FiltereMin, FilterMip) SamplerState SamplerName ## Sampler \
+{ \
+    Texture = (TexName); \
+    AddressU = WrapU; \
+    AddressV = WrapV; \
+    MagFilter = FilterMag; \
+    MinFilter = FiltereMin; \
+    Mipfilter = FilterMip; \
+}
+
 #define Sampler(SamplerName, WrapMode, Filter) SamplerState SamplerName ## Sampler \
 { \
     AddressU = WrapMode; \
