@@ -114,16 +114,21 @@ float integrateVolume(float d2, float d1, float radius);
 
 //Check helper.fx for more helper functions
 
+// ToDo: Shaders: Extract base texture lookup (Albedo/Normal) and extract to method with out parameters
+
+
 void LightingCalculation(in int3 texCoordInt, in float distanceToLight, in float3 lightVector, in float3 cameraDirection, inout float3 diffuseOutput, inout float3 specularOutput)
 {
 		//get normal data from the NormalMap
-    float4 normalData = NormalMap.Load(texCoordInt);
+    float2 texCoord = texCoordInt.xy / Resolution;
+    // ToDo: GL Compat: input.Position needs normalized UVs/texCoords and resolution is only hardcoded atm
+    float4 normalData = NormalMap.SampleLevel(NormalMapSampler, texCoord, 0);
 		//tranform normal back into [-1,1] range
     float3 normal = decode(normalData.xyz); //2.0f * normalData.xyz - 1.0f;    //could do mad
 												//get metalness
     float roughness = normalData.a;
 		//get specular intensity from the AlbedoMap
-    float4 color = AlbedoMap.Load(texCoordInt);
+    float4 color = AlbedoMap.SampleLevel(AlbedoMapSampler, texCoord, 0);
 
     float metalness = decodeMetalness(normalData.b);
 
@@ -153,13 +158,15 @@ void LightingCalculation(in int3 texCoordInt, in float distanceToLight, in float
 
 void LightingShadowedCalculation(in int3 texCoordInt, in float distanceToLight, in float3 lightVector, in float3 cameraDirection, inout float3 diffuseOutput, inout float3 specularOutput)
 {
-    float4 normalData = NormalMap.Load(texCoordInt);
+    float2 texCoord = texCoordInt.xy / Resolution;
+    // ToDo: GL Compat: input.Position needs normalized UVs/texCoords and resolution is only hardcoded atm
+    float4 normalData = NormalMap.SampleLevel(NormalMapSampler, texCoord, 0);
 		//tranform normal back into [-1,1] range
     float3 normal = decode(normalData.xyz); //2.0f * normalData.xyz - 1.0f;    //could do mad
 												//get metalness
     float roughness = normalData.a;
 		//get specular intensity from the AlbedoMap
-    float4 color = AlbedoMap.Load(texCoordInt);
+    float4 color = AlbedoMap.SampleLevel(AlbedoMapSampler, texCoord, 0);
 
     float metalness = decodeMetalness(normalData.b);
 
@@ -199,13 +206,15 @@ void LightingShadowedCalculation(in int3 texCoordInt, in float distanceToLight, 
 
 void LightingSDFCalculation(in float3 posVS, in int3 texCoordInt, in float distanceToLight, in float3 lightVector, in float3 cameraDirection, inout float3 diffuseOutput, inout float3 specularOutput)
 {
-    float4 normalData = NormalMap.Load(texCoordInt);
+    float2 texCoord = texCoordInt.xy / Resolution;
+    // ToDo: GL Compat: input.Position needs normalized UVs/texCoords and resolution is only hardcoded atm
+    float4 normalData = NormalMap.SampleLevel(NormalMapSampler, texCoord, 0);
 		//tranform normal back into [-1,1] range
     float3 normal = decode(normalData.xyz); //2.0f * normalData.xyz - 1.0f;    //could do mad
 												//get metalness
     float roughness = normalData.a;
 		//get specular intensity from the AlbedoMap
-    float4 color = AlbedoMap.Load(texCoordInt);
+    float4 color = AlbedoMap.SampleLevel(AlbedoMapSampler, texCoord, 0);
 
     float metalness = decodeMetalness(normalData.b);
 
@@ -449,7 +458,8 @@ PixelShaderInput BaseCalculations(V2F_ViewPosScreenPos input)
     /////////////////////////////////////////
 
     //read depth, use point sample or load
-    output.Depth = DepthMap.Load(int3(input.Position.xy, 0)); //DepthMap.SampleLevel(LinearSampler, texCoord, 0).r;
+    // ToDo: GL Compat: input.Position needs normalized UVs/texCoords and resolution is only hardcoded atm
+    output.Depth = DepthMap.SampleLevel(DepthMapSampler, input.Position.xy / Resolution, 0);
 
 	//Basically extend the depth of this ray to the end of the far plane, this gives us the position of the sphere only
     float3 cameraDirVS = input.PositionVS.xyz * (FarClip / -input.PositionVS.z);
@@ -532,17 +542,14 @@ float4 PixelShaderBasic(float4 position : POSITION) : COLOR
 //Base function
 PixelShaderOutput PixelShaderFunction(V2F_ViewPosScreenPos input)
 {
-    PixelShaderInput p_input = BaseCalculations(input);
-
-    PixelShaderOutput Output;
-
     float lightDepth = input.PositionVS.z / -FarClip;
+    PixelShaderInput p_input = BaseCalculations(input);
 
 	[branch]
     if (lightDepth * inside < p_input.Depth * inside)
     {
         clip(-1);
-        return Output;
+        return (PixelShaderOutput) 0;
     }
     else
     {
@@ -556,15 +563,13 @@ PixelShaderOutput PixelShaderFunctionSDF(V2F_ViewPosScreenPos input)
 {
     PixelShaderInput p_input = BaseCalculations(input);
 
-    PixelShaderOutput Output;
-
     float lightDepth = input.PositionVS.z / -FarClip;
 
 	[branch]
     if (lightDepth * inside < p_input.Depth * inside)
     {
         clip(-1);
-        return Output;
+        return (PixelShaderOutput) 0;
     }
     else
     {
@@ -581,7 +586,7 @@ PixelShaderOutput VolumetricPixelShaderFunction(V2F_ViewPosScreenPos input)
     int3 texCoordInt = int3(texCoord * Resolution, 0);
 
 	//read linear depth
-    float linDepth = DepthMap.Load(texCoordInt).r;
+    float linDepth = DepthMap.SampleLevel(DepthMapSampler, texCoord, 0).r;
 
 	//Basically extend the depth of this ray to the end of the far plane, this gives us the position of the sphere only
 	//todo: needed?
@@ -706,7 +711,7 @@ PixelShaderOutput BasePixelShaderFunctionShadow(PixelShaderInput input)
     if (lengthLight > lightRadius)
     {
         clip(-1);
-        return output;
+        return (PixelShaderOutput) 0;
     }
     else
     {
@@ -757,7 +762,7 @@ PixelShaderOutput VolumetricPixelShaderFunctionShadowed(V2F_ViewPosScreenPos inp
     int3 texCoordInt = int3(texCoord * Resolution, 0);
 
 	//read linear depth
-    float linDepth = DepthMap.Load(texCoordInt).r;
+    float linDepth = DepthMap.SampleLevel(DepthMapSampler, texCoord, 0).r;
 
 	//Basically extend the depth of this ray to the end of the far plane, this gives us the position of the sphere only
     float3 cameraDirVS = input.PositionVS.xyz * (FarClip / -input.PositionVS.z);
