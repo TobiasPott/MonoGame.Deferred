@@ -40,13 +40,14 @@ float TransformDepth(float depth, matrix trafoMatrix)
 //  PIXEL SHADER
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-float PixelShaderFunction(VSOut_PosTex input) : SV_DEPTH
+//float PixelShaderFunction(VSOut_PosTex input) : SV_Depth
+float4 PixelShaderFunction(VSOut_PosTex input) : SV_TARGET0
 {
 	float2 texCoord = float2(input.TexCoord);
 
 	float linearDepth = DepthMap.Sample(texSampler, texCoord).r * -FarClip;
 
-	return TransformDepth(linearDepth, Projection);
+    return float4(TransformDepth(linearDepth, Projection), 0, 0, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
