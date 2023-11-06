@@ -6,6 +6,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "../../Includes/Macros.incl.fx"
+#define _NORMAL_MAP
 #define _DEPTH_MAP
 #include "../../Includes/Maps.incl.fx"
 #include "../../Includes/VertexStage.incl.fx"
@@ -22,40 +23,12 @@ const float border = 0.1f;
 
 float2 Resolution = float2(1280, 720);
 
-
-Texture2D NormalMap;
-Texture2D SourceMap;
-Texture2D NoiseMap;
-
-SamplerState texSampler
-{
-    Texture = (AlbedoMap);
-    AddressU = CLAMP;
-    AddressV = CLAMP;
-    MagFilter = LINEAR;
-    MinFilter = LINEAR;
-    Mipfilter = POINT;
-};
- 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//  STRUCTS
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
+DECLARE_MAP(SourceMap, CLAMP, LINEAR, 0);
+DECLARE_MAP(NoiseMap, CLAMP, LINEAR, 0);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//  FUNCTIONS
+//  HELPER FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//  VERTEX SHADER
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//  PIXEL SHADER
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-		////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		//  HELPER FUNCTIONS
-		////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //http://martindevans.me/game-development/2015/02/22/Random-Gibberish/
 float Random_Final(float2 uv, float seed)
@@ -88,9 +61,17 @@ float TransformDepth(float depth, matrix trafoMatrix)
 }
 
 
-		////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		//  Main Raymarching algorithm
-		////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  VERTEX SHADER
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  PIXEL SHADER
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  Main Raymarching algorithm
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Basic
 float4 PixelShaderFunction(VSOut_PosTexViewDir input) : COLOR0
@@ -105,11 +86,11 @@ float4 PixelShaderFunction(VSOut_PosTexViewDir input) : COLOR0
 	float2 texCoord = float2(input.TexCoord);
 
 	//Get our current Position in viewspace
-	float linearDepth = DepthMap.Sample(texSampler, texCoord).r;
+    float linearDepth = DepthMap.Sample(DepthMapSampler, texCoord).r;
 	float3 positionVS = input.ViewDir * linearDepth;
 
 	//Sample the normal map
-	float4 normalData = NormalMap.Sample(texSampler, texCoord);
+	float4 normalData = NormalMap.Sample(NormalMapSampler, texCoord);
 	//tranform normal back into [-1,1] range
 	float3 normal = decode(normalData.xyz);
 	float roughness = normalData.a;
@@ -163,7 +144,7 @@ float4 PixelShaderFunction(VSOut_PosTexViewDir input) : COLOR0
 	}
 
 	//Add some noise
-	float noise = NoiseMap.Sample(texSampler, frac(((texCoord + temporalComponent.xx)* Resolution ) / 64)).r; // + frac(input.TexCoord* Projection)).r;
+    float noise = NoiseMap.Sample(NoiseMapSampler, frac(((texCoord + temporalComponent.xx) * Resolution) / 64)).r; // + frac(input.TexCoord* Projection)).r;
 	
 	//Raymarching the depth buffer
 	[loop]
@@ -178,7 +159,7 @@ float4 PixelShaderFunction(VSOut_PosTexViewDir input) : COLOR0
 		//Get the depth at our new position
 		int3 texCoordInt = int3(rayPosition.xy * Resolution, 0);
 
-		float linearDepth = DepthMap.Load(texCoordInt).r * -FarClip;
+        float linearDepth = DepthMap.SampleLevel(DepthMapSampler, rayPosition.xy, 0).r * -FarClip;
 		float sampleDepth = TransformDepth(linearDepth, Projection);
 
 		float depthDifference = sampleDepth - rayPosition.z;
@@ -218,7 +199,7 @@ float4 PixelShaderFunction(VSOut_PosTexViewDir input) : COLOR0
 
 				texCoordInt = int3(rayPosition.xy * Resolution, 0);
 
-				sampleDepth = TransformDepth(DepthMap.Load(texCoordInt).r * -FarClip - 50.0f, Projection);
+                sampleDepth = TransformDepth(DepthMap.SampleLevel(DepthMapSampler, rayPosition.xy, 0).r * -FarClip - 50.0f, Projection);
 
 				//Looks like we don't hit anything any more?
 				[branch]
@@ -264,9 +245,7 @@ float4 PixelShaderFunction(VSOut_PosTexViewDir input) : COLOR0
 			if (!hit)
 				continue;
 
-			int3 hitCoordInt = int3(hitTexCoord.xy * Resolution, 0);
-
-			float4 albedoColor = SourceMap.Load(hitCoordInt);
+            float4 albedoColor = SourceMap.SampleLevel(SourceMapSampler, hitTexCoord.xy, 0);
 			output.rgb = albedoColor.rgb;
 			output.a = 1;
 
@@ -331,11 +310,11 @@ float4 PixelShaderFunctionTAA(VSOut_PosTexViewDir input) : COLOR0
 	float2 texCoord = float2(input.TexCoord);
 
 	//Get our current Position in viewspace
-	float linearDepth = DepthMap.Sample(texSampler, texCoord).r;
+	float linearDepth = DepthMap.Sample(DepthMapSampler, texCoord).r;
     float3 positionVS = input.ViewDir * linearDepth;
 
 													 //Sample the normal map
-	float4 normalData = NormalMap.Sample(texSampler, texCoord);
+    float4 normalData = NormalMap.Sample(NormalMapSampler, texCoord);
 	//tranform normal back into [-1,1] range
 	float3 normal = decode(normalData.xyz);
 	float roughness = normalData.a;
@@ -361,7 +340,7 @@ float4 PixelShaderFunctionTAA(VSOut_PosTexViewDir input) : COLOR0
 	}
 
 		//Add some noise
-	//float noise = NoiseMap.Sample(texSampler, frac(((texCoord)* resolution + temporalComponent) / 64)).r; // + frac(input.TexCoord* Projection)).r;
+	//float noise = NoiseMap.Sample(NoiseMapSampler, frac(((texCoord)* resolution + temporalComponent) / 64)).r; // + frac(input.TexCoord* Projection)).r;
 
 	randNor = randomNormal(input.TexCoord); // randomNormal(frac(mul(input.TexCoord, noise).xy)) * -randomNormal(frac(mul(1 - input.TexCoord, noise).xy)); //
 	
@@ -411,7 +390,7 @@ float4 PixelShaderFunctionTAA(VSOut_PosTexViewDir input) : COLOR0
 		//Get the depth at our new position
 		int3 texCoordInt = int3(rayPosition.xy * Resolution, 0);
 
-		float linearDepth = DepthMap.Load(texCoordInt).r * -FarClip;
+        float linearDepth = DepthMap.SampleLevel(DepthMapSampler, rayPosition.xy, 0).r * -FarClip;
 		float sampleDepth = TransformDepth(linearDepth, Projection);
 
 		float depthDifference = sampleDepth - rayPosition.z;
@@ -451,7 +430,7 @@ float4 PixelShaderFunctionTAA(VSOut_PosTexViewDir input) : COLOR0
 
 				texCoordInt = int3(rayPosition.xy * Resolution, 0);
 
-				sampleDepth = TransformDepth(DepthMap.Load(texCoordInt).r * -FarClip - 50.0f, Projection);
+                sampleDepth = TransformDepth(DepthMap.SampleLevel(DepthMapSampler, rayPosition.xy, 0).r * -FarClip - 50.0f, Projection);
 
 				//Looks like we don't hit anything any more?
 				[branch]
@@ -497,9 +476,7 @@ float4 PixelShaderFunctionTAA(VSOut_PosTexViewDir input) : COLOR0
 			if (!hit)
 				continue;
 
-			int3 hitCoordInt = int3(  (hitTexCoord.xy * Resolution), 0);
-
-            float4 albedoColor = SourceMap.Load(hitCoordInt);
+            float4 albedoColor = SourceMap.SampleLevel(SourceMapSampler, hitTexCoord.xy, 0);
 			output.rgb = albedoColor.rgb;
 			output.a = 1;
 
