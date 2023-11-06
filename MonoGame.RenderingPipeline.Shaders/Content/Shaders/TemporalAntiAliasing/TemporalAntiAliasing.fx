@@ -67,8 +67,7 @@ float3 InverseReinhardTonemap(float3 ldr)
 
 float4 InverseToneMapPixelShader(VSOut_PosTexViewDir input) : SV_Target
 {
-    float4 updatedColorSample = AccumulationMap.Load(int3(input.Position.xy, 0));
-    //float4 updatedColorSample = AccumulationMap.Sample(AccumulationMapSampler, input.TexCoord);
+    float4 updatedColorSample = AccumulationMap.Sample(AccumulationMapSampler, input.TexCoord);
 
 	return float4(InverseReinhardTonemap(updatedColorSample.rgb), updatedColorSample.a);
 }
@@ -110,10 +109,8 @@ PixelShaderOutput PixelShaderFunction(VSOut_PosTexViewDir input)
 	[branch]
 	if (UseTonemap)
 		updatedColorSample.rgb = ReinhardTonemap(updatedColorSample.rgb);
-	
-    // ToDo: GL Compat: Reverted to .Load (this issue might be related with the buffers passed into TAA)
-    float4 accumulationColorSample = AccumulationMap.Load(int3(input.Position.xy, 0));
-    //float4 accumulationColorSample = AccumulationMap.Sample(AccumulationMapSampler, sampleTexCoord);
+
+    float4 accumulationColorSample = AccumulationMap.Sample(AccumulationMapSampler, sampleTexCoord);
 
     float alpha = accumulationColorSample.a;
 
