@@ -42,17 +42,13 @@ namespace DeferredEngine.Pipeline
 
             Pass_Clear = Effect_Clear.CurrentTechnique.Passes[0];
 
-            Param_ColorMap = Effect_Compose.Parameters["colorMap"];
-            Param_NormalMap = Effect_Compose.Parameters["normalMap"];
-            Param_DiffuseLightMap = Effect_Compose.Parameters["diffuseLightMap"];
-            Param_SpecularLightMap = Effect_Compose.Parameters["specularLightMap"];
-            Param_VolumeLightMap = Effect_Compose.Parameters["volumeLightMap"];
+            Param_ColorMap = Effect_Compose.Parameters["ColorMap"];
+            Param_NormalMap = Effect_Compose.Parameters["NormalMap"];
+            Param_DiffuseLightMap = Effect_Compose.Parameters["DiffuseLightMap"];
+            Param_SpecularLightMap = Effect_Compose.Parameters["SpecularLightMap"];
+            Param_VolumeLightMap = Effect_Compose.Parameters["VolumeLightMap"];
             Param_SSAOMap = Effect_Compose.Parameters["SSAOMap"];
             Param_UseSSAO = Effect_Compose.Parameters["useSSAO"];
-            //Param_HologramMap = Effect_Compose.Parameters["HologramMap"];
-            //Param_LinearMap = Effect_Compose.Parameters["LinearMap"];
-            //Param_SSRMap = Effect_Compose.Parameters["SSRMap"];
-
         }
 
         public override void Dispose()

@@ -4,38 +4,30 @@
 //  Converts albedo from Gamma 2.2 to 1.0 and outputs an HDR file.
 
 #include "../../Includes/Macros.incl.fx"
+#include "../../Includes/Maps.incl.fx"
 #include "../../Includes/VertexStage.incl.fx"
 #include "../Common/helper.fx"
 
-Texture2D colorMap;
-Texture2D normalMap;
-Texture2D diffuseLightMap;
-Texture2D specularLightMap;
-Texture2D volumeLightMap;
-
-Texture2D SSAOMap;
+DECLARE_MAP(ColorMap, CLAMP, POINT, 0);
+DECLARE_MAP(NormalMap, CLAMP, POINT, 0);
+DECLARE_MAP(DiffuseLightMap, CLAMP, POINT, 0);
+DECLARE_MAP(SpecularLightMap, CLAMP, POINT, 0);
+DECLARE_MAP(VolumeLightMap, CLAMP, POINT, 0);
 
 bool useSSAO = true;
+DECLARE_MAP(SSAOMap, CLAMP, POINT, 0);
 
-sampler pointSampler = sampler_state
-{
-    Texture = (colorMap);
-    AddressU = CLAMP;
-    AddressV = CLAMP;
-    MagFilter = POINT;
-    MinFilter = POINT;
-    Mipfilter = POINT;
-};
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////  FUNCTION DEFINITIONS
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 float4 PSMain(VSOut_PosTex input) : SV_Target
 {
 	int3 texCoordInt = int3(input.Position.xy, 0);
 
-	float4 diffuseColor = colorMap.Load(texCoordInt);
-	float4 normalInfo = normalMap.Load(texCoordInt);
+    float4 diffuseColor = ColorMap.Sample(ColorMapSampler, input.TexCoord);
+    float4 normalInfo = NormalMap.Sample(NormalMapSampler, input.TexCoord);
 	//Convert gamma for linear pipeline
 	diffuseColor.rgb = pow(abs(diffuseColor.rgb), 2.2f);
 
@@ -48,7 +40,7 @@ float4 PSMain(VSOut_PosTex input) : SV_Target
 	float metalness = decodeMetalness(normalInfo.b);
 
 	//Our "volumetric" light data. This is a seperate buffer that is renders on top of all other stuff.
-	float3 volumetrics = volumeLightMap.Load(texCoordInt).rgb;
+    float3 volumetrics = VolumeLightMap.Sample(VolumeLightMapSampler, input.TexCoord).rgb;
 
 	//Emissive Material
 	//If the material is emissive (matType == 3) we store the factor inside metalness. We simply output the emissive material and do not compose with lighting
@@ -67,13 +59,13 @@ float4 PSMain(VSOut_PosTex input) : SV_Target
 	[branch]
 	if (useSSAO)
 	{
-		ssaoContribution = SSAOMap.SampleLevel(pointSampler, input.TexCoord, 0).r;
-	}
+        ssaoContribution = SSAOMap.SampleLevel(SSAOMapSampler, input.TexCoord, 0).r;
+    }
 
 	//float f0 = lerp(0.04f, diffuseColor.g * 0.25 + 0.75, metalness);
 
-	float3 diffuseLight = diffuseLightMap.Load(texCoordInt).rgb;
-	float3 specularLight = specularLightMap.Load(texCoordInt).rgb;
+    float3 diffuseLight = DiffuseLightMap.Sample(DiffuseLightMapSampler, input.TexCoord).rgb;
+    float3 specularLight = SpecularLightMap.Sample(SpecularLightMapSampler, input.TexCoord).rgb;
 
 	float3 plasticFinal = diffuseColor.rgb * (diffuseLight)+specularLight;
 
