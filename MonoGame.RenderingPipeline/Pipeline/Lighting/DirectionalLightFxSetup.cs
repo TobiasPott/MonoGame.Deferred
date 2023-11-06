@@ -55,8 +55,8 @@ namespace DeferredEngine.Pipeline.Lighting
             Param_LightView = Effect.Parameters["LightView"];
             Param_LightFarClip = Effect.Parameters["LightFarClip"];
 
-            Param_LightColor = Effect.Parameters["lightColor"];
-            Param_LightIntensity = Effect.Parameters["lightIntensity"];
+            Param_LightColor = Effect.Parameters["LightColor"];
+            Param_LightIntensity = Effect.Parameters["LightIntensity"];
             Param_LightDirection = Effect.Parameters["LightVector"];
             Param_ShadowFiltering = Effect.Parameters["ShadowFiltering"];
             Param_ShadowMapSize = Effect.Parameters["ShadowMapSize"];
