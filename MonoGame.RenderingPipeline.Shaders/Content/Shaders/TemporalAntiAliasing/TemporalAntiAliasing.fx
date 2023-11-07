@@ -8,8 +8,8 @@
 float4x4 CurrentToPrevious;
 
 
-DECLARE_MAP(AccumulationMap, CLAMP, POINT, 0);
-DECLARE_MAP(UpdateMap, CLAMP, POINT, 0);
+DECLARE_MAP_EXPLICIT(AccumulationMap, CLAMP, CLAMP, CLAMP, POINT, POINT, NONE, 0);
+DECLARE_MAP_EXPLICIT(UpdateMap, CLAMP, CLAMP, CLAMP, POINT, POINT, NONE, 0);
 
 float2 Resolution = { 1280, 720 };
 
@@ -67,8 +67,7 @@ float3 InverseReinhardTonemap(float3 ldr)
 
 float4 InverseToneMapPixelShader(VSOut_PosTexViewDir input) : SV_Target
 {
-    float4 updatedColorSample = AccumulationMap.Load(int3(input.Position.xy, 0));
-    //float4 updatedColorSample = AccumulationMap.Sample(AccumulationMapSampler, input.TexCoord);
+    float4 updatedColorSample = AccumulationMap.Sample(AccumulationMapSampler, input.TexCoord);
 
 	return float4(InverseReinhardTonemap(updatedColorSample.rgb), updatedColorSample.a);
 }
@@ -92,7 +91,7 @@ PixelShaderOutput PixelShaderFunction(VSOut_PosTexViewDir input)
     //float linearDepth = DepthMap.Load(texCoordInt).r;
     // ToDo: GL Compat: input.Position needs normalized UVs/texCoords and resolution is only hardcoded atm
 	// ToDo: GL Compat: Consider using input.TexCoord instead the .Position.xy thingy
-    float linearDepth = DepthMap.Sample(DepthMapSampler, input.Position.xy / Resolution).r;
+    float linearDepth = DepthMap.SampleLevel(DepthMapSampler, input.Position.xy / Resolution, 0).r;
 
     float3 positionVS = input.ViewDir * linearDepth;
 
@@ -100,10 +99,9 @@ PixelShaderOutput PixelShaderFunction(VSOut_PosTexViewDir input)
     previousPositionVS /= previousPositionVS.w;
 
     float2 sampleTexCoord = 0.5f * (float2(previousPositionVS.x, -previousPositionVS.y) + 1);
-
     //Check how much they match
     // ToDo: GL Compat: input.Position needs normalized UVs/texCoords and resolution is only hardcoded atm
-    float4 updatedColorSample = UpdateMap.Sample(UpdateMapSampler, input.Position.xy / Resolution);
+    float4 updatedColorSample = UpdateMap.SampleLevel(UpdateMapSampler, sampleTexCoord, 0);
 
 	//HDR -> LDR!
 
@@ -111,9 +109,7 @@ PixelShaderOutput PixelShaderFunction(VSOut_PosTexViewDir input)
 	if (UseTonemap)
 		updatedColorSample.rgb = ReinhardTonemap(updatedColorSample.rgb);
 	
-    // ToDo: GL Compat: Reverted to .Load (this issue might be related with the buffers passed into TAA)
-    float4 accumulationColorSample = AccumulationMap.Load(int3(input.Position.xy, 0));
-    //float4 accumulationColorSample = AccumulationMap.Sample(AccumulationMapSampler, sampleTexCoord);
+    float4 accumulationColorSample = AccumulationMap.SampleLevel(AccumulationMapSampler, sampleTexCoord, 0);
 
     float alpha = accumulationColorSample.a;
 
