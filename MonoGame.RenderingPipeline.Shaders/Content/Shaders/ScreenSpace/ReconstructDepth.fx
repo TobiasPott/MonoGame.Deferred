@@ -11,17 +11,6 @@
 
 float4x4 Projection;
 
-
-SamplerState texSampler
-{
-    Texture = (DepthMap);
-    AddressU = CLAMP;
-    AddressV = CLAMP;
-    MagFilter = POINT;
-    MinFilter = POINT;
-    Mipfilter = POINT;
-};
- 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  HELPER FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -40,7 +29,7 @@ float TransformDepth(float depth, matrix trafoMatrix)
 //  PIXEL SHADER
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifdef DX10_OR_NEWER
+#if DX10_OR_NEWER == 1
 float PixelShaderFunction(VSOut_PosTex input) : SV_Depth
 #else
 float4 PixelShaderFunction(VSOut_PosTex input) : SV_TARGET0
@@ -48,9 +37,13 @@ float4 PixelShaderFunction(VSOut_PosTex input) : SV_TARGET0
 {
 	float2 texCoord = float2(input.TexCoord);
 
-	float linearDepth = DepthMap.Sample(texSampler, texCoord).r * -FarClip;
-
+    float linearDepth = DepthMap.Sample(DepthMapSampler, texCoord).r * -FarClip;
+    
+#if DX10_OR_NEWER == 1
+    return TransformDepth(linearDepth, Projection);
+    #else
     return float4(TransformDepth(linearDepth, Projection), 0, 0, 0);
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
