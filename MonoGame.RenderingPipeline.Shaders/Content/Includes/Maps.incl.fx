@@ -76,7 +76,7 @@ Sampler(Linear, CLAMP, LINEAR);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #ifdef _DEPTH_MAP
-DECLARE_MAP_EXPLICIT(DepthMap, CLAMP, CLAMP, CLAMP, POINT, POINT, NONE, 0);
+DECLARE_MAP_EXPLICIT(DepthMap, CLAMP, CLAMP, CLAMP, POINT, POINT, POINT, 0);
 #endif
 
 #ifdef _ALBEDO_MAP
