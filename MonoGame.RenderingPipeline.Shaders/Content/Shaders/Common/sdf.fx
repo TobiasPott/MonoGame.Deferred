@@ -4,19 +4,29 @@
 //  VARIABLES
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include "../../Includes/Macros.incl.fx"
 #include "../../Includes/Frustum.incl.fx"
 
-#define MAXTEXTURES 40
-
+#if DX10_OR_NEWER == 1
+// Maximum 40
 Texture2D VolumeTex;
-float3 VolumeTexSize[MAXTEXTURES];
-float4 VolumeTexResolution[MAXTEXTURES];
+float3 VolumeTexSize[40];
+float4 VolumeTexResolution[40];
 
-#define MAXINSTANCES 40
+float4x4 InstanceInverseMatrix[40];
+float3 InstanceScale[40];
+float InstanceSDFIndex[40];
 
-float4x4 InstanceInverseMatrix[MAXINSTANCES];
-float3 InstanceScale[MAXINSTANCES];
-float InstanceSDFIndex[MAXINSTANCES];
+#else
+// Maximum 20
+Texture2D VolumeTex;
+float3 VolumeTexSize[20];
+float4 VolumeTexResolution[20];
+
+float4x4 InstanceInverseMatrix[20];
+float3 InstanceScale[20];
+float InstanceSDFIndex[20];
+#endif
 
 float InstancesCount = 0;
 
