@@ -5,6 +5,9 @@
 #define PREFIX_VS VertexStage_
 #define PREFIX_PS PixelStage_
 
+#define DX10_OR_NEWER 1
+
+
 #define VS_Target vs_4_0
 #define PS_Target ps_4_0
 

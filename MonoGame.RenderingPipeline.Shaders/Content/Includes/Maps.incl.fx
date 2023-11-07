@@ -1,12 +1,10 @@
 #ifndef __HLSL_MAPS__
 #define __HLSL_MAPS__
 
+#include "Macros.incl.fx"
+
 
 #define TEXTURE(Name) Texture2D Name ## Map
-
-#define DX9_OR_OLDER
-#define DX10_OR_NEWER
-
 
 #define DECLARE_MAP(Name, InWrapMode, InFilter, InMaxAnisotropy) Texture2D Name; \
  \
@@ -78,7 +76,7 @@ Sampler(Linear, CLAMP, LINEAR);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #ifdef _DEPTH_MAP
-DECLARE_MAP(DepthMap, CLAMP, POINT, 0);
+DECLARE_MAP_EXPLICIT(DepthMap, CLAMP, CLAMP, CLAMP, POINT, POINT, NONE, 0);
 #endif
 
 #ifdef _ALBEDO_MAP
