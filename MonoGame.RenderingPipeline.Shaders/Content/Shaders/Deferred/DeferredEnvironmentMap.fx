@@ -64,7 +64,7 @@ float4 GetSSR(float2 TexCoord)
 	int3 texCoord = int3(TexCoord * Resolution, 0);
 
 	//Get our current Position in viewspace
-	float4 similarSampleAcc = ReflectionMap.Load(texCoord);
+    float4 similarSampleAcc = ReflectionMap.Sample(ReflectionCubeMapSampler, TexCoord);
 
 	float alpha = similarSampleAcc.a;
 
@@ -132,7 +132,7 @@ PixelShaderOutput PixelShaderFunctionBasic(VSOut_PosTexViewDir input)
 	int3 texCoordInt = int3(input.Position.xy, 0);
     
     //get normal data from the NormalMap
-    float4 normalData = NormalMap.Load(texCoordInt);
+    float4 normalData = NormalMap.Sample(NormalMapSampler, input.Position.xy / Resolution);
     //tranform normal back into [-1,1] range
     float3 normal = decode(normalData.xyz); //2.0f * normalData.xyz - 1.0f;    //could do mad
 
@@ -147,7 +147,7 @@ PixelShaderOutput PixelShaderFunctionBasic(VSOut_PosTexViewDir input)
     //get metalness
     float roughness = normalData.a;
     //get specular intensity from the AlbedoMap
-    float4 color = AlbedoMap.Load(texCoordInt);
+    float4 color = AlbedoMap.Sample(AlbedoMapSampler, input.Position.xy / Resolution);
 
     float metalness = decodeMetalness(normalData.b);
 
