@@ -62,9 +62,9 @@ V2F_TexCoordColor VSMain(VSIn_PosTexColor input)
     float2 texCoord = 0.5f * (float2(output.Position.x, -output.Position.y) + 1);
         
 	//Average the depth of this and the 2 neighbor pixels (x)
-    float vDepthMap = DepthMap.SampleLevel(DepthSampler, texCoord, 0).r;
-    vDepthMap += DepthMap.SampleLevel(DepthSampler, texCoord + float2(ResolutionRcp.x, 0), 0).r;
-    vDepthMap += DepthMap.SampleLevel(DepthSampler, texCoord - float2(ResolutionRcp.x, 0), 0).r;
+    float vDepthMap = DepthMap.SampleLevel(DepthMapSampler, texCoord, 0).r;
+    vDepthMap += DepthMap.SampleLevel(DepthMapSampler, texCoord + float2(ResolutionRcp.x, 0), 0).r;
+    vDepthMap += DepthMap.SampleLevel(DepthMapSampler, texCoord - float2(ResolutionRcp.x, 0), 0).r;
     vDepthMap /= 3;
 
 	//If we are behind that -> don't draw
@@ -88,7 +88,7 @@ V2F_TexCoordColor VSMain(VSIn_PosTexColor input)
 //  PIXEL SHADER
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-float4 PSMain_Sprite(V2F_TexCoordColor input) : SV_TARGET
+float4 PSMain_Sprite(V2F_TexCoordColor input) : SV_TARGET0
 {
     float4 color = Texture.Sample(Sampler, input.TextureCoordinate);
 
@@ -98,7 +98,7 @@ float4 PSMain_Sprite(V2F_TexCoordColor input) : SV_TARGET
     return float4(color.rgb * input.Color.rgb * IdColor, 1);
 }
 
-float4 PSMain_Id(V2F_TexCoordColor input) : SV_TARGET
+float4 PSMain_Id(V2F_TexCoordColor input) : SV_TARGET0
 {
     float4 color = Texture.Sample(Sampler, input.TextureCoordinate);
 

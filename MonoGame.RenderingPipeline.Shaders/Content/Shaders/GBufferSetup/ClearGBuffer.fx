@@ -11,7 +11,7 @@
 //  FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-PSOut_AlbedoNormalDepth PSClear() : COLOR
+PSOut_AlbedoNormalDepth PSClear()
 {
     PSOut_AlbedoNormalDepth output;
     //black color
