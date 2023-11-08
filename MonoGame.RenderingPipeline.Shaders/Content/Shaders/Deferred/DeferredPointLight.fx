@@ -447,7 +447,7 @@ float integrateVolume(float d2, float d1, float radius)
 //Used for both shadow casting and unshadowed, shared function
 PixelShaderInput BaseCalculations(V2F_ViewPosScreenPos input)
 {
-    PixelShaderInput output;
+    PixelShaderInput output = (PixelShaderInput) 0;
      //obtain screen position
     input.ScreenPosition.xyz /= input.ScreenPosition.w;
     //obtain textureCoordinates corresponding to the current pixel
@@ -459,7 +459,7 @@ PixelShaderInput BaseCalculations(V2F_ViewPosScreenPos input)
 
     //read depth, use point sample or load
     // ToDo: GL Compat: input.Position needs normalized UVs/texCoords and resolution is only hardcoded atm
-    output.Depth = DepthMap.SampleLevel(DepthMapSampler, input.Position.xy / Resolution, 0);
+    output.Depth = DepthMap.SampleLevel(DepthMapSampler, input.Position.xy / Resolution, 0).r;
 
 	//Basically extend the depth of this ray to the end of the far plane, this gives us the position of the sphere only
     float3 cameraDirVS = input.PositionVS.xyz * (FarClip / -input.PositionVS.z);
@@ -700,7 +700,7 @@ PixelShaderOutput VolumetricPixelShaderFunction(V2F_ViewPosScreenPos input)
 //Shadow mapped light!
 PixelShaderOutput BasePixelShaderFunctionShadow(PixelShaderInput input)
 {
-    PixelShaderOutput output = (PixelShaderOutput)0;
+    PixelShaderOutput output = (PixelShaderOutput) 0;
     
     //surface-to-light vector
     float3 lightVector = lightPosition - input.PositionVS;
