@@ -29,7 +29,7 @@ namespace DeferredEngine.Rendering.PostProcessing
               : base()
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
-
+            
             Technique_ApplyLUT = Effect.Techniques["ApplyLUT"];
             Technique_CreateLUT = Effect.Techniques["CreateLUT"];
 
@@ -39,7 +39,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             Param_Size = Effect.Parameters["Size"];
             Param_SizeRoot = Effect.Parameters["SizeRoot"];
             Param_InputTexture = Effect.Parameters["InputTexture"];
-            Param_LUT = Effect.Parameters["LUT"];
+            Param_LUT = Effect.Parameters["LUT"]; // ToDo: PRIO I: Make a static TextureName extension which prepends '[name]Sampler+' to [name]
 
         }
 
