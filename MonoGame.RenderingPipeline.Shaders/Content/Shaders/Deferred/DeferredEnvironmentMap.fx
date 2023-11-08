@@ -22,7 +22,7 @@ Texture2D ReflectionMap;
 //SDF
 bool UseSDFAO;
 
-float2 Resolution = { 1280, 800 };
+float2 Resolution = { 1280, 720 };
 
 float3 SkyColor = float3(0.1385, 0.3735f, 0.9805f);
 float3 CameraPositionWS;

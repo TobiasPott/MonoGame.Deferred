@@ -104,15 +104,12 @@ float GetMinDistance(float3 Position, float SDFIndex)
 
 	float distanceToBounds = 0;
 
-	//FS = field space
-	float3 outsideFS;
-
-
 	//Out of bounds
 	if (abs(MaxManhattan(samplePosition)) > 1)
 	{
 		float3 clamped = clamp(samplePosition, float3(-1, -1, -1), float3(1, 1, 1));
-		outsideFS = (samplePosition - clamped);
+		//FS = field space
+        float3 outsideFS = (samplePosition - clamped);
 		distanceToBounds = length(outsideFS * baseSize);
 
 		samplePosition = clamped;
@@ -122,21 +119,18 @@ float GetMinDistance(float3 Position, float SDFIndex)
 	//These are not in [0...1] but instead in [0 ... VolumeTexResolution]
 	float3 texCoords = (samplePosition + float3(1, 1, 1)) * 0.5f * (resolution - float3(1, 1, 1));
 
-	float value = InterpolateSDF(texCoords + float3(0, y_offset, 0), resolution);
+    float value = 0;
+	value = InterpolateSDF(texCoords + float3(0, y_offset, 0), resolution);
 
 	//Get back to our initial problem - are we outside?
-
+    float absVal = abs(distanceToBounds);
+    
 	[branch]
 	//must always be larger than 0 if we are outside
-	if (abs(distanceToBounds) > 0)
-	{
-		////normalize
-		////outsideFS /= distanceToBounds;
+    if (absVal < 0)
+		distanceToBounds = 0;
 
-		return distanceToBounds + value; /// gradient; ///*texelsCovered * gradient*/value + texelsCovered * gradient;
-	}
-
-	return value;
+    return distanceToBounds + value;
 }
 
 //returns true if position is inside SDF of given index
