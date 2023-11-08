@@ -106,7 +106,7 @@ PixelShaderOutput PixelShaderFunction(VSOut_PosTexViewDir input)
 	//HDR -> LDR!
 
 	[branch]
-	if (UseTonemap)
+	if (UseTonemap == 1)
 		updatedColorSample.rgb = ReinhardTonemap(updatedColorSample.rgb);
 	
     float4 accumulationColorSample = AccumulationMap.SampleLevel(AccumulationMapSampler, sampleTexCoord, 0);

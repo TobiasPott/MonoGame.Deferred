@@ -18,6 +18,7 @@
 float3x3 TransposeView;
 
 Texture2D ReflectionMap;
+SamplerTex(ReflectionMap, ReflectionMap, CLAMP, POINT);
 
 //SDF
 bool UseSDFAO;
@@ -94,7 +95,7 @@ float4 GetSSR(float2 TexCoord)
 			//Don't sample mid again
 			if (y == 0 && x == 0) continue;
 
-			neighbor = ReflectionMap.Load(int3(texCoord.x + x, texCoord.y + y, 0));
+            neighbor = ReflectionMap.SampleLevel(ReflectionMapSampler, float2(texCoord.x + x, texCoord.y + y) / Resolution, 0);
 			neighborLuma = GetLuma(neighbor.rgb);
 
 			float weight = 1;
@@ -191,10 +192,10 @@ PixelShaderOutput PixelShaderFunctionBasic(VSOut_PosTexViewDir input)
 	float ao = 1;
 
 	[branch]
-	if (UseSDFAO)
+	if (UseSDFAO == 1)
 	{
 		//Compute WS position 
-		float linearDepth = DepthMap.Load(texCoordInt).r;
+		float linearDepth = DepthMap.SampleLevel(DepthMapSampler, texCoordInt.xy / Resolution, 0).r;
 		float3 PositionWS = CameraPositionWS + linearDepth * input.ViewDir;
 
 		float3 aoDirection = normal;
@@ -222,7 +223,7 @@ PixelShaderOutput PixelShaderFunctionSky(VSOut_PosTexViewDir input)
 	int3 texCoordInt = int3(input.Position.xy, 0);
 
 	//get normal data from the NormalMap
-	float4 normalData = NormalMap.Load(texCoordInt);
+    float4 normalData = NormalMap.SampleLevel(NormalMapSampler, input.Position.xy / Resolution, 0);
 
 	//tranform normal back into [-1,1] range
 	float3 normal = decode(normalData.xyz); //2.0f * normalData.xyz - 1.0f;    //could do mad

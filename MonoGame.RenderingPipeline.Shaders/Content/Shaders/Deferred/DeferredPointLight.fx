@@ -50,7 +50,7 @@ float DepthBias = 0.02;
 float2 Resolution = float2(1280, 800);
 
 //Multiply output with this to get results that can be evaluated alone
-const float OUTPUTCONST = 0.1f;
+CONST float OUTPUTCONST = 0.1f;
 
 
 // AlbedoMap: diffuse color, and specularIntensity in the alpha channel
@@ -287,14 +287,16 @@ void LightingSDFCalculation(in float3 posVS, in int3 texCoordInt, in float dista
 	//Loads a texel based off of input vector
 float4 LoadShadowMap(float3 vec3)
 {
-    return ShadowMap.Load(int3(GetSampleCoordinate(vec3) * float2(ShadowMapSize, 6 * ShadowMapSize), 0)).r;
+    int3 texCoordInt = int3(GetSampleCoordinate(vec3) * float2(ShadowMapSize, 6 * ShadowMapSize), 0);
+    return ShadowMap.SampleLevel(ShadowMapSampler, GetSampleCoordinate(vec3), 0).r;
 }
 
 	//Loads a texel based on float2 texCoord. The texCoord can be obtained by calling GetSampleCoordinate(vec3).
 	//One can additionally add an offset, like this GetSampleOffset(sampleCoord, float2(x, y)*texelSize)
 float4 LoadShadowMapUV(float2 coord)
 {
-    return ShadowMap.Load(int3(coord * float2(ShadowMapSize, 6 * ShadowMapSize), 0)).r;
+    //return ShadowMap.Load(int3(coord * float2(ShadowMapSize, 6 * ShadowMapSize), 0)).r;
+    return ShadowMap.SampleLevel(ShadowMapSampler, coord, 0).r;
 }
 
 //For Virtual Shadow Maps

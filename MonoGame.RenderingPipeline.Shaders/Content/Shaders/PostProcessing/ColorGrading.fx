@@ -1,5 +1,6 @@
 ﻿
 #include "../../Includes/Macros.incl.fx"
+#include "../../Includes/Maps.incl.fx"
 
 //Color Grading Shader with LUTs, TheKosmonaut 2017 ( kosmonaut3d@googlemail.com )
 
@@ -11,7 +12,11 @@ float Size = 16;
 float SizeRoot = 4;
 
 Texture2D InputTexture;
+SamplerTex(InputTexture, InputTexture, CLAMP, POINT);
 Texture2D LUT;
+SamplerTex(LUT, LUT, CLAMP, NONE);
+
+float2 Resolution = { 1280, 720 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  STRUCTS
@@ -53,7 +58,7 @@ VertexShaderFSQOutput VertexShaderFSQFunction(VertexShaderFSQInput input)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Creating a LookUpTable texture with default values
-float4 PixelShaderCreateLUT(VertexShaderFSQOutput input) : COLOR0
+float4 PixelShaderCreateLUT(VertexShaderFSQOutput input) : SV_Target0
 {
 	//Size can be 16 or 32 for example
 	//16 will yield in 4x4 fields
@@ -74,11 +79,11 @@ float4 PixelShaderCreateLUT(VertexShaderFSQOutput input) : COLOR0
 	return float4(red, green, blue, 1);
 }
 
-float4 PixelShaderApplyLUT(VertexShaderFSQOutput input) : COLOR0
+float4 PixelShaderApplyLUT(VertexShaderFSQOutput input) : SV_Target0
 {
 
 	//Our input
-	float4 baseTexture = InputTexture.Load(int3(input.Position.xy, 0));
+    float4 baseTexture = InputTexture.SampleLevel(InputTextureSampler, input.Position.xy / Resolution, 0);
 
 	//Manual trilinear interpolation
 
@@ -120,11 +125,11 @@ float4 PixelShaderApplyLUT(VertexShaderFSQOutput input) : COLOR0
 
 	//Red 0 and 1, Green 0
 
-	float4 b0r0g0 = LUT.Load(int3(blueBaseTable.x + red, blueBaseTable.y + green, 0));
+    float4 b0r0g0 = LUT.SampleLevel(LUTSampler, float2(blueBaseTable.x + red, blueBaseTable.y + green) / Resolution, 0);
 
 	[branch]
 	if (red < Size - 1)
-		b0r1g0 = LUT.Load(int3(blueBaseTable.x + red + 1, blueBaseTable.y + green, 0));
+        b0r1g0 = LUT.SampleLevel(LUTSampler, float2(blueBaseTable.x + red + 1, blueBaseTable.y + green) / Resolution, 0);
 	else
 		b0r1g0 = b0r0g0;
 
@@ -135,11 +140,11 @@ float4 PixelShaderApplyLUT(VertexShaderFSQOutput input) : COLOR0
 	{
 		//Red 0 and 1
 
-		b0r0g1 = LUT.Load(int3(blueBaseTable.x + red, blueBaseTable.y + green + 1, 0));
+        b0r0g1 = LUT.SampleLevel(LUTSampler, float2(blueBaseTable.x + red, blueBaseTable.y + green + 1) / Resolution, 0);
 
 		[branch]
 		if (red < Size - 1)
-			b0r1g1 = LUT.Load(int3(blueBaseTable.x + red + 1, blueBaseTable.y + green + 1, 0));
+            b0r1g1 = LUT.SampleLevel(LUTSampler, float2(blueBaseTable.x + red + 1, blueBaseTable.y + green + 1) / Resolution, 0);
 		else
 			b0r1g1 = b0r0g1;
 	}
@@ -158,11 +163,11 @@ float4 PixelShaderApplyLUT(VertexShaderFSQOutput input) : COLOR0
 
 		blueBaseTable = float2(trunc(col * Size), trunc(row * Size));
 
-		b1r0g0 = LUT.Load(int3(blueBaseTable.x + red, blueBaseTable.y + green, 0));
+        b1r0g0 = LUT.SampleLevel(LUTSampler, float2(blueBaseTable.x + red, blueBaseTable.y + green) / Resolution, 0);
 
 		[branch]
 		if (red < Size - 1)
-			b1r1g0 = LUT.Load(int3(blueBaseTable.x + red + 1, blueBaseTable.y + green, 0));
+            b1r1g0 = LUT.SampleLevel(LUTSampler, float2(blueBaseTable.x + red + 1, blueBaseTable.y + green) / Resolution, 0);
 		else
 			b1r1g0 = b0r0g0;
 
@@ -173,11 +178,11 @@ float4 PixelShaderApplyLUT(VertexShaderFSQOutput input) : COLOR0
 		{
 			//Red 0 and 1
 
-			b1r0g1 = LUT.Load(int3(blueBaseTable.x + red, blueBaseTable.y + green + 1, 0));
+            b1r0g1 = LUT.SampleLevel(LUTSampler, float2(blueBaseTable.x + red, blueBaseTable.y + green + 1) / Resolution, 0);
 
 			[branch]
 			if (red < Size - 1)
-				b1r1g1 = LUT.Load(int3(blueBaseTable.x + red + 1, blueBaseTable.y + green + 1, 0));
+                b1r1g1 = LUT.SampleLevel(LUTSampler, float2(blueBaseTable.x + red + 1, blueBaseTable.y + green + 1) / Resolution, 0);
 			else
 				b1r1g1 = b0r0g1;
 		}

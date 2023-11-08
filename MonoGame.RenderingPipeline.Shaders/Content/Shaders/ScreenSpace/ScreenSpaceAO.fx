@@ -239,11 +239,11 @@ float4 BilateralBlurVertical(VSOut_PosTex input) : SV_TARGET
         float2 sampleOffset = float2( texelsize * samplerOffsets[i],0);
         float2 samplePos = input.TexCoord + sampleOffset;
          
-        float sampleDepth = DepthMap.Sample(texSampler, samplePos).r;
+        float sampleDepth = DepthMap.SampleLevel(DepthMapSampler, samplePos, 0).r;
          
         float weight = (1.0f / (0.0001f + abs(compareDepth - sampleDepth))) * gaussianWeights[i];
         
-        result += SSAOMap.Sample(blurSamplerPoint, samplePos) * weight;
+        result += SSAOMap.SampleLevel(blurSamplerPoint, samplePos, 0) * weight;
         
         weightSum += weight;
     }
@@ -254,11 +254,11 @@ float4 BilateralBlurVertical(VSOut_PosTex input) : SV_TARGET
         float2 sampleOffset = float2(texelsize * samplerOffsets2[j],0);
         float2 samplePos = input.TexCoord + sampleOffset;
          
-        float sampleDepth = DepthMap.Sample(texSampler, samplePos).r;
+        float sampleDepth = DepthMap.SampleLevel(DepthMapSampler, samplePos, 0).r;
         
         float weight = (1.0f / (0.0001f + abs(compareDepth - sampleDepth))) * gaussianWeights2[j];
           
-        result += SSAOMap.Sample(blurSamplerLinear, samplePos, 0) * weight;
+        result += SSAOMap.SampleLevel(blurSamplerLinear, samplePos, 0) * weight;
           
         weightSum += weight;
          

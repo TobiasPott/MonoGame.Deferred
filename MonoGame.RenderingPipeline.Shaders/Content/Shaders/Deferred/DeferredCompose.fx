@@ -40,42 +40,41 @@ float4 PSMain(VSOut_PosTex input) : SV_Target
 	float metalness = decodeMetalness(normalInfo.b);
 
 	//Our "volumetric" light data. This is a seperate buffer that is renders on top of all other stuff.
-    float3 volumetrics = VolumeLightMap.Sample(VolumeLightMapSampler, input.TexCoord).rgb;
-
+    float4 volumetrics = VolumeLightMap.Sample(VolumeLightMapSampler, input.TexCoord);
+	
 	//Emissive Material
 	//If the material is emissive (matType == 3) we store the factor inside metalness. We simply output the emissive material and do not compose with lighting
 	if (abs(materialType - 3) < 0.1f)
 	{
 		// Optional: 2 << metalness*8, pow(2, m*8) etc.
 		// Note: metalness is used as the power value in this case
-		return float4(diffuseColor.rgb * metalness * 8 + volumetrics, 1);
+		return float4(diffuseColor.rgb * metalness * 8 + volumetrics.rgb, 1);
 	}
-
-	float3 diffuseContrib = float3(0, 0, 0);
-
+	
 	//SSAO
 	float ssaoContribution = 1;
 
 	[branch]
-	if (useSSAO)
+	if (useSSAO == 1)
 	{
         ssaoContribution = SSAOMap.SampleLevel(SSAOMapSampler, input.TexCoord, 0).r;
     }
-
+	
 	//float f0 = lerp(0.04f, diffuseColor.g * 0.25 + 0.75, metalness);
+	
+    float4 diffuseLight = DiffuseLightMap.Sample(DiffuseLightMapSampler, input.TexCoord);
+    float4 specularLight = SpecularLightMap.Sample(SpecularLightMapSampler, input.TexCoord);
 
-    float3 diffuseLight = DiffuseLightMap.Sample(DiffuseLightMapSampler, input.TexCoord).rgb;
-    float3 specularLight = SpecularLightMap.Sample(SpecularLightMapSampler, input.TexCoord).rgb;
+	float4 plasticFinal = diffuseColor * diffuseLight + specularLight;
+	
+	float4 metalFinal = diffuseColor * specularLight;
+	
+	float4 finalValue = lerp(plasticFinal, metalFinal, metalness);
+	
+    float4 output  = float4(finalValue * ssaoContribution + volumetrics);
+    output.w = 1;
+    return output;
 
-	float3 plasticFinal = diffuseColor.rgb * (diffuseLight)+specularLight;
-
-	float3 metalFinal = diffuseColor.rgb * specularLight;
-
-	float3 finalValue = lerp(plasticFinal, metalFinal, metalness) + diffuseContrib;
-
-	float3 output = (finalValue * ssaoContribution + volumetrics);
-
-	return float4(output, 1);
 }
 
 technique TechniqueLinear

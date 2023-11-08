@@ -19,6 +19,7 @@ float2 ResolutionRcp = float2(1.0f / 1280, 1.0f / 800);
 
 // Particle texture and sampler.
 Texture2D Texture;
+SamplerTex(Texture, Texture, CLAMP, LINEAR);
 
 // For mouse picking we draw the object's id as color to the screen
 float3 IdColor;
@@ -61,21 +62,21 @@ V2F_TexCoordColor VSMain(VSIn_PosTexColor input)
 	//Get the screen coordinates of the billboards position
     float2 texCoord = 0.5f * (float2(output.Position.x, -output.Position.y) + 1);
         
-	//Average the depth of this and the 2 neighbor pixels (x)
-    float vDepthMap = DepthMap.SampleLevel(DepthMapSampler, texCoord, 0).r;
-    vDepthMap += DepthMap.SampleLevel(DepthMapSampler, texCoord + float2(ResolutionRcp.x, 0), 0).r;
-    vDepthMap += DepthMap.SampleLevel(DepthMapSampler, texCoord - float2(ResolutionRcp.x, 0), 0).r;
-    vDepthMap /= 3;
-
-	//If we are behind that -> don't draw
-    float vLocalDepth = PositionVS.z /- FarClip;
+	////Average the depth of this and the 2 neighbor pixels (x)
+ //   float vDepthMap = DepthMap.SampleLevel(DepthMapSampler, texCoord, 0).r;
+ //   vDepthMap += DepthMap.SampleLevel(DepthMapSampler, texCoord + float2(ResolutionRcp.x, 0), 0).r;
+ //   vDepthMap += DepthMap.SampleLevel(DepthMapSampler, texCoord - float2(ResolutionRcp.x, 0), 0).r;
+ //   vDepthMap /= 3;
+    
+	////If we are behind that -> don't draw
+ //   float vLocalDepth = PositionVS.z /- FarClip;
        
-	//If we are in front
-    if (vLocalDepth < vDepthMap)
-    {
-		//Expand each edge vertex depending on texture coordinate
-        output.Position.xy += (input.TexCoord - float2(0.5f, 0.5f)) * float2(1, AspectRatio) * 0.075f;
-    }
+	////If we are in front
+ //   if (vLocalDepth < vDepthMap)
+ //   {
+	//	//Expand each edge vertex depending on texture coordinate
+ //       output.Position.xy += (input.TexCoord - float2(0.5f, 0.5f)) * float2(1, AspectRatio) * 0.075f;
+ //   }
     
     output.TextureCoordinate = float2(input.TexCoord.x, 1-input.TexCoord.y);
 
@@ -90,7 +91,7 @@ V2F_TexCoordColor VSMain(VSIn_PosTexColor input)
 
 float4 PSMain_Sprite(V2F_TexCoordColor input) : SV_TARGET0
 {
-    float4 color = Texture.Sample(Sampler, input.TextureCoordinate);
+    float4 color = Texture.SampleLevel(TextureSampler, input.TextureCoordinate, 0);
 
     if (color.a < 0.95f)
         clip(-1);
@@ -100,7 +101,7 @@ float4 PSMain_Sprite(V2F_TexCoordColor input) : SV_TARGET0
 
 float4 PSMain_Id(V2F_TexCoordColor input) : SV_TARGET0
 {
-    float4 color = Texture.Sample(Sampler, input.TextureCoordinate);
+    float4 color = Texture.SampleLevel(TextureSampler, input.TextureCoordinate, 0);
 
     if (color.a < 0.95f)
         clip(-1);

@@ -16,10 +16,10 @@ float4x4 Projection;
 float4x4 InverseProjection;
 
 
-const int Samples = 3;
-const int SecondarySamples = 3;
-const float MinimumThickness = 70;
-const float border = 0.1f;
+CONST int Samples = 3;
+CONST int SecondarySamples = 3;
+CONST float MinimumThickness = 70;
+CONST float border = 0.1f;
 
 float2 Resolution = float2(1280, 720);
 

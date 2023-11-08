@@ -11,6 +11,8 @@
 //#define TESTNORMALENCODING
 
 #include "../../Includes/Macros.incl.fx"
+#define _NORMAL_MAP
+#include "../../Includes/Maps.incl.fx"
 #include "../../Includes/PixelStage.incl.fx"
 #include "../Common/helper.fx"
 #include "../Shared.fx"
@@ -23,12 +25,11 @@ float Roughness = 0.3f;
 float Metallic = 0;
 int MaterialType = 0;
 
-const float CLIP_VALUE = 0.49;
+CONST float CLIP_VALUE = 0.49;
 
 float4 DiffuseColor = float4(0.8f, 0.8f, 0.8f, 1);
 
 Texture2D<float4> AlbedoMap;
-Texture2D<float4> NormalMap;
 
 Texture2D<float4> MetallicMap;
 Texture2D<float4> RoughnessMap;
@@ -60,7 +61,7 @@ sampler TextureSamplerTrilinear
 
 struct DrawBasic_VSIn
 {
-	float4 Position : POSITION0;
+    float4 Position : SV_POSITION;
 	float3 Normal   : NORMAL0;
 	float2 TexCoord : TEXCOORD0;
 };
@@ -75,7 +76,7 @@ struct DrawBasic_VSOut
 
 struct DrawNormals_VSIn
 {
-    float4 Position : POSITION0;
+    float4 Position : SV_POSITION;
     float3 Normal : NORMAL0;
     float3 Binormal : BINORMAL0;
     float3 Tangent : TANGENT0;
@@ -112,28 +113,29 @@ DrawBasic_VSOut DrawBasic_VertexShader(DrawBasic_VSIn input)
     Output.TexCoord = input.TexCoord;
 
 	//Linear Depth buffer instead of Z / W
-	Output.Depth = mul(input.Position, WorldView).z / -FarClip;//float2(Output.Position.z, Output.Position.w);
+	Output.Depth = mul(input.Position, WorldView).z / -FarClip;
     return Output;
 }
 
 DrawNormals_VSOut DrawNormals_VertexShader(DrawNormals_VSIn input)
 {
-    DrawNormals_VSOut Output;
+    DrawNormals_VSOut Output = (DrawNormals_VSOut)0;
     Output.Position = mul(input.Position, WorldViewProj);
-	Output.WorldToTangentSpace[0] = mul(input.Tangent, WorldViewIT);//mul(normalize(float4(input.Tangent, 0)), World).xyz;
-    Output.WorldToTangentSpace[1] = mul(input.Binormal, WorldViewIT);//mul(normalize(float4(input.Binormal, 0)), World).xyz;
-    Output.WorldToTangentSpace[2] = mul(input.Normal, WorldViewIT);//mul(normalize(float4(input.Normal, 0)), World).xyz;
+	Output.WorldToTangentSpace[0] = mul(input.Tangent, WorldViewIT);
+    Output.WorldToTangentSpace[1] = mul(input.Binormal, WorldViewIT);
+    Output.WorldToTangentSpace[2] = mul(input.Normal, WorldViewIT);
     Output.TexCoord = input.TexCoord;
 
 	//Linear Depth buffer instead of Z / W
-	Output.Depth = mul(input.Position, WorldView).z / -FarClip;//float2(Output.Position.z, Output.Position.w);
+	Output.Depth = mul(input.Position, WorldView).z / -FarClip;
     return Output;
 }
 
 float3 GetNormalMap(float2 TexCoord)
 {
 	//This gets normalized anyways, so it doesn't matter that it's technically only half the length
-	return NormalMap.Sample(TextureSamplerTrilinear, TexCoord).rgb - float3(0.5f, 0.5f, 0.5f);
+	//return NormalMap.Sample(TextureSamplerTrilinear, TexCoord).rgb - float3(0.5f, 0.5f, 0.5f);
+    return NormalMap.Sample(NormalMapSampler, TexCoord).rgb - float3(0.5f, 0.5f, 0.5f);
 }
 
 //See BufferSetup.dgml for overview
@@ -178,7 +180,7 @@ PSOut_AlbedoNormalDepth WriteBuffers(Render_IN input)
     return Out;
 }
 
-[earlydepthstencil]      //experimental
+//[earlydepthstencil]      //experimental
 PSOut_AlbedoNormalDepth DrawTexture_PixelShader(DrawBasic_VSOut input)
 {
     Render_IN renderParams;
@@ -196,7 +198,7 @@ PSOut_AlbedoNormalDepth DrawTexture_PixelShader(DrawBasic_VSOut input)
     return WriteBuffers(renderParams);
 }
 
-[earlydepthstencil]      //experimental
+//[earlydepthstencil]      //experimental
 PSOut_AlbedoNormalDepth DrawTextureSpecular_PixelShader(DrawBasic_VSOut input)
 {
     Render_IN renderParams;
@@ -216,7 +218,7 @@ PSOut_AlbedoNormalDepth DrawTextureSpecular_PixelShader(DrawBasic_VSOut input)
     return WriteBuffers(renderParams);
 }
 
-[earlydepthstencil]      //experimental
+//[earlydepthstencil]      //experimental
 PSOut_AlbedoNormalDepth DrawTextureSpecularMetallic_PixelShader(DrawBasic_VSOut input)
 {
     Render_IN renderParams;
@@ -237,7 +239,7 @@ PSOut_AlbedoNormalDepth DrawTextureSpecularMetallic_PixelShader(DrawBasic_VSOut 
     return WriteBuffers(renderParams);
 }
 
-[earlydepthstencil]      //experimental
+//[earlydepthstencil]      //experimental
 PSOut_AlbedoNormalDepth DrawTextureSpecularNormal_PixelShader(DrawNormals_VSOut input)
 {
     Render_IN renderParams;
@@ -263,7 +265,7 @@ PSOut_AlbedoNormalDepth DrawTextureSpecularNormal_PixelShader(DrawNormals_VSOut 
     return WriteBuffers(renderParams);
 }
 
-[earlydepthstencil]      //experimental
+//[earlydepthstencil]      //experimental
 PSOut_AlbedoNormalDepth DrawTextureSpecularNormalMetallic_PixelShader(DrawNormals_VSOut input)
 {
     Render_IN renderParams;
@@ -289,9 +291,7 @@ PSOut_AlbedoNormalDepth DrawTextureSpecularNormalMetallic_PixelShader(DrawNormal
     return WriteBuffers(renderParams);
 }
 
-
-
-[earlydepthstencil]      //experimental
+//[earlydepthstencil]      //experimental
 PSOut_AlbedoNormalDepth DrawTextureNormal_PixelShader(DrawNormals_VSOut input)
 {
     Render_IN renderParams;
@@ -315,7 +315,7 @@ PSOut_AlbedoNormalDepth DrawTextureNormal_PixelShader(DrawNormals_VSOut input)
     return WriteBuffers(renderParams);
 }
 
-[earlydepthstencil]      //experimental
+//[earlydepthstencil]      //experimental
 PSOut_AlbedoNormalDepth DrawNormal_PixelShader(DrawNormals_VSOut input)
 {
 	Render_IN renderParams;
@@ -616,11 +616,12 @@ technique DrawTextureNormalMask
     }
 }
 
-technique DrawTextureDisplacement
-{
-    pass Pass1
-    {
-        COMPILE_VS(DrawNormals_VertexShader);
-        COMPILE_PS(DrawTextureDisplacement_PixelShader);
-    }
-}
+ //ToDo: DX10: Only works in DX10
+//technique DrawTextureDisplacement
+//{
+//    pass Pass1
+//    {
+//        COMPILE_VS(DrawNormals_VertexShader);
+//        COMPILE_PS(DrawTextureDisplacement_PixelShader);
+//    }
+//}

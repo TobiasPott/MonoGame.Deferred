@@ -5,11 +5,11 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "../../Includes/Macros.incl.fx"
+#include "../../Includes/Maps.incl.fx"
 #include "../../Includes/Frustum.incl.fx"
 
 #if DX10_OR_NEWER == 1
 // Maximum 40
-Texture2D VolumeTex;
 float3 VolumeTexSize[40];
 float4 VolumeTexResolution[40];
 
@@ -19,7 +19,6 @@ float InstanceSDFIndex[40];
 
 #else
 // Maximum 20
-Texture2D VolumeTex;
 float3 VolumeTexSize[20];
 float4 VolumeTexResolution[20];
 
@@ -28,6 +27,8 @@ float3 InstanceScale[20];
 float InstanceSDFIndex[20];
 #endif
 
+Texture2D VolumeTex;
+SamplerTex(VolumeTex, VolumeTex, CLAMP, NONE);
 float InstancesCount = 0;
 
 
@@ -39,7 +40,7 @@ float InstancesCount = 0;
 //  FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  PIXEL SHADER
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -74,7 +75,21 @@ float InterpolateSDF(float3 texCoords, float3 resolution)
 	float x1y0z1;
 	float x0y1z1;
 	float x1y1z1;
+	
+    x += resolution.x * z;
+    x0y0z0 = VolumeTex.SampleLevel(VolumeTexSampler, float2(x, y) / resolution.xy, 0).r;
+    x1y0z0 = VolumeTex.SampleLevel(VolumeTexSampler, float2(x + 1, y) / resolution.xy, 0).r;
+    x0y1z0 = VolumeTex.SampleLevel(VolumeTexSampler, float2(x, y + 1) / resolution.xy, 0).r;
+    x1y1z0 = VolumeTex.SampleLevel(VolumeTexSampler, float2(x + 1, y + 1) / resolution.xy, 0).r;
 
+    x += resolution.x;
+    x0y0z1 = VolumeTex.SampleLevel(VolumeTexSampler, float2(x, y) / resolution.xy, 0).r;
+    x1y0z1 = VolumeTex.SampleLevel(VolumeTexSampler, float2(x + 1, y) / resolution.xy, 0).r;
+    x0y1z1 = VolumeTex.SampleLevel(VolumeTexSampler, float2(x, y + 1) / resolution.xy, 0).r;
+    x1y1z1 = VolumeTex.SampleLevel(VolumeTexSampler, float2(x + 1, y + 1) / resolution.xy, 0).r;
+
+	
+	/*
 	x += resolution.x * z;
 	x0y0z0 = VolumeTex.Load(int3(x, y, 0)).r;
 	x1y0z0 = VolumeTex.Load(int3(x + 1, y, 0)).r;
@@ -86,7 +101,7 @@ float InterpolateSDF(float3 texCoords, float3 resolution)
 	x1y0z1 = VolumeTex.Load(int3(x + 1, y, 0)).r;
 	x0y1z1 = VolumeTex.Load(int3(x, y + 1, 0)).r;
 	x1y1z1 = VolumeTex.Load(int3(x + 1, y + 1, 0)).r;
-
+	*/
 	float lerpz0 = lerp(lerp(x0y0z0, x1y0z0, xfrac), lerp(x0y1z0, x1y1z0, xfrac), yfrac);
 	float lerpz1 = lerp(lerp(x0y0z1, x1y0z1, xfrac), lerp(x0y1z1, x1y1z1, xfrac), yfrac);
 	return lerp(lerpz0, lerpz1, zfrac);

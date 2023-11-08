@@ -16,6 +16,8 @@
 float3 CameraPosition;
 
 
+float2 Resolution = { 1280, 720 };
+
 //Generation
 float2 TriangleTexResolution;
 float TriangleAmount;
@@ -59,7 +61,7 @@ float4 CreateSeededColor(float input)
 		//  BASE FUNCTIONS
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-float4 PixelShaderFunctionVisualizeVolume(VSOut_PosTexViewDir input) : COLOR0
+float4 PixelShaderFunctionVisualizeVolume(VSOut_PosTexViewDir input) : SV_Target0
 {
 	float3 startPoint = CameraPosition;
 	float3 endPoint = CameraPosition + input.ViewDir;
@@ -97,7 +99,7 @@ float4 PixelShaderFunctionVisualizeVolume(VSOut_PosTexViewDir input) : COLOR0
 	return float4(0,0,0, 1);
 }
 
-float4 PixelShaderFunctionVisualizeVolume2(VSOut_PosTexViewDir input) : COLOR0
+float4 PixelShaderFunctionVisualizeVolume2(VSOut_PosTexViewDir input) : SV_Target0
 {
 	float3 startPoint = CameraPosition;
 	float3 endPoint = CameraPosition + input.ViewDir;
@@ -130,11 +132,11 @@ float4 PixelShaderFunctionVisualizeVolume2(VSOut_PosTexViewDir input) : COLOR0
 	return float4(0,0,0, 1);
 }
 
-float4 PixelShaderFunctionDrawShadow(VSOut_PosTexViewDir input) : COLOR0
+float4 PixelShaderFunctionDrawShadow(VSOut_PosTexViewDir input) : SV_Target0
 {
 	int3 texCoordInt = int3(input.Position.xy, 0);
 
-	float linearDepth = DepthMap.Load(texCoordInt).r;
+    float linearDepth = DepthMap.SampleLevel(DepthMapSampler, input.Position.xy / Resolution, 0).r;
 
 	float3 p = linearDepth * input.ViewDir + CameraPosition;
 
@@ -179,7 +181,10 @@ float4 PixelShaderFunctionDrawShadow(VSOut_PosTexViewDir input) : COLOR0
 
 float3 GetVertex(float vertexIndex)
 {
-	return VolumeTex.Load(int3(vertexIndex % TriangleTexResolution.x, vertexIndex / TriangleTexResolution.x, 0)).xyz;
+    int3 indexCoords = int3(vertexIndex % TriangleTexResolution.x, vertexIndex / TriangleTexResolution.x, 0);
+    float2 texCoords = indexCoords.xy / TriangleTexResolution;
+	//return VolumeTex.Load(int3(vertexIndex % TriangleTexResolution.x, vertexIndex / TriangleTexResolution.x, 0)).xyz;
+    return VolumeTex.SampleLevel(VolumeTexSampler, texCoords, 0).xyz;
 }
 
 float dot2(in float3 v) { return dot(v, v); }
@@ -212,7 +217,7 @@ float RayCast(float3 a, float3 b, float3 c, float3 origin, float3 dir)
 	return 0.0f;
 }
 
-float4 PixelShaderFunctionGenerateSDF(VSOut_PosTexViewDir input) : COLOR0
+float4 PixelShaderFunctionGenerateSDF(VSOut_PosTexViewDir input) : SV_Target0
 {
 	//Generate SDFs
 	float2 pixel = input.Position.xy;
