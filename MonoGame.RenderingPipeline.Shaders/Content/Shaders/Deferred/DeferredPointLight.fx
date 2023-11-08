@@ -700,7 +700,7 @@ PixelShaderOutput VolumetricPixelShaderFunction(V2F_ViewPosScreenPos input)
 //Shadow mapped light!
 PixelShaderOutput BasePixelShaderFunctionShadow(PixelShaderInput input)
 {
-    PixelShaderOutput output;
+    PixelShaderOutput output = (PixelShaderOutput)0;
     
     //surface-to-light vector
     float3 lightVector = lightPosition - input.PositionVS;
@@ -711,7 +711,7 @@ PixelShaderOutput BasePixelShaderFunctionShadow(PixelShaderInput input)
     if (lengthLight > lightRadius)
     {
         clip(-1);
-        return (PixelShaderOutput) 0;
+        return output;
     }
     else
     {
