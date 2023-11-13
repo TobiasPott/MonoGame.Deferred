@@ -55,13 +55,9 @@ namespace DeferredEngine.Pipeline
             Pass_Sky = Effect.Techniques["Sky"].Passes[0];
             Pass_Basic = Effect.Techniques["Basic"].Passes[0];
 
-            Param_AlbedoMap = Effect.Parameters["AlbedoMap"];
-            Param_NormalMap = Effect.Parameters["NormalMap"];
-            Param_DepthMap = Effect.Parameters["DepthMap"];
-
             Param_FrustumCorners = Effect.Parameters["FrustumCorners"];
-            Param_SSRMap = Effect.Parameters["ReflectionMap"];
-            Param_ReflectionCubeMap = Effect.Parameters["ReflectionCubeMap"];
+            Param_SSRMap = Effect.Parameters[Names.Sampler("ReflectionMap")];
+            Param_ReflectionCubeMap = Effect.Parameters[Names.Sampler("ReflectionCubeMap")];
             Param_Resolution = Effect.Parameters["Resolution"];
             Param_FireflyReduction = Effect.Parameters["FireflyReduction"];
             Param_FireflyThreshold = Effect.Parameters["FireflyThreshold"];
@@ -72,6 +68,9 @@ namespace DeferredEngine.Pipeline
             Param_CameraPositionWS = Effect.Parameters["CameraPositionWS"];
             Param_Time = Effect.Parameters["Time"];
 
+            Param_AlbedoMap = Effect.Parameters[Names.Sampler("AlbedoMap")];
+            Param_NormalMap = Effect.Parameters[Names.Sampler("NormalMap")];
+            Param_DepthMap = Effect.Parameters[Names.Sampler("DepthMap")];
 
             Param_VolumeTex = Effect.Parameters["VolumeTex"];
             Param_VolumeTexSize = Effect.Parameters["VolumeTexSize"];

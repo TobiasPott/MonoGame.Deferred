@@ -26,15 +26,16 @@ namespace DeferredEngine.Recources
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
 
-            Param_DepthMap = Effect.Parameters["DepthMap"];
-            Param_NormalMap = Effect.Parameters["NormalMap"];
-            Param_SourceMap = Effect.Parameters["SourceMap"];
+            Param_DepthMap = Effect.Parameters[Names.Sampler("DepthMap")];
+            Param_NormalMap = Effect.Parameters[Names.Sampler("NormalMap")];
+            Param_SourceMap = Effect.Parameters[Names.Sampler("SourceMap")];
+            Param_NoiseMap = Effect.Parameters[Names.Sampler("NoiseMap")];
+
             Param_Resolution = Effect.Parameters["Resolution"];
             Param_Projection = Effect.Parameters["Projection"];
             Param_Time = Effect.Parameters["Time"];
             Param_FrustumCorners = Effect.Parameters["FrustumCorners"];
             Param_FarClip = Effect.Parameters["FarClip"];
-            Param_NoiseMap = Effect.Parameters["NoiseMap"];
 
             Param_Samples = Effect.Parameters["Samples"];
             Param_SecondarySamples = Effect.Parameters["SecondarySamples"];

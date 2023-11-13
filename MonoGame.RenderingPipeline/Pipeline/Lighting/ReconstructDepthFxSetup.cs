@@ -16,10 +16,10 @@ namespace DeferredEngine.Pipeline.Lighting
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
 
-            Param_DepthMap = Effect.Parameters["DepthMap"];
             Param_Projection = Effect.Parameters["Projection"];
             Param_FarClip = Effect.Parameters["FarClip"];
 
+            Param_DepthMap = Effect.Parameters[Names.Sampler("DepthMap")];
         }
 
         public override void Dispose()

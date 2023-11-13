@@ -13,10 +13,6 @@ namespace DeferredEngine.Recources
         public EffectParameter Param_SSAOMap { get; protected set; }
         public EffectParameter Param_NormalMap { get; protected set; }
         public EffectParameter Param_DepthMap { get; protected set; }
-        public EffectParameter Param_CameraPosition { get; protected set; }
-        public EffectParameter Param_InverseViewProjection { get; protected set; }
-        public EffectParameter Param_Projection { get; protected set; }
-        public EffectParameter Param_ViewProjection { get; protected set; }
 
         public EffectParameter Param_FalloffMin { get; protected set; }
         public EffectParameter Param_FalloffMax { get; protected set; }
@@ -36,13 +32,9 @@ namespace DeferredEngine.Recources
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
 
-            Param_SSAOMap = Effect.Parameters["SSAOMap"];
-            Param_NormalMap = Effect.Parameters["NormalMap"];
-            Param_DepthMap = Effect.Parameters["DepthMap"];
-            Param_CameraPosition = Effect.Parameters["CameraPosition"];
-            Param_InverseViewProjection = Effect.Parameters["InverseViewProjection"];
-            Param_Projection = Effect.Parameters["Projection"];
-            Param_ViewProjection = Effect.Parameters["ViewProjection"];
+            Param_SSAOMap = Effect.Parameters[Names.Sampler("SSAOMap")];
+            Param_NormalMap = Effect.Parameters[Names.Sampler("NormalMap")];
+            Param_DepthMap = Effect.Parameters[Names.Sampler("DepthMap")];
 
             Param_FalloffMin = Effect.Parameters["FalloffMin"];
             Param_FalloffMax = Effect.Parameters["FalloffMax"];

@@ -34,6 +34,7 @@ float LightIntensity = 1.0f;
 // DepthMap:
 // ShadowMap:
 Texture2D SSShadowMap;
+SamplerTex(SSShadowMap, SSShadowMap, CLAMP, NONE);
 
 int ShadowFiltering = 0; //PCF, PCF(3), PCF(7), Poisson, VSM
 float ShadowMapSize = 2048;
@@ -449,7 +450,7 @@ PixelShaderOutput PixelShaderSSShadowedFunction(VSOut_PosTexViewDir input)
     {
         float NdL = saturate(dot(normal, -LightVector));
 
-        float shadowContribution = SSShadowMap.Sample(ShadowMapSampler, texCoord).g;
+        float shadowContribution = SSShadowMap.Sample(SSShadowMapSampler, texCoord).g;
 
         //get metalness
         float roughness = normalData.a;

@@ -12,35 +12,17 @@
 float4x4 WorldViewProj;
 float4x4 WorldView;
 
-//Will be overwritten
-float AspectRatio = 1.777;
+// For mouse picking we draw the object's id as color to the screen
+float3 IdColor;
 
-float2 ResolutionRcp = float2(1.0f / 1280, 1.0f / 800);
+//Will be overwritten
+// ToDo: Effect Parameter is null in C# part O.o
 
 // Particle texture and sampler.
 Texture2D Texture;
 SamplerTex(Texture, Texture, CLAMP, LINEAR);
 
-// For mouse picking we draw the object's id as color to the screen
-float3 IdColor;
-
-SamplerState Sampler = sampler_state
-{
-    MinFilter = Linear;
-    MagFilter = Anisotropic;
-
-    AddressU = Clamp;
-    AddressV = Clamp;
-};
-
-SamplerState DepthSampler = sampler_state
-{
-    MinFilter = Point;
-    MagFilter = Point;
-
-    AddressU = Clamp;
-    AddressV = Clamp;
-};
+float2 ResolutionRcp = float2(1.0f / 1280, 1.0f / 800);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  STRUCTS
@@ -62,22 +44,6 @@ V2F_TexCoordColor VSMain(VSIn_PosTexColor input)
 	//Get the screen coordinates of the billboards position
     float2 texCoord = 0.5f * (float2(output.Position.x, -output.Position.y) + 1);
         
-	////Average the depth of this and the 2 neighbor pixels (x)
- //   float vDepthMap = DepthMap.SampleLevel(DepthMapSampler, texCoord, 0).r;
- //   vDepthMap += DepthMap.SampleLevel(DepthMapSampler, texCoord + float2(ResolutionRcp.x, 0), 0).r;
- //   vDepthMap += DepthMap.SampleLevel(DepthMapSampler, texCoord - float2(ResolutionRcp.x, 0), 0).r;
- //   vDepthMap /= 3;
-    
-	////If we are behind that -> don't draw
- //   float vLocalDepth = PositionVS.z /- FarClip;
-       
-	////If we are in front
- //   if (vLocalDepth < vDepthMap)
- //   {
-	//	//Expand each edge vertex depending on texture coordinate
- //       output.Position.xy += (input.TexCoord - float2(0.5f, 0.5f)) * float2(1, AspectRatio) * 0.075f;
- //   }
-    
     output.TextureCoordinate = float2(input.TexCoord.x, 1-input.TexCoord.y);
 
     output.Color = input.Color;

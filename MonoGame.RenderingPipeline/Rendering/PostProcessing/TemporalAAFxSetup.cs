@@ -36,9 +36,10 @@ namespace DeferredEngine.Recources
             Pass_TemporalAA = Technique_TemporalAA.Passes[0];
             Pass_TonemapInverse = Technique_TonemapInverse.Passes[0];
 
-            Param_AccumulationMap = Effect.Parameters["AccumulationMap"];
-            Param_UpdateMap = Effect.Parameters["UpdateMap"];
-            Param_DepthMap = Effect.Parameters["DepthMap"];
+            Param_AccumulationMap = Effect.Parameters[Names.Sampler("AccumulationMap")];
+            Param_UpdateMap = Effect.Parameters[Names.Sampler("UpdateMap")];
+            Param_DepthMap = Effect.Parameters[Names.Sampler("DepthMap")];
+
             Param_CurrentToPrevious = Effect.Parameters["CurrentToPrevious"];
             Param_Resolution = Effect.Parameters["Resolution"];
             Param_FrustumCorners = Effect.Parameters["FrustumCorners"];

@@ -31,8 +31,9 @@ namespace DeferredEngine.Pipeline.Utilities
             Param_WorldView = Effect.Parameters["WorldView"];
             Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
             Param_InverseWorldView = Effect.Parameters["InverseWorldView"];
-            Param_DepthMap = Effect.Parameters["DepthMap"];
             Param_FarClip = Effect.Parameters["FarClip"];
+
+            Param_DepthMap = Effect.Parameters[Names.Sampler("DepthMap")];
         }
 
 

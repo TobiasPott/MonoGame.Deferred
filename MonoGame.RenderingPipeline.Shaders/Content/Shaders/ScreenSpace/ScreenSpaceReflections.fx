@@ -13,7 +13,6 @@
 #include "../Common/helper.fx"
 
 float4x4 Projection;
-float4x4 InverseProjection;
 
 
 CONST int Samples = 3;

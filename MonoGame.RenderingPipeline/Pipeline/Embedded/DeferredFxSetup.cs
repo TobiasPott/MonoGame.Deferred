@@ -41,13 +41,14 @@ namespace DeferredEngine.Pipeline
             Technique_Linear = Effect_Compose.Techniques["TechniqueLinear"];
 
             Pass_Clear = Effect_Clear.CurrentTechnique.Passes[0];
+            
+            Param_ColorMap = Effect_Compose.Parameters[Names.Sampler("ColorMap")];
+            Param_NormalMap = Effect_Compose.Parameters[Names.Sampler("NormalMap")];
+            Param_DiffuseLightMap = Effect_Compose.Parameters[Names.Sampler("DiffuseLightMap")];
+            Param_SpecularLightMap = Effect_Compose.Parameters[Names.Sampler("SpecularLightMap")];
+            Param_VolumeLightMap = Effect_Compose.Parameters[Names.Sampler("VolumeLightMap")];
+            Param_SSAOMap = Effect_Compose.Parameters[Names.Sampler("SSAOMap")];
 
-            Param_ColorMap = Effect_Compose.Parameters["ColorMap"];
-            Param_NormalMap = Effect_Compose.Parameters["NormalMap"];
-            Param_DiffuseLightMap = Effect_Compose.Parameters["DiffuseLightMap"];
-            Param_SpecularLightMap = Effect_Compose.Parameters["SpecularLightMap"];
-            Param_VolumeLightMap = Effect_Compose.Parameters["VolumeLightMap"];
-            Param_SSAOMap = Effect_Compose.Parameters["SSAOMap"];
             Param_UseSSAO = Effect_Compose.Parameters["useSSAO"];
         }
 

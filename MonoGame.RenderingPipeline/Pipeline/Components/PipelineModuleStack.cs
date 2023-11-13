@@ -44,7 +44,6 @@ namespace DeferredEngine.Rendering
             set
             {
                 GBuffer.GBufferTarget = value;
-                Billboard.DepthMap = value.Depth;
 
                 PointLight.SetGBufferParams(value);
                 DirectionalLight.SetGBufferParams(value);
@@ -82,7 +81,6 @@ namespace DeferredEngine.Rendering
                 PointLight.Resolution = value;
                 Environment.Resolution = value;
 
-                Billboard.AspectRatio = value.X / value.Y;
                 IdAndOutline.SetUpRenderTarget(value);
             }
         }

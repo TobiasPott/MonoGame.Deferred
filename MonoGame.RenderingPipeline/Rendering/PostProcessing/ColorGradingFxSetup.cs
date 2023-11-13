@@ -39,7 +39,7 @@ namespace DeferredEngine.Rendering.PostProcessing
             Param_Size = Effect.Parameters["Size"];
             Param_SizeRoot = Effect.Parameters["SizeRoot"];
             Param_InputTexture = Effect.Parameters["InputTexture"];
-            Param_LUT = Effect.Parameters["LUT"]; // ToDo: PRIO I: Make a static TextureName extension which prepends '[name]Sampler+' to [name]
+            Param_LUT = Effect.Parameters[Names.Sampler("LUT")]; // ToDo: PRIO I: Make a static TextureName extension which prepends '[name]Sampler+' to [name]
 
         }
 

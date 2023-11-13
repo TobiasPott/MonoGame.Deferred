@@ -99,9 +99,9 @@ namespace DeferredEngine.Pipeline.Lighting
             Param_InstanceSDFIndex = Effect.Parameters["InstanceSDFIndex"];
             Param_InstancesCount = Effect.Parameters["InstancesCount"];
 
-            Param_AlbedoMap = Effect.Parameters["AlbedoMap"];
-            Param_NormalMap = Effect.Parameters["NormalMap"];
-            Param_DepthMap = Effect.Parameters["DepthMap"];
+            Param_AlbedoMap = Effect.Parameters[Names.Sampler("AlbedoMap")];
+            Param_NormalMap = Effect.Parameters[Names.Sampler("NormalMap")];
+            Param_DepthMap = Effect.Parameters[Names.Sampler("DepthMap")];
         }
 
         public override void Dispose()

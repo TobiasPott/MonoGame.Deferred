@@ -120,15 +120,6 @@ namespace DeferredEngine.Rendering.PostProcessing
 
         }
 
-        public void SetViewPosition(Vector3 viewPosition)
-        {
-            _fxSetup.Param_InverseViewProjection.SetValue(this.Matrices.InverseViewProjection);
-            _fxSetup.Param_Projection.SetValue(this.Matrices.Projection);
-            _fxSetup.Param_ViewProjection.SetValue(this.Matrices.ViewProjection);
-
-            _fxSetup.Param_CameraPosition.SetValue(viewPosition);
-        }
-
 
         public override void Dispose()
         {

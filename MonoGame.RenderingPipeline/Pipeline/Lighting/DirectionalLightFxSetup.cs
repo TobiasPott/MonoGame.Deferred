@@ -61,12 +61,12 @@ namespace DeferredEngine.Pipeline.Lighting
             Param_ShadowFiltering = Effect.Parameters["ShadowFiltering"];
             Param_ShadowMapSize = Effect.Parameters["ShadowMapSize"];
 
-            Param_AlbedoMap = Effect.Parameters["AlbedoMap"];
-            Param_NormalMap = Effect.Parameters["NormalMap"];
-            Param_DepthMap = Effect.Parameters["DepthMap"];
+            Param_AlbedoMap = Effect.Parameters[Names.Sampler("AlbedoMap")];
+            Param_NormalMap = Effect.Parameters[Names.Sampler("NormalMap")];
+            Param_DepthMap = Effect.Parameters[Names.Sampler("DepthMap")];
 
-            Param_ShadowMap = Effect.Parameters["ShadowMap"];
-            Param_SSShadowMap = Effect.Parameters["SSShadowMap"];
+            Param_ShadowMap = Effect.Parameters[Names.Sampler("ShadowMap")];
+            Param_SSShadowMap = Effect.Parameters[Names.Sampler("SSShadowMap")];
         }
 
         public void SetGBufferParams(GBufferTarget gBufferTarget)

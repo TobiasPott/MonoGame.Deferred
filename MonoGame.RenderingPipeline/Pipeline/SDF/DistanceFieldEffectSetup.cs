@@ -29,7 +29,7 @@ namespace DeferredEngine.Rendering.SDF
         public EffectParameter Param_TriangleTexResolution { get; protected set; }
         public EffectParameter Param_TriangleAmount { get; protected set; }
 
-        public DistanceFieldEffectSetup(string shaderPath = "Shaders/SDF/volumeProjection")
+        public DistanceFieldEffectSetup(string shaderPath = "Shaders/SDF/VolumeProjection")
             : base()
         {
             Effect = Globals.content.Load<Effect>(shaderPath);
@@ -40,9 +40,10 @@ namespace DeferredEngine.Rendering.SDF
 
             Param_FrustumCorners = Effect.Parameters["FrustumCorners"];
             Param_CameraPositon = Effect.Parameters["CameraPosition"];
-            Param_DepthMap = Effect.Parameters["DepthMap"];
 
-            Param_VolumeTex = Effect.Parameters["VolumeTex"];
+            Param_DepthMap = Effect.Parameters[Names.Sampler("DepthMap")];
+
+            Param_VolumeTex = Effect.Parameters[Names.Sampler("VolumeTex")];
             Param_VolumeTexSize = Effect.Parameters["VolumeTexSize"];
             Param_VolumeTexResolution = Effect.Parameters["VolumeTexResolution"];
 

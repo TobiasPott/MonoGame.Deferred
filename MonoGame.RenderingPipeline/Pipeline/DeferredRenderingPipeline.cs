@@ -143,7 +143,6 @@ namespace DeferredEngine.Pipeline
                     _fxStack.TemporalAA.SwapOffFrame();
                     _matrices.ApplyViewProjectionJitter(_fxStack.TemporalAA.JitterMode, _fxStack.TemporalAA.IsOffFrame, _fxStack.TemporalAA.HaltonSequence);
                 }
-                _fxStack.SSAmbientOcclusion.SetViewPosition(camera.Position);
 
                 _frustum.Frustum.Matrix = _matrices.StaticViewProjection;
                 // Compute the frustum corners for cheap view direction computation in shaders

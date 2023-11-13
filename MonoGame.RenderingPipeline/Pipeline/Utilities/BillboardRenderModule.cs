@@ -7,7 +7,6 @@ using DeferredEngine.Rendering.Helper.HelperGeometry;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Ext;
-using System.Diagnostics;
 
 namespace DeferredEngine.Pipeline.Utilities
 {
@@ -19,9 +18,6 @@ namespace DeferredEngine.Pipeline.Utilities
         private readonly BillboardEffectSetup _fxSetup = new BillboardEffectSetup();
         private BillboardBuffer _billboardBuffer;
 
-        public Texture2D DepthMap { set { _fxSetup.Param_DepthMap.SetValue(value); } }
-        public float AspectRatio
-        { set { _fxSetup.Param_AspectRatio.SetValue(value); } }
 
         public override void Initialize(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         {
@@ -37,7 +33,6 @@ namespace DeferredEngine.Pipeline.Utilities
             _graphicsDevice.Indices = (_billboardBuffer.IndexBuffer);
 
             _fxSetup.Param_Texture.SetValue(StaticAssets.Instance.IconLight);
-            _fxSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
             _fxSetup.Effect.CurrentTechnique = _fxSetup.Technique_Id;
 
             List<Decal> decals = scene.Decals;
@@ -70,7 +65,6 @@ namespace DeferredEngine.Pipeline.Utilities
         private void DrawSceneBillboard(Matrix world, PipelineMatrices matrices, int id)
         {
             _fxSetup.Param_WorldViewProj.SetValue(world * matrices.StaticViewProjection);
-            _fxSetup.Param_WorldView.SetValue(world * matrices.View);
             _fxSetup.Param_IdColor.SetValue(IdGenerator.GetColorFromId(id).ToVector3());
             _fxSetup.Effect.CurrentTechnique.Passes[0].Apply();
             _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 2);
@@ -86,7 +80,6 @@ namespace DeferredEngine.Pipeline.Utilities
 
             _fxSetup.Effect.CurrentTechnique = _fxSetup.Technique_Billboard;
             _fxSetup.Param_IdColor.SetValue(Color.Gray.ToVector3());
-            _fxSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
 
             // Decals
             List<Decal> decals = scene.Decals;
@@ -135,7 +128,6 @@ namespace DeferredEngine.Pipeline.Utilities
         {
             Matrix world = Matrix.CreateTranslation(billboardObject.Position);
             _fxSetup.Param_WorldViewProj.SetValue(world * this.Matrices.StaticViewProjection);
-            _fxSetup.Param_WorldView.SetValue(world * this.Matrices.View);
 
             if (billboardObject.Id == IdAndOutlineRenderer.HoveredId)
                 _fxSetup.Param_IdColor.SetValue(Color.White.ToVector3());
