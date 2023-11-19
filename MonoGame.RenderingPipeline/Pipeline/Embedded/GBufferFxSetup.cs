@@ -26,13 +26,12 @@ namespace DeferredEngine.Pipeline
         public EffectTechnique Technique_DrawBasic { get; protected set; }
 
         // Parameters
-        public EffectParameter Param_WorldView { get; protected set; } // = Effec
-        public EffectParameter Param_WorldViewProj { get; protected set; } // = E
-        public EffectParameter Param_WorldViewIT { get; protected set; } //  = Ef
-        public EffectParameter Param_Camera { get; protected set; } // = Effect_G
-        public EffectParameter Param_FarClip { get; protected set; } // = Effect_
+        public EffectParameter Param_WorldView { get; protected set; }
+        public EffectParameter Param_WorldViewProj { get; protected set; }
+        public EffectParameter Param_WorldViewIT { get; protected set; }
+        public EffectParameter Param_FarClip { get; protected set; } 
 
-        public EffectParameter Param_Material_Metallic { get; protected set; } //
+        public EffectParameter Param_Material_Metallic { get; protected set; }
         public EffectParameter Param_Material_MetallicMap { get; protected set; }
         public EffectParameter Param_Material_DiffuseColor { get; protected set; }
         public EffectParameter Param_Material_Roughness { get; protected set; }
@@ -73,19 +72,18 @@ namespace DeferredEngine.Pipeline
             Param_WorldView = Effect_GBuffer.Parameters["WorldView"];
             Param_WorldViewProj = Effect_GBuffer.Parameters["WorldViewProj"];
             Param_WorldViewIT = Effect_GBuffer.Parameters["WorldViewIT"];
-            Param_Camera = Effect_GBuffer.Parameters["Camera"];
             Param_FarClip = Effect_GBuffer.Parameters["FarClip"];
 
             Param_Material_Metallic = Effect_GBuffer.Parameters["Metallic"];
-            Param_Material_MetallicMap = Effect_GBuffer.Parameters["MetallicMap"];
             Param_Material_DiffuseColor = Effect_GBuffer.Parameters["DiffuseColor"];
             Param_Material_Roughness = Effect_GBuffer.Parameters["Roughness"];
 
-            Param_Material_MaskMap = Effect_GBuffer.Parameters["Mask"];
-            Param_Material_AlbedoMap = Effect_GBuffer.Parameters["AlbedoMap"];
-            Param_Material_NormalMap = Effect_GBuffer.Parameters["NormalMap"];
-            Param_Material_RoughnessMap = Effect_GBuffer.Parameters["RoughnessMap"];
-            Param_Material_DisplacementMap = Effect_GBuffer.Parameters["DisplacementMap"];
+            Param_Material_MaskMap = Effect_GBuffer.Parameters[Names.Sampler("Mask")];
+            Param_Material_AlbedoMap = Effect_GBuffer.Parameters[Names.Sampler("AlbedoMap")];
+            Param_Material_NormalMap = Effect_GBuffer.Parameters[Names.Sampler("NormalMap")];
+            Param_Material_MetallicMap = Effect_GBuffer.Parameters[Names.Sampler("MetallicMap")];
+            Param_Material_RoughnessMap = Effect_GBuffer.Parameters[Names.Sampler("RoughnessMap")];
+            Param_Material_DisplacementMap = Effect_GBuffer.Parameters[Names.Sampler("DisplacementMap")];
 
             Param_Material_MaterialType = Effect_GBuffer.Parameters["MaterialType"];
         }

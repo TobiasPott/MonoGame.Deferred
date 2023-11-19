@@ -1,14 +1,15 @@
 ﻿
 #include "../../Includes/Macros.incl.fx"
+#include "../../Includes/Maps.incl.fx"
 
 //Shadow Mapping for point & directional lights
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  VARIABLES
 
-matrix WorldViewProj;
-matrix WorldView;
-matrix World;
+float4x4 WorldViewProj;
+float4x4 WorldView;
+float4x4 World;
 
 float3 LightPositionWS = float3(0,0,0);
 
@@ -16,16 +17,7 @@ float FarClip = 200;
 float SizeBias = 0.005f; //0.005f * 2048 / ShadowMapSize
 
 Texture2D MaskTexture;
-
-SamplerState texSampler
-{
-	Texture = (MaskTexture);
-	AddressU = WRAP;
-	AddressV = WRAP;
-	MagFilter = POINT;
-	MinFilter = POINT;
-	Mipfilter = POINT;
-};
+SamplerTex(MaskTexture, MaskTexture, WRAP, POINT);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  STRUCT DEFINITIONS
@@ -146,7 +138,7 @@ float4 DrawDistance_PixelShader(DrawLinear2_VSOut input) : SV_TARGET
 
 float4 DrawDistance_PixelShaderAlpha(DrawLinear3_VSOut input) : SV_TARGET
 {
-	if (MaskTexture.Sample(texSampler, input.TexCoord).r < 0.49f) discard;
+	if (MaskTexture.Sample(MaskTextureSampler, input.TexCoord).r < 0.49f) discard;
 
 	float dist = length(input.WorldPosition - LightPositionWS) / FarClip;
 	return 1 - dist;

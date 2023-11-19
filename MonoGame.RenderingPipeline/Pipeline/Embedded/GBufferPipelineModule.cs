@@ -57,9 +57,10 @@ namespace DeferredEngine.Pipeline
 
             worldView = Matrix.Invert(Matrix.Transpose(worldView));
             _fxSetup.Param_WorldViewIT.SetValue(worldView);
+            _fxSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
+
             _fxSetup.Effect_GBuffer.CurrentTechnique.Passes[0].Apply();
 
-            _fxSetup.Param_FarClip.SetValue(this.Frustum.FarClip);
         }
 
         public void SetMaterialSettings(MaterialBase material)

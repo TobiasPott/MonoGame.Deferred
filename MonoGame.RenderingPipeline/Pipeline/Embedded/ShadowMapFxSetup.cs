@@ -34,7 +34,7 @@ namespace DeferredEngine.Pipeline
             Param_LightPositionWS = Effect.Parameters["LightPositionWS"];
             Param_FarClip = Effect.Parameters["FarClip"];
             Param_SizeBias = Effect.Parameters["SizeBias"];
-            Param_MaskTexture = Effect.Parameters["MaskTexture"];
+            Param_MaskTexture = Effect.Parameters[Names.Sampler("MaskTexture")];
 
 
         }

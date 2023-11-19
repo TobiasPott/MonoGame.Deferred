@@ -27,12 +27,12 @@ namespace DeferredEngine.Pipeline.Utilities
             Pass_Decal = Effect.Techniques["Decal"].Passes[0];
             Pass_Outline = Effect.Techniques["Outline"].Passes[0];
 
-            Param_DecalMap = Effect.Parameters["DecalMap"];
             Param_WorldView = Effect.Parameters["WorldView"];
             Param_WorldViewProj = Effect.Parameters["WorldViewProj"];
             Param_InverseWorldView = Effect.Parameters["InverseWorldView"];
             Param_FarClip = Effect.Parameters["FarClip"];
 
+            Param_DecalMap = Effect.Parameters[Names.Sampler("DecalMap")];
             Param_DepthMap = Effect.Parameters[Names.Sampler("DepthMap")];
         }
 

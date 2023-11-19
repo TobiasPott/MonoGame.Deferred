@@ -11,6 +11,7 @@
 //#define TESTNORMALENCODING
 
 #include "../../Includes/Macros.incl.fx"
+#define _ALBEDO_MAP
 #define _NORMAL_MAP
 #include "../../Includes/Maps.incl.fx"
 #include "../../Includes/PixelStage.incl.fx"
@@ -29,35 +30,20 @@ CONST float CLIP_VALUE = 0.49;
 
 float4 DiffuseColor = float4(0.8f, 0.8f, 0.8f, 1);
 
-Texture2D<float4> AlbedoMap;
+Texture2D MetallicMap;
+SamplerTex(MetallicMap, MetallicMap, CLAMP, POINT);
+Texture2D RoughnessMap;
+SamplerTex(RoughnessMap, RoughnessMap, CLAMP, POINT);
 
-Texture2D<float4> MetallicMap;
-Texture2D<float4> RoughnessMap;
+Texture2D Mask;
+SamplerTex(Mask, Mask, CLAMP, POINT);
+Texture2D DisplacementMap;
+SamplerTex(DisplacementMap, DisplacementMap, CLAMP, POINT);
 
-Texture2D<float4> Mask;
-Texture2D<float4> DisplacementMap;
-
-sampler TextureSampler
-{
-    Texture = (AlbedoMap);
-	Filter = Anisotropic;
-	MaxAnisotropy = 8;
-	AddressU = Wrap;
-	AddressV = Wrap;
-};
-
-sampler TextureSamplerTrilinear
-{
-	Texture = (NormalMap);
-	MagFilter = LINEAR;
-	MinFilter = LINEAR;
-	Mipfilter = LINEAR;
-	AddressU = Wrap;
-	AddressV = Wrap;
-};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  STRUCT DEFINITIONS
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 struct DrawBasic_VSIn
 {
@@ -185,7 +171,7 @@ PSOut_AlbedoNormalDepth DrawTexture_PixelShader(DrawBasic_VSOut input)
 {
     Render_IN renderParams;
 
-    float4 albedoColor = AlbedoMap.Sample(TextureSampler, input.TexCoord);
+    float4 albedoColor = AlbedoMap.Sample(AlbedoMapSampler, input.TexCoord);
     float4 outputColor = albedoColor; //* input.Color;
  
     renderParams.Position = input.Position;
@@ -203,10 +189,10 @@ PSOut_AlbedoNormalDepth DrawTextureSpecular_PixelShader(DrawBasic_VSOut input)
 {
     Render_IN renderParams;
 
-    float4 albedoColor = AlbedoMap.Sample(TextureSampler, input.TexCoord);
+    float4 albedoColor = AlbedoMap.Sample(AlbedoMapSampler, input.TexCoord);
     float4 outputColor = albedoColor; //* input.Color;
 
-    float RoughnessTexture = RoughnessMap.Sample(TextureSampler, input.TexCoord).r;
+    float RoughnessTexture = RoughnessMap.Sample(RoughnessMapSampler, input.TexCoord).r;
 
     renderParams.Position = input.Position;
     renderParams.Color = outputColor;
@@ -223,11 +209,11 @@ PSOut_AlbedoNormalDepth DrawTextureSpecularMetallic_PixelShader(DrawBasic_VSOut 
 {
     Render_IN renderParams;
 
-    float4 albedoColor = AlbedoMap.Sample(TextureSampler, input.TexCoord);
+    float4 albedoColor = AlbedoMap.Sample(AlbedoMapSampler, input.TexCoord);
     float4 outputColor = albedoColor; //* input.Color;
 
-    float RoughnessTexture = RoughnessMap.Sample(TextureSampler, input.TexCoord).r;
-    float metallicTexture = MetallicMap.Sample(TextureSampler, input.TexCoord).r;
+    float RoughnessTexture = RoughnessMap.Sample(RoughnessMapSampler, input.TexCoord).r;
+    float metallicTexture = MetallicMap.Sample(MetallicMapSampler, input.TexCoord).r;
 
     renderParams.Position = input.Position;
     renderParams.Color = outputColor;
@@ -244,12 +230,12 @@ PSOut_AlbedoNormalDepth DrawTextureSpecularNormal_PixelShader(DrawNormals_VSOut 
 {
     Render_IN renderParams;
 
-    float4 albedoColor = AlbedoMap.Sample(TextureSampler, input.TexCoord);
+    float4 albedoColor = AlbedoMap.Sample(AlbedoMapSampler, input.TexCoord);
     float4 outputColor = albedoColor; //* input.Color;
 
     float3x3 worldSpace = input.WorldToTangentSpace;
 
-    float RoughnessTexture = RoughnessMap.Sample(TextureSampler, input.TexCoord).r;
+    float RoughnessTexture = RoughnessMap.Sample(RoughnessMapSampler, input.TexCoord).r;
 
     // NORMAL MAP ////
 	float3 normalMap = GetNormalMap(input.TexCoord);
@@ -270,13 +256,13 @@ PSOut_AlbedoNormalDepth DrawTextureSpecularNormalMetallic_PixelShader(DrawNormal
 {
     Render_IN renderParams;
 
-    float4 albedoColor = AlbedoMap.Sample(TextureSampler, input.TexCoord);
+    float4 albedoColor = AlbedoMap.Sample(AlbedoMapSampler, input.TexCoord);
     float4 outputColor = albedoColor; //* input.Color;
 
     float3x3 worldSpace = input.WorldToTangentSpace;
 
-    float RoughnessTexture = RoughnessMap.Sample(TextureSampler, input.TexCoord).r;
-    float metallicTexture = MetallicMap.Sample(TextureSampler, input.TexCoord).r;
+    float RoughnessTexture = RoughnessMap.Sample(RoughnessMapSampler, input.TexCoord).r;
+    float metallicTexture = MetallicMap.Sample(MetallicMapSampler, input.TexCoord).r;
     // NORMAL MAP ////
     float3 normalMap = GetNormalMap(input.TexCoord);
     normalMap = normalize(mul(normalMap, worldSpace));
@@ -296,7 +282,7 @@ PSOut_AlbedoNormalDepth DrawTextureNormal_PixelShader(DrawNormals_VSOut input)
 {
     Render_IN renderParams;
 
-    float4 albedoColor = AlbedoMap.Sample(TextureSampler, input.TexCoord);
+    float4 albedoColor = AlbedoMap.Sample(AlbedoMapSampler, input.TexCoord);
     float4 outputColor = albedoColor; //* input.Color;
 
     float3x3 worldSpace = input.WorldToTangentSpace;
@@ -342,10 +328,10 @@ PSOut_AlbedoNormalDepth DrawTextureMask_PixelShader(DrawBasic_VSOut input)
 {
     Render_IN renderParams;
 
-    float4 albedoColor = AlbedoMap.Sample(TextureSampler, input.TexCoord);
+    float4 albedoColor = AlbedoMap.Sample(AlbedoMapSampler, input.TexCoord);
     float4 outputColor = albedoColor; //* input.Color;
 
-    float mask = Mask.Sample(TextureSampler, input.TexCoord).r;
+    float mask = Mask.Sample(MaskSampler, input.TexCoord).r;
     if (mask < CLIP_VALUE)
         clip(-1);
  
@@ -364,14 +350,14 @@ PSOut_AlbedoNormalDepth DrawTextureSpecularMask_PixelShader(DrawBasic_VSOut inpu
 {
     Render_IN renderParams;
 
-	float mask = Mask.Sample(TextureSampler, input.TexCoord).r;
+    float mask = Mask.Sample(MaskSampler, input.TexCoord).r;
 	if (mask < CLIP_VALUE)
 	clip(-1);
 
-    float4 albedoColor = AlbedoMap.Sample(TextureSampler, input.TexCoord);
+    float4 albedoColor = AlbedoMap.Sample(AlbedoMapSampler, input.TexCoord);
     float4 outputColor = albedoColor; //* input.Color;
 
-    float RoughnessTexture = RoughnessMap.Sample(TextureSampler, input.TexCoord).r;
+    float RoughnessTexture = RoughnessMap.Sample(RoughnessMapSampler, input.TexCoord).r;
 
     renderParams.Position = input.Position;
     renderParams.Color = outputColor;
@@ -388,16 +374,16 @@ PSOut_AlbedoNormalDepth DrawTextureSpecularNormalMask_PixelShader(DrawNormals_VS
 {
     Render_IN renderParams;
 
-	float mask = Mask.Sample(TextureSampler, input.TexCoord).r;
+    float mask = Mask.Sample(MaskSampler, input.TexCoord).r;
 	if (mask < CLIP_VALUE)
 	clip(-1);
 
-    float4 albedoColor = AlbedoMap.Sample(TextureSampler, input.TexCoord);
+    float4 albedoColor = AlbedoMap.Sample(AlbedoMapSampler, input.TexCoord);
     float4 outputColor = albedoColor; //* input.Color;
 
     float3x3 worldSpace = input.WorldToTangentSpace;
 
-    float RoughnessTexture = RoughnessMap.Sample(TextureSampler, input.TexCoord).r;
+    float RoughnessTexture = RoughnessMap.Sample(RoughnessMapSampler, input.TexCoord).r;
 
 
     // NORMAL MAP ////
@@ -419,7 +405,7 @@ PSOut_AlbedoNormalDepth DrawTextureNormalMask_PixelShader(DrawNormals_VSOut inpu
 {
     Render_IN renderParams;
 
-	float mask = Mask.Sample(TextureSampler, input.TexCoord).r;
+    float mask = Mask.Sample(MaskSampler, input.TexCoord).r;
 
 	//Branching has shown to make no difference here
 	if (mask < CLIP_VALUE)
@@ -427,7 +413,7 @@ PSOut_AlbedoNormalDepth DrawTextureNormalMask_PixelShader(DrawNormals_VSOut inpu
 		clip(-1);
 	}
 
-    float4 albedoColor = AlbedoMap.Sample(TextureSampler, input.TexCoord);
+    float4 albedoColor = AlbedoMap.Sample(AlbedoMapSampler, input.TexCoord);
     float4 outputColor = albedoColor; //* input.Color;
 
 	float3x3 worldSpace = input.WorldToTangentSpace;
@@ -477,7 +463,7 @@ PSOut_AlbedoNormalDepth DrawTextureDisplacement_PixelShader(DrawNormals_VSOut in
     
     float3 viewDir = normalize(tangentPos - tangentCamera);
     //POM
-    float height = DisplacementMap.Sample(TextureSampler, input.TexCoord).r;
+    float height = DisplacementMap.Sample(DisplacementMapSampler, input.TexCoord).r;
     float2 p = viewDir.xy / viewDir.z * height * 0.01f;
 
     float2 texCoordPOM = input.TexCoord - p;
@@ -486,7 +472,7 @@ PSOut_AlbedoNormalDepth DrawTextureDisplacement_PixelShader(DrawNormals_VSOut in
     //float metallicTexture = MetallicMap.Sample(TextureSampler, input.TexCoord).r;
 
     
-    float4 albedoColor = AlbedoMap.Sample(TextureSampler, texCoordPOM);
+    float4 albedoColor = AlbedoMap.Sample(AlbedoMapSampler, texCoordPOM);
     float4 outputColor = albedoColor; //* input.Color;
 
     // NORMAL MAP ////
